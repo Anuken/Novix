@@ -22,6 +22,7 @@ public class DrawingGrid extends Actor{
 	int tpointer;
 	int touches = 0;
 	boolean moving;
+	public float zoom = 2f;
 
 	public DrawingGrid(){
 		addListener(new InputListener(){
@@ -71,13 +72,13 @@ public class DrawingGrid extends Actor{
 				if(pointer != tpointer) return;
 				tdx += Gdx.input.getDeltaX(pointer);
 				tdy -= Gdx.input.getDeltaY(pointer);
-				tdx = MiscUtils.clamp(tdx, 0, getWidth() - 1);
-				tdy = MiscUtils.clamp(tdy, 0, getHeight() - 1);
-				int newx = (int)(tdx / canvasScale()), newy = (int)(tdy / canvasScale());
+				tdx = MiscUtils.clamp(tdx, getX(), getX() + getWidth() - 1);
+				tdy = MiscUtils.clamp(tdy, getY(), getY() + getHeight() - 1);
+				int newx = (int)(tdx / (canvasScale()*zoom)), newy = (int)(tdy / (canvasScale()*zoom));
 
 				if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.selected.getColor(), canvas, newx, newy);
 
-				selected.set(tdx / canvasScale(), tdy / canvasScale());
+				selected.set(newx, newy);
 
 			}
 		});
@@ -96,29 +97,33 @@ public class DrawingGrid extends Actor{
 
 	public void draw(Batch batch, float parentAlpha){
 		updateSize();
-
-		float cscl = canvasScale();
+		setX(-100);
+		setY(-100);
+		
+		
+		
+		float cscl = canvasScale() * zoom;
 		String gridtype = "grid_25";
 
 		batch.setColor(Color.WHITE);
-		batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+		batch.draw(Textures.get("alpha"), getX() , getY() , canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 
-		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
+		batch.draw(canvas.texture, getX() , getY() , getWidth()*zoom, getHeight()*zoom);
 
 		if(grid){
-			batch.draw(Textures.get(gridtype), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+			batch.draw(Textures.get(gridtype), getX() , getY() , canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 		}
 
-		int xt = (int)(4 * (10f / canvas.width()));
+		int xt = (int)(4 * (10f / canvas.width())); //extra border thickness
 
 		batch.setColor(Color.CORAL);
 
-		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
-		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
+		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt , getY() + selected.y * cscl - xt , cscl + xt * 2, cscl + xt * 2);
+		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl , getY() + selected.y * cscl , cscl, cscl);
 
 		batch.setColor(Color.PURPLE);
 
-		batch.draw(Textures.get("cursor"), getX() + tdx - 15, getY() + tdy - 15, 30, 30);
+		batch.draw(Textures.get("cursor"), getX() + tdx - 15 , getY() + tdy - 15 , 30, 30);
 
 		batch.setColor(Color.WHITE);
 	}

@@ -51,9 +51,10 @@ public class GUI extends Module<PixelEditor>{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
-
+		
 		//pc debugging
-		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null) stage.setKeyboardFocus(drawgrid);
+		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) 
+			stage.setKeyboardFocus(drawgrid);
 
 	}
 
@@ -338,7 +339,6 @@ public class GUI extends Module<PixelEditor>{
 						stage.addActor(picker.fadeIn());
 						//collapse.setCollapsed(!collapse.isCollapsed());
 					}
-
 				}
 			});
 
