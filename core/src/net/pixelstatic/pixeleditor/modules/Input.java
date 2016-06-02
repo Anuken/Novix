@@ -122,11 +122,14 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean pan(float x, float y, float deltaX, float deltaY){
-			if(input.<GUI>getModule(GUI.class).tool != Tool.zoom) return false;
-			drawgrid().offsetx -= deltaX / drawgrid().zoom ;
-			drawgrid().offsety += deltaY / drawgrid().zoom;
-			drawgrid().updateBounds();
-
+			if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
+				DrawingGrid grid = drawgrid();
+				grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
+			}else if(input.<GUI>getModule(GUI.class).tool == Tool.zoom){
+				drawgrid().offsetx -= deltaX / drawgrid().zoom;
+				drawgrid().offsety += deltaY / drawgrid().zoom;
+				drawgrid().updateBounds();
+			}
 			return false;
 		}
 
@@ -137,37 +140,33 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			float newzoom = initzoom * s;
 			if(newzoom < 1f) newzoom = 1f;
 			drawgrid().setZoom(newzoom);
-			toward.interpolate(to, s/10f / newzoom, Interpolation.linear);
-			
-			float deltax = toward.x - drawgrid().offsetx;
-			float deltay = toward.y - drawgrid().offsety;
-			
-			drawgrid().moveOffset(deltax, deltay);
+			toward.interpolate(to, s / 10f / newzoom, Interpolation.linear);
+
+			drawgrid().offsetx = toward.x;
+			drawgrid().offsety = toward.y;
 			return false;
 		}
 
 		@Override
 		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2){
 			if(input.<GUI>getModule(GUI.class).tool != Tool.zoom) return false;
-			
-			
+
 			Vector2 afirst = initialPointer1.cpy().add(initialPointer2).scl(0.5f);
 			Vector2 alast = pointer1.cpy().add(pointer2).scl(0.5f);
-			
-			if(!afirst.epsilonEquals(lastinitialpinch, 0.1f)){
+
+			if( !afirst.epsilonEquals(lastinitialpinch, 0.1f)){
 				lastinitialpinch = afirst;
 				lastpinch = afirst.cpy();
 				toward.set(drawgrid().offsetx, drawgrid().offsety);
-				to.x = (afirst.x - Gdx.graphics.getWidth()/2) / drawgrid().zoom + drawgrid().offsetx;
-				to.y = ((Gdx.graphics.getHeight()-afirst.y) - Gdx.graphics.getHeight()/2) / drawgrid().zoom + drawgrid().offsety;
+				to.x = (afirst.x - Gdx.graphics.getWidth() / 2) / drawgrid().zoom + drawgrid().offsetx;
+				to.y = ((Gdx.graphics.getHeight() - afirst.y) - Gdx.graphics.getHeight() / 2) / drawgrid().zoom + drawgrid().offsety;
+
 			}
-			
+
 			lastpinch.sub(alast);
-			
-			drawgrid().moveOffset(lastpinch.x, lastpinch.y);
-	
+
 			lastpinch = alast;
-			
+
 			return false;
 		}
 

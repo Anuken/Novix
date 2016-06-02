@@ -6,7 +6,6 @@ import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -146,10 +145,10 @@ public enum Tool{
 		}
 		
 		public void update(DrawingGrid grid){
-			if(Gdx.input.isTouched()){
-				grid.setCursor(Gdx.input.getX() - grid.getX(),
-				((Gdx.graphics.getHeight()-Gdx.input.getY()) - grid.getY()));
-			}
+			//if(Gdx.input.isTouched()){
+			//	grid.setCursor(Gdx.input.getX() - grid.getX(),
+			//	((Gdx.graphics.getHeight()-Gdx.input.getY()) - grid.getY()));
+			//}
 		}
 		
 		public boolean moveCursor(){
