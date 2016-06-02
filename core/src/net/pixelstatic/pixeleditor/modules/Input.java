@@ -98,6 +98,10 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean touchDown(float x, float y, int pointer, int button){
+			if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
+				DrawingGrid grid = drawgrid();
+				grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
+			}
 			initzoom = input.<GUI>getModule(GUI.class).drawgrid.zoom;
 			return false;
 		}
