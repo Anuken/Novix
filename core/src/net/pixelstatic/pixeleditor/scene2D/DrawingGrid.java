@@ -53,7 +53,6 @@ public class DrawingGrid extends Actor{
 				if(keycode == Keys.E){
 					if(GUI.gui.tool.push){
 						canvas.pushActions();
-						System.out.println("pushing action");
 					}
 					return true;
 				}

@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.util.InputValidator;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.color.ColorPicker;
@@ -285,55 +286,12 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton resize = new VisTextButton("resize");
 		resize.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				final VisTextField widthfield = new VisTextField();
-				final VisTextField heightfield = new VisTextField();
-				widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
-				heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
-				
-				VisDialog dialog = new VisDialog("Resize Canvas", "dialog"){
-					protected void result(Object object){
-						if((Boolean)object != true) return;
-						try{
-							int width = Integer.parseInt(widthfield.getText());
-							int height = Integer.parseInt(heightfield.getText());
-							
-						}catch (Exception e){
-							e.printStackTrace();
-							Dialogs.showDetailsDialog(stage, "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
-						}
-					}
-				};
-
-				dialog.getContentTable().add(new VisLabel("Width: "));
-				dialog.getContentTable().add(widthfield);
-				dialog.getContentTable().row();
-				dialog.getContentTable().add(new VisLabel("Height: "));
-				dialog.getContentTable().add(heightfield);
-
-				dialog.button("Cancel", false);
-				dialog.button("OK", true);
-
-				dialog.show(stage);
-
-				/*
-				InputDialog dialog = Dialogs.showInputDialog(stage, "Select Size", "Width", new InputDialogListener(){
-
+				showSizeDialog("Resize Canvas", new SizeDialogListener(){
 					@Override
-					public void finished(String input){
-						// TODO Auto-generated method stub
-
+					public void result(int width, int height){
+						drawgrid.setCanvas(drawgrid.canvas.asResized(width, height));
 					}
-
-					@Override
-					public void canceled(){
-						// TODO Auto-generated method stub
-
-					}
-
 				});
-				
-				dialog.add(new VisTextField());
-				*/
 			}
 		});
 
@@ -342,7 +300,13 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton newcanvas = new VisTextButton("new");
 		newcanvas.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-
+				showSizeDialog("New Canvas", new SizeDialogListener(){
+					@Override
+					public void result(int width, int height){
+						PixelCanvas canvas = new PixelCanvas(width, height);
+						drawgrid.setCanvas(canvas);
+					}
+				});
 			}
 		});
 
@@ -460,6 +424,82 @@ public class GUI extends Module<PixelEditor>{
 
 		});
 
+	}
+
+	void showSizeDialog(String title, final SizeDialogListener listener){
+		final VisValidatableTextField widthfield = new VisValidatableTextField(new NumberValidator());
+		final VisValidatableTextField heightfield = new VisValidatableTextField(new NumberValidator());
+		widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+		heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+
+		widthfield.setText(drawgrid.canvas.width() + "");
+		heightfield.setText(drawgrid.canvas.height() + "");
+		
+		
+
+		final VisDialog dialog = new VisDialog(title, "dialog"){
+			protected void result(Object object){
+				if((Boolean)object != true) return;
+				
+				//if(!widthfield.isInputValid()){
+				//	Dialogs.showErrorDialog(stage, "Width cannot be empty!");
+				//	return;
+				//}
+				//if(heightfield.isInputValid()){
+				//	Dialogs.showErrorDialog(stage, "Height cannot be empty!");
+				//	return;
+				//}
+
+				try{
+					int width = Integer.parseInt(widthfield.getText());
+					int height = Integer.parseInt(heightfield.getText());
+
+					listener.result(width, height);
+					//PixelCanvas canvas = new PixelCanvas(width, height);
+					//drawgrid.setCanvas(canvas);
+				}catch(Exception e){
+					e.printStackTrace();
+					Dialogs.showDetailsDialog(stage, "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
+				}
+			}
+		};
+		
+		dialog.getButtonsTable().addAction(new Action(){
+			@Override
+			public boolean act(float delta){
+				for(Cell<?> cell : dialog.getButtonsTable().getCells()){
+					((Button)cell.getActor()).setDisabled(!widthfield.isInputValid() || !heightfield.isInputValid());
+				}
+				return false;
+			}
+		});
+		
+		dialog.getContentTable().add(new VisLabel("Width: "));
+		dialog.getContentTable().add(widthfield);
+		dialog.getContentTable().row();
+		dialog.getContentTable().add(new VisLabel("Height: "));
+		dialog.getContentTable().add(heightfield);
+		
+		
+		
+		dialog.button("Cancel", false);
+		dialog.button("OK", true);
+		dialog.addCloseButton();
+
+		dialog.show(stage);
+	}
+	
+	static class NumberValidator implements InputValidator{
+		@Override
+		public boolean validateInput(String input){
+			if(input.equals("")) return false;
+			int i = Integer.parseInt(input);
+			return i > 0 && i < 513;
+		}
+	}
+
+	static interface SizeDialogListener{
+		public void result(int width, int height);
 	}
 
 	public void resize(int width, int height){

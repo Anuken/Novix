@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.graphics;
 
 import net.pixelstatic.pixeleditor.tools.ActionStack;
 import net.pixelstatic.pixeleditor.tools.DrawAction;
+import net.pixelstatic.utils.graphics.PixmapUtils;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -71,6 +72,10 @@ public class PixelCanvas implements Disposable{
 	
 	public int height(){
 		return pixmap.getHeight();
+	}
+	
+	public PixelCanvas asResized(int newwidth, int newheight){
+		return new PixelCanvas(PixmapUtils.resize(pixmap, newwidth, newheight));
 	}
 
 	@Override
