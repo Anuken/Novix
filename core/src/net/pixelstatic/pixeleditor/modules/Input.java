@@ -3,9 +3,8 @@ package net.pixelstatic.pixeleditor.modules;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.utils.modules.Module;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
 
@@ -14,6 +13,26 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		if(Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
 			Gdx.app.exit();
 		}
+		
+		float speed = 10f;
+		
+		if(Gdx.input.isKeyPressed(Keys.W))
+			this.<GUI>getModule(GUI.class).drawgrid.offsety += speed;
+		if(Gdx.input.isKeyPressed(Keys.A))
+			this.<GUI>getModule(GUI.class).drawgrid.offsetx -= speed;
+		if(Gdx.input.isKeyPressed(Keys.S))
+			this.<GUI>getModule(GUI.class).drawgrid.offsety -= speed;
+		if(Gdx.input.isKeyPressed(Keys.D))
+			this.<GUI>getModule(GUI.class).drawgrid.offsetx += speed;
+	}
+	
+	public void init(){
+
+		InputMultiplexer plex = new InputMultiplexer();
+		plex.addProcessor(this);
+		plex.addProcessor(this.<GUI>getModule(GUI.class).stage);
+
+		Gdx.input.setInputProcessor(plex);
 	}
 
 	@Override
@@ -53,6 +72,10 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	@Override
 	public boolean scrolled(int amount){
+		float newzoom = this.<GUI>getModule(GUI.class).drawgrid.zoom - amount / 10f;
+		if(newzoom >= 0)
+		this.<GUI>getModule(GUI.class).drawgrid.setZoom(newzoom);
+		this.<GUI>getModule(GUI.class).drawgrid.updateSize();
 		return false;
 	}
 

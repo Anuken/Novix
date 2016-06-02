@@ -72,13 +72,13 @@ public class GUI extends Module<PixelEditor>{
 
 	void loadTools(){
 		
-		final VisDialog extradialog = new VisDialog(""){
+		final VisDialog extradialog = new VisDialog("Tool Options"){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
 			
 			public float getPrefHeight(){
-				return 500;
+				return 300;
 			}
 		};
 		extradialog.setMovable(false);
@@ -382,7 +382,6 @@ public class GUI extends Module<PixelEditor>{
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
-		Gdx.input.setInputProcessor(stage);
 		VisUI.load();
 		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
 		FileChooser.setDefaultPrefsName(getClass().getPackage().getName());
