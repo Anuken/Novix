@@ -27,6 +27,7 @@ public class DrawingGrid extends Actor{
 	public DrawingGrid(){
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				if(!GUI.gui.tool.moveCursor()) return false;
 				touches ++;
 				if(moving){
 					GUI.gui.tool.clicked(GUI.gui.selected.getColor(), canvas, selected.x, selected.y);
@@ -69,7 +70,7 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
-				if(pointer != tpointer) return;
+				if(pointer != tpointer || !GUI.gui.tool.moveCursor()) return;
 				cursorx += Gdx.input.getDeltaX(pointer);
 				cursory -= Gdx.input.getDeltaY(pointer);
 				cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
@@ -93,7 +94,6 @@ public class DrawingGrid extends Actor{
 		updateSize();
 
 		updateBounds();
-
 	}
 
 
@@ -143,12 +143,11 @@ public class DrawingGrid extends Actor{
 	
 	
 	public void updateBounds(){
-		int toolheight = 160;
-		//Gdx.graphics.getWidth() / 2 < - offsetx * zoom + min()
-		
+		int toolheight = (Gdx.graphics.getHeight() - Gdx.graphics.getWidth())/2, colorheight = toolheight;
+			
 		if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth()/2 - getWidth())/zoom;
-		//if(getY() + getHeight() < Gdx.graphics.getHeight() - 50 /*colorbar height?*/)  offsety = -(Gdx.graphics.getWidth()/2/zoom + 50);
-		System.out.println(offsetx + " " + zoom + " size: " + Gdx.graphics.getWidth()/2 + " " + Gdx.graphics.getWidth()/2/zoom);
+		if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight()/2 - getHeight() - colorheight)/zoom;
+		
 		if(getX() > 0) offsetx = Gdx.graphics.getWidth()/2/zoom;
 		if(getY() > toolheight) offsety = (Gdx.graphics.getHeight()/2-toolheight)/zoom;
 	}
@@ -159,8 +158,6 @@ public class DrawingGrid extends Actor{
 
 		setX(Gdx.graphics.getWidth() / 2 - offsetx * zoom);
 		setY(Gdx.graphics.getHeight() / 2 - offsety * zoom);
-		//Gdx.graphics.getWidth() / 2 - offsetx * zoom + getWidth() > Gdx.graphics.getWidth();
-		//Gdx.graphics.getWidth() / 2 < - offsetx * zoom + min()
 	}
 
 	float canvasScale(){

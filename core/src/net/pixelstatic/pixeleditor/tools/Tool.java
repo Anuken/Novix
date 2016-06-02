@@ -3,6 +3,7 @@ package net.pixelstatic.pixeleditor.tools;
 import java.util.Stack;
 
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
+import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
 
 import com.badlogic.gdx.graphics.Color;
@@ -150,6 +151,10 @@ public enum Tool{
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			
 		}
+		
+		public boolean moveCursor(){
+			return false;
+		}
 	};
 	public final boolean push; //whether the undo stack is pushed when the mouse is up
 	public final boolean drawOnMove; //whether to draw when the mouse moves
@@ -176,6 +181,14 @@ public enum Tool{
 			VisTextButton button = new VisTextButton("test");
 			table.top().left().add(button).height(70).expandX().fillX();
 		}
+	}
+	
+	public boolean moveCursor(){
+		return true;
+	}
+	
+	public void update(DrawingGrid grid){
+		
 	}
 	
 	public String toString(){
