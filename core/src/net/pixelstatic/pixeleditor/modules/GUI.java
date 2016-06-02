@@ -36,7 +36,7 @@ import com.kotcrab.vis.ui.widget.file.FileChooser.Mode;
 public class GUI extends Module<PixelEditor>{
 	public static GUI gui;
 	public DrawingGrid drawgrid;
-	Stage stage;
+	public Stage stage;
 	Skin skin;
 	VisTable tooltable;
 	VisTable colortable;
@@ -434,13 +434,11 @@ public class GUI extends Module<PixelEditor>{
 
 		widthfield.setText(drawgrid.canvas.width() + "");
 		heightfield.setText(drawgrid.canvas.height() + "");
-		
-		
 
 		final VisDialog dialog = new VisDialog(title, "dialog"){
 			protected void result(Object object){
 				if((Boolean)object != true) return;
-				
+
 				//if(!widthfield.isInputValid()){
 				//	Dialogs.showErrorDialog(stage, "Width cannot be empty!");
 				//	return;
@@ -463,32 +461,29 @@ public class GUI extends Module<PixelEditor>{
 				}
 			}
 		};
-		
+
 		dialog.getButtonsTable().addAction(new Action(){
 			@Override
 			public boolean act(float delta){
-				for(Cell<?> cell : dialog.getButtonsTable().getCells()){
-					((Button)cell.getActor()).setDisabled(!widthfield.isInputValid() || !heightfield.isInputValid());
-				}
+				Cell<?> cell = dialog.getButtonsTable().getCells().peek();
+				((Button)cell.getActor()).setDisabled( !widthfield.isInputValid() || !heightfield.isInputValid());
 				return false;
 			}
 		});
-		
+
 		dialog.getContentTable().add(new VisLabel("Width: "));
 		dialog.getContentTable().add(widthfield);
 		dialog.getContentTable().row();
 		dialog.getContentTable().add(new VisLabel("Height: "));
 		dialog.getContentTable().add(heightfield);
-		
-		
-		
+
 		dialog.button("Cancel", false);
 		dialog.button("OK", true);
 		dialog.addCloseButton();
 
 		dialog.show(stage);
 	}
-	
+
 	static class NumberValidator implements InputValidator{
 		@Override
 		public boolean validateInput(String input){
@@ -500,6 +495,14 @@ public class GUI extends Module<PixelEditor>{
 
 	static interface SizeDialogListener{
 		public void result(int width, int height);
+	}
+	
+	public static class FitAction extends Action{
+		@Override
+		public boolean act(float delta){
+			this.getActor().setWidth(Gdx.graphics.getWidth());
+			return false;
+		}
 	}
 
 	public void resize(int width, int height){
