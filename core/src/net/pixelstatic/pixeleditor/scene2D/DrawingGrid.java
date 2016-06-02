@@ -18,7 +18,7 @@ public class DrawingGrid extends Actor{
 	public PixelCanvas canvas;
 	public Pos selected = new Pos();
 	public boolean grid = true;
-	float cursorx, cursory;
+	private float cursorx, cursory;
 	int tpointer;
 	int touches = 0;
 	boolean moving;
@@ -83,6 +83,16 @@ public class DrawingGrid extends Actor{
 			}
 		});
 	}
+	
+	public void moveOffset(float x, float y){
+		offsetx += x;
+		offsety += y;
+	}
+	
+	public void moveCursor(float x, float y){
+		cursorx += x;
+		cursory += y;
+	}
 
 	public void setZoom(float newzoom){
 		cursorx *= (newzoom / zoom);
@@ -93,6 +103,16 @@ public class DrawingGrid extends Actor{
 		updateSize();
 
 		updateBounds();
+	}
+	
+	public void setCursor(float x, float y){
+		cursorx = x;
+		cursory = y;
+		cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
+		cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+		int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
+
+		selected.set(newx, newy);
 	}
 
 
@@ -159,7 +179,7 @@ public class DrawingGrid extends Actor{
 		setY(Gdx.graphics.getHeight() / 2 - offsety * zoom);
 	}
 
-	float canvasScale(){
+	public float canvasScale(){
 		return min() / canvas.width();
 	}
 

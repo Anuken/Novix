@@ -139,8 +139,10 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			drawgrid().setZoom(newzoom);
 			toward.interpolate(to, s/10f / newzoom, Interpolation.linear);
 			
-			drawgrid().offsetx = toward.x;
-			drawgrid().offsety = toward.y;
+			float deltax = toward.x - drawgrid().offsetx;
+			float deltay = toward.y - drawgrid().offsety;
+			
+			drawgrid().moveOffset(deltax, deltay);
 			return false;
 		}
 
@@ -161,10 +163,9 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			}
 			
 			lastpinch.sub(alast);
-			drawgrid().offsetx += lastpinch.x;
-
-			drawgrid().offsety -= lastpinch.y;
 			
+			drawgrid().moveOffset(lastpinch.x, lastpinch.y);
+	
 			lastpinch = alast;
 			
 			return false;

@@ -6,6 +6,7 @@ import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -138,17 +139,30 @@ public enum Tool{
 			color.set(canvas.getColor(x, y));
 		}
 	},
-	shift {
+	snap {
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.setColor(color);
-			canvas.drawPixel(x, y);
-			canvas.updateTexture();
+			
+		}
+		
+		public void update(DrawingGrid grid){
+			if(Gdx.input.isTouched()){
+				grid.setCursor(Gdx.input.getX() - grid.getX(),
+				((Gdx.graphics.getHeight()-Gdx.input.getY()) - grid.getY()));
+			}
+		}
+		
+		public boolean moveCursor(){
+			return false;
 		}
 	},
 	zoom (false, false){
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
+			
+		}
+		
+		public void update(DrawingGrid grid){
 			
 		}
 		

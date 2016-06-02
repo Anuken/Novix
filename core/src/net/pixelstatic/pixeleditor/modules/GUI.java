@@ -48,10 +48,13 @@ public class GUI extends Module<PixelEditor>{
 
 	@Override
 	public void update(){
+		
 		Gdx.gl.glClearColor(20 / 255f, 33 / 255f, 52 / 255f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
+
+		tool.update(drawgrid);
 
 		//pc debugging
 		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
@@ -311,7 +314,7 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		menu.add(newcanvas).size(height);
-
+/*
 		VisTextButton settings = new VisTextButton("settings");
 		settings.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -320,7 +323,7 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		menu.add(settings).size(height);
-
+*/
 		float size = Gdx.graphics.getWidth() / menu.getCells().size;
 
 		for(Cell<?> cell : menu.getCells()){
