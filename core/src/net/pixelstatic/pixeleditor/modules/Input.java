@@ -9,6 +9,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
@@ -92,6 +93,8 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		float initzoom = 1f;
 		Vector2 lastinitialpinch = new Vector2();
 		Vector2 lastpinch;
+		Vector2 to = new Vector2();
+		Vector2 toward = new Vector2();
 
 		@Override
 		public boolean touchDown(float x, float y, int pointer, int button){
@@ -133,8 +136,11 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
 			if(newzoom < 1f) newzoom = 1f;
-			input.<GUI>getModule(GUI.class).drawgrid.setZoom(newzoom);
+			drawgrid().setZoom(newzoom);
+			toward.interpolate(to, s/10f / newzoom, Interpolation.linear);
 			
+			drawgrid().offsetx = toward.x;
+			drawgrid().offsety = toward.y;
 			return false;
 		}
 
@@ -149,6 +155,9 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			if(!afirst.epsilonEquals(lastinitialpinch, 0.1f)){
 				lastinitialpinch = afirst;
 				lastpinch = afirst.cpy();
+				toward.set(drawgrid().offsetx, drawgrid().offsety);
+				to.x = (afirst.x - Gdx.graphics.getWidth()/2) / drawgrid().zoom + drawgrid().offsetx;
+				to.y = ((Gdx.graphics.getHeight()-afirst.y) - Gdx.graphics.getHeight()/2) / drawgrid().zoom + drawgrid().offsety;
 			}
 			
 			lastpinch.sub(alast);

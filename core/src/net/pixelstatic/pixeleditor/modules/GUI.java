@@ -51,19 +51,18 @@ public class GUI extends Module<PixelEditor>{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
-		
+
 		//pc debugging
-		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) 
-			stage.setKeyboardFocus(drawgrid);
+		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
 
 	}
 
 	void setup(){
-		
+
 		colortable = new VisTable();
 		colortable.setFillParent(true);
 		stage.addActor(colortable);
-		
+
 		tooltable = new VisTable();
 		tooltable.setFillParent(true);
 		stage.addActor(tooltable);
@@ -71,19 +70,18 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	void loadTools(){
-		
+
 		final VisDialog extradialog = new VisDialog("Tool Options"){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
-			
+
 			public float getPrefHeight(){
 				return 300;
 			}
 		};
 		extradialog.setMovable(false);
-		
-		
+
 		final VisCheckBox box = new VisCheckBox("Overwrite");
 		extradialog.getButtonsTable().top().left().add(box).align(Align.topLeft);
 
@@ -98,29 +96,25 @@ public class GUI extends Module<PixelEditor>{
 					tool.initTable();
 					tool.table.setName("table");
 				}
-				
+
 				extradialog.getContentTable().clear();
 				extradialog.getContentTable().top().left().add(tool.table);
-				
+
 				collapser.setCollapsed( !collapser.isCollapsed());
 				expandbutton.setText(collapser.isCollapsed() ? "^" : "v");
 			}
 		});
-		
-		
 
 		tooltable.bottom().left().add(collapser).height(20).colspan(7).fillX().expandX();
 		tooltable.row();
 		tooltable.bottom().left().add(expandbutton).height(50).colspan(7).fillX().expandX();
 		tooltable.row();
-		
-		tools.addAll(Tool.values());
 
+		tools.addAll(Tool.values());
 
 		float size = Gdx.graphics.getWidth() / tools.size;
 
-		
-		for(int i = 0;i < tools.size; i ++){
+		for(int i = 0;i < tools.size;i ++){
 			final Tool ctool = tools.get(i);
 
 			final VisTextButton button = new VisTextButton(ctool.toString(), "toggle");
@@ -133,14 +127,14 @@ public class GUI extends Module<PixelEditor>{
 						VisTextButton other = (VisTextButton)actor;
 						if(other != button) other.setChecked(false);
 					}
-					
-					if(!collapser.isCollapsed()){
-						if(tool.table == null)tool.initTable();
+
+					if( !collapser.isCollapsed()){
+						if(tool.table == null) tool.initTable();
 						extradialog.getContentTable().clear();
 						extradialog.getContentTable().top().left().add(tool.table);
 					}
-				//((ClickListener)expandbutton.getListeners().get(2)).clicked(null, x, y);
-					
+					//((ClickListener)expandbutton.getListeners().get(2)).clicked(null, x, y);
+
 				}
 			});
 
@@ -149,7 +143,7 @@ public class GUI extends Module<PixelEditor>{
 				tool = ctool;
 			}
 
-			tooltable.bottom().left().add(button).size(size+1f);
+			tooltable.bottom().left().add(button).size(size + 1f);
 		}
 
 	}
@@ -287,20 +281,77 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 		menu.add(load).size(height);
-		
+
 		VisTextButton resize = new VisTextButton("resize");
 		resize.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
+				final VisTextField widthfield = new VisTextField();
+				final VisTextField heightfield = new VisTextField();
+				widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+				heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 				
+				VisDialog dialog = new VisDialog("Resize Canvas", "dialog"){
+					protected void result(Object object){
+						if((Boolean)object != true) return;
+						try{
+							int width = Integer.parseInt(widthfield.getText());
+							int height = Integer.parseInt(heightfield.getText());
+							
+						}catch (Exception e){
+							e.printStackTrace();
+							Dialogs.showDetailsDialog(stage, "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
+						}
+					}
+				};
+
+				dialog.getContentTable().add(new VisLabel("Width: "));
+				dialog.getContentTable().add(widthfield);
+				dialog.getContentTable().row();
+				dialog.getContentTable().add(new VisLabel("Height: "));
+				dialog.getContentTable().add(heightfield);
+
+				dialog.button("Cancel", false);
+				dialog.button("OK", true);
+
+				dialog.show(stage);
+
+				/*
+				InputDialog dialog = Dialogs.showInputDialog(stage, "Select Size", "Width", new InputDialogListener(){
+
+					@Override
+					public void finished(String input){
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void canceled(){
+						// TODO Auto-generated method stub
+
+					}
+
+				});
+				
+				dialog.add(new VisTextField());
+				*/
 			}
 		});
 
 		menu.add(resize).size(height);
-		
+
+		VisTextButton newcanvas = new VisTextButton("new");
+		newcanvas.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+
+			}
+		});
+
+		menu.add(newcanvas).size(height);
+
 		VisTextButton settings = new VisTextButton("settings");
 		settings.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				
+
 			}
 		});
 
