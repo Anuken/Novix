@@ -74,7 +74,7 @@ public class DrawingGrid extends Actor{
 				cursory -= Gdx.input.getDeltaY(pointer);
 				cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
 				cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
-				int newx = (int)(cursorx / (canvasScale()*zoom)), newy = (int)(cursory / (canvasScale()*zoom));
+				int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
 				if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.selected.getColor(), canvas, newx, newy);
 
@@ -83,13 +83,19 @@ public class DrawingGrid extends Actor{
 			}
 		});
 	}
-	
+
 	public void setZoom(float newzoom){
 		cursorx *= (newzoom / zoom);
 		cursory *= (newzoom / zoom);
-		
+
 		zoom = newzoom;
+
+		updateSize();
+
+		updateBounds();
+
 	}
+
 
 	public void setCanvas(PixelCanvas canvas){
 		if(this.canvas != null) this.canvas.dispose();
@@ -97,49 +103,64 @@ public class DrawingGrid extends Actor{
 		this.canvas = canvas;
 
 		updateSize();
+		
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
 		selected.set(cursorx / canvasScale(), cursory / canvasScale());
-		offsetx = getWidth()/2;
-		offsety = getHeight()/2;
+		offsetx = getWidth() / 2;
+		offsety = getHeight() / 2;
 	}
 
 	public void draw(Batch batch, float parentAlpha){
 		updateSize();
-		
-		
-		setX(Gdx.graphics.getWidth()/2 - offsetx*zoom);
-		setY(Gdx.graphics.getHeight()/2 -  offsety*zoom);
-		
+		updateBounds();
+
 		float cscl = canvasScale() * zoom;
 		String gridtype = "grid_25";
 
 		batch.setColor(Color.WHITE);
-		batch.draw(Textures.get("alpha"), getX() , getY() , canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+		batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 
-		batch.draw(canvas.texture, getX() , getY() , getWidth(), getHeight());
+		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
 		if(grid){
-			batch.draw(Textures.get(gridtype), getX() , getY() , canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+			batch.draw(Textures.get(gridtype), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 		}
 
-		int xt = (int)(4 * (10f / canvas.width())); //extra border thickness
+		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
 		batch.setColor(Color.CORAL);
 
-		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt , getY() + selected.y * cscl - xt , cscl + xt * 2, cscl + xt * 2);
-		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl , getY() + selected.y * cscl , cscl, cscl);
+		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
+		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
 
 		batch.setColor(Color.PURPLE);
 
-		batch.draw(Textures.get("cursor"), getX() + cursorx - 15 , getY() + cursory - 15 , 30, 30);
+		batch.draw(Textures.get("cursor"), getX() + cursorx - 15, getY() + cursory - 15, 30, 30);
 
 		batch.setColor(Color.WHITE);
+	}
+	
+	
+	public void updateBounds(){
+		int toolheight = 160;
+		//Gdx.graphics.getWidth() / 2 < - offsetx * zoom + min()
+		
+		if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth()/2 - getWidth())/zoom;
+		//if(getY() + getHeight() < Gdx.graphics.getHeight() - 50 /*colorbar height?*/)  offsety = -(Gdx.graphics.getWidth()/2/zoom + 50);
+		System.out.println(offsetx + " " + zoom + " size: " + Gdx.graphics.getWidth()/2 + " " + Gdx.graphics.getWidth()/2/zoom);
+		if(getX() > 0) offsetx = Gdx.graphics.getWidth()/2/zoom;
+		if(getY() > toolheight) offsety = (Gdx.graphics.getHeight()/2-toolheight)/zoom;
 	}
 
 	public void updateSize(){
 		setWidth(min() * zoom);
-		setHeight(min() / canvas.width() * canvas.height()* zoom) ;
+		setHeight(min() / canvas.width() * canvas.height() * zoom);
+
+		setX(Gdx.graphics.getWidth() / 2 - offsetx * zoom);
+		setY(Gdx.graphics.getHeight() / 2 - offsety * zoom);
+		//Gdx.graphics.getWidth() / 2 - offsetx * zoom + getWidth() > Gdx.graphics.getWidth();
+		//Gdx.graphics.getWidth() / 2 < - offsetx * zoom + min()
 	}
 
 	float canvasScale(){
