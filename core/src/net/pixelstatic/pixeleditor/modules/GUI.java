@@ -1,5 +1,7 @@
 package net.pixelstatic.pixeleditor.modules;
 
+import java.lang.reflect.Field;
+
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.ColorBox;
@@ -7,18 +9,26 @@ import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
+import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
+import net.pixelstatic.utils.dialogs.TextFieldDialog;
 import net.pixelstatic.utils.graphics.Hue;
 import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
+import net.pixelstatic.utils.scene2D.AndroidColorPicker;
+import net.pixelstatic.utils.scene2D.SmoothCollapsibleWidget;
+import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -29,9 +39,9 @@ import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.color.ColorPicker;
 import com.kotcrab.vis.ui.widget.color.ColorPickerAdapter;
-import com.kotcrab.vis.ui.widget.file.*;
-import com.kotcrab.vis.ui.widget.file.FileChooser.HistoryPolicy;
-import com.kotcrab.vis.ui.widget.file.FileChooser.Mode;
+import com.kotcrab.vis.ui.widget.file.FileChooser;
+
+import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
 public class GUI extends Module<PixelEditor>{
 	public static GUI gui;
@@ -40,6 +50,8 @@ public class GUI extends Module<PixelEditor>{
 	Skin skin;
 	VisTable tooltable;
 	VisTable colortable;
+	VisTable extratable;
+	Table menutable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
 	public ColorBox selected;
@@ -48,7 +60,7 @@ public class GUI extends Module<PixelEditor>{
 
 	@Override
 	public void update(){
-		
+
 		Gdx.gl.glClearColor(20 / 255f, 33 / 255f, 52 / 255f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
@@ -62,6 +74,9 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	void setup(){
+		extratable = new VisTable();
+		extratable.setFillParent(true);
+		stage.addActor(extratable);
 
 		colortable = new VisTable();
 		colortable.setFillParent(true);
@@ -70,26 +85,48 @@ public class GUI extends Module<PixelEditor>{
 		tooltable = new VisTable();
 		tooltable.setFillParent(true);
 		stage.addActor(tooltable);
+	}
+
+	void setupMenu(){
+
+		addMenuButton("filters");
+
+		addMenuButton("transform");
+
+		addMenuButton("open");
+
+		addMenuButton("export");
+
+		//addMenuButton("settings");
 
 	}
 
-	void loadTools(){
+	void addMenuButton(String text){
+		float height = 70f;
 
-		final VisDialog extradialog = new VisDialog("Tool Options"){
+		VisTextButton button = new VisTextButton(text);
+		menutable.top().left().add(button).height(height).expandX().fillX().uniformX();
+	}
+
+	void setupTools(){
+		final float s = MiscUtils.densityScale();
+		final float size = Gdx.graphics.getWidth() / Tool.values().length;
+
+		final VisDialog extradialog = new VisDialog(""){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
 
 			public float getPrefHeight(){
-				return 300;
+				return Gdx.graphics.getHeight() / 2f;
 			}
 		};
+
+		menutable = extradialog.getContentTable();
+		setupMenu();
 		extradialog.setMovable(false);
 
-		final VisCheckBox box = new VisCheckBox("Overwrite");
-		extradialog.getButtonsTable().top().left().add(box).align(Align.topLeft);
-
-		final CollapsibleWidget collapser = new CollapsibleWidget(extradialog);
+		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(extradialog, false);
 		collapser.setCollapsed(true);
 
 		final VisTextButton expandbutton = new VisTextButton("^");
@@ -101,22 +138,20 @@ public class GUI extends Module<PixelEditor>{
 					tool.table.setName("table");
 				}
 
-				extradialog.getContentTable().clear();
-				extradialog.getContentTable().top().left().add(tool.table);
+				//	extradialog.getContentTable().clear();
+				//	extradialog.getContentTable().top().left().add(tool.table);
 
 				collapser.setCollapsed( !collapser.isCollapsed());
 				expandbutton.setText(collapser.isCollapsed() ? "^" : "v");
 			}
 		});
 
-		tooltable.bottom().left().add(collapser).height(20).colspan(7).fillX().expandX();
+		tooltable.bottom().left().add(collapser).height(20 * s).colspan(7).fillX().expandX();
 		tooltable.row();
-		tooltable.bottom().left().add(expandbutton).height(50).colspan(7).fillX().expandX();
+		tooltable.bottom().left().add(expandbutton).height(60 * s).colspan(7).fillX().expandX();
 		tooltable.row();
 
 		tools.addAll(Tool.values());
-
-		float size = Gdx.graphics.getWidth() / tools.size;
 
 		for(int i = 0;i < tools.size;i ++){
 			final Tool ctool = tools.get(i);
@@ -125,6 +160,7 @@ public class GUI extends Module<PixelEditor>{
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					tool = ctool;
+					tool.onColorChange(selectedColor(), drawgrid.canvas);
 					if( !button.isChecked()) button.setChecked(true);
 					for(Actor actor : tooltable.getChildren()){
 						if( !(actor instanceof VisTextButton)) continue;
@@ -133,9 +169,9 @@ public class GUI extends Module<PixelEditor>{
 					}
 
 					if( !collapser.isCollapsed()){
-						if(tool.table == null) tool.initTable();
-						extradialog.getContentTable().clear();
-						extradialog.getContentTable().top().left().add(tool.table);
+						//	if(tool.table == null) tool.initTable();
+						//	extradialog.getContentTable().clear();
+						//	extradialog.getContentTable().top().left().add(tool.table);
 					}
 					//((ClickListener)expandbutton.getListeners().get(2)).clicked(null, x, y);
 
@@ -149,7 +185,6 @@ public class GUI extends Module<PixelEditor>{
 
 			tooltable.bottom().left().add(button).size(size + 1f);
 		}
-
 	}
 
 	VisTextButton menuButton(int height){
@@ -162,32 +197,24 @@ public class GUI extends Module<PixelEditor>{
 		return ham;
 	}
 
-	void loadColors(){
+	void setupColors(){
 
 		picker = new ColorPicker(new ColorPickerAdapter(){
 			@Override
 			public void finished(Color color){
 				selected.setColor(color);
+				tool.onColorChange(color, drawgrid.canvas);
 			}
 		});
 
 		picker.setShowHexFields(false);
 
-		/*
-		VisTable colorselect = new VisTable();
-		colorselect.setFillParent(true);
-		colorselect.add(new Separator()).fillY().expandX().fillX();
-		colorselect.add(picker).expandX().fillX();
-		colorselect.add(new Separator()).fillY().expandY().expandX().fillX();
-		final CollapsibleWidget collapse = new CollapsibleWidget(colorselect);
-		collapse.setCollapsed(false);
-		*/
-
 		colortable.top().left();
 
-		int height = 50;
+		//int height = 50;
 
-		VisTable menu = new VisTable();
+		//	VisTable menu = new VisTable();
+		/*
 
 		VisTextButton ham = menuButton(height);
 		menu.add(ham).size(height);
@@ -246,6 +273,7 @@ public class GUI extends Module<PixelEditor>{
 						currentChooser = null;
 					}
 				});
+				
 				currentChooser = chooser;
 				stage.addActor(chooser.fadeIn());
 				chooser.setX(0);
@@ -256,6 +284,9 @@ public class GUI extends Module<PixelEditor>{
 		final VisTextButton load = new VisTextButton("open");
 		load.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
+				AndroidFileChooser chooser = new AndroidFileChooser();
+				chooser.show(stage);
+				/*
 				FileChooser chooser = new FileChooser(Mode.OPEN);
 				chooser.setSize(stage.getWidth(), 350);
 				if(Gdx.app.getType() == ApplicationType.Android) chooser.setDirectory(Gdx.files.absolute(System.getProperty("user.home") + "/sdcard/"), HistoryPolicy.CLEAR);
@@ -282,6 +313,7 @@ public class GUI extends Module<PixelEditor>{
 				currentChooser = chooser;
 				stage.addActor(chooser.fadeIn());
 				chooser.setX(0);
+				
 			}
 		});
 		menu.add(load).size(height);
@@ -314,16 +346,7 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		menu.add(newcanvas).size(height);
-/*
-		VisTextButton settings = new VisTextButton("settings");
-		settings.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
 
-			}
-		});
-
-		menu.add(settings).size(height);
-*/
 		float size = Gdx.graphics.getWidth() / menu.getCells().size;
 
 		for(Cell<?> cell : menu.getCells()){
@@ -332,11 +355,42 @@ public class GUI extends Module<PixelEditor>{
 
 		ham.setOrigin(size / 2, size / 2);
 		ham.setRotation(90);
+		
+		*/
+		VisDialog filemenu = new VisDialog(""){
+			public float getPrefWidth(){
+				return Gdx.graphics.getWidth();
+			}
 
-		colortable.add(menu).expandX().fillX().colspan(11).height(size);
+			public float getPrefHeight(){
+				return 300f;
+			}
+		};
+
+		filemenu.setMovable(false);
+
+		final VisTextButton expander = new VisTextButton("v");
+
+		colortable.add(expander).expandX().fillX().colspan(11).height(MiscUtils.densityScale(50f));
+
+		//colortable.row();
+		//colortable.add(new Separator()).expandX().fillX().colspan(11).height(MiscUtils.densityScale(8f));
 		colortable.row();
 
-		int colorsize = 52;
+		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(new AndroidColorPicker());
+
+		expander.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				collapser.setCollapsed( !collapser.isCollapsed());
+				expander.setText(collapser.isCollapsed() ? "v" : "^");
+			}
+		});
+
+		extratable.top().left().add(collapser).fillX().expandX().padTop(50f);
+
+		expander.setZIndex(collapser.getZIndex() + 10);
+
+		int colorsize = Gdx.graphics.getWidth() / 9 - MiscUtils.densityScale(3);
 
 		colortable.add().expandX().fillX();
 		for(int i = 0;i < 8;i ++){
@@ -355,14 +409,15 @@ public class GUI extends Module<PixelEditor>{
 					if(getTapCount() > 1){
 						picker.setColor(box.getColor());
 						stage.addActor(picker.fadeIn());
-						//collapse.setCollapsed(!collapse.isCollapsed());
 					}
+					updateToolColor();
 				}
 			});
 
 		}
+
 		VisTextButton acolor = new VisTextButton("...");
-		colortable.add(acolor).height(height).size(colorsize);
+		colortable.add(acolor).size(colorsize);
 		acolor.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 
@@ -370,17 +425,13 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		colortable.add().expandX().fillX();
-
-		//}
 		selected.setZIndex(999);
-		//VisTextButton add = new VisTextButton("+");
-		//colortable.add(add).size(40);
 
-		//colortable.row();
-		//colortable.add(collapse).colspan(11).expandX().fillX();
+		collapser.resetY();
+		collapser.setCollapsed(true);
 	}
 
-	void loadCanvas(){
+	void setupCanvas(){
 		drawgrid = new DrawingGrid();
 		drawgrid.setCanvas(new PixelCanvas(20, 20));
 		drawgrid.addAction(new Action(){
@@ -396,17 +447,25 @@ public class GUI extends Module<PixelEditor>{
 
 	public GUI(){
 		gui = this;
+
+		GDXDialogsSystem.install();
+
+		GDXDialogsSystem.getDialogManager().registerDialog(TextFieldDialog.class.getCanonicalName(), AndroidTextFieldDialog.class.getCanonicalName());
+
 		Textures.load("textures/");
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
-		VisUI.load();
+		//VisUI.load(Gdx.files.internal("x1/uiskin.json"));
+		loadFonts();
 		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
 		FileChooser.setDefaultPrefsName(getClass().getPackage().getName());
 		setup();
-		loadTools();
-		loadColors();
-		loadCanvas();
+		setupTools();
+		setupColors();
+		setupCanvas();
+
+		updateToolColor();
 
 		AndroidKeyboard.setListener(new AndroidKeyboardListener(){
 			@Override
@@ -424,9 +483,38 @@ public class GUI extends Module<PixelEditor>{
 			public void onKeyboardClose(){
 
 			}
-
 		});
+	}
 
+	public void loadFonts(){
+		FileHandle skinFile = Gdx.files.internal("visgui/uiskin.json");
+		Skin skin = new Skin();
+
+		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
+		if(atlasFile.exists()){
+			TextureAtlas atlas = new TextureAtlas(atlasFile);
+			try{
+				Field field = skin.getClass().getDeclaredField("atlas");
+				field.setAccessible(true);
+				field.set(skin, atlas);
+			}catch(Exception e){
+				throw new RuntimeException(e);
+			}
+			skin.addRegions(atlas);
+		}
+
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = (int)(22 * MiscUtils.densityScale());
+		BitmapFont font = generator.generateFont(parameter);
+
+		skin.add("default-font", font);
+
+		skin.load(skinFile);
+
+		VisUI.load(skin);
+
+		generator.dispose();
 	}
 
 	void showSizeDialog(String title, final SizeDialogListener listener){
@@ -438,26 +526,18 @@ public class GUI extends Module<PixelEditor>{
 		widthfield.setText(drawgrid.canvas.width() + "");
 		heightfield.setText(drawgrid.canvas.height() + "");
 
+		TextFieldDialogListener.add(widthfield, true, 3);
+		TextFieldDialogListener.add(heightfield, true, 3);
+
 		final VisDialog dialog = new VisDialog(title, "dialog"){
 			protected void result(Object object){
 				if((Boolean)object != true) return;
-
-				//if(!widthfield.isInputValid()){
-				//	Dialogs.showErrorDialog(stage, "Width cannot be empty!");
-				//	return;
-				//}
-				//if(heightfield.isInputValid()){
-				//	Dialogs.showErrorDialog(stage, "Height cannot be empty!");
-				//	return;
-				//}
 
 				try{
 					int width = Integer.parseInt(widthfield.getText());
 					int height = Integer.parseInt(heightfield.getText());
 
 					listener.result(width, height);
-					//PixelCanvas canvas = new PixelCanvas(width, height);
-					//drawgrid.setCanvas(canvas);
 				}catch(Exception e){
 					e.printStackTrace();
 					Dialogs.showDetailsDialog(stage, "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
@@ -474,14 +554,26 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 
-		dialog.getContentTable().add(new VisLabel("Width: "));
-		dialog.getContentTable().add(widthfield);
-		dialog.getContentTable().row();
-		dialog.getContentTable().add(new VisLabel("Height: "));
-		dialog.getContentTable().add(heightfield);
+		float s = MiscUtils.densityScale();
 
-		dialog.button("Cancel", false);
-		dialog.button("OK", true);
+		dialog.getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
+		dialog.getContentTable().add(widthfield).size(140, 40).padRight(50 * s).padTop(40 * s);
+
+		dialog.getContentTable().row();
+
+		dialog.getContentTable().add(new VisLabel("Height: ")).padLeft(50 * s).padTop(40 * s).padBottom(40f * s);
+		dialog.getContentTable().add(heightfield).size(140, 40).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
+
+		dialog.getContentTable().row();
+
+		Button cancel = new VisTextButton("Cancel");
+		Button ok = new VisTextButton("OK");
+
+		dialog.setObject(ok, true);
+		dialog.setObject(cancel, false);
+
+		dialog.getButtonsTable().add(cancel).size(130 * s, 60 * s);
+		dialog.getButtonsTable().add(ok).size(130 * s, 60 * s);
 		dialog.addCloseButton();
 
 		dialog.show(stage);
@@ -499,7 +591,7 @@ public class GUI extends Module<PixelEditor>{
 	static interface SizeDialogListener{
 		public void result(int width, int height);
 	}
-	
+
 	public static class FitAction extends Action{
 		@Override
 		public boolean act(float delta){
@@ -510,6 +602,14 @@ public class GUI extends Module<PixelEditor>{
 
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
+	}
+
+	public Color selectedColor(){
+		return selected.getColor();
+	}
+
+	public void updateToolColor(){
+		tool.onColorChange(selectedColor(), drawgrid.canvas);
 	}
 
 	public void dispose(){

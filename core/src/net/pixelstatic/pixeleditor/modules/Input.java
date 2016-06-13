@@ -1,16 +1,18 @@
 package net.pixelstatic.pixeleditor.modules;
 
-import net.pixelstatic.pixeleditor.PixelEditor;
-import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
-import net.pixelstatic.pixeleditor.tools.Tool;
-import net.pixelstatic.utils.modules.Module;
-
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
+
+import net.pixelstatic.pixeleditor.PixelEditor;
+import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
+import net.pixelstatic.pixeleditor.tools.Tool;
+import net.pixelstatic.utils.modules.Module;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
 	private Input input;
@@ -142,9 +144,9 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			if(input.<GUI>getModule(GUI.class).tool != Tool.zoom) return false;
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
-			if(newzoom < 1f) newzoom = 1f;
+			if(newzoom < drawgrid().maxAspectRatio()) newzoom = drawgrid().maxAspectRatio();
 			drawgrid().setZoom(newzoom);
-			toward.interpolate(to, s / 10f / newzoom, Interpolation.linear);
+			toward.interpolate(to, s / 40f, Interpolation.linear);
 
 			drawgrid().offsetx = toward.x;
 			drawgrid().offsety = toward.y;

@@ -1,11 +1,5 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.modules.GUI;
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.Pos;
-import net.pixelstatic.utils.graphics.Textures;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -13,6 +7,12 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+
+import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
+import net.pixelstatic.pixeleditor.modules.GUI;
+import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.Pos;
+import net.pixelstatic.utils.graphics.Textures;
 
 public class DrawingGrid extends Actor{
 	public PixelCanvas canvas;
@@ -129,10 +129,16 @@ public class DrawingGrid extends Actor{
 		offsetx = getWidth() / 2;
 		offsety = getHeight() / 2;
 	}
+	
+	public void updateCursorSelection(){
+		int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
+		selected.set(newx, newy);
+	}
 
 	public void draw(Batch batch, float parentAlpha){
 		updateSize();
 		updateBounds();
+		updateCursor();
 
 		float cscl = canvasScale() * zoom;
 		String gridtype = "grid_25";
@@ -160,15 +166,43 @@ public class DrawingGrid extends Actor{
 		batch.setColor(Color.WHITE);
 	}
 	
+	public void updateCursor(){
+		if(cursorx > Gdx.graphics.getWidth() -  getX()) cursorx = Gdx.graphics.getWidth() -  getX();
+		if(cursory > Gdx.graphics.getHeight()/2 + Gdx.graphics.getWidth()/2 - getY()) cursory = Gdx.graphics.getHeight()/2 + Gdx.graphics.getWidth()/2 - getY();
+		
+		if(cursorx < -  getX()) cursorx = -  getX();
+		if(cursory < Gdx.graphics.getHeight()/2 - Gdx.graphics.getWidth()/2 - getY()) cursory = Gdx.graphics.getHeight()/2 - Gdx.graphics.getWidth()/2 - getY();
+		
+		
+		if(cursorx > getWidth()-1) cursorx = getWidth()-1;
+		if(cursory > getHeight()-1) cursory = getHeight()-1;
+
+		if(cursorx < 0) cursorx = 0;
+		if(cursorx < 0) cursory = 0;
+		
+		updateCursorSelection();
+
+	}
 	
 	public void updateBounds(){
 		int toolheight = (Gdx.graphics.getHeight() - Gdx.graphics.getWidth())/2, colorheight = toolheight;
-			
-		if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth()/2 - getWidth())/zoom;
-		if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight()/2 - getHeight() - colorheight)/zoom;
 		
-		if(getX() > 0) offsetx = Gdx.graphics.getWidth()/2/zoom;
-		if(getY() > toolheight) offsety = (Gdx.graphics.getHeight()/2-toolheight)/zoom;
+		if(aspectRatio() >= 1f){
+			if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth()/2 - getWidth())/zoom;
+			if(getX() > 0) offsetx = Gdx.graphics.getWidth()/2/zoom;
+			
+		}
+		
+		if(aspectRatio() <= 1f){
+			if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight()/2 - getHeight() - colorheight)/zoom;
+			if(getY() > toolheight) offsety = (Gdx.graphics.getHeight()/2-toolheight)/zoom;
+			
+			//if(aspectRatio() < 1f){
+			//	if(getX() + getWidth() > Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth()/2 - getWidth())/zoom;
+			//	if(getX() < 0) offsetx = Gdx.graphics.getWidth()/2/zoom;
+			//}
+		}
+		
 	}
 
 	public void updateSize(){
@@ -177,6 +211,14 @@ public class DrawingGrid extends Actor{
 
 		setX(Gdx.graphics.getWidth() / 2 - offsetx * zoom);
 		setY(Gdx.graphics.getHeight() / 2 - offsety * zoom);
+	}
+	
+	public float maxAspectRatio(){
+		return Math.min(getWidth() / getHeight(), getHeight() / getWidth());
+	}
+	
+	public float aspectRatio(){
+		return getWidth() / getHeight();
 	}
 
 	public float canvasScale(){

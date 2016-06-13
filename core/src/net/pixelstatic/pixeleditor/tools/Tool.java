@@ -2,25 +2,26 @@ package net.pixelstatic.pixeleditor.tools;
 
 import java.util.Stack;
 
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
-import net.pixelstatic.utils.Pos;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.IntSet;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisSlider;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+
+import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
+import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
+import net.pixelstatic.utils.Pos;
 
 public enum Tool{
 	pencil {
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.setColor(color);
 			canvas.drawPixel(x, y);
-			canvas.updateTexture();
 		}
 		
 		public void initTable(){
@@ -202,6 +203,10 @@ public enum Tool{
 	
 	public void update(DrawingGrid grid){
 		
+	}
+	
+	public void onColorChange(Color color, PixelCanvas canvas){
+		canvas.setColor(color);
 	}
 	
 	public String toString(){
