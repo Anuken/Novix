@@ -54,8 +54,9 @@ public class GUI extends Module<PixelEditor>{
 	Table menutable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
-	public ColorBox selected;
-	public ColorPicker picker;
+	public ColorBox colorbox;
+	ColorPicker picker;
+	AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
 
 	@Override
@@ -202,12 +203,18 @@ public class GUI extends Module<PixelEditor>{
 		picker = new ColorPicker(new ColorPickerAdapter(){
 			@Override
 			public void finished(Color color){
-				selected.setColor(color);
+				colorbox.setColor(color);
 				tool.onColorChange(color, drawgrid.canvas);
 			}
 		});
 
 		picker.setShowHexFields(false);
+
+		apicker = new AndroidColorPicker(){
+			public void onColorChanged(){
+				colorbox.setColor(apicker.getColor());
+			}
+		};
 
 		colortable.top().left();
 
@@ -371,13 +378,13 @@ public class GUI extends Module<PixelEditor>{
 
 		final VisTextButton expander = new VisTextButton("v");
 
-		colortable.add(expander).expandX().fillX().colspan(11).height(MiscUtils.densityScale(50f));
+		colortable.add(expander).expandX().fillX().colspan(10).height(MiscUtils.densityScale(50f));
 
 		//colortable.row();
 		//colortable.add(new Separator()).expandX().fillX().colspan(11).height(MiscUtils.densityScale(8f));
 		colortable.row();
 
-		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(new AndroidColorPicker());
+		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(apicker);
 
 		expander.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -390,21 +397,25 @@ public class GUI extends Module<PixelEditor>{
 
 		expander.setZIndex(collapser.getZIndex() + 10);
 
-		int colorsize = Gdx.graphics.getWidth() / 9 - MiscUtils.densityScale(3);
+		int colorsize = Gdx.graphics.getWidth() / 8 - MiscUtils.densityScale(3);
 
 		colortable.add().expandX().fillX();
 		for(int i = 0;i < 8;i ++){
 
 			final ColorBox box = new ColorBox();
-			if(selected == null) selected = box;
+			if(colorbox == null){
+				colorbox = box;
+				apicker.setSelectedColor(box.getColor());
+			}
 
 			colortable.add(box).size(colorsize);
 			box.setColor(Hue.fromHSB(i / 8f, 1f, 1f));
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					selected = box;
+					colorbox = box;
 					box.setZIndex(999);
+					apicker.setSelectedColor(box.getColor());
 
 					if(getTapCount() > 1){
 						picker.setColor(box.getColor());
@@ -416,16 +427,8 @@ public class GUI extends Module<PixelEditor>{
 
 		}
 
-		VisTextButton acolor = new VisTextButton("...");
-		colortable.add(acolor).size(colorsize);
-		acolor.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-
-			}
-		});
-
 		colortable.add().expandX().fillX();
-		selected.setZIndex(999);
+		colorbox.setZIndex(999);
 
 		collapser.resetY();
 		collapser.setCollapsed(true);
@@ -506,6 +509,7 @@ public class GUI extends Module<PixelEditor>{
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = (int)(22 * MiscUtils.densityScale());
+		//if(Gdx.app.getType() == ApplicationType.Desktop) parameter.size = 22;
 		BitmapFont font = generator.generateFont(parameter);
 
 		skin.add("default-font", font);
@@ -605,7 +609,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	public Color selectedColor(){
-		return selected.getColor();
+		return colorbox.getColor();
 	}
 
 	public void updateToolColor(){

@@ -29,6 +29,6 @@ public class ColorBox extends Widget{
 	}
 
 	public boolean selected(){
-		return GUI.gui.selected == this;
+		return GUI.gui.colorbox == this;
 	}
 }

@@ -30,7 +30,7 @@ public class DrawingGrid extends Actor{
 				if(!GUI.gui.tool.moveCursor()) return false;
 				touches ++;
 				if(moving){
-					GUI.gui.tool.clicked(GUI.gui.selected.getColor(), canvas, selected.x, selected.y);
+					GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, selected.x, selected.y);
 					return true;
 				}
 
@@ -62,7 +62,7 @@ public class DrawingGrid extends Actor{
 			//pc debugging
 			public boolean keyDown(InputEvent event, int keycode){
 				if(keycode == Keys.E){
-					GUI.gui.tool.clicked(GUI.gui.selected.getColor(), canvas, selected.x, selected.y);
+					GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, selected.x, selected.y);
 					return true;
 				}
 				return false;
@@ -76,7 +76,7 @@ public class DrawingGrid extends Actor{
 				cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
 				int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
-				if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.selected.getColor(), canvas, newx, newy);
+				if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, newx, newy);
 
 				selected.set(newx, newy);
 
