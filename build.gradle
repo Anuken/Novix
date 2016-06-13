@@ -38,6 +38,7 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 		compile "de.tomgrill.gdxdialogs:gdx-dialogs-desktop:1.0.0"
+		compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
 }
 
@@ -67,7 +68,6 @@ project(":android") {
 
 project(":core") {
     apply plugin: "java"
-
 
     dependencies {
 		compile "de.tomgrill.gdxdialogs:gdx-dialogs-core:1.0.0"

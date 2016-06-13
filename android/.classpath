@@ -7,6 +7,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Utils"/>
-	<classpathentry exported="true" kind="lib" path="/PixelEditor-core/lib/vis-ui-1.1.0-b1.jar" sourcepath="/PixelEditor-core/lib/vis-ui-1.1.0-b1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/PixelEditor-core/lib/vis-ui-1.1.1.jar" sourcepath="/PixelEditor-core/lib/vis-ui-1.1.1-sources.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
