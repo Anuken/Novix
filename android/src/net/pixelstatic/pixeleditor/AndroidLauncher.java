@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor;
 
+import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.utils.AndroidKeyboard;
 import android.annotation.TargetApi;
 import android.graphics.Rect;

@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.scene2D.ColorBox;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
@@ -15,9 +14,7 @@ import net.pixelstatic.utils.dialogs.TextFieldDialog;
 import net.pixelstatic.utils.graphics.Hue;
 import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
-import net.pixelstatic.utils.scene2D.AndroidColorPicker;
-import net.pixelstatic.utils.scene2D.SmoothCollapsibleWidget;
-import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
+import net.pixelstatic.utils.scene2D.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -212,7 +209,7 @@ public class GUI extends Module<PixelEditor>{
 
 		apicker = new AndroidColorPicker(){
 			public void onColorChanged(){
-				colorbox.setColor(apicker.getColor());
+				colorbox.setColor(apicker.getSelectedColor());
 			}
 		};
 
@@ -405,6 +402,7 @@ public class GUI extends Module<PixelEditor>{
 			final ColorBox box = new ColorBox();
 			if(colorbox == null){
 				colorbox = box;
+				box.selected = true;
 				apicker.setSelectedColor(box.getColor());
 			}
 
@@ -413,7 +411,9 @@ public class GUI extends Module<PixelEditor>{
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
+					colorbox.selected = false;
 					colorbox = box;
+					box.selected = true;
 					box.setZIndex(999);
 					apicker.setSelectedColor(box.getColor());
 
@@ -431,7 +431,7 @@ public class GUI extends Module<PixelEditor>{
 		colorbox.setZIndex(999);
 
 		collapser.resetY();
-		collapser.setCollapsed(true);
+		collapser.setCollapsed(true, false);
 	}
 
 	void setupCanvas(){
