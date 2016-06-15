@@ -47,7 +47,7 @@ import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
 public class GUI extends Module<PixelEditor>{
 	public static GUI gui;
-	public float s = 1f; //density scale
+	public static float s = 1f; //density scale
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	int palettewidth = 8;
@@ -55,7 +55,7 @@ public class GUI extends Module<PixelEditor>{
 	VisTable tooltable;
 	VisTable colortable;
 	VisTable extratable;
-	Table menutable;
+	Table menutable, optiontable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
 	public ColorBox colorbox;
@@ -97,35 +97,68 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupMenu(){
 
+		VisTextButton fbutton = addMenuButton("filters...");
+		
 		final PopupMenu filterMenu = new PopupMenu();
 		filterMenu.addItem(new ExtraMenuItem("invert"));
 		filterMenu.addItem(new ExtraMenuItem("colorize"));
 		filterMenu.addItem(new ExtraMenuItem("desaturate"));
 		filterMenu.addItem(new ExtraMenuItem("burn"));
-
-		VisTextButton fbutton = addMenuButton("filters...");
+		
 		fbutton.addListener(new MenuListener(filterMenu, fbutton));
+
+
+		VisTextButton tbutton = addMenuButton("transform..");
+		
 
 		final PopupMenu transformMenu = new PopupMenu();
 		transformMenu.addItem(new ExtraMenuItem("flip"));
 		transformMenu.addItem(new ExtraMenuItem("rotate"));
 		transformMenu.addItem(new ExtraMenuItem("shift"));
 		transformMenu.addItem(new ExtraMenuItem("symmetry"));
-
-		VisTextButton tbutton = addMenuButton("transform..");
+		
 		tbutton.addListener(new MenuListener(transformMenu, tbutton));
 
+		VisTextButton fibutton = addMenuButton("file..");
+		
 		final PopupMenu fileMenu = new PopupMenu();
 		fileMenu.addItem(new ExtraMenuItem("save"));
 		fileMenu.addItem(new ExtraMenuItem("load"));
 		fileMenu.addItem(new ExtraMenuItem("export GIF"));
 		fileMenu.addItem(new ExtraMenuItem("export layer"));
-
-		VisTextButton fibutton = addMenuButton("file..");
+		
 		fibutton.addListener(new MenuListener(fileMenu, fibutton));
-
-		//addMenuButton("settings");
-
+		
+		final ColorBar alpha = new ColorBar();
+		
+		alpha.addAction(new Action(){
+			@Override
+			public boolean act(float delta){
+				alpha.setRightColor(colorbox.getColor());
+				return false;
+			}
+		});
+		
+		alpha.setColors(Color.CLEAR, Color.WHITE);
+		alpha.setSize(Gdx.graphics.getWidth() - 20*s, 40*s);
+		
+		optiontable.bottom().left();
+		
+		final VisLabel opacity = new VisLabel("opacity: 1.0");
+		
+		opacity.addAction(new Action(){
+			@Override
+			public boolean act(float delta){
+				String string = alpha.getSelection() + "";
+				opacity.setText("opacity: " + string.substring(0, Math.min(string.length(), 5)));
+				return false;
+			}
+		});
+		
+		optiontable.add(opacity).align(Align.left).padBottom(6f*s);
+		optiontable.row();
+		
+		optiontable.add(alpha);
 	}
 
 	private class MenuListener extends ClickListener{
@@ -143,8 +176,8 @@ public class GUI extends Module<PixelEditor>{
 		}
 	}
 
-	private class ExtraMenuItem extends MenuItem{
-
+	private static class ExtraMenuItem extends MenuItem{
+		
 		public ExtraMenuItem(String text){
 			super(text);
 		}
@@ -154,11 +187,12 @@ public class GUI extends Module<PixelEditor>{
 		}
 		
 		public float getPrefWidth(){
-			return 162;
+			float buttons = 3f;
+			return Gdx.graphics.getWidth()/buttons - 2f*buttons*s;
 		}
 
 		public float getPrefHeight(){
-			return super.getPrefHeight() * 2f;
+			return super.getPrefHeight() * 2f - 3f;
 		}
 	}
 
@@ -184,6 +218,7 @@ public class GUI extends Module<PixelEditor>{
 		};
 
 		menutable = extradialog.getTitleTable();
+		optiontable = extradialog.getContentTable();
 		menutable.clear();
 		setupMenu();
 		extradialog.setMovable(false);
