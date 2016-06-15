@@ -24,16 +24,21 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.InputValidator;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 import com.kotcrab.vis.ui.widget.color.ColorPicker;
 import com.kotcrab.vis.ui.widget.color.ColorPickerAdapter;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
@@ -42,8 +47,10 @@ import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
 public class GUI extends Module<PixelEditor>{
 	public static GUI gui;
+	public float s = 1f; //density scale
 	public DrawingGrid drawgrid;
 	public Stage stage;
+	int palettewidth = 8;
 	Skin skin;
 	VisTable tooltable;
 	VisTable colortable;
@@ -52,15 +59,18 @@ public class GUI extends Module<PixelEditor>{
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
 	public ColorBox colorbox;
+	ColorBox[] boxes;
 	ColorPicker picker;
 	AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
 
 	@Override
 	public void update(){
-
 		Gdx.gl.glClearColor(20 / 255f, 33 / 255f, 52 / 255f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		if(FocusManager.getFocusedWidget() != null) FocusManager.resetFocus(stage);
+
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 
@@ -87,30 +97,83 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupMenu(){
 
-		addMenuButton("filters");
+		final PopupMenu filterMenu = new PopupMenu();
+		filterMenu.addItem(new ExtraMenuItem("invert"));
+		filterMenu.addItem(new ExtraMenuItem("colorize"));
+		filterMenu.addItem(new ExtraMenuItem("desaturate"));
+		filterMenu.addItem(new ExtraMenuItem("burn"));
 
-		addMenuButton("transform");
+		VisTextButton fbutton = addMenuButton("filters...");
+		fbutton.addListener(new MenuListener(filterMenu, fbutton));
 
-		addMenuButton("open");
+		final PopupMenu transformMenu = new PopupMenu();
+		transformMenu.addItem(new ExtraMenuItem("flip"));
+		transformMenu.addItem(new ExtraMenuItem("rotate"));
+		transformMenu.addItem(new ExtraMenuItem("shift"));
+		transformMenu.addItem(new ExtraMenuItem("symmetry"));
 
-		addMenuButton("export");
+		VisTextButton tbutton = addMenuButton("transform..");
+		tbutton.addListener(new MenuListener(transformMenu, tbutton));
+
+		final PopupMenu fileMenu = new PopupMenu();
+		fileMenu.addItem(new ExtraMenuItem("save"));
+		fileMenu.addItem(new ExtraMenuItem("load"));
+		fileMenu.addItem(new ExtraMenuItem("export GIF"));
+		fileMenu.addItem(new ExtraMenuItem("export layer"));
+
+		VisTextButton fibutton = addMenuButton("file..");
+		fibutton.addListener(new MenuListener(fileMenu, fibutton));
 
 		//addMenuButton("settings");
 
 	}
 
-	void addMenuButton(String text){
+	private class MenuListener extends ClickListener{
+		private final PopupMenu menu;
+		private final Button button;
+
+		public MenuListener(PopupMenu menu, Button button){
+			this.menu = menu;
+			this.button = button;
+		}
+
+		public void clicked(InputEvent event, float x, float y){
+			Vector2 pos = button.localToStageCoordinates(new Vector2(0, 0));
+			menu.showMenu(stage, pos.x, pos.y);
+		}
+	}
+
+	private class ExtraMenuItem extends MenuItem{
+
+		public ExtraMenuItem(String text){
+			super(text);
+		}
+
+		public ExtraMenuItem(String text, ChangeListener changeListener){
+			super(text, changeListener);
+		}
+		
+		public float getPrefWidth(){
+			return 162;
+		}
+
+		public float getPrefHeight(){
+			return super.getPrefHeight() * 2f;
+		}
+	}
+
+	VisTextButton addMenuButton(String text){
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).height(height).expandX().fillX().uniformX();
+		menutable.top().left().add(button).height(height).fillX().width(Gdx.graphics.getWidth() / 3f - 6f*s).expandX().pad(2f*s).padTop(6f*s);
+		return button;
 	}
 
 	void setupTools(){
-		final float s = MiscUtils.densityScale();
 		final float size = Gdx.graphics.getWidth() / Tool.values().length;
 
-		final VisDialog extradialog = new VisDialog(""){
+		final VisDialog extradialog = new VisDialog("asdfasd"){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
@@ -120,25 +183,19 @@ public class GUI extends Module<PixelEditor>{
 			}
 		};
 
-		menutable = extradialog.getContentTable();
+		menutable = extradialog.getTitleTable();
+		menutable.clear();
 		setupMenu();
 		extradialog.setMovable(false);
 
 		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(extradialog, false);
+
 		collapser.setCollapsed(true);
 
 		final VisTextButton expandbutton = new VisTextButton("^");
 		expandbutton.setColor(Color.LIGHT_GRAY);
 		expandbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				if(tool.table == null){
-					tool.initTable();
-					tool.table.setName("table");
-				}
-
-				//	extradialog.getContentTable().clear();
-				//	extradialog.getContentTable().top().left().add(tool.table);
-
 				collapser.setCollapsed( !collapser.isCollapsed());
 				expandbutton.setText(collapser.isCollapsed() ? "^" : "v");
 			}
@@ -154,25 +211,20 @@ public class GUI extends Module<PixelEditor>{
 		for(int i = 0;i < tools.size;i ++){
 			final Tool ctool = tools.get(i);
 
-			final VisTextButton button = new VisTextButton(ctool.toString(), "toggle");
+			final VisImageButton button = new VisImageButton((Drawable)null);
+			button.setStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class));
+			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-arrow-right"); //whatever icon is needed
+
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					tool = ctool;
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 					if( !button.isChecked()) button.setChecked(true);
 					for(Actor actor : tooltable.getChildren()){
-						if( !(actor instanceof VisTextButton)) continue;
-						VisTextButton other = (VisTextButton)actor;
+						if( !(actor instanceof VisImageButton)) continue;
+						VisImageButton other = (VisImageButton)actor;
 						if(other != button) other.setChecked(false);
 					}
-
-					if( !collapser.isCollapsed()){
-						//	if(tool.table == null) tool.initTable();
-						//	extradialog.getContentTable().clear();
-						//	extradialog.getContentTable().top().left().add(tool.table);
-					}
-					//((ClickListener)expandbutton.getListeners().get(2)).clicked(null, x, y);
-
 				}
 			});
 
@@ -377,14 +429,15 @@ public class GUI extends Module<PixelEditor>{
 
 		colortable.add(expander).expandX().fillX().colspan(10).height(MiscUtils.densityScale(50f));
 
-		//colortable.row();
-		//colortable.add(new Separator()).expandX().fillX().colspan(11).height(MiscUtils.densityScale(8f));
 		colortable.row();
 
 		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(apicker);
 
 		expander.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
+				if( !collapser.isCollapsed()){
+					apicker.setSelectedColor(apicker.getSelectedColor());
+				}
 				collapser.setCollapsed( !collapser.isCollapsed());
 				expander.setText(collapser.isCollapsed() ? "v" : "^");
 			}
@@ -397,17 +450,15 @@ public class GUI extends Module<PixelEditor>{
 		int colorsize = Gdx.graphics.getWidth() / 8 - MiscUtils.densityScale(3);
 
 		colortable.add().expandX().fillX();
-		for(int i = 0;i < 8;i ++){
+
+		boxes = new ColorBox[palettewidth];
+
+		for(int i = 0;i < palettewidth;i ++){
 
 			final ColorBox box = new ColorBox();
-			if(colorbox == null){
-				colorbox = box;
-				box.selected = true;
-				apicker.setSelectedColor(box.getColor());
-			}
 
+			boxes[i] = box;
 			colortable.add(box).size(colorsize);
-			box.setColor(Hue.fromHSB(i / 8f, 1f, 1f));
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -428,10 +479,25 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 		colortable.add().expandX().fillX();
-		colorbox.setZIndex(999);
 
 		collapser.resetY();
 		collapser.setCollapsed(true, false);
+		setupBoxColors();
+	}
+
+	void setupBoxColors(){
+		for(int i = 0;i < boxes.length;i ++){
+			boxes[i].setColor(Hue.fromHSB((float)i / palettewidth, 1f, 1f));
+		}
+
+		apicker.setRecentColors(boxes);
+
+		if(colorbox == null){
+			colorbox = boxes[0];
+			colorbox.selected = true;
+			apicker.setSelectedColor(colorbox.getColor());
+			colorbox.setZIndex(999);
+		}
 	}
 
 	void setupCanvas(){
@@ -450,7 +516,7 @@ public class GUI extends Module<PixelEditor>{
 
 	public GUI(){
 		gui = this;
-
+		s = MiscUtils.densityScale();
 		GDXDialogsSystem.install();
 
 		GDXDialogsSystem.getDialogManager().registerDialog(TextFieldDialog.class.getCanonicalName(), AndroidTextFieldDialog.class.getCanonicalName());
@@ -557,8 +623,6 @@ public class GUI extends Module<PixelEditor>{
 				return false;
 			}
 		});
-
-		float s = MiscUtils.densityScale();
 
 		dialog.getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
 		dialog.getContentTable().add(widthfield).size(140, 40).padRight(50 * s).padTop(40 * s);
