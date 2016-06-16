@@ -6,6 +6,7 @@ import net.pixelstatic.utils.graphics.PixmapUtils;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 public class PixelCanvas implements Disposable{
@@ -39,7 +40,8 @@ public class PixelCanvas implements Disposable{
 	public void drawRadius(int x, int y, int rad){
 		for(int rx = -rad; rx <= rad; rx ++){
 			for(int ry = -rad; ry <= rad; ry ++){
-				
+				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f)
+				drawPixel(x + rx,y + ry);
 			}
 		}
 	}

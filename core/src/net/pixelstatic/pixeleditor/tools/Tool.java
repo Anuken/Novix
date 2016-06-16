@@ -16,7 +16,7 @@ public enum Tool{
 	pencil{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.drawPixel(x, y);
+			canvas.drawRadius(x, y, GUI.gui.getBrushSize());
 		}
 	},
 	eraser{
@@ -24,7 +24,7 @@ public enum Tool{
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			Pixmap.setBlending(Blending.None);
 			canvas.setColor(Color.CLEAR);
-			canvas.drawPixel(x, y);
+			canvas.drawRadius(x, y, GUI.gui.getBrushSize());
 
 			Pixmap.setBlending(Blending.SourceOver);
 			canvas.updateTexture();
