@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
+import net.pixelstatic.pixeleditor.scene2D.BrushSizeWidget;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
@@ -55,7 +56,7 @@ public class GUI extends Module<PixelEditor>{
 	VisTable tooltable;
 	VisTable colortable;
 	VisTable extratable;
-	Table menutable, optiontable;
+	Table menutable, optionstable, tooloptiontable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
 	public ColorBox colorbox;
@@ -102,6 +103,7 @@ public class GUI extends Module<PixelEditor>{
 		final PopupMenu filterMenu = new PopupMenu();
 		filterMenu.addItem(new ExtraMenuItem("invert"));
 		filterMenu.addItem(new ExtraMenuItem("colorize"));
+		filterMenu.addItem(new ExtraMenuItem("replace"));
 		filterMenu.addItem(new ExtraMenuItem("desaturate"));
 		filterMenu.addItem(new ExtraMenuItem("burn"));
 		
@@ -112,8 +114,10 @@ public class GUI extends Module<PixelEditor>{
 		
 
 		final PopupMenu transformMenu = new PopupMenu();
+		transformMenu.addItem(new ExtraMenuItem("resize"));
 		transformMenu.addItem(new ExtraMenuItem("flip"));
 		transformMenu.addItem(new ExtraMenuItem("rotate"));
+		transformMenu.addItem(new ExtraMenuItem("scale"));
 		transformMenu.addItem(new ExtraMenuItem("shift"));
 		transformMenu.addItem(new ExtraMenuItem("symmetry"));
 		
@@ -126,8 +130,35 @@ public class GUI extends Module<PixelEditor>{
 		fileMenu.addItem(new ExtraMenuItem("load"));
 		fileMenu.addItem(new ExtraMenuItem("export GIF"));
 		fileMenu.addItem(new ExtraMenuItem("export layer"));
+		fileMenu.addItem(new ExtraMenuItem("open as layer"));
 		
 		fibutton.addListener(new MenuListener(fileMenu, fibutton));
+
+		final BrushSizeWidget brush = new BrushSizeWidget();
+		final VisLabel brushlabel = new VisLabel("Brush Size: 1");
+		final VisSlider slider = new VisSlider(1, 5, 0.01f, false);
+		
+		slider.addListener(new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				brush.setBrushSize((int)slider.getValue());
+			}
+		});
+		
+		brush.addAction(new Action(){
+			@Override
+			public boolean act(float delta){
+				brushlabel.setText("Brush Size: " + brush.getBrushSize());
+				brush.setColor(colorbox.getColor());
+				return false;
+			}
+		});
+		
+		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
+		tooloptiontable.row();
+		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f);
+		tooloptiontable.row();
+		tooloptiontable.add(brush).align(Align.bottomLeft);
 		
 		final ColorBar alpha = new ColorBar();
 		
@@ -142,7 +173,7 @@ public class GUI extends Module<PixelEditor>{
 		alpha.setColors(Color.CLEAR, Color.WHITE);
 		alpha.setSize(Gdx.graphics.getWidth() - 20*s, 40*s);
 		
-		optiontable.bottom().left();
+		optionstable.bottom().left();
 		
 		final VisLabel opacity = new VisLabel("opacity: 1.0");
 		
@@ -155,10 +186,10 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 		
-		optiontable.add(opacity).align(Align.left).padBottom(6f*s);
-		optiontable.row();
+		optionstable.add(opacity).align(Align.left).padBottom(6f*s);
+		optionstable.row();
 		
-		optiontable.add(alpha);
+		optionstable.add(alpha);
 	}
 
 	private class MenuListener extends ClickListener{
@@ -207,7 +238,7 @@ public class GUI extends Module<PixelEditor>{
 	void setupTools(){
 		final float size = Gdx.graphics.getWidth() / Tool.values().length;
 
-		final VisDialog extradialog = new VisDialog("asdfasd"){
+		final VisDialog extradialog = new VisDialog("lel"){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
@@ -216,9 +247,11 @@ public class GUI extends Module<PixelEditor>{
 				return Gdx.graphics.getHeight() / 2f;
 			}
 		};
-
 		menutable = extradialog.getTitleTable();
-		optiontable = extradialog.getContentTable();
+		optionstable = extradialog.getContentTable();
+		tooloptiontable = new VisTable();
+		optionstable.add(tooloptiontable).expand().fill();
+		optionstable.row();
 		menutable.clear();
 		setupMenu();
 		extradialog.setMovable(false);
