@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.graphics.Textures;
 
 import com.badlogic.gdx.graphics.Color;
@@ -14,7 +15,7 @@ public class BrushSizeWidget extends Widget{
 	int gridsize = 9, brushsize = 1;
 
 	{
-		setSize(gridsize * 15, gridsize * 15);
+		setSize(gridsize * 15*MiscUtils.densityScale(), gridsize * 15*MiscUtils.densityScale());
 
 		addListener(new InputListener(){
 			

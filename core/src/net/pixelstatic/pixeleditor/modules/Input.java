@@ -1,18 +1,16 @@
 package net.pixelstatic.pixeleditor.modules;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
-
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.modules.Module;
+
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
 	private Input input;
@@ -100,10 +98,10 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean touchDown(float x, float y, int pointer, int button){
-			if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
-				DrawingGrid grid = drawgrid();
-				grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
-			}
+			//if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
+			//	DrawingGrid grid = drawgrid();
+			//	grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
+			//}
 			initzoom = input.<GUI>getModule(GUI.class).drawgrid.zoom;
 			return false;
 		}
@@ -128,10 +126,11 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean pan(float x, float y, float deltaX, float deltaY){
-			if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
-				DrawingGrid grid = drawgrid();
-				grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
-			}else if(input.<GUI>getModule(GUI.class).tool == Tool.zoom){
+			/*	if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
+					DrawingGrid grid = drawgrid();
+					grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
+				}else*/
+			if(input.<GUI>getModule(GUI.class).tool == Tool.zoom){
 				drawgrid().offsetx -= deltaX / drawgrid().zoom;
 				drawgrid().offsety += deltaY / drawgrid().zoom;
 				drawgrid().updateBounds();

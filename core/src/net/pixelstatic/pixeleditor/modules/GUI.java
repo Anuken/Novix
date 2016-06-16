@@ -56,6 +56,7 @@ public class GUI extends Module<PixelEditor>{
 	VisTable tooltable;
 	VisTable colortable;
 	VisTable extratable;
+	BrushSizeWidget brush;
 	Table menutable, optionstable, tooloptiontable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
@@ -134,7 +135,7 @@ public class GUI extends Module<PixelEditor>{
 		
 		fibutton.addListener(new MenuListener(fileMenu, fibutton));
 
-		final BrushSizeWidget brush = new BrushSizeWidget();
+		brush = new BrushSizeWidget();
 		final VisLabel brushlabel = new VisLabel("Brush Size: 1");
 		final VisSlider slider = new VisSlider(1, 5, 0.01f, false);
 		
@@ -156,7 +157,7 @@ public class GUI extends Module<PixelEditor>{
 		
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
-		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f);
+		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
 		tooloptiontable.row();
 		tooloptiontable.add(brush).align(Align.bottomLeft);
 		
@@ -285,6 +286,11 @@ public class GUI extends Module<PixelEditor>{
 
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
+					ctool.onSelected();
+					if(!ctool.selectable()){
+						button.setChecked(false);
+						return;
+					}
 					tool = ctool;
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 					if( !button.isChecked()) button.setChecked(true);
@@ -738,6 +744,10 @@ public class GUI extends Module<PixelEditor>{
 
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
+	}
+	
+	public int getBrushSize(){
+		return brush.getBrushSize();
 	}
 
 	public Color selectedColor(){

@@ -1,14 +1,12 @@
 package net.pixelstatic.pixeleditor.graphics;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.Disposable;
-
 import net.pixelstatic.pixeleditor.tools.ActionStack;
 import net.pixelstatic.pixeleditor.tools.DrawAction;
 import net.pixelstatic.utils.graphics.PixmapUtils;
+
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.utils.Disposable;
 
 public class PixelCanvas implements Disposable{
 	private Color color; // pixmap color
@@ -38,6 +36,14 @@ public class PixelCanvas implements Disposable{
 		texture.draw(blank, x, height() -1 - y);
 	}
 	
+	public void drawRadius(int x, int y, int rad){
+		for(int rx = -rad; rx <= rad; rx ++){
+			for(int ry = -rad; ry <= rad; ry ++){
+				
+			}
+		}
+	}
+	
 	public void drawPixel(int x, int y, Color color){
 		setColor(color);
 		drawPixel(x, y); 
@@ -51,6 +57,7 @@ public class PixelCanvas implements Disposable{
 	public Color getColor(int x, int y){
 		return new Color(pixmap.getPixel(x, height() -1 - y));
 	}
+
 	
 	public void setColor(Color color){
 		this.color = color;
