@@ -280,9 +280,11 @@ public class GUI extends Module<PixelEditor>{
 			final Tool ctool = tools.get(i);
 
 			final VisImageButton button = new VisImageButton((Drawable)null);
-			button.setStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class));
+			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
 			button.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-" + ctool.name()))); //whatever icon is needed
 
+			button.getImageCell().size(50);
+			
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					ctool.onSelected();

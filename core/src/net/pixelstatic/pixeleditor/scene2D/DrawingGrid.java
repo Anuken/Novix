@@ -1,5 +1,11 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
+import net.pixelstatic.pixeleditor.modules.GUI;
+import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.Pos;
+import net.pixelstatic.utils.graphics.Textures;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -7,12 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.modules.GUI;
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.Pos;
-import net.pixelstatic.utils.graphics.Textures;
+import com.kotcrab.vis.ui.VisUI;
 
 public class DrawingGrid extends Actor{
 	public PixelCanvas canvas;
@@ -23,6 +24,7 @@ public class DrawingGrid extends Actor{
 	int touches = 0;
 	boolean moving;
 	public float zoom = 1f, offsetx = 0, offsety = 0;
+	public boolean clip = true;
 
 	public DrawingGrid(){
 		addListener(new InputListener(){
@@ -139,6 +141,11 @@ public class DrawingGrid extends Actor{
 		updateSize();
 		updateBounds();
 		updateCursor();
+		
+		if(clip){
+			batch.flush();
+			clipBegin(Gdx.graphics.getWidth()/2 - min()/2, Gdx.graphics.getHeight()/2 - min()/2,  min(), min());
+		}
 
 		float cscl = canvasScale() * zoom;
 		String gridtype = "grid_25";
@@ -158,11 +165,24 @@ public class DrawingGrid extends Actor{
 
 		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
 		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
-
+		
+		batch.setColor(Color.GRAY);
+		//draw edges
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), 2);
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 + min()/2f, Gdx.graphics.getHeight() / 2 + min()/2f, -min(), -2);
+		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 + min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, 2, min());
+		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), 2);
+	
 		batch.setColor(Color.PURPLE);
 
 		batch.draw(Textures.get("cursor"), getX() + cursorx - 15, getY() + cursory - 15, 30, 30);
-
+		
+		if(clip){
+			clipEnd();
+			batch.flush();
+		}
+		
+		
 		batch.setColor(Color.WHITE);
 	}
 	

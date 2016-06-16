@@ -49,9 +49,9 @@ public class DrawAction{
 	class ColorPair{
 		Color fromcolor;
 		Color tocolor;
-		
+
 		public ColorPair(Color fromcolor, Color tocolor){
-			this.fromcolor =fromcolor;
+			this.fromcolor = fromcolor;
 			this.tocolor = tocolor;
 		}
 	}
