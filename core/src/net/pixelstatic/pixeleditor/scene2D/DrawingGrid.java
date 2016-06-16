@@ -179,7 +179,6 @@ public class DrawingGrid extends Actor{
 		
 		if(clip){
 			clipEnd();
-			batch.flush();
 		}
 		
 		

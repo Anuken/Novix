@@ -67,7 +67,7 @@ public class GUI extends Module<PixelEditor>{
 
 	@Override
 	public void update(){
-		Gdx.gl.glClearColor(20 / 255f, 33 / 255f, 52 / 255f, 1);
+		Gdx.gl.glClearColor(0.13f, 0.13f, 0.13f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		if(FocusManager.getFocusedWidget() != null) FocusManager.resetFocus(stage);
@@ -99,52 +99,116 @@ public class GUI extends Module<PixelEditor>{
 	void setupMenu(){
 
 		VisTextButton fbutton = addMenuButton("filters...");
-		
+
 		final PopupMenu filterMenu = new PopupMenu();
 		filterMenu.addItem(new ExtraMenuItem("invert"));
 		filterMenu.addItem(new ExtraMenuItem("colorize"));
 		filterMenu.addItem(new ExtraMenuItem("replace"));
 		filterMenu.addItem(new ExtraMenuItem("desaturate"));
 		filterMenu.addItem(new ExtraMenuItem("burn"));
-		
+
 		fbutton.addListener(new MenuListener(filterMenu, fbutton));
 
-
 		VisTextButton tbutton = addMenuButton("transform..");
-		
 
 		final PopupMenu transformMenu = new PopupMenu();
-		transformMenu.addItem(new ExtraMenuItem("resize"));
-		transformMenu.addItem(new ExtraMenuItem("flip"));
-		transformMenu.addItem(new ExtraMenuItem("rotate"));
-		transformMenu.addItem(new ExtraMenuItem("scale"));
-		transformMenu.addItem(new ExtraMenuItem("shift"));
-		transformMenu.addItem(new ExtraMenuItem("symmetry"));
-		
+		transformMenu.addItem(new ExtraMenuItem("resize", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				showSizeDialog("Resize Canvas", new SizeDialogListener(){
+					@Override
+					public void result(int width, int height){
+						drawgrid.setCanvas(drawgrid.canvas.asResized(width, height));
+					}
+				});
+			}
+		}));
+		transformMenu.addItem(new ExtraMenuItem("flip", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				
+			}
+		}));
+		transformMenu.addItem(new ExtraMenuItem("rotate", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+
+			}
+		}));
+		transformMenu.addItem(new ExtraMenuItem("scale", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+
+			}
+		}));
+		transformMenu.addItem(new ExtraMenuItem("shift", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+
+			}
+		}));
+		transformMenu.addItem(new ExtraMenuItem("symmetry", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+
+			}
+		}));
+
 		tbutton.addListener(new MenuListener(transformMenu, tbutton));
 
 		VisTextButton fibutton = addMenuButton("file..");
-		
+
 		final PopupMenu fileMenu = new PopupMenu();
-		fileMenu.addItem(new ExtraMenuItem("save"));
-		fileMenu.addItem(new ExtraMenuItem("load"));
-		fileMenu.addItem(new ExtraMenuItem("export GIF"));
-		fileMenu.addItem(new ExtraMenuItem("export layer"));
-		fileMenu.addItem(new ExtraMenuItem("open as layer"));
-		
+		fileMenu.addItem(new ExtraMenuItem("new", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				showSizeDialog("New Canvas", new SizeDialogListener(){
+					@Override
+					public void result(int width, int height){
+						PixelCanvas canvas = new PixelCanvas(width, height);
+						drawgrid.setCanvas(canvas);
+					}
+				});
+			}
+		}));
+		fileMenu.addItem(new ExtraMenuItem("save", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new AndroidFileChooser().show(stage);
+			}
+		}));
+		fileMenu.addItem(new ExtraMenuItem("load", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				
+			}
+		}));
+		fileMenu.addItem(new ExtraMenuItem("export GIF", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+
+			}
+		}));
+		fileMenu.addItem(new ExtraMenuItem("open as layer", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+
+			}
+		}));
+
 		fibutton.addListener(new MenuListener(fileMenu, fibutton));
 
 		brush = new BrushSizeWidget();
 		final VisLabel brushlabel = new VisLabel("Brush Size: 1");
 		final VisSlider slider = new VisSlider(1, 5, 0.01f, false);
-		
+
 		slider.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				brush.setBrushSize((int)slider.getValue());
 			}
 		});
-		
+
 		brush.addAction(new Action(){
 			@Override
 			public boolean act(float delta){
@@ -153,15 +217,15 @@ public class GUI extends Module<PixelEditor>{
 				return false;
 			}
 		});
-		
+
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
 		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
 		tooloptiontable.row();
 		tooloptiontable.add(brush).align(Align.bottomLeft);
-		
+
 		final ColorBar alpha = new ColorBar();
-		
+
 		alpha.addAction(new Action(){
 			@Override
 			public boolean act(float delta){
@@ -169,14 +233,14 @@ public class GUI extends Module<PixelEditor>{
 				return false;
 			}
 		});
-		
+
 		alpha.setColors(Color.CLEAR, Color.WHITE);
-		alpha.setSize(Gdx.graphics.getWidth() - 20*s, 40*s);
-		
+		alpha.setSize(Gdx.graphics.getWidth() - 20 * s, 40 * s);
+
 		optionstable.bottom().left();
-		
+
 		final VisLabel opacity = new VisLabel("opacity: 1.0");
-		
+
 		opacity.addAction(new Action(){
 			@Override
 			public boolean act(float delta){
@@ -185,10 +249,10 @@ public class GUI extends Module<PixelEditor>{
 				return false;
 			}
 		});
-		
-		optionstable.add(opacity).align(Align.left).padBottom(6f*s);
+
+		optionstable.add(opacity).align(Align.left).padBottom(6f * s);
 		optionstable.row();
-		
+
 		optionstable.add(alpha);
 	}
 
@@ -208,7 +272,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	private static class ExtraMenuItem extends MenuItem{
-		
+
 		public ExtraMenuItem(String text){
 			super(text);
 		}
@@ -216,10 +280,10 @@ public class GUI extends Module<PixelEditor>{
 		public ExtraMenuItem(String text, ChangeListener changeListener){
 			super(text, changeListener);
 		}
-		
+
 		public float getPrefWidth(){
 			float buttons = 3f;
-			return Gdx.graphics.getWidth()/buttons - 2f*buttons*s;
+			return Gdx.graphics.getWidth() / buttons - 2f * buttons * s;
 		}
 
 		public float getPrefHeight(){
@@ -231,7 +295,7 @@ public class GUI extends Module<PixelEditor>{
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).height(height).fillX().width(Gdx.graphics.getWidth() / 3f - 6f*s).expandX().pad(2f*s).padTop(6f*s);
+		menutable.top().left().add(button).height(height).fillX().width(Gdx.graphics.getWidth() / 3f - 6f * s).expandX().pad(2f * s).padTop(6f * s);
 		return button;
 	}
 
@@ -284,11 +348,11 @@ public class GUI extends Module<PixelEditor>{
 			button.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-" + ctool.name()))); //whatever icon is needed
 
 			button.getImageCell().size(50);
-			
+
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					ctool.onSelected();
-					if(!ctool.selectable()){
+					if( !ctool.selectable()){
 						button.setChecked(false);
 						return;
 					}
@@ -631,7 +695,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	public void loadFonts(){
-		FileHandle skinFile = Gdx.files.internal("visgui/uiskin.json");
+		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
 		Skin skin = new Skin();
 
 		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
@@ -746,7 +810,7 @@ public class GUI extends Module<PixelEditor>{
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
 	}
-	
+
 	public int getBrushSize(){
 		return brush.getBrushSize();
 	}
