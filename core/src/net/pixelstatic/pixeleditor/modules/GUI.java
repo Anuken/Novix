@@ -141,12 +141,6 @@ public class GUI extends Module<PixelEditor>{
 
 			}
 		}));
-		transformMenu.addItem(new ExtraMenuItem("shift", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-
-			}
-		}));
 		transformMenu.addItem(new ExtraMenuItem("symmetry", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -174,7 +168,7 @@ public class GUI extends Module<PixelEditor>{
 		fileMenu.addItem(new ExtraMenuItem("save", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				new AndroidFileChooser().show(stage);
+				new AndroidFileChooser(false).show(stage);
 			}
 		}));
 		fileMenu.addItem(new ExtraMenuItem("load", new ChangeListener(){
@@ -268,6 +262,7 @@ public class GUI extends Module<PixelEditor>{
 		public void clicked(InputEvent event, float x, float y){
 			Vector2 pos = button.localToStageCoordinates(new Vector2(0, 0));
 			menu.showMenu(stage, pos.x, pos.y);
+			menu.setPosition(pos.x, pos.y - menu.getPrefHeight());
 		}
 	}
 
