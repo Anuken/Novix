@@ -94,7 +94,7 @@ public class DrawingGrid extends Actor{
 					cursorx = x;
 					cursory = y;
 					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
-					
+
 					if( !selected.equals(newx, newy)) GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, newx, newy);
 					selected.set(newx, newy);
 				}
@@ -178,11 +178,13 @@ public class DrawingGrid extends Actor{
 
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
-		batch.setColor(Color.CORAL);
-
-		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
-		batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
-
+		//draw selection
+		if(cursormode || Gdx.input.isTouched()){
+			batch.setColor(Color.CORAL);
+			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
+			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
+		}
+		
 		batch.setColor(Color.GRAY);
 		//draw edges
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
@@ -190,10 +192,11 @@ public class DrawingGrid extends Actor{
 		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 + min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, 2, min());
 		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), 2);
 
-		batch.setColor(Color.PURPLE);
-
-		batch.draw(Textures.get("cursor"), getX() + cursorx - 15, getY() + cursory - 15, 30, 30);
-
+		//draw cursor
+		if(cursormode || Gdx.input.isTouched()){
+			batch.setColor(Color.PURPLE);
+			batch.draw(Textures.get("cursor"), getX() + cursorx - 15, getY() + cursory - 15, 30, 30);
+		}
 		if(clip){
 			clipEnd();
 		}
