@@ -38,7 +38,6 @@ public class DrawAction{
 			
 			Pixmap.setBlending(Blending.None);
 			canvas.drawPixelActionless(x, y, reapply ? pos.tocolor : pos.fromcolor);
-			//System.out.println("editing: " + x + ", " + y + " to " + pos.fromcolor);
 
 			Pixmap.setBlending(Blending.SourceOver);
 		}

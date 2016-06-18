@@ -10,6 +10,7 @@ import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
 import net.pixelstatic.utils.graphics.Hue;
@@ -19,8 +20,7 @@ import net.pixelstatic.utils.scene2D.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -56,7 +56,7 @@ public class GUI extends Module<PixelEditor>{
 	VisTable colortable;
 	VisTable extratable;
 	BrushSizeWidget brush;
-	Table menutable, optionstable, tooloptiontable;
+	Table menutable, optionstable, tooloptiontable, extratooltable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
 	public ColorBox colorbox;
@@ -126,7 +126,7 @@ public class GUI extends Module<PixelEditor>{
 		transformMenu.addItem(new ExtraMenuItem("flip", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				
+
 			}
 		}));
 		transformMenu.addItem(new ExtraMenuItem("rotate", new ChangeListener(){
@@ -168,13 +168,34 @@ public class GUI extends Module<PixelEditor>{
 		fileMenu.addItem(new ExtraMenuItem("save", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				new AndroidFileChooser(false).show(stage);
+				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
+					public void fileSelected(FileHandle file){
+						try{
+							if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
+							PixmapIO.writePNG(file, drawgrid.canvas.pixmap);
+							AndroidDialogs.showInfo(stage, "Image exported to " + file + ".");
+						}catch(Exception e){
+							e.printStackTrace();
+							AndroidDialogs.showError(stage, e);
+						}
+					}
+				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem("load", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem("open", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				
+				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
+					public void fileSelected(FileHandle file){
+						try{
+							drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
+							tool.onColorChange(selectedColor(), drawgrid.canvas);
+						}catch(Exception e){
+							e.printStackTrace();
+							AndroidDialogs.showError(stage, e);
+						}
+					}
+				}.show(stage);
 			}
 		}));
 		fileMenu.addItem(new ExtraMenuItem("export GIF", new ChangeListener(){
@@ -228,6 +249,12 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 
+		alpha.addListener(new InputListener(){
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+
+			}
+		});
+
 		alpha.setColors(Color.CLEAR, Color.WHITE);
 		alpha.setSize(Gdx.graphics.getWidth() - 20 * s, 40 * s);
 
@@ -235,19 +262,52 @@ public class GUI extends Module<PixelEditor>{
 
 		final VisLabel opacity = new VisLabel("opacity: 1.0");
 
-		opacity.addAction(new Action(){
+		alpha.addListener(new ChangeListener(){
 			@Override
-			public boolean act(float delta){
+			public void changed(ChangeEvent event, Actor actor){
 				String string = alpha.getSelection() + "";
 				opacity.setText("opacity: " + string.substring(0, Math.min(string.length(), 5)));
-				return false;
+				drawgrid.canvas.setAlpha(alpha.getSelection());
+			}
+		});
+		
+		final VisCheckBox grid = new VisCheckBox("Grid");
+		grid.setChecked(true);
+		
+		grid.addListener(new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				drawgrid.grid = grid.isChecked();
 			}
 		});
 
-		optionstable.add(opacity).align(Align.left).padBottom(6f * s);
+		final VisRadioButton cbox = new VisRadioButton("cursor mode");
+		cbox.setChecked(true);
+		VisRadioButton tbox = new VisRadioButton("tap mode");
+
+		new ButtonGroup<VisRadioButton>(cbox, tbox);
+		cbox.addListener(new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				drawgrid.cursormode = cbox.isChecked();
+			}
+		});
+		
+		extratooltable.top().left().add(cbox).padTop(50f*s).padLeft(20f*s);
+	//extratooltable.add(grid).padTop(50f).padLeft(60f);
+		extratooltable.row();
+		extratooltable.add(tbox).align(Align.left).padTop(5f*s).padLeft(20f*s);
+		extratooltable.row();
+		extratooltable.add(grid).align(Align.left).padTop(55f*s).padLeft(20f*s);
+		
+
+		optionstable.add(opacity).align(Align.left).padBottom(6f * s).colspan(2);
 		optionstable.row();
 
-		optionstable.add(alpha);
+		optionstable.add(alpha).colspan(2);
+
+
+
 	}
 
 	private class MenuListener extends ClickListener{
@@ -309,7 +369,9 @@ public class GUI extends Module<PixelEditor>{
 		menutable = extradialog.getTitleTable();
 		optionstable = extradialog.getContentTable();
 		tooloptiontable = new VisTable();
-		optionstable.add(tooloptiontable).expand().fill();
+		extratooltable = new VisTable();
+		optionstable.add(tooloptiontable);
+		optionstable.add(extratooltable).expand().fill();
 		optionstable.row();
 		menutable.clear();
 		setupMenu();
@@ -571,6 +633,7 @@ public class GUI extends Module<PixelEditor>{
 			public void clicked(InputEvent event, float x, float y){
 				if( !collapser.isCollapsed()){
 					apicker.setSelectedColor(apicker.getSelectedColor());
+					tool.onColorChange(selectedColor(), drawgrid.canvas);
 				}
 				collapser.setCollapsed( !collapser.isCollapsed());
 				expander.setText(collapser.isCollapsed() ? "v" : "^");
@@ -786,7 +849,7 @@ public class GUI extends Module<PixelEditor>{
 		public boolean validateInput(String input){
 			if(input.equals("")) return false;
 			int i = Integer.parseInt(input);
-			return i > 0 && i < 513;
+			return i > 0 && i < 1000;
 		}
 	}
 
@@ -811,7 +874,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	public Color selectedColor(){
-		return colorbox.getColor();
+		return colorbox.getColor().cpy();
 	}
 
 	public void updateToolColor(){

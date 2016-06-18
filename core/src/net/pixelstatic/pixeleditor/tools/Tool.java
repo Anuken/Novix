@@ -33,8 +33,6 @@ public enum Tool{
 	fill(true, false){
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.setColor(color);
-
 			Color dest = canvas.getColor(x, y);
 
 			//if(colorEquals(color, dest)) return;
@@ -72,7 +70,10 @@ public enum Tool{
 	pick(false){
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			color.set(canvas.getColor(x, y));
+			Color selected = canvas.getColor(x, y);
+			selected.a = 1f;
+			GUI.gui.colorbox.setColor(selected);
+			GUI.gui.updateToolColor();
 		}
 	},
 	zoom(false, false){
