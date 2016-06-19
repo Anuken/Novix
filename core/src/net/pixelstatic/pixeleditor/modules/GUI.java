@@ -4,8 +4,9 @@ import java.lang.reflect.Field;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.scene2D.BrushSizeWidget;
-import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
+import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
@@ -36,7 +37,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.InputValidator;
-import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 import com.kotcrab.vis.ui.widget.color.ColorPicker;
@@ -115,18 +115,18 @@ public class GUI extends Module<PixelEditor>{
 		transformMenu.addItem(new ExtraMenuItem("resize", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				showSizeDialog("Resize Canvas", new SizeDialogListener(){
+				new SizeDialog("Resize Canvas"){
 					@Override
 					public void result(int width, int height){
 						drawgrid.setCanvas(drawgrid.canvas.asResized(width, height));
 					}
-				});
+				}.show(stage);
 			}
 		}));
 		transformMenu.addItem(new ExtraMenuItem("flip", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-
+				new FlipDialog().show(stage);
 			}
 		}));
 		transformMenu.addItem(new ExtraMenuItem("rotate", new ChangeListener(){
@@ -156,13 +156,13 @@ public class GUI extends Module<PixelEditor>{
 		fileMenu.addItem(new ExtraMenuItem("new", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				showSizeDialog("New Canvas", new SizeDialogListener(){
+				new SizeDialog("New Canvas"){
 					@Override
 					public void result(int width, int height){
 						PixelCanvas canvas = new PixelCanvas(width, height);
 						drawgrid.setCanvas(canvas);
 					}
-				});
+				}.show(stage);
 			}
 		}));
 		fileMenu.addItem(new ExtraMenuItem("save", new ChangeListener(){
@@ -463,152 +463,6 @@ public class GUI extends Module<PixelEditor>{
 
 		colortable.top().left();
 
-		//int height = 50;
-
-		//	VisTable menu = new VisTable();
-		/*
-
-		VisTextButton ham = menuButton(height);
-		menu.add(ham).size(height);
-
-		VisTextButton undo = new VisTextButton("undo");
-		undo.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				drawgrid.canvas.actions.undo(drawgrid.canvas);
-			}
-		});
-
-		menu.add(undo).size(height);
-
-		VisTextButton redo = new VisTextButton("redo");
-		redo.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				drawgrid.canvas.actions.redo(drawgrid.canvas);
-			}
-		});
-		menu.add(redo).size(height);
-
-		final VisTextButton grid = new VisTextButton("grid", "toggle");
-		grid.setChecked(true);
-		grid.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				drawgrid.grid = !drawgrid.grid;
-				grid.setChecked(drawgrid.grid);
-			}
-		});
-		menu.add(grid).size(height);
-
-		final VisTextButton export = new VisTextButton("export");
-		export.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				FileChooser chooser = new FileChooser(Mode.SAVE);
-				chooser.setSize(stage.getWidth(), 350);
-				if(Gdx.app.getType() == ApplicationType.Android) chooser.setDirectory(Gdx.files.absolute(System.getProperty("user.home") + "/sdcard/"), HistoryPolicy.CLEAR);
-				chooser.setMovable(false);
-				chooser.setResizable(false);
-				chooser.setListener(new FileChooserListener(){
-					@Override
-					public void selected(Array<FileHandle> files){
-						try{
-							PixmapIO.writePNG(files.first(), drawgrid.canvas.pixmap);
-							Dialogs.showOKDialog(stage, "Info", "Image exported to " + files.first() + ".");
-						}catch(Exception e){
-							e.printStackTrace();
-							Dialogs.showDetailsDialog(stage, "Error writing image!", "Info", e.getClass().getSimpleName() + ": " + e.getMessage());
-
-							//Dialogs.showErrorDialog(stage, "Error writing file:\n" + e.toString());
-						}
-					}
-
-					@Override
-					public void canceled(){
-						currentChooser = null;
-					}
-				});
-				
-				currentChooser = chooser;
-				stage.addActor(chooser.fadeIn());
-				chooser.setX(0);
-			}
-		});
-		menu.add(export).size(height);
-
-		final VisTextButton load = new VisTextButton("open");
-		load.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				AndroidFileChooser chooser = new AndroidFileChooser();
-				chooser.show(stage);
-				/*
-				FileChooser chooser = new FileChooser(Mode.OPEN);
-				chooser.setSize(stage.getWidth(), 350);
-				if(Gdx.app.getType() == ApplicationType.Android) chooser.setDirectory(Gdx.files.absolute(System.getProperty("user.home") + "/sdcard/"), HistoryPolicy.CLEAR);
-				chooser.setMovable(false);
-				chooser.setResizable(false);
-				chooser.setListener(new FileChooserListener(){
-					@Override
-					public void selected(Array<FileHandle> files){
-						try{
-							drawgrid.setCanvas(new PixelCanvas(new Pixmap(files.first())));
-
-							//Dialogs.showOKDialog(stage, "Info", "Image loaded.");
-						}catch(Exception e){
-							e.printStackTrace();
-							Dialogs.showDetailsDialog(stage, "Error loading image!", "Info", e.getClass().getSimpleName() + ": " + e.getMessage());
-						}
-					}
-
-					@Override
-					public void canceled(){
-						currentChooser = null;
-					}
-				});
-				currentChooser = chooser;
-				stage.addActor(chooser.fadeIn());
-				chooser.setX(0);
-				
-			}
-		});
-		menu.add(load).size(height);
-
-		VisTextButton resize = new VisTextButton("resize");
-		resize.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				showSizeDialog("Resize Canvas", new SizeDialogListener(){
-					@Override
-					public void result(int width, int height){
-						drawgrid.setCanvas(drawgrid.canvas.asResized(width, height));
-					}
-				});
-			}
-		});
-
-		menu.add(resize).size(height);
-
-		VisTextButton newcanvas = new VisTextButton("new");
-		newcanvas.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				showSizeDialog("New Canvas", new SizeDialogListener(){
-					@Override
-					public void result(int width, int height){
-						PixelCanvas canvas = new PixelCanvas(width, height);
-						drawgrid.setCanvas(canvas);
-					}
-				});
-			}
-		});
-
-		menu.add(newcanvas).size(height);
-
-		float size = Gdx.graphics.getWidth() / menu.getCells().size;
-
-		for(Cell<?> cell : menu.getCells()){
-			cell.size(size);
-		}
-
-		ham.setOrigin(size / 2, size / 2);
-		ham.setRotation(90);
-		
-		*/
 		VisDialog filemenu = new VisDialog(""){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
@@ -784,65 +638,6 @@ public class GUI extends Module<PixelEditor>{
 		generator.dispose();
 	}
 
-	void showSizeDialog(String title, final SizeDialogListener listener){
-		final VisValidatableTextField widthfield = new VisValidatableTextField(new NumberValidator());
-		final VisValidatableTextField heightfield = new VisValidatableTextField(new NumberValidator());
-		widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
-		heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
-
-		widthfield.setText(drawgrid.canvas.width() + "");
-		heightfield.setText(drawgrid.canvas.height() + "");
-
-		TextFieldDialogListener.add(widthfield, true, 3);
-		TextFieldDialogListener.add(heightfield, true, 3);
-
-		final VisDialog dialog = new VisDialog(title, "dialog"){
-			protected void result(Object object){
-				if((Boolean)object != true) return;
-
-				try{
-					int width = Integer.parseInt(widthfield.getText());
-					int height = Integer.parseInt(heightfield.getText());
-
-					listener.result(width, height);
-				}catch(Exception e){
-					e.printStackTrace();
-					Dialogs.showDetailsDialog(stage, "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
-				}
-			}
-		};
-
-		dialog.getButtonsTable().addAction(new Action(){
-			@Override
-			public boolean act(float delta){
-				Cell<?> cell = dialog.getButtonsTable().getCells().peek();
-				((Button)cell.getActor()).setDisabled( !widthfield.isInputValid() || !heightfield.isInputValid());
-				return false;
-			}
-		});
-
-		dialog.getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
-		dialog.getContentTable().add(widthfield).size(140, 40).padRight(50 * s).padTop(40 * s);
-
-		dialog.getContentTable().row();
-
-		dialog.getContentTable().add(new VisLabel("Height: ")).padLeft(50 * s).padTop(40 * s).padBottom(40f * s);
-		dialog.getContentTable().add(heightfield).size(140, 40).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
-
-		dialog.getContentTable().row();
-
-		Button cancel = new VisTextButton("Cancel");
-		Button ok = new VisTextButton("OK");
-
-		dialog.setObject(ok, true);
-		dialog.setObject(cancel, false);
-
-		dialog.getButtonsTable().add(cancel).size(130 * s, 60 * s);
-		dialog.getButtonsTable().add(ok).size(130 * s, 60 * s);
-		dialog.addCloseButton();
-
-		dialog.show(stage);
-	}
 
 	static class NumberValidator implements InputValidator{
 		@Override
@@ -851,10 +646,6 @@ public class GUI extends Module<PixelEditor>{
 			int i = Integer.parseInt(input);
 			return i > 0 && i < 1000;
 		}
-	}
-
-	static interface SizeDialogListener{
-		public void result(int width, int height);
 	}
 
 	public static class FitAction extends Action{
