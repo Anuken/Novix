@@ -186,12 +186,23 @@ public class DrawingGrid extends Actor{
 		}
 		
 		batch.setColor(Color.GRAY);
-		//draw edges
+		//draw screen edges
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 + min() / 2f, Gdx.graphics.getHeight() / 2 + min() / 2f, -min(), -2);
+	
 		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 + min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, 2, min());
 		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), 2);
+		
+		//draw pic edges
+		
+		batch.setColor(Color.CORAL);
+		
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), getY(), getWidth(), 2);
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), getY() + getHeight(), getWidth(), -2);
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), getY(), 2, getHeight());
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"),getX() + getWidth(), getY(), -2, getHeight());
 
+		
 		//draw cursor
 		if(cursormode || Gdx.input.isTouched()){
 			batch.setColor(Color.PURPLE);

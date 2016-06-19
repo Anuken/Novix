@@ -9,7 +9,6 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
@@ -145,10 +144,10 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			float newzoom = initzoom * s;
 			if(newzoom < drawgrid().maxAspectRatio()) newzoom = drawgrid().maxAspectRatio();
 			drawgrid().setZoom(newzoom);
-			toward.interpolate(to, s / 40f, Interpolation.linear);
+			//toward.interpolate(to, s / 40f, Interpolation.linear);
 
-			drawgrid().offsetx = toward.x;
-			drawgrid().offsety = toward.y;
+			//drawgrid().offsetx = toward.x;
+			//drawgrid().offsety = toward.y;
 			return false;
 		}
 
@@ -165,10 +164,15 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 				toward.set(drawgrid().offsetx, drawgrid().offsety);
 				to.x = (afirst.x - Gdx.graphics.getWidth() / 2) / drawgrid().zoom + drawgrid().offsetx;
 				to.y = ((Gdx.graphics.getHeight() - afirst.y) - Gdx.graphics.getHeight() / 2) / drawgrid().zoom + drawgrid().offsety;
-
 			}
 
 			lastpinch.sub(alast);
+			
+			Gdx.app.error("asdsaddsa", lastpinch + "");
+			Gdx.app.error("asdsaddsa", "offsetpre: " + drawgrid().offsetx + ", " + drawgrid().offsety);
+			drawgrid().moveOffset(lastpinch.x / drawgrid().zoom, -lastpinch.y / drawgrid().zoom);
+			Gdx.app.error("asdsaddsa", "offsetafter: " + drawgrid().offsetx + ", " + drawgrid().offsety);
+			
 
 			lastpinch = alast;
 
