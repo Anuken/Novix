@@ -30,8 +30,8 @@ public class DrawingGrid extends Actor{
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				if( !GUI.gui.tool.moveCursor()) return false;
+				touches ++;
 				if(cursormode){
-					touches ++;
 					if(moving){
 						GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, selected.x, selected.y);
 						return true;
@@ -179,7 +179,7 @@ public class DrawingGrid extends Actor{
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
 		//draw selection
-		if(cursormode || Gdx.input.isTouched()){
+		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
 			batch.setColor(Color.CORAL);
 			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
 			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
@@ -189,6 +189,12 @@ public class DrawingGrid extends Actor{
 		//draw screen edges
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 + min() / 2f, Gdx.graphics.getHeight() / 2 + min() / 2f, -min(), -2);
+		
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 + min() / 2f, min(), -2);
+		
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 + min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, -2, min());
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, 2, min());
 	
 		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 + min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, 2, min());
 		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), 2);
@@ -204,7 +210,7 @@ public class DrawingGrid extends Actor{
 
 		
 		//draw cursor
-		if(cursormode || Gdx.input.isTouched()){
+		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
 			batch.draw(Textures.get("cursor"), getX() + cursorx - 15, getY() + cursory - 15, 30, 30);
 		}
