@@ -111,6 +111,14 @@ public class PixelCanvas implements Disposable{
 	public PixelCanvas asResized(int newwidth, int newheight){
 		return new PixelCanvas(PixmapUtils.resize(pixmap, newwidth, newheight));
 	}
+	
+	public void drawPixmap(Pixmap pixmap){
+		for(int x = 0; x < width(); x ++){
+			for(int y = 0; y < height(); y ++){
+				//action.push(x, y, getColor(x,y), color.cpy());
+			}
+		}
+	}
 
 	@Override
 	public void dispose(){

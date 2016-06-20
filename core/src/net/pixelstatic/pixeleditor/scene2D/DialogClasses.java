@@ -1,9 +1,12 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
@@ -67,9 +70,11 @@ public class DialogClasses{
 		public FlipDialog(){
 			super("Flip Image");
 			
-			
-			hbox = new VisCheckBox("Flip Horizontally");
+
 			vbox = new VisCheckBox("Flip Vertically");
+			hbox = new VisCheckBox("Flip Horizontally");
+			
+			new ButtonGroup<VisCheckBox>(hbox, vbox);
 			
 			hbox.setChecked(true);
 			
@@ -87,7 +92,9 @@ public class DialogClasses{
 		}
 		
 		public void result(){
-			
+			Pixmap pixmap = Filter.flip.apply(GUI.gui.drawgrid.canvas.pixmap, vbox.isChecked());
+			GUI.gui.drawgrid.canvas.drawPixmap(pixmap);
+			pixmap.dispose();
 		}
 	}
 	

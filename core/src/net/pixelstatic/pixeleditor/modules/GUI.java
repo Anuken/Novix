@@ -271,6 +271,9 @@ public class GUI extends Module<PixelEditor>{
 		});
 		
 		final VisCheckBox grid = new VisCheckBox("Grid");
+		
+		grid.getImageStackCell().size(40*s);
+		
 		grid.setChecked(true);
 		
 		grid.addListener(new ChangeListener(){
@@ -281,8 +284,12 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		final VisRadioButton cbox = new VisRadioButton("cursor mode");
+		final VisRadioButton tbox = new VisRadioButton("tap mode");
+		
 		cbox.setChecked(true);
-		VisRadioButton tbox = new VisRadioButton("tap mode");
+		
+		cbox.getImageStackCell().size(40*s);
+		tbox.getImageStackCell().size(40*s);
 
 		new ButtonGroup<VisRadioButton>(cbox, tbox);
 		cbox.addListener(new ChangeListener(){
@@ -369,7 +376,7 @@ public class GUI extends Module<PixelEditor>{
 		optionstable = extradialog.getContentTable();
 		tooloptiontable = new VisTable();
 		extratooltable = new VisTable();
-		optionstable.add(tooloptiontable);
+		optionstable.add(tooloptiontable).minWidth(150*s);
 		optionstable.add(extratooltable).expand().fill();
 		optionstable.row();
 		menutable.clear();
@@ -475,6 +482,7 @@ public class GUI extends Module<PixelEditor>{
 		filemenu.setMovable(false);
 
 		final CollapseButton expander = new CollapseButton();
+		expander.flip();
 
 		colortable.add(expander).expandX().fillX().colspan(10).height(MiscUtils.densityScale(50f));
 
