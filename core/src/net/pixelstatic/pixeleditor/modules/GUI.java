@@ -36,7 +36,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.util.InputValidator;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 import com.kotcrab.vis.ui.widget.color.ColorPicker;
@@ -381,12 +380,12 @@ public class GUI extends Module<PixelEditor>{
 
 		collapser.setCollapsed(true);
 
-		final VisTextButton expandbutton = new VisTextButton("^");
+		final CollapseButton expandbutton = new CollapseButton();
 		expandbutton.setColor(Color.LIGHT_GRAY);
 		expandbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				collapser.setCollapsed( !collapser.isCollapsed());
-				expandbutton.setText(collapser.isCollapsed() ? "^" : "v");
+				expandbutton.flip();
 			}
 		});
 
@@ -475,7 +474,7 @@ public class GUI extends Module<PixelEditor>{
 
 		filemenu.setMovable(false);
 
-		final VisTextButton expander = new VisTextButton("v");
+		final CollapseButton expander = new CollapseButton();
 
 		colortable.add(expander).expandX().fillX().colspan(10).height(MiscUtils.densityScale(50f));
 
@@ -490,7 +489,7 @@ public class GUI extends Module<PixelEditor>{
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 				}
 				collapser.setCollapsed( !collapser.isCollapsed());
-				expander.setText(collapser.isCollapsed() ? "v" : "^");
+				expander.flip();
 			}
 		});
 
@@ -638,21 +637,27 @@ public class GUI extends Module<PixelEditor>{
 		generator.dispose();
 	}
 
-
-	static class NumberValidator implements InputValidator{
-		@Override
-		public boolean validateInput(String input){
-			if(input.equals("")) return false;
-			int i = Integer.parseInt(input);
-			return i > 0 && i < 1000;
+	static class CollapseButton extends VisImageButton{
+		Drawable up = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-up")));
+		Drawable down = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-down")));
+		
+		public CollapseButton(){
+			super("default");
+			setStyle(new VisImageButtonStyle(getStyle()));
+			this.getImageCell().size(getHeight());
+			set(up);
 		}
-	}
-
-	public static class FitAction extends Action{
-		@Override
-		public boolean act(float delta){
-			this.getActor().setWidth(Gdx.graphics.getWidth());
-			return false;
+		
+		public void flip(){
+			if(getStyle().imageUp == up){
+				 set(down);
+			}else{
+				 set(up);
+			}
+		}
+		
+		private void set(Drawable d){
+			getStyle().imageUp = d;
 		}
 	}
 

@@ -5,6 +5,7 @@ import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
 
@@ -41,8 +42,7 @@ public class DialogClasses{
 			addButtons();
 		}
 		
-		protected void result(Object object){
-			if((Boolean)object != true) return;
+		public void result(){
 
 			try{
 				int width = Integer.parseInt(widthfield.getText());
@@ -62,18 +62,31 @@ public class DialogClasses{
 	}
 	
 	public static class FlipDialog extends MenuDialog{
+		VisCheckBox hbox, vbox;
+		
 		public FlipDialog(){
 			super("Flip Image");
 			
-			final VisCheckBox hbox = new VisCheckBox("Flip Horizontal");
-			final VisCheckBox vbox = new VisCheckBox("Flip Vertical");
+			
+			hbox = new VisCheckBox("Flip Horizontally");
+			vbox = new VisCheckBox("Flip Vertically");
+			
+			hbox.setChecked(true);
+			
+			hbox.getImageStackCell().size(40*s);
+			vbox.getImageStackCell().size(40*s);
 			
 			Table table = getContentTable();
 			
-			table.add(hbox).row();
-			table.add(vbox);
+			table.add(vbox).align(Align.left).row();
+			table.add(hbox).align(Align.left).padTop(10*s).padBottom(10*s);
+			
 			
 			addButtons();
+			
+		}
+		
+		public void result(){
 			
 		}
 	}
@@ -98,14 +111,12 @@ public class DialogClasses{
 		}
 		
 		protected void result(Object object){
-			if((Boolean)object != true) return;
+			if((Boolean)object == true) result();
 
-			try{
-				
-			}catch(Exception e){
-				e.printStackTrace();
-				Dialogs.showDetailsDialog(getStage(), "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
-			}
+		}
+		
+		public void result(){
+			
 		}
 	}
 }

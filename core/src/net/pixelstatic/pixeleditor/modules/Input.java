@@ -168,10 +168,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 			lastpinch.sub(alast);
 			
-			Gdx.app.error("asdsaddsa", lastpinch + "");
-			Gdx.app.error("asdsaddsa", "offsetpre: " + drawgrid().offsetx + ", " + drawgrid().offsety);
 			drawgrid().moveOffset(lastpinch.x / drawgrid().zoom, -lastpinch.y / drawgrid().zoom);
-			Gdx.app.error("asdsaddsa", "offsetafter: " + drawgrid().offsetx + ", " + drawgrid().offsety);
 			
 
 			lastpinch = alast;
