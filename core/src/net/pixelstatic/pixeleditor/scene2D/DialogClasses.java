@@ -76,7 +76,7 @@ public class DialogClasses{
 			
 			new ButtonGroup<VisCheckBox>(hbox, vbox);
 			
-			hbox.setChecked(true);
+			vbox.setChecked(true);
 			
 			hbox.getImageStackCell().size(40*s);
 			vbox.getImageStackCell().size(40*s);

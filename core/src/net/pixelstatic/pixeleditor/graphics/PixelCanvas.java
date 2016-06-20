@@ -35,7 +35,7 @@ public class PixelCanvas implements Disposable{
 	}
 	
 	public void drawPixel(int x, int y){
-		action.push(x, y, getColor(x,y), color.cpy());
+		action.push(x, y, getIntColor(x,y), Color.rgba8888(color));
 		pixmap.drawPixel(x, height() -1 - y); 
 		if(!MathUtils.isEqual(alpha, 1f)){
 			Pixmap.setBlending(Blending.None);
@@ -59,13 +59,17 @@ public class PixelCanvas implements Disposable{
 		drawPixel(x, y); 
 	}
 	
-	public void drawPixelActionless(int x, int y, Color color){
+	public void drawPixelActionless(int x, int y, int color){
 		pixmap.setColor(color);
 		pixmap.drawPixel(x, height() -1 - y); 
 	}
 	
 	public Color getColor(int x, int y){
 		return new Color(pixmap.getPixel(x, height() -1 - y));
+	}
+	
+	public int getIntColor(int x, int y){
+		return pixmap.getPixel(x, height() -1 - y);
 	}
 	
 	public void setAlpha(float alpha){
@@ -115,9 +119,16 @@ public class PixelCanvas implements Disposable{
 	public void drawPixmap(Pixmap pixmap){
 		for(int x = 0; x < width(); x ++){
 			for(int y = 0; y < height(); y ++){
-				//action.push(x, y, getColor(x,y), color.cpy());
+				action.push(x, y, getIntColor(x,y), pixmap.getPixel(x, height() - 1 - y));
 			}
 		}
+		
+		Pixmap.setBlending(Blending.None);
+		this.pixmap.drawPixmap(pixmap, 0, 0);
+		Pixmap.setBlending(Blending.SourceOver);
+		
+		
+		updateAndPush();
 	}
 
 	@Override

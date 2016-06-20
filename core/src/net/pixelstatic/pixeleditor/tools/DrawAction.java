@@ -4,7 +4,6 @@ import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.utils.Pos;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -13,7 +12,8 @@ import com.badlogic.gdx.utils.ObjectMap.Keys;
 public class DrawAction{
 	public ObjectMap<Integer, ColorPair> positions = new ObjectMap<Integer, ColorPair>();
 
-	public void push(int x, int y, Color from, Color to){
+	public void push(int x, int y, int from, int to){
+		if(from == to) return; //ignore action that doesn't do anything
 		int key = Pos.asInt(x, y, GUI.gui.drawgrid.canvas.width());
 		if(positions.containsKey(key)){
 			ColorPair pos = positions.get(key);
@@ -46,10 +46,10 @@ public class DrawAction{
 	}
 
 	class ColorPair{
-		Color fromcolor;
-		Color tocolor;
+		int fromcolor;
+		int tocolor;
 
-		public ColorPair(Color fromcolor, Color tocolor){
+		public ColorPair(int fromcolor, int tocolor){
 			this.fromcolor = fromcolor;
 			this.tocolor = tocolor;
 		}
