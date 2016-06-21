@@ -13,11 +13,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.kotcrab.vis.ui.VisUI;
 
 public class DrawingGrid extends Actor{
 	public PixelCanvas canvas;
 	public Pos selected = new Pos();
+	GridImage image;
 	public boolean grid = true, cursormode = true;;
 	private float cursorx, cursory;
 	int tpointer;
@@ -27,6 +27,7 @@ public class DrawingGrid extends Actor{
 	public boolean clip = true;
 
 	public DrawingGrid(){
+		image = new GridImage(1,1);
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				if( !GUI.gui.tool.moveCursor()) return false;
@@ -147,6 +148,7 @@ public class DrawingGrid extends Actor{
 		selected.set(cursorx / canvasScale(), cursory / canvasScale());
 		offsetx = getWidth() / 2;
 		offsety = getHeight() / 2;
+		image.setImageSize(canvas.width(), canvas.height());
 	}
 
 	public void updateCursorSelection(){
@@ -173,7 +175,9 @@ public class DrawingGrid extends Actor{
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
 		if(grid){
-			batch.draw(Textures.get(gridtype), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+			image.setBounds(getX(), getY(), getWidth(), getHeight());
+			image.draw(batch, parentAlpha);
+		//	batch.draw(Textures.get(gridtype), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 		}
 
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
@@ -186,25 +190,14 @@ public class DrawingGrid extends Actor{
 		}
 		
 		batch.setColor(Color.GRAY);
+		
 		//draw screen edges
-		
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 + min() / 2f, min(), -2);
-		
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 + min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, -2, min());
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, 2, min());
-	
-		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 + min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, 2, min());
-		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth()/2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), 2);
-		
-		//draw pic edges
+		MiscUtils.drawBorder(batch, Gdx.graphics.getWidth() / 2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), min(), 2);
 		
 		batch.setColor(Color.CORAL);
 		
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), getY(), getWidth(), 2);
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), getY() + getHeight(), getWidth(), -2);
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), getY(), 2, getHeight());
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"),getX() + getWidth(), getY(), -2, getHeight());
+		//draw pic edges
+		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2);
 
 		
 		//draw cursor

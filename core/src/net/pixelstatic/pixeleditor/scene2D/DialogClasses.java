@@ -3,6 +3,7 @@ package net.pixelstatic.pixeleditor.scene2D;
 import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.graphics.PixmapUtils;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,13 +18,13 @@ import com.kotcrab.vis.ui.widget.*;
 
 public class DialogClasses{
 	static float s = GUI.s;
-	
+
 	public static class SizeDialog extends MenuDialog{
 		VisTextField widthfield, heightfield;
-		
+
 		public SizeDialog(String title){
 			super(title);
-			
+
 			widthfield = new VisTextField();
 			heightfield = new VisTextField();
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
@@ -34,7 +35,7 @@ public class DialogClasses{
 
 			TextFieldDialogListener.add(widthfield, true, 3);
 			TextFieldDialogListener.add(heightfield, true, 3);
-			
+
 			getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
 			getContentTable().add(widthfield).size(140, 40).padRight(50 * s).padTop(40 * s);
 
@@ -44,10 +45,10 @@ public class DialogClasses{
 			getContentTable().add(heightfield).size(140, 40).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
-			
+
 			addButtons();
 		}
-		
+
 		public void result(){
 
 			try{
@@ -60,102 +61,126 @@ public class DialogClasses{
 				Dialogs.showDetailsDialog(getStage(), "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
 			}
 		}
-		
+
 		public void result(int width, int height){
-			
+
 		}
-		
+
 	}
-	
-	public static class FlipDialog extends MenuDialog{
+
+	public static class FlipDialog extends FilterDialog{
 		VisCheckBox hbox, vbox;
-		
+
 		public FlipDialog(){
-			super("Flip Image");
-			
+			super(Filter.flip, "Flip Image");
 
 			vbox = new VisCheckBox("Flip Vertically");
 			hbox = new VisCheckBox("Flip Horizontally");
-			
+
 			new ButtonGroup<VisCheckBox>(hbox, vbox);
-			
+
 			vbox.setChecked(true);
+
+			ChangeListener listener = new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					updatePreview();
+				}
+			};
 			
-			hbox.getImageStackCell().size(40*s);
-			vbox.getImageStackCell().size(40*s);
-			
+			hbox.addListener(listener);
+			vbox.addListener(listener);
+
+			hbox.getImageStackCell().size(40 * s);
+			vbox.getImageStackCell().size(40 * s);
+
 			Table table = getContentTable();
-			
+
 			table.add(vbox).align(Align.left).row();
-			table.add(hbox).align(Align.left).padTop(10*s).padBottom(10*s);
-			
-			
+			table.add(hbox).align(Align.left).padTop(10 * s).padBottom(10 * s);
+
 			addButtons();
-			
 		}
-		
-		public void result(){
-			Pixmap pixmap = Filter.flip.apply(GUI.gui.drawgrid.canvas.pixmap, vbox.isChecked());
-			GUI.gui.drawgrid.canvas.drawPixmap(pixmap);
-			pixmap.dispose();
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{vbox.isChecked()};
 		}
 	}
-	
-	public static class RotateDialog extends MenuDialog{
-		public VisSlider slider;
-		
-		public RotateDialog(){
-			super("Rotate Image");
-			
-			final VisLabel label = new VisLabel("Rotation: 0.0");
-			
-			final RotatedImage rotimage = new RotatedImage();
-			/*
-			Stack stack = new Stack();
-			
-			final Image image = new Image(GUI.gui.drawgrid.canvas.texture);
-			final AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 
-			stack.add(alpha);
-			stack.add(image);
-			*/
-			Table imagetable = new VisTable();
-			imagetable.setClip(true);
-			imagetable.add(rotimage).expand().fill();
-			
-			slider = new VisSlider(0, 360, 0.001f, false);
-			
+	public static class RotateDialog extends FilterDialog{
+		VisSlider slider;
+
+		public RotateDialog(){
+			super(Filter.rotate, "Rotate Image");
+
+			final VisLabel label = new VisLabel("Rotation: 0.0");
+
+			slider = new VisSlider(0, 360, 5f, false);
+
 			slider.addListener(new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					label.setText("Rotation: " + MiscUtils.limit(slider.getValue() + "", 5));
-					rotimage.setImageRotation(slider.getValue());
+					updatePreview();
 				}
 			});
-			
-			getContentTable().add(imagetable).size(200, 200).row();
-			rotimage.getImage().setOrigin(100, 100);
-			getContentTable().add(label).align(Align.left).padTop(20).row();
-			getContentTable().add(slider).expand().fill().padBottom(30).padTop(5);
-			
+
+			getContentTable().add(label).align(Align.left).padTop(20 * s).row();
+			getContentTable().add(slider).expand().fill().padBottom(30 * s).padTop(5 * s);
+
 			addButtons();
-			
 		}
-		
-		public void result(){
-			Pixmap pixmap = Filter.rotate.apply(GUI.gui.drawgrid.canvas.pixmap, slider.getValue());
-			GUI.gui.drawgrid.canvas.drawPixmap(pixmap);
-			pixmap.dispose();
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{slider.getValue()};
 		}
 	}
-	
-	
+
+	public abstract static class FilterDialog extends MenuDialog{
+		private Filter filter;
+		ImagePreview preview;
+
+		public FilterDialog(Filter filter, String title){
+			super(title);
+			this.filter = filter;
+			preview = new ImagePreview(PixmapUtils.copy(sourcePixmap()));
+
+			float isize = 400;
+			getContentTable().add(preview).size(isize, isize).padTop(3).row();
+
+		}
+
+		abstract Object[] getArgs();
+
+		public void updatePreview(){
+			filter.apply(sourcePixmap(), pixmap(), getArgs());
+			preview.image.updateTexture();
+		}
+
+		public final void result(){
+			filter.apply(sourcePixmap(), pixmap(), getArgs());
+			GUI.gui.drawgrid.canvas.drawPixmap(pixmap());
+			pixmap().dispose();
+		}
+
+		public Pixmap sourcePixmap(){
+			return GUI.gui.drawgrid.canvas.pixmap;
+		}
+
+		public Pixmap pixmap(){
+			return preview.image.pixmap;
+		}
+
+	}
+
 	public static abstract class MenuDialog extends VisDialog{
-		
+
 		public MenuDialog(String title){
 			super(title, "dialog");
 		}
-		
+
 		void addButtons(){
 			Button cancel = new VisTextButton("Cancel");
 			Button ok = new VisTextButton("OK");
@@ -167,14 +192,14 @@ public class DialogClasses{
 			getButtonsTable().add(ok).size(130 * s, 60 * s);
 			addCloseButton();
 		}
-		
+
 		protected void result(Object object){
 			if((Boolean)object == true) result();
 
 		}
-		
+
 		public void result(){
-			
+
 		}
 	}
 }
