@@ -187,8 +187,6 @@ public class DrawingGrid extends Actor{
 		
 		batch.setColor(Color.GRAY);
 		//draw screen edges
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 + min() / 2f, Gdx.graphics.getHeight() / 2 + min() / 2f, -min(), -2);
 		
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), 2);
 		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 + min() / 2f, min(), -2);

@@ -119,6 +119,9 @@ public class DialogClasses{
 			stack.add(alpha);
 			stack.add(image);
 			*/
+			Table imagetable = new VisTable();
+			imagetable.setClip(true);
+			imagetable.add(rotimage).expand().fill();
 			
 			slider = new VisSlider(0, 360, 0.001f, false);
 			
@@ -130,7 +133,7 @@ public class DialogClasses{
 				}
 			});
 			
-			getContentTable().add(rotimage).size(200, 200).row();
+			getContentTable().add(imagetable).size(200, 200).row();
 			rotimage.getImage().setOrigin(100, 100);
 			getContentTable().add(label).align(Align.left).padTop(20).row();
 			getContentTable().add(slider).expand().fill().padBottom(30).padTop(5);

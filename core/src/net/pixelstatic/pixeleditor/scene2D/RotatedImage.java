@@ -1,7 +1,9 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
 import net.pixelstatic.pixeleditor.modules.GUI;
+import net.pixelstatic.utils.MiscUtils;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -25,9 +27,13 @@ public class RotatedImage extends Actor{
 		stack.setBounds(getX(), getY(), getWidth(), getHeight());
 		batch.flush();
 		
-		clipBegin(getX(), getY(), getWidth(), getHeight());
+	//	clipBegin(getX(), getY(), getWidth(), getHeight());
 		stack.draw(batch, alpha);
-		clipEnd();
+		
+		batch.setColor(Color.CORAL);
+		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight());
+		batch.setColor(Color.WHITE);
+		//clipEnd();
 	}
 	
 	public Image getImage(){
