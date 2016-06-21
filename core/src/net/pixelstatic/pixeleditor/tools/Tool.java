@@ -23,11 +23,13 @@ public enum Tool{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			Pixmap.setBlending(Blending.None);
-			canvas.setColor(Color.CLEAR);
+			
+			canvas.setColor(Color.CLEAR, true);
+			
 			canvas.drawRadius(x, y, GUI.gui.getBrushSize());
 
 			Pixmap.setBlending(Blending.SourceOver);
-			canvas.updateTexture();
+			
 		}
 	},
 	fill(true, false){

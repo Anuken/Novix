@@ -17,23 +17,24 @@ public class RotatedImage extends Actor{
 		stack = new Stack();
 		
 		image = new Image(GUI.gui.drawgrid.canvas.texture);
+		
 		AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 
 		stack.add(alpha);
 		stack.add(image);
+		
 	}
 	
 	public void draw(Batch batch, float alpha){
 		stack.setBounds(getX(), getY(), getWidth(), getHeight());
-		batch.flush();
 		
-	//	clipBegin(getX(), getY(), getWidth(), getHeight());
+		
 		stack.draw(batch, alpha);
 		
 		batch.setColor(Color.CORAL);
 		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight());
 		batch.setColor(Color.WHITE);
-		//clipEnd();
+		
 	}
 	
 	public Image getImage(){

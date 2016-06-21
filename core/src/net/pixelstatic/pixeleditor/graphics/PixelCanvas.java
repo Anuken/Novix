@@ -78,8 +78,12 @@ public class PixelCanvas implements Disposable{
 	}
 	
 	public void setColor(Color color){
+		setColor(color, false);
+	}
+	
+	public void setColor(Color color, boolean ignoreAlpha){
 		this.color = color;
-		color.a = alpha;
+		if(!ignoreAlpha)color.a = alpha;
 		blank.setColor(color);
 		
 		Pixmap.setBlending(Blending.None);
