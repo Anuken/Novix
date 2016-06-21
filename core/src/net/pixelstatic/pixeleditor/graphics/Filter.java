@@ -24,9 +24,24 @@ public enum Filter{
 			
 			return pixmap;
 		}
+	}, 
+	rotate{
+		@Override
+		public Pixmap apply(Pixmap input, Object...args){
+			Pixmap pixmap = new Pixmap(input.getWidth(), input.getHeight(), Format.RGBA8888);
+			
+			return pixmap;
+		}
+	}, 
+	scale{
+		@Override
+		public Pixmap apply(Pixmap pixmap, Object...args){
+			// TODO Auto-generated method stub
+			return null;
+		}
 	};
 	
-	public abstract Pixmap apply(Pixmap pixmap, Object... args);
+	public abstract Pixmap apply(Pixmap input, Object... args);
 		
 	
 }

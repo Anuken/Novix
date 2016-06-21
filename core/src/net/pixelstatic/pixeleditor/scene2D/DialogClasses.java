@@ -2,12 +2,15 @@ package net.pixelstatic.pixeleditor.scene2D;
 
 import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.modules.GUI;
+import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
@@ -93,6 +96,51 @@ public class DialogClasses{
 		
 		public void result(){
 			Pixmap pixmap = Filter.flip.apply(GUI.gui.drawgrid.canvas.pixmap, vbox.isChecked());
+			GUI.gui.drawgrid.canvas.drawPixmap(pixmap);
+			pixmap.dispose();
+		}
+	}
+	
+	public static class RotateDialog extends MenuDialog{
+		public VisSlider slider;
+		
+		public RotateDialog(){
+			super("Rotate Image");
+			
+			final VisLabel label = new VisLabel("Rotation: 0.0");
+			
+			final RotatedImage rotimage = new RotatedImage();
+			/*
+			Stack stack = new Stack();
+			
+			final Image image = new Image(GUI.gui.drawgrid.canvas.texture);
+			final AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
+
+			stack.add(alpha);
+			stack.add(image);
+			*/
+			
+			slider = new VisSlider(0, 360, 0.001f, false);
+			
+			slider.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					label.setText("Rotation: " + MiscUtils.limit(slider.getValue() + "", 5));
+					rotimage.setImageRotation(slider.getValue());
+				}
+			});
+			
+			getContentTable().add(rotimage).size(200, 200).row();
+			rotimage.getImage().setOrigin(100, 100);
+			getContentTable().add(label).align(Align.left).padTop(20).row();
+			getContentTable().add(slider).expand().fill().padBottom(30).padTop(5);
+			
+			addButtons();
+			
+		}
+		
+		public void result(){
+			Pixmap pixmap = Filter.rotate.apply(GUI.gui.drawgrid.canvas.pixmap, slider.getValue());
 			GUI.gui.drawgrid.canvas.drawPixmap(pixmap);
 			pixmap.dispose();
 		}

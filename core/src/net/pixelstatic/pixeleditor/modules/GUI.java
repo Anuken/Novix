@@ -6,6 +6,7 @@ import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
@@ -131,7 +132,7 @@ public class GUI extends Module<PixelEditor>{
 		transformMenu.addItem(new ExtraMenuItem("rotate", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-
+				new RotateDialog().show(stage);
 			}
 		}));
 		transformMenu.addItem(new ExtraMenuItem("scale", new ChangeListener(){
@@ -264,8 +265,7 @@ public class GUI extends Module<PixelEditor>{
 		alpha.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				String string = alpha.getSelection() + "";
-				opacity.setText("opacity: " + string.substring(0, Math.min(string.length(), 5)));
+				opacity.setText("opacity: " + MiscUtils.limit(alpha.getSelection() + "",5));
 				drawgrid.canvas.setAlpha(alpha.getSelection());
 			}
 		});
