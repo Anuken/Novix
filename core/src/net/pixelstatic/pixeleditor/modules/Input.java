@@ -84,7 +84,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	public boolean scrolled(int amount){
 		//PC only
 		float newzoom = this.<GUI>getModule(GUI.class).drawgrid.zoom - amount / 10f;
-		if(newzoom >= 1) this.<GUI>getModule(GUI.class).drawgrid.setZoom(newzoom);
+		this.<GUI>getModule(GUI.class).drawgrid.setZoom(newzoom);
 		return false;
 	}
 
@@ -97,10 +97,6 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean touchDown(float x, float y, int pointer, int button){
-			//if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
-			//	DrawingGrid grid = drawgrid();
-			//	grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
-			//}
 			initzoom = input.<GUI>getModule(GUI.class).drawgrid.zoom;
 			return false;
 		}

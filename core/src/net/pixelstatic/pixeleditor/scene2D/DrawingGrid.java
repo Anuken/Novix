@@ -114,6 +114,8 @@ public class DrawingGrid extends Actor{
 	}
 
 	public void setZoom(float newzoom){
+		if(newzoom < maxAspectRatio()) newzoom = maxAspectRatio();
+		
 		cursorx *= (newzoom / zoom);
 		cursory *= (newzoom / zoom);
 
@@ -242,13 +244,7 @@ public class DrawingGrid extends Actor{
 		if(aspectRatio() <= 1f){
 			if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight() / 2 - getHeight() - colorheight) / zoom;
 			if(getY() > toolheight) offsety = (Gdx.graphics.getHeight() / 2 - toolheight) / zoom;
-
-			//if(aspectRatio() < 1f){
-			//	if(getX() + getWidth() > Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth()/2 - getWidth())/zoom;
-			//	if(getX() < 0) offsetx = Gdx.graphics.getWidth()/2/zoom;
-			//}
 		}
-
 	}
 
 	public void updateSize(){

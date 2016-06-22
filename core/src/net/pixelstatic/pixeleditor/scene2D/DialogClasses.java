@@ -68,14 +68,34 @@ public class DialogClasses{
 	}
 	
 	public static class DesaturateDialog extends FilterDialog{
+		VisSlider slider;
 		
 		public DesaturateDialog(){
-			super(Filter.desaturate, "Rotate Image");
+			super(Filter.contrast, "Change Image Contrast");
+			
+			final VisLabel label = new VisLabel("Contrast: 0");
+			
+			slider = new VisSlider(-50f, 50, 1f, false);
+			
+			slider.setValue(0f);
+			
+			slider.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					label.setText("Contrast: " + slider.getValue());
+					updatePreview();
+				}
+			});
+			
+			getContentTable().add(label).align(Align.left).row();;
+			getContentTable().add(slider).expand().fill();
+			
+			updatePreview();
 		}
 
 		@Override
 		Object[] getArgs(){
-			return new Object[]{};
+			return new Object[]{slider.getValue()/50f};
 		}
 	}
 	
@@ -122,9 +142,9 @@ public class DialogClasses{
 			sslider.addListener(listener);
 			bslider.addListener(listener);
 			
-			hslider.setValue(360f);
-			sslider.setValue(100f);
-			bslider.setValue(100f);
+			hslider.setValue(180f);
+			sslider.setValue(50f);
+			bslider.setValue(50f);
 			
 			getContentTable().add(hlabel).align(Align.left).padTop(5).row();
 			getContentTable().add(hslider).expand().fill().row();

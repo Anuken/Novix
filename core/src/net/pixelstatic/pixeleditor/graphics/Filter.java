@@ -43,25 +43,26 @@ public enum Filter{
 	},
 	colorize{
 		float[] hsb = new float[3];
-		
+
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
-			float h = (Float)args[0],s = (Float)args[1],b = (Float)args[2];
-			java.awt.Color.RGBtoHSB((int)(color.r*255), (int)(color.g*255), (int)(color.b*255), hsb);
-			
-			hsb[0] = h;
-			hsb[1] *= s;
-			hsb[2] *= b;
-			
-			
-			ColorUtils.HSVtoRGB(hsb[0]*360f, hsb[1]*100f, hsb[2]*100f, color);
-		
+			float h = (Float)args[0], s = (Float)args[1], b = (Float)args[2];
+			java.awt.Color.RGBtoHSB((int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255), hsb);
+
+			hsb[0] += h-0.5f;
+			if(hsb[0] < 0) hsb[0] += 1f;
+			if(hsb[0] > 1f) hsb[0] -= 1f;
+			hsb[1] *= s * 2f;
+			hsb[2] *= b * 2f;
+
+			ColorUtils.HSVtoRGB(hsb[0] * 360f, hsb[1] * 100f, hsb[2] * 100f, color);
+
 			pixmap.setColor(color);
 			pixmap.drawPixel(x, y);
 		}
 	},
 	invert{
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
-			color.set(1f-color.r, 1f-color.g, 1f-color.b, color.a);
+			color.set(1f - color.r, 1f - color.g, 1f - color.b, color.a);
 			pixmap.setColor(color);
 			pixmap.drawPixel(x, y);
 		}
@@ -70,20 +71,33 @@ public enum Filter{
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
 			Color from = (Color)args[0];
 			Color to = (Color)args[1];
-			
+
 			if(color.equals(from)){
 				pixmap.setColor(to);
 				pixmap.drawPixel(x, y);
 			}
 		}
 	},
-	desaturate{
+	contrast{
 		@Override
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
+			float contrast = (Float)args[0];
+			
+			float f = 0.44f;
+			float factor = (259 / 255f * (contrast + 1f)) / (1f * (259 / 255f - contrast));
+			float newRed = (factor * (color.r - f) + f);
+			float newGreen = (factor * (color.g - f) + f);
+			float newBlue = (factor * (color.b - f) + f);
+
+			pixmap.setColor(color.set(newRed, newGreen, newBlue, color.a));
+			pixmap.drawPixel(x, y);
+
+			/*
 			float i = (color.r + color.g + color.b)/3f;
 			color.set(i, i, i, color.a);
 			pixmap.setColor(color);
 			pixmap.drawPixel(x, y);
+			*/
 		}
 	};
 	protected static Color color = new Color();

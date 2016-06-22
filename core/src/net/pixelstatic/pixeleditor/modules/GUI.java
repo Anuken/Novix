@@ -123,7 +123,7 @@ public class GUI extends Module<PixelEditor>{
 				new ReplaceDialog().show(stage);
 			}
 		}));
-		filterMenu.addItem(new ExtraMenuItem("desaturate", new ChangeListener(){
+		filterMenu.addItem(new ExtraMenuItem("contrast", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new DesaturateDialog().show(stage);
