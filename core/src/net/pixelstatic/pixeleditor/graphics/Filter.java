@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.math.Vector2;
+import com.kotcrab.vis.ui.util.ColorUtils;
 
 public enum Filter{
 	flip{
@@ -41,8 +42,21 @@ public enum Filter{
 		}
 	},
 	colorize{
+		float[] hsb = new float[3];
+		
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
+			float h = (Float)args[0],s = (Float)args[1],b = (Float)args[2];
+			java.awt.Color.RGBtoHSB((int)(color.r*255), (int)(color.g*255), (int)(color.b*255), hsb);
 			
+			hsb[0] = h;
+			hsb[1] *= s;
+			hsb[2] *= b;
+			
+			
+			ColorUtils.HSVtoRGB(hsb[0]*360f, hsb[1]*100f, hsb[2]*100f, color);
+		
+			pixmap.setColor(color);
+			pixmap.drawPixel(x, y);
 		}
 	},
 	invert{
@@ -54,13 +68,22 @@ public enum Filter{
 	},
 	replace{
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
-
+			Color from = (Color)args[0];
+			Color to = (Color)args[1];
+			
+			if(color.equals(from)){
+				pixmap.setColor(to);
+				pixmap.drawPixel(x, y);
+			}
 		}
 	},
 	desaturate{
 		@Override
-		protected void applyTo(Pixmap input, Pixmap pixmap, Object...args){
-
+		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
+			float i = (color.r + color.g + color.b)/3f;
+			color.set(i, i, i, color.a);
+			pixmap.setColor(color);
+			pixmap.drawPixel(x, y);
 		}
 	};
 	protected static Color color = new Color();

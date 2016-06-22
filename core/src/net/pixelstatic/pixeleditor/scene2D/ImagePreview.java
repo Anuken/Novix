@@ -23,7 +23,7 @@ public class ImagePreview extends Actor{
 
 		stack.add(alpha);
 		stack.add(image);
-		stack.add(grid);
+		if(GUI.gui.drawgrid.grid)stack.add(grid);
 		
 	}
 	

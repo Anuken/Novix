@@ -70,7 +70,7 @@ public class DialogClasses{
 	public static class DesaturateDialog extends FilterDialog{
 		
 		public DesaturateDialog(){
-			super(Filter.invert, "Rotate Image");
+			super(Filter.desaturate, "Rotate Image");
 		}
 
 		@Override
@@ -82,7 +82,9 @@ public class DialogClasses{
 	public static class ReplaceDialog extends FilterDialog{
 		
 		public ReplaceDialog(){
-			super(Filter.invert, "Rotate Image");
+			super(Filter.replace, "Rotate Image");
+			
+			updatePreview();
 		}
 
 		@Override
@@ -92,9 +94,28 @@ public class DialogClasses{
 	}
 	
 	public static class ColorizeDialog extends FilterDialog{
+		VisSlider hslider;
+		VisSlider sslider;
+		VisSlider bslider;
 		
 		public ColorizeDialog(){
-			super(Filter.invert, "Rotate Image");
+			super(Filter.colorize, "Colorize Image");
+			
+			hslider = new VisSlider(0, 360, 1f, false);
+			sslider = new VisSlider(0, 100, 1f, false);
+			bslider = new VisSlider(0, 100, 1f, false);
+			
+			VisLabel hlabel = new VisLabel("Hue:"), slabel = new VisLabel("Saturation:"), blabel = new VisLabel("Brightness:");
+			
+			
+			getContentTable().add(hlabel).align(Align.left).padTop(5).row();
+			getContentTable().add(hslider).expand().fill().row();
+
+			getContentTable().add(slabel).align(Align.left).padTop(5).row();
+			getContentTable().add(sslider).expand().fill().row();
+
+			getContentTable().add(blabel).align(Align.left).padTop(5).row();
+			getContentTable().add(bslider).expand().fill();
 		}
 
 		@Override
@@ -105,8 +126,11 @@ public class DialogClasses{
 	
 	public static class InvertDialog extends FilterDialog{
 		
+		
 		public InvertDialog(){
-			super(Filter.invert, "Rotate Image");
+			super(Filter.invert, "Invert Image");
+			
+			updatePreview();
 		}
 
 		@Override
@@ -145,6 +169,7 @@ public class DialogClasses{
 
 			table.add(vbox).align(Align.left).row();
 			table.add(hbox).align(Align.left).padTop(10 * s).padBottom(10 * s);
+			updatePreview();
 		}
 
 		@Override
@@ -160,7 +185,7 @@ public class DialogClasses{
 			super(Filter.rotate, "Rotate Image");
 
 			final VisLabel label = new VisLabel("Rotation: 0.0");
-
+			
 			slider = new VisSlider(0, 360, 5f, false);
 
 			slider.addListener(new ChangeListener(){
@@ -173,6 +198,7 @@ public class DialogClasses{
 
 			getContentTable().add(label).align(Align.left).padTop(20 * s).row();
 			getContentTable().add(slider).expand().fill().padBottom(30 * s).padTop(5 * s);
+			updatePreview();
 		}
 
 		@Override
@@ -200,7 +226,7 @@ public class DialogClasses{
 			}
 			float sidePad = (isize - width)/2f, topPad = (isize-height)/2f;
 			getContentTable().add(preview).size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad+2).padRight(sidePad+2).row();
-
+			
 		}
 
 		abstract Object[] getArgs();

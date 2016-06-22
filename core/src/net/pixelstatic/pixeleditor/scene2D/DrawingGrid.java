@@ -198,7 +198,7 @@ public class DrawingGrid extends Actor{
 		batch.setColor(Color.CORAL);
 		
 		//draw pic edges
-		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 1, 2);
+		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2);
 
 		
 		//draw cursor
