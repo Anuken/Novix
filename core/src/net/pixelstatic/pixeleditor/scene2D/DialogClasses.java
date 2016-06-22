@@ -105,8 +105,26 @@ public class DialogClasses{
 			sslider = new VisSlider(0, 100, 1f, false);
 			bslider = new VisSlider(0, 100, 1f, false);
 			
-			VisLabel hlabel = new VisLabel("Hue:"), slabel = new VisLabel("Saturation:"), blabel = new VisLabel("Brightness:");
+			final VisLabel hlabel = new VisLabel("Hue:"), slabel = new VisLabel("Saturation:"), blabel = new VisLabel("Brightness:");
 			
+			ChangeListener listener = new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					hlabel.setText("Hue: " + hslider.getValue());
+					slabel.setText("Saturation: " + sslider.getValue());
+					blabel.setText("Brightness: " + bslider.getValue());
+					
+					updatePreview();
+				}
+			};
+			
+			hslider.addListener(listener);
+			sslider.addListener(listener);
+			bslider.addListener(listener);
+			
+			hslider.setValue(360f);
+			sslider.setValue(100f);
+			bslider.setValue(100f);
 			
 			getContentTable().add(hlabel).align(Align.left).padTop(5).row();
 			getContentTable().add(hslider).expand().fill().row();
@@ -116,11 +134,14 @@ public class DialogClasses{
 
 			getContentTable().add(blabel).align(Align.left).padTop(5).row();
 			getContentTable().add(bslider).expand().fill();
+			
+
+			updatePreview();
 		}
 
 		@Override
 		Object[] getArgs(){
-			return new Object[]{};
+			return new Object[]{hslider.getValue()/360f, sslider.getValue()/100f, bslider.getValue()/100f};
 		}
 	}
 	
