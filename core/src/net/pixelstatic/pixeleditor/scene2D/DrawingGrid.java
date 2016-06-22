@@ -167,7 +167,6 @@ public class DrawingGrid extends Actor{
 		}
 
 		float cscl = canvasScale() * zoom;
-		String gridtype = "grid_25";
 
 		batch.setColor(Color.WHITE);
 		batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
@@ -177,7 +176,6 @@ public class DrawingGrid extends Actor{
 		if(grid){
 			image.setBounds(getX(), getY(), getWidth(), getHeight());
 			image.draw(batch, parentAlpha);
-		//	batch.draw(Textures.get(gridtype), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 		}
 
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
@@ -187,6 +185,9 @@ public class DrawingGrid extends Actor{
 			batch.setColor(Color.CORAL);
 			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
 			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
+		}else{
+			batch.draw(Textures.get("grid_10"), -999, -999, 1, 1); //don't ask me why this is necessary, but it is
+			
 		}
 		
 		batch.setColor(Color.GRAY);
@@ -197,7 +198,7 @@ public class DrawingGrid extends Actor{
 		batch.setColor(Color.CORAL);
 		
 		//draw pic edges
-		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2);
+		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 1, 2);
 
 		
 		//draw cursor
@@ -208,7 +209,7 @@ public class DrawingGrid extends Actor{
 		if(clip){
 			clipEnd();
 		}
-
+		batch.flush();
 		batch.setColor(Color.WHITE);
 	}
 

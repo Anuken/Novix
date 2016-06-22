@@ -22,7 +22,10 @@ public class ActionStack{
 	
 	public void add(DrawAction action){
 		stack.truncate(stack.size + index);
+		index = 0;
 		stack.add(action);
+		
+		//print();
 	}
 
 	public void undo(){
@@ -35,6 +38,7 @@ public class ActionStack{
 		stack.get(stack.size - 1 + index).apply(canvas, false);
 		index --;
 		
+		//print();
 	}
 
 	public void redo(){
@@ -47,7 +51,21 @@ public class ActionStack{
 		//System.out.println("applying " + stack.get(stack.size - 1 + index));
 		index ++;
 		stack.get(stack.size - 1 + index).apply(canvas, true);
+		
+		//print();
 	}
 	
-	
+	void print(){
+		System.out.println("\n\n\n\n\n\n\n\n\n");
+		
+		System.out.println("index: " + index);
+		int i = 0;
+		for(DrawAction action : stack){
+
+			boolean sel = stack.size + index - 1 == i;
+			System.out.println("<"+i+"> " + (sel ? "[" : "") + action.positions.size + "S" + (sel ? "]" : "" ));
+			
+			i++;
+		}
+	}
 }

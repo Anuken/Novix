@@ -17,7 +17,7 @@ public class GridImage extends Actor{
 		TextureRegion blank = VisUI.getSkin().getAtlas().findRegion("white");
 		
 		float xspace = (getWidth() / imageWidth);
-		float yspace = (getWidth() / imageHeight);
+		float yspace = (getHeight() / imageHeight);
 		float s = 1f;
 		
 		for(int x = 0; x <= imageWidth; x ++){

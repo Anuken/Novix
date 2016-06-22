@@ -30,7 +30,7 @@ public class DialogClasses{
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 
-			widthfield.setText(GUI.gui.drawgrid.canvas.width() + "");
+			widthfield.setText((GUI.gui.drawgrid.canvas.width())+ "");
 			heightfield.setText(GUI.gui.drawgrid.canvas.height() + "");
 
 			TextFieldDialogListener.add(widthfield, true, 3);
@@ -46,7 +46,6 @@ public class DialogClasses{
 
 			getContentTable().row();
 
-			addButtons();
 		}
 
 		public void result(){
@@ -66,6 +65,54 @@ public class DialogClasses{
 
 		}
 
+	}
+	
+	public static class DesaturateDialog extends FilterDialog{
+		
+		public DesaturateDialog(){
+			super(Filter.invert, "Rotate Image");
+		}
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{};
+		}
+	}
+	
+	public static class ReplaceDialog extends FilterDialog{
+		
+		public ReplaceDialog(){
+			super(Filter.invert, "Rotate Image");
+		}
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{};
+		}
+	}
+	
+	public static class ColorizeDialog extends FilterDialog{
+		
+		public ColorizeDialog(){
+			super(Filter.invert, "Rotate Image");
+		}
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{};
+		}
+	}
+	
+	public static class InvertDialog extends FilterDialog{
+		
+		public InvertDialog(){
+			super(Filter.invert, "Rotate Image");
+		}
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{};
+		}
 	}
 
 	public static class FlipDialog extends FilterDialog{
@@ -98,8 +145,6 @@ public class DialogClasses{
 
 			table.add(vbox).align(Align.left).row();
 			table.add(hbox).align(Align.left).padTop(10 * s).padBottom(10 * s);
-
-			addButtons();
 		}
 
 		@Override
@@ -128,8 +173,6 @@ public class DialogClasses{
 
 			getContentTable().add(label).align(Align.left).padTop(20 * s).row();
 			getContentTable().add(slider).expand().fill().padBottom(30 * s).padTop(5 * s);
-
-			addButtons();
 		}
 
 		@Override
@@ -146,9 +189,17 @@ public class DialogClasses{
 			super(title);
 			this.filter = filter;
 			preview = new ImagePreview(PixmapUtils.copy(sourcePixmap()));
-
+			
+			float ratio = (float)sourcePixmap().getWidth() / sourcePixmap().getHeight();
+			
 			float isize = 400;
-			getContentTable().add(preview).size(isize, isize).padTop(3).row();
+			float width = isize, height = isize/ratio;
+			if(height > width){
+				height = isize;
+				width = isize*ratio;
+			}
+			float sidePad = (isize - width)/2f, topPad = (isize-height)/2f;
+			getContentTable().add(preview).size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad+2).padRight(sidePad+2).row();
 
 		}
 
@@ -179,6 +230,7 @@ public class DialogClasses{
 
 		public MenuDialog(String title){
 			super(title, "dialog");
+			addButtons();
 		}
 
 		void addButtons(){

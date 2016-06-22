@@ -5,7 +5,11 @@ import java.lang.reflect.Field;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.DesaturateDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
@@ -101,11 +105,36 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton fbutton = addMenuButton("filters...");
 
 		final PopupMenu filterMenu = new PopupMenu();
-		filterMenu.addItem(new ExtraMenuItem("invert"));
-		filterMenu.addItem(new ExtraMenuItem("colorize"));
-		filterMenu.addItem(new ExtraMenuItem("replace"));
-		filterMenu.addItem(new ExtraMenuItem("desaturate"));
-		filterMenu.addItem(new ExtraMenuItem("burn"));
+		filterMenu.addItem(new ExtraMenuItem("colorize", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new ColorizeDialog().show(stage);
+			}
+		}));
+		filterMenu.addItem(new ExtraMenuItem("invert", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new InvertDialog().show(stage);
+			}
+		}));
+		filterMenu.addItem(new ExtraMenuItem("replace", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new ReplaceDialog().show(stage);
+			}
+		}));
+		filterMenu.addItem(new ExtraMenuItem("desaturate", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new DesaturateDialog().show(stage);
+			}
+		}));
+		filterMenu.addItem(new ExtraMenuItem("burn", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				//new ColorizeDialog().show(stage);
+			}
+		}));
 
 		fbutton.addListener(new MenuListener(filterMenu, fbutton));
 
@@ -119,6 +148,7 @@ public class GUI extends Module<PixelEditor>{
 					@Override
 					public void result(int width, int height){
 						drawgrid.setCanvas(drawgrid.canvas.asResized(width, height));
+						updateToolColor();
 					}
 				}.show(stage);
 			}
@@ -161,6 +191,7 @@ public class GUI extends Module<PixelEditor>{
 					public void result(int width, int height){
 						PixelCanvas canvas = new PixelCanvas(width, height);
 						drawgrid.setCanvas(canvas);
+						updateToolColor();
 					}
 				}.show(stage);
 			}
@@ -265,17 +296,17 @@ public class GUI extends Module<PixelEditor>{
 		alpha.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				opacity.setText("opacity: " + MiscUtils.limit(alpha.getSelection() + "",5));
+				opacity.setText("opacity: " + MiscUtils.limit(alpha.getSelection() + "", 5));
 				drawgrid.canvas.setAlpha(alpha.getSelection());
 			}
 		});
-		
+
 		final VisCheckBox grid = new VisCheckBox("Grid");
-		
-		grid.getImageStackCell().size(40*s);
-		
+
+		grid.getImageStackCell().size(40 * s);
+
 		grid.setChecked(true);
-		
+
 		grid.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -285,11 +316,11 @@ public class GUI extends Module<PixelEditor>{
 
 		final VisRadioButton cbox = new VisRadioButton("cursor mode");
 		final VisRadioButton tbox = new VisRadioButton("tap mode");
-		
+
 		cbox.setChecked(true);
-		
-		cbox.getImageStackCell().size(40*s);
-		tbox.getImageStackCell().size(40*s);
+
+		cbox.getImageStackCell().size(40 * s);
+		tbox.getImageStackCell().size(40 * s);
 
 		new ButtonGroup<VisRadioButton>(cbox, tbox);
 		cbox.addListener(new ChangeListener(){
@@ -298,21 +329,18 @@ public class GUI extends Module<PixelEditor>{
 				drawgrid.cursormode = cbox.isChecked();
 			}
 		});
-		
-		extratooltable.top().left().add(cbox).padTop(50f*s).padLeft(20f*s);
-	//extratooltable.add(grid).padTop(50f).padLeft(60f);
+
+		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(20f * s);
+		//extratooltable.add(grid).padTop(50f).padLeft(60f);
 		extratooltable.row();
-		extratooltable.add(tbox).align(Align.left).padTop(5f*s).padLeft(20f*s);
+		extratooltable.add(tbox).align(Align.left).padTop(5f * s).padLeft(20f * s);
 		extratooltable.row();
-		extratooltable.add(grid).align(Align.left).padTop(55f*s).padLeft(20f*s);
-		
+		extratooltable.add(grid).align(Align.left).padTop(55f * s).padLeft(20f * s);
 
 		optionstable.add(opacity).align(Align.left).padBottom(6f * s).colspan(2);
 		optionstable.row();
 
 		optionstable.add(alpha).colspan(2);
-
-
 
 	}
 
@@ -376,7 +404,7 @@ public class GUI extends Module<PixelEditor>{
 		optionstable = extradialog.getContentTable();
 		tooloptiontable = new VisTable();
 		extratooltable = new VisTable();
-		optionstable.add(tooloptiontable).minWidth(150*s);
+		optionstable.add(tooloptiontable).minWidth(150 * s);
 		optionstable.add(extratooltable).expand().fill();
 		optionstable.row();
 		menutable.clear();
@@ -648,22 +676,22 @@ public class GUI extends Module<PixelEditor>{
 	static class CollapseButton extends VisImageButton{
 		Drawable up = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-up")));
 		Drawable down = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-down")));
-		
+
 		public CollapseButton(){
 			super("default");
 			setStyle(new VisImageButtonStyle(getStyle()));
 			this.getImageCell().size(getHeight());
 			set(up);
 		}
-		
+
 		public void flip(){
 			if(getStyle().imageUp == up){
-				 set(down);
+				set(down);
 			}else{
-				 set(up);
+				set(up);
 			}
 		}
-		
+
 		private void set(Drawable d){
 			getStyle().imageUp = d;
 		}
