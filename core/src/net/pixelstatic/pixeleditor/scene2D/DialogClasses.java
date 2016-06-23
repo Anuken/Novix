@@ -4,14 +4,17 @@ import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.graphics.PixmapUtils;
+import net.pixelstatic.utils.graphics.Textures;
+import net.pixelstatic.utils.scene2D.AndroidColorPicker;
+import net.pixelstatic.utils.scene2D.ColorBox;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
@@ -67,10 +70,10 @@ public class DialogClasses{
 
 	}
 	
-	public static class DesaturateDialog extends FilterDialog{
+	public static class ContrastDialog extends FilterDialog{
 		VisSlider slider;
 		
-		public DesaturateDialog(){
+		public ContrastDialog(){
 			super(Filter.contrast, "Change Image Contrast");
 			
 			final VisLabel label = new VisLabel("Contrast: 0");
@@ -100,16 +103,47 @@ public class DialogClasses{
 	}
 	
 	public static class ReplaceDialog extends FilterDialog{
+		ColorBox from, to;
 		
 		public ReplaceDialog(){
-			super(Filter.replace, "Rotate Image");
+			super(Filter.replace, "Replace Colors");
+			
+			from = new ColorBox(GUI.gui.selectedColor());
+			to = new ColorBox();
+			
+			final VisDialog dialog = new VisDialog("Chooser Picker"){
+				
+			};
+			
+			dialog.add(new AndroidColorPicker());
+			
+			ClickListener listener = new ClickListener(){
+				public void clicked (InputEvent event, float x, float y) {
+					dialog.show(GUI.gui.stage);
+				}
+			};
+			
+			from.addListener(listener);
+			to.addListener(listener);
+			
+			Table table = new VisTable();
+			
+			getContentTable().add(table).expand().fill();
+			
+			table.add(from).size(70*s).pad(10*s);
+			
+			Image image = new Image((Textures.get("icon-arrow-right")));
+			
+			table.add(image).size(60*s).pad(5*s);
+			
+			table.add(to).size(70*s).pad(10*s);
 			
 			updatePreview();
 		}
 
 		@Override
 		Object[] getArgs(){
-			return new Object[]{};
+			return new Object[]{from.getColor(), to.getColor()};
 		}
 	}
 	

@@ -6,7 +6,7 @@ import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
-import net.pixelstatic.pixeleditor.scene2D.DialogClasses.DesaturateDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ContrastDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
@@ -126,7 +126,7 @@ public class GUI extends Module<PixelEditor>{
 		filterMenu.addItem(new ExtraMenuItem("contrast", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				new DesaturateDialog().show(stage);
+				new ContrastDialog().show(stage);
 			}
 		}));
 		filterMenu.addItem(new ExtraMenuItem("burn", new ChangeListener(){
@@ -286,7 +286,7 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 
-		alpha.setColors(Color.CLEAR, Color.WHITE);
+		alpha.setColors(Color.CLEAR.cpy(), Color.WHITE);
 		alpha.setSize(Gdx.graphics.getWidth() - 20 * s, 40 * s);
 
 		optionstable.bottom().left();
