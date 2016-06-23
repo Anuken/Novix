@@ -10,11 +10,13 @@ import net.pixelstatic.utils.scene2D.ColorBox;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
@@ -103,25 +105,50 @@ public class DialogClasses{
 	}
 	
 	public static class ReplaceDialog extends FilterDialog{
-		ColorBox from, to;
+		ColorBox from, to, selected;
 		
 		public ReplaceDialog(){
 			super(Filter.replace, "Replace Colors");
 			
+			
 			from = new ColorBox(GUI.gui.selectedColor());
 			to = new ColorBox();
 			
-			final VisDialog dialog = new VisDialog("Chooser Picker"){
-				
+			final AndroidColorPicker picker = new AndroidColorPicker(false){
+				public void onColorChanged(){
+					selected.setColor(getSelectedColor());
+					updatePreview();
+				}
 			};
+			picker.setRecentColors(GUI.gui.apicker.getRecentColors());
 			
-			dialog.add(new AndroidColorPicker());
+			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
+			dialog.getContentTable().add(picker).expand().fill();
+			
+			VisTextButton button = new VisTextButton("OK");
+			
+			dialog.getButtonsTable().add(button).size(320*s, 70*s).pad(5f*s);
+			dialog.setObject(button, true);
+			
+			VisImageButton closeButton = new VisImageButton("close-window");
+			dialog.getTitleTable().add(closeButton).padRight(-getPadRight() + 0.7f);
+			closeButton.addListener(new ChangeListener() {
+				@Override
+				public void changed (ChangeEvent event, Actor actor) {
+					dialog.hide();
+				}
+			});
 			
 			ClickListener listener = new ClickListener(){
 				public void clicked (InputEvent event, float x, float y) {
+					selected = (ColorBox)event.getTarget();
+					picker.setSelectedColor(event.getTarget().getColor());
 					dialog.show(GUI.gui.stage);
 				}
 			};
+			
+			from.addSelectListener();
+			to.addSelectListener();
 			
 			from.addListener(listener);
 			to.addListener(listener);
@@ -130,6 +157,13 @@ public class DialogClasses{
 			
 			getContentTable().add(table).expand().fill();
 			
+			VisImageButton pickfrom = new VisImageButton(new TextureRegionDrawable(new TextureRegion(Textures.get("icon-pick"))));
+			VisImageButton pickto = new VisImageButton(new TextureRegionDrawable(new TextureRegion(Textures.get("icon-pick"))));
+			
+			pickfrom.getImageCell().size(60*s);
+
+			pickto.getImageCell().size(60*s);
+			
 			table.add(from).size(70*s).pad(10*s);
 			
 			Image image = new Image((Textures.get("icon-arrow-right")));
@@ -137,6 +171,17 @@ public class DialogClasses{
 			table.add(image).size(60*s).pad(5*s);
 			
 			table.add(to).size(70*s).pad(10*s);
+			
+			/*
+			VisLabel label = new VisLabel("Pick");
+			label.setAlignment(Align.center);
+			
+			
+			table.row();
+			table.add(pickfrom).size(70*s).pad(4f);
+			table.add().size(60*s).align(Align.center);
+			table.add(pickto).size(70*s).pad(4f);
+			*/
 			
 			updatePreview();
 		}

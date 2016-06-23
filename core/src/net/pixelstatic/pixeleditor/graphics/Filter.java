@@ -22,7 +22,6 @@ public enum Filter{
 					}
 				}
 			}
-
 		}
 	},
 	rotate{

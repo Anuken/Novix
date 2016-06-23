@@ -66,7 +66,7 @@ public class GUI extends Module<PixelEditor>{
 	public ColorBox colorbox;
 	ColorBox[] boxes;
 	ColorPicker picker;
-	AndroidColorPicker apicker;
+	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
 
 	@Override
@@ -340,7 +340,7 @@ public class GUI extends Module<PixelEditor>{
 		optionstable.add(opacity).align(Align.left).padBottom(6f * s).colspan(2);
 		optionstable.row();
 
-		optionstable.add(alpha).colspan(2);
+		optionstable.add(alpha).colspan(2).pad(3*s).padBottom(15f*s);
 
 	}
 
@@ -372,7 +372,7 @@ public class GUI extends Module<PixelEditor>{
 
 		public float getPrefWidth(){
 			float buttons = 3f;
-			return Gdx.graphics.getWidth() / buttons - 2f * buttons * s;
+			return Gdx.graphics.getWidth() / buttons - 4f * buttons * s;
 		}
 
 		public float getPrefHeight(){
@@ -384,39 +384,40 @@ public class GUI extends Module<PixelEditor>{
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).height(height).fillX().width(Gdx.graphics.getWidth() / 3f - 6f * s).expandX().pad(2f * s).padTop(6f * s);
+		menutable.top().left().add(button).height(height).expandX().fillX().uniform().space(9f * s).padTop(5f*s).align(Align.topLeft);
 		return button;
 	}
 
 	void setupTools(){
 		final float size = Gdx.graphics.getWidth() / Tool.values().length;
-
-		final VisDialog extradialog = new VisDialog("lel"){
+		
+		final VisTable extratable = new VisTable(){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
-
-			public float getPrefHeight(){
-				return Gdx.graphics.getHeight() / 2f;
-			}
+	
 		};
-		menutable = extradialog.getTitleTable();
-		optionstable = extradialog.getContentTable();
+		
+		extratable.setBackground("button-window-bg");
+		
+		menutable = new VisTable();
+		optionstable = new VisTable();
 		tooloptiontable = new VisTable();
 		extratooltable = new VisTable();
+		extratable.top().left().add(menutable).align(Align.topLeft).expand().fill().row();
+		extratable.top().left().add(optionstable).expand().fill().row();
 		optionstable.add(tooloptiontable).minWidth(150 * s);
 		optionstable.add(extratooltable).expand().fill();
 		optionstable.row();
-		menutable.clear();
+		
 		setupMenu();
-		extradialog.setMovable(false);
 
-		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(extradialog, false);
+		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(extratable, false);
 
 		collapser.setCollapsed(true);
 
 		final CollapseButton expandbutton = new CollapseButton();
-		expandbutton.setColor(Color.LIGHT_GRAY);
+		
 		expandbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				collapser.setCollapsed( !collapser.isCollapsed());
@@ -488,6 +489,13 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		picker.setShowHexFields(false);
+		
+		VisTable pickertable = new VisTable(){
+			public float getPrefWidth(){
+				return Gdx.graphics.getWidth();
+			}
+		};
+		pickertable.background("button-window-bg");
 
 		apicker = new AndroidColorPicker(){
 			public void onColorChanged(){
@@ -512,11 +520,11 @@ public class GUI extends Module<PixelEditor>{
 		final CollapseButton expander = new CollapseButton();
 		expander.flip();
 
-		colortable.add(expander).expandX().fillX().colspan(10).height(MiscUtils.densityScale(50f));
+		colortable.add(expander).expandX().fillX().colspan(palettewidth+2).height(MiscUtils.densityScale(50f));
 
 		colortable.row();
 
-		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(apicker);
+		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(pickertable);
 
 		expander.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -533,7 +541,7 @@ public class GUI extends Module<PixelEditor>{
 
 		expander.setZIndex(collapser.getZIndex() + 10);
 
-		int colorsize = Gdx.graphics.getWidth() / 8 - MiscUtils.densityScale(3);
+		int colorsize = Gdx.graphics.getWidth() / palettewidth - MiscUtils.densityScale(3);
 
 		colortable.add().expandX().fillX();
 
@@ -565,6 +573,9 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 		colortable.add().expandX().fillX();
+		
+		pickertable.add(apicker).expand().fill().padTop(colorsize + 20*s).padBottom(10f*s);
+		
 
 		collapser.resetY();
 		collapser.setCollapsed(true, false);
@@ -681,6 +692,7 @@ public class GUI extends Module<PixelEditor>{
 			super("default");
 			setStyle(new VisImageButtonStyle(getStyle()));
 			this.getImageCell().size(getHeight());
+			getStyle().up = VisUI.getSkin().getDrawable("button");
 			set(up);
 		}
 
