@@ -1,5 +1,7 @@
 package net.pixelstatic.pixeleditor.graphics;
 
+import net.pixelstatic.utils.graphics.Hue;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -45,7 +47,7 @@ public enum Filter{
 
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
 			float h = (Float)args[0], s = (Float)args[1], b = (Float)args[2];
-			java.awt.Color.RGBtoHSB((int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255), hsb);
+			Hue.RGBtoHSB((int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255), hsb);
 
 			hsb[0] += h-0.5f;
 			if(hsb[0] < 0) hsb[0] += 1f;

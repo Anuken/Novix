@@ -11,7 +11,9 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ScaleDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
@@ -168,13 +170,13 @@ public class GUI extends Module<PixelEditor>{
 		transformMenu.addItem(new ExtraMenuItem("scale", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-
+				new ScaleDialog().show(stage);
 			}
 		}));
 		transformMenu.addItem(new ExtraMenuItem("symmetry", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-
+				new SymmetryDialog().show(stage);
 			}
 		}));
 

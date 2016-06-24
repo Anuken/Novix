@@ -369,7 +369,18 @@ public class DialogClasses{
 		public Pixmap pixmap(){
 			return preview.image.pixmap;
 		}
-
+	}
+	
+	public static class SymmetryDialog extends MenuDialog{
+		public SymmetryDialog(){
+			super("Edit Symmetry");
+		}
+	}
+	
+	public static class ScaleDialog extends MenuDialog{
+		public ScaleDialog(){
+			super("Scale Image");
+		}
 	}
 
 	public static abstract class MenuDialog extends VisDialog{
