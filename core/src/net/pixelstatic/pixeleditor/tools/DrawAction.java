@@ -41,7 +41,7 @@ public class DrawAction{
 
 			Pixmap.setBlending(Blending.SourceOver);
 		}
-
+		canvas.updatePixmapColor();
 		canvas.updateTexture();
 	}
 

@@ -8,8 +8,6 @@ import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.utils.IntSet;
 
 public enum Tool{
@@ -22,12 +20,7 @@ public enum Tool{
 	eraser{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			Pixmap.setBlending(Blending.None);
-			
-			canvas.drawRadius(x, y, GUI.gui.getBrushSize());
-
-			Pixmap.setBlending(Blending.SourceOver);
-			
+			canvas.eraseRadius(x, y, GUI.gui.getBrushSize());
 		}
 		
 		public void onColorChange(Color color, PixelCanvas canvas){
@@ -37,6 +30,7 @@ public enum Tool{
 	fill(true, false){
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
+			
 			Color dest = canvas.getColor(x, y);
 
 			//if(colorEquals(color, dest)) return;

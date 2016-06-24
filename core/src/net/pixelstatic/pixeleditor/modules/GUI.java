@@ -289,7 +289,7 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		alpha.setColors(Color.CLEAR.cpy(), Color.WHITE);
-		alpha.setSize(Gdx.graphics.getWidth() - 20 * s, 40 * s);
+		alpha.setSize(Gdx.graphics.getWidth() - 40 * s, 50 * s);
 
 		optionstable.bottom().left();
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.kotcrab.vis.ui.VisUI;
 
 public class DrawingGrid extends Actor{
 	public PixelCanvas canvas;
@@ -25,9 +26,10 @@ public class DrawingGrid extends Actor{
 	boolean moving;
 	public float zoom = 1f, offsetx = 0, offsety = 0;
 	public boolean clip = true;
+	public boolean vSymmetry = false, hSymmetry = false;
 
 	public DrawingGrid(){
-		image = new GridImage(1,1);
+		image = new GridImage(1, 1);
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				if( !GUI.gui.tool.moveCursor()) return false;
@@ -51,8 +53,12 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button){
-				if(pointer == tpointer){
-					moving = false;
+				if(cursormode){
+					if(pointer == tpointer){
+						moving = false;
+					}else{
+						if(GUI.gui.tool.push) canvas.pushActions();
+					}
 				}else{
 					if(GUI.gui.tool.push) canvas.pushActions();
 				}
@@ -96,7 +102,7 @@ public class DrawingGrid extends Actor{
 					cursory = y;
 					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
-					if( !selected.equals(newx, newy)) GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, newx, newy);
+					if( !selected.equals(newx, newy) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, newx, newy);
 					selected.set(newx, newy);
 				}
 			}
@@ -115,7 +121,7 @@ public class DrawingGrid extends Actor{
 
 	public void setZoom(float newzoom){
 		if(newzoom < maxAspectRatio()) newzoom = maxAspectRatio();
-		
+
 		cursorx *= (newzoom / zoom);
 		cursory *= (newzoom / zoom);
 
@@ -180,6 +186,24 @@ public class DrawingGrid extends Actor{
 			image.draw(batch, parentAlpha);
 		}
 
+		//draw symmetry lines
+
+		if(vSymmetry){
+			batch.setColor(Color.CYAN);
+			batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), (int)(getX() + getWidth() / 2f - 2f), getY(), 4, getHeight());
+		}
+
+		if(hSymmetry){
+			batch.setColor(Color.PURPLE);
+			batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), (int)(getY() + getHeight() / 2f - 2f), getWidth(), 4);
+		}
+
+		//draw center of grid
+		batch.setColor(Color.CORAL);
+
+		float size = 4;
+		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), (int)(getX() + getWidth() / 2f - size / 2), (int)(getY() + getHeight() / 2f - size / 2), size, size);
+
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
 		//draw selection
@@ -189,20 +213,19 @@ public class DrawingGrid extends Actor{
 			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
 		}else{
 			batch.draw(Textures.get("grid_10"), -999, -999, 1, 1); //don't ask me why this is necessary, but it is
-			
+
 		}
-		
+
 		batch.setColor(Color.GRAY);
-		
+
 		//draw screen edges
-		MiscUtils.drawBorder(batch, Gdx.graphics.getWidth() / 2 - min()/2f, Gdx.graphics.getHeight() / 2 - min()/2f, min(), min(), 2);
-		
+		MiscUtils.drawBorder(batch, Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), min(), 2);
+
 		batch.setColor(Color.CORAL);
-		
+
 		//draw pic edges
 		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2);
 
-		
 		//draw cursor
 		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);

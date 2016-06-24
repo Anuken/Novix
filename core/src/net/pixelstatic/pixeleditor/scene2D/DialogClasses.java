@@ -372,8 +372,35 @@ public class DialogClasses{
 	}
 	
 	public static class SymmetryDialog extends MenuDialog{
+		VisCheckBox hbox, vbox;
+		
 		public SymmetryDialog(){
 			super("Edit Symmetry");
+			
+			vbox = new VisCheckBox("Vertical Symmetry");
+			hbox = new VisCheckBox("Horizontal Symmetry");
+
+			ChangeListener listener = new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					
+				}
+			};
+			
+			hbox.addListener(listener);
+			vbox.addListener(listener);
+
+			hbox.getImageStackCell().size(40 * s);
+			vbox.getImageStackCell().size(40 * s);
+
+			Table table = getContentTable();
+
+			table.add(vbox).align(Align.left).row();
+			table.add(hbox).align(Align.left).padTop(10 * s).padBottom(10 * s);
+		}
+
+		Object[] getArgs(){
+			return null;
 		}
 	}
 	
