@@ -174,6 +174,10 @@ public class PixelCanvas implements Disposable{
 
 		updateAndPush();
 	}
+	
+	public float getAlpha(){
+		return alpha;
+	}
 
 	@Override
 	public void dispose(){

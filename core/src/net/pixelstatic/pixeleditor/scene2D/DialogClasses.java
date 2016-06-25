@@ -10,6 +10,7 @@ import net.pixelstatic.utils.scene2D.AndroidColorPicker;
 import net.pixelstatic.utils.scene2D.ColorBox;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -91,8 +92,8 @@ public class DialogClasses{
 				}
 			});
 
-			getContentTable().add(label).align(Align.left).row();;
-			getContentTable().add(slider).expand().fill();
+			getContentTable().add(label).align(Align.left).padTop(15f*s).row();
+			getContentTable().add(slider).expand().fill().padBottom(30 * s);
 
 			updatePreview();
 		}
@@ -223,14 +224,14 @@ public class DialogClasses{
 			sslider.setValue(50f);
 			bslider.setValue(50f);
 
-			getContentTable().add(hlabel).align(Align.left).padTop(5).row();
+			getContentTable().add(hlabel).align(Align.left).padTop(10*s).row();
 			getContentTable().add(hslider).expand().fill().row();
 
-			getContentTable().add(slabel).align(Align.left).padTop(5).row();
+			getContentTable().add(slabel).align(Align.left).padTop(5*s).row();
 			getContentTable().add(sslider).expand().fill().row();
 
-			getContentTable().add(blabel).align(Align.left).padTop(5).row();
-			getContentTable().add(bslider).expand().fill();
+			getContentTable().add(blabel).align(Align.left).padTop(5*s).row();
+			getContentTable().add(bslider).expand().fill().padBottom(30 * s);
 
 			updatePreview();
 		}
@@ -466,15 +467,15 @@ public class DialogClasses{
 
 					if(box.isChecked()){
 						if(field == xscalefield){
-							yscalefield.setText((value / aspectRatio) + "");
+							yscalefield.setText(value + "");
 						}else{
-							xscalefield.setText((value * aspectRatio) + "");
+							xscalefield.setText(value + "");
 						}
 					}
 
 					int width = (int)(Float.parseFloat(xscalefield.getText()) * GUI.gui.drawgrid.canvas.width());
 					int height = (int)(Float.parseFloat(yscalefield.getText()) * GUI.gui.drawgrid.canvas.height());
-
+					
 					widthfield.setText(width + "");
 					heightfield.setText(height + "");
 				}
@@ -488,9 +489,9 @@ public class DialogClasses{
 
 			Table table = getContentTable();
 
-			float width = 130, height = 50, pad = 20, right = 80f;
+			float width = 135*s, height = 55*s, pad = 30*s, right = 80f*s;
 
-			table.add().height(30f);
+			table.add().height(30f*s);
 			table.row();
 
 			table.add(new VisLabel("Size: "));
@@ -506,70 +507,10 @@ public class DialogClasses{
 			table.add(yscalefield).size(width, height).padTop(pad).padRight(right);
 
 			table.row();
-			table.add(box).colspan(4).padTop(15f);
+			table.add(box).colspan(4).padTop(15f*s);
 
 			table.row();
-			table.add().height(30f);
-
-			/*
-				
-				final VisTextField scalefield = new VisTextField();
-				scalefield.setTouchable(Touchable.disabled);
-				
-				
-				scalefield.addListener(new ChangeListener(){
-					@Override
-					public void changed(ChangeEvent event, Actor actor){
-						float scl = Float.parseFloat(scalefield.getText());
-						int nwidth = (int)(scl*GUI.gui.drawgrid.canvas.width());
-						int nheight = (int)(scl*GUI.gui.drawgrid.canvas.height());
-					}
-				});
-				
-				scalefield.setText("1.0");
-				
-				scalefield.fire(new ChangeListener.ChangeEvent());
-				
-				VisImageButton upbutton = new VisImageButton(Textures.getDrawable("icon-plus"));
-				VisImageButton downbutton = new VisImageButton(Textures.getDrawable("icon-minus"));
-				
-				upbutton.addListener(new ClickListener(){
-					public void clicked(InputEvent event, float x, float y){
-						
-					}
-				});
-				
-				upbutton.getImageCell().size(40f);
-				downbutton.getImageCell().size(40f);
-				
-				float fieldheight = 40;
-				
-				TextFieldDialogListener.add(scalefield);
-				getContentTable().add(new VisLabel("Scale: ")).padRight(0f).padTop(40f*s);
-				getContentTable().add(scalefield).size(180*s, fieldheight).padTop(40f*s).padLeft(0);
-				
-				getContentTable().add(downbutton).spaceLeft(5f).padTop(40f*s).size(fieldheight);
-				getContentTable().add(upbutton).spaceLeft(5f).padTop(40f*s).size(fieldheight).row();
-				
-				float tpad = 20;
-				
-				getContentTable().add(new VisLabel("Width: ")).colspan(1).padTop(tpad * s);
-				getContentTable().add(widthfield).height(fieldheight).colspan(2).expandX().fillX().padRight(50 * s).padTop(tpad * s);
-
-				getContentTable().row();
-
-				getContentTable().add(new VisLabel("Height: ")).colspan(1).padTop(tpad * s).padBottom(40f * s);
-				getContentTable().add(heightfield).height(fieldheight).colspan(2).expandX().fillX().padRight(50 * s).padTop(tpad * s).padBottom(40f * s);
-
-				
-				
-				
-				//spinner = new Spinner("Scale: ", new SimpleFloatSpinnerModel(1, 0.1f, 10));
-				//((Cell<VisTextField>)MiscUtils.getPrivate(spinner, "textFieldCell")).size(100f);
-			
-				//getContentTable().add(spinner).pad(10f);
-				 * 
-				 */
+			table.add().height(30f*s);
 		}
 
 		public void result(){
@@ -587,11 +528,40 @@ public class DialogClasses{
 			}
 		}
 	}
+	
+	public static class ClearDialog extends MenuDialog{
+		public ClearDialog(){
+			super("Confirm Clear Image");
+			
+			VisLabel label = new VisLabel("Are you sure you want\nto clear the image?");
+			
+			
+			label.setAlignment(Align.center);
+			getContentTable().center().add(label).pad(40*s).align(Align.center);
+		}
+		
+		public void result(){
+			PixelCanvas canvas = GUI.gui.drawgrid.canvas;
+			float alpha = canvas.getAlpha();
+			
+			canvas.setAlpha(1f);
+			
+			for(int x = 0; x < canvas.width(); x ++){
+				for(int y = 0; y < canvas.height(); y ++){
+					canvas.erasePixel(x, y);
+				}
+			}
+			canvas.pushActions();
+			
+			canvas.setAlpha(alpha);
+		}
+	}
 
 	public static abstract class MenuDialog extends VisDialog{
 
 		public MenuDialog(String title){
 			super(title, "dialog");
+			getTitleLabel().setColor(Color.CORAL);
 			addButtons();
 		}
 

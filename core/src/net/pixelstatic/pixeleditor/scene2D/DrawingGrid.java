@@ -294,8 +294,6 @@ public class DrawingGrid extends Actor{
 	public void updateBounds(){
 		int toolheight = (Gdx.graphics.getHeight() - Gdx.graphics.getWidth()) / 2, colorheight = toolheight;
 		
-		System.out.println(zoom);
-		
 		if(aspectRatio() >= 1f){
 			if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth() / 2 - getWidth()) / zoom;
 			if(getX() > 0) offsetx = Gdx.graphics.getWidth() / 2 / zoom;

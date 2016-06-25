@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ContrastDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
@@ -103,6 +104,19 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	void setupMenu(){
+		VisTextButton ibutton = addMenuButton("image...");
+		
+		final PopupMenu imageMenu = new PopupMenu();
+		
+		imageMenu.addItem(new ExtraMenuItem("clear", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new ClearDialog().show(stage);
+			}
+		}));
+		
+		ibutton.addListener(new MenuListener(imageMenu, ibutton));
+
 
 		VisTextButton fbutton = addMenuButton("filters...");
 
@@ -386,7 +400,7 @@ public class GUI extends Module<PixelEditor>{
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).height(height).expandX().fillX().uniform().space(9f * s).padTop(5f*s).align(Align.topLeft);
+		menutable.top().left().add(button).height(height).expandX().fillX().uniform().padTop(5f*s).align(Align.topLeft);
 		return button;
 	}
 
