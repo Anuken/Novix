@@ -39,8 +39,8 @@ public class DialogClasses{
 			widthfield.setText((GUI.gui.drawgrid.canvas.width()) + "");
 			heightfield.setText(GUI.gui.drawgrid.canvas.height() + "");
 
-			TextFieldDialogListener.add(widthfield, true, 3);
-			TextFieldDialogListener.add(heightfield, true, 3);
+			TextFieldDialogListener.add(widthfield, 1, 3);
+			TextFieldDialogListener.add(heightfield, 1, 3);
 
 			getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
 			getContentTable().add(widthfield).size(140, 40).padRight(50 * s).padTop(40 * s);
@@ -406,60 +406,80 @@ public class DialogClasses{
 
 		public ScaleDialog(){
 			super("Scale Image");
-			
-			final float aspectRatio = (float)GUI.gui.drawgrid.canvas.width()/GUI.gui.drawgrid.canvas.height();
+
+			final float aspectRatio = (float)GUI.gui.drawgrid.canvas.width() / GUI.gui.drawgrid.canvas.height();
 
 			widthfield = new VisTextField(GUI.gui.drawgrid.canvas.width() + "");
 			heightfield = new VisTextField(GUI.gui.drawgrid.canvas.height() + "");
-			
-			TextFieldDialogListener.add(widthfield, true, 3);
-			TextFieldDialogListener.add(heightfield, true, 3);
+
+			TextFieldDialogListener.add(widthfield, 1, 3);
+			TextFieldDialogListener.add(heightfield, 1, 3);
 
 			xscalefield = new VisTextField("1.0");
 			yscalefield = new VisTextField("1.0");
 
+			TextFieldDialogListener.add(xscalefield, 2, 3);
+			TextFieldDialogListener.add(yscalefield, 2, 3);
+
 			final VisCheckBox box = new VisCheckBox("Keep Aspect Ratio", true);
 
 			box.getImageStackCell().size(40);
-			
+
 			box.addListener(new ChangeListener(){
 				public void changed(ChangeEvent event, Actor actor){
 					heightfield.setDisabled(box.isChecked());
 					yscalefield.setDisabled(box.isChecked());
 				}
 			});
-			
+
 			box.fire(new ChangeListener.ChangeEvent());
 
-			ClickListener sizeClickListener = new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					VisTextField field = (VisTextField)event.getTarget();
-					
+			ChangeListener sizeClickListener = new ChangeListener(){
+				public void changed(ChangeEvent event, Actor actor){
+					VisTextField field = (VisTextField)actor;
+
 					int value = Integer.parseInt(field.getText());
-					
+
 					if(box.isChecked()){
 						if(field == widthfield){
-							heightfield.setText((int)(value/aspectRatio) + "");
+							heightfield.setText((int)(value / aspectRatio) + "");
 						}else{
-							widthfield.setText((int)(value*aspectRatio) + "");
+							widthfield.setText((int)(value * aspectRatio) + "");
 						}
 					}
-					
+
 					float xscl = (float)Integer.parseInt(widthfield.getText()) / GUI.gui.drawgrid.canvas.width();
 					float yscl = (float)Integer.parseInt(heightfield.getText()) / GUI.gui.drawgrid.canvas.height();
-					
+
 					xscalefield.setText(xscl + "");
 					yscalefield.setText(yscl + "");
-					
-				}
-			};
-			
-			ClickListener scaleClickListener = new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
 
 				}
 			};
-			
+
+			ChangeListener scaleClickListener = new ChangeListener(){
+				public void changed(ChangeEvent event, Actor actor){
+					VisTextField field = (VisTextField)actor;
+					
+					System.out.println("change.");
+					float value = Float.parseFloat(field.getText());
+
+					if(box.isChecked()){
+						if(field == xscalefield){
+							yscalefield.setText((value / aspectRatio) + "");
+						}else{
+							xscalefield.setText((value * aspectRatio) + "");
+						}
+					}
+
+					int width = (int)(Float.parseFloat(xscalefield.getText()) * GUI.gui.drawgrid.canvas.width());
+					int height = (int)(Float.parseFloat(yscalefield.getText()) * GUI.gui.drawgrid.canvas.height());
+
+					widthfield.setText(width + "");
+					heightfield.setText(height + "");
+				}
+			};
+
 			widthfield.addListener(sizeClickListener);
 			heightfield.addListener(sizeClickListener);
 
@@ -551,14 +571,14 @@ public class DialogClasses{
 				 * 
 				 */
 		}
-		
+
 		public void result(){
 			try{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
-				
+
 				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(GUI.gui.drawgrid.canvas.pixmap, xscale, yscale));
-				
+
 				GUI.gui.drawgrid.setCanvas(canvas);
 				GUI.gui.updateToolColor();
 			}catch(Exception e){
