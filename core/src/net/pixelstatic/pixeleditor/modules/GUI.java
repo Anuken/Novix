@@ -84,8 +84,8 @@ public class GUI extends Module<PixelEditor>{
 		tool.update(drawgrid);
 
 		//pc debugging
-		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
-
+		//if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
+		//System.out.println(stage.getKeyboardFocus());
 	}
 
 	void setup(){

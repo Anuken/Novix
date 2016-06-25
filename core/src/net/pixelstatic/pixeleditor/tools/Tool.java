@@ -87,6 +87,10 @@ public enum Tool{
 		public boolean moveCursor(){
 			return false;
 		}
+		
+		public boolean drawCursor(){
+			return false;
+		}
 	},
 
 	undo(false, false){
@@ -125,6 +129,10 @@ public enum Tool{
 	}
 
 	public boolean moveCursor(){
+		return true;
+	}
+	
+	public boolean drawCursor(){
 		return true;
 	}
 

@@ -26,7 +26,7 @@ public class DrawingGrid extends Actor{
 	boolean moving;
 	public float zoom = 1f, offsetx = 0, offsety = 0;
 	public boolean clip = true;
-	public boolean vSymmetry = false, hSymmetry = false;
+	public boolean vSymmetry = true, hSymmetry = false;
 
 	public DrawingGrid(){
 		image = new GridImage(1, 1);
@@ -36,7 +36,7 @@ public class DrawingGrid extends Actor{
 				touches ++;
 				if(cursormode){
 					if(moving){
-						GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, selected.x, selected.y);
+						processToolTap(selected.x, selected.y);
 						return true;
 					}
 
@@ -46,7 +46,7 @@ public class DrawingGrid extends Actor{
 					cursorx = x;
 					cursory = y;
 					updateCursorSelection();
-					GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, selected.x, selected.y);
+					processToolTap(selected.x, selected.y);
 					return true;
 				}
 				return true;
@@ -79,7 +79,7 @@ public class DrawingGrid extends Actor{
 			//pc debugging
 			public boolean keyDown(InputEvent event, int keycode){
 				if(keycode == Keys.E){
-					GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, selected.x, selected.y);
+					processToolTap(selected.x, selected.y);
 					return true;
 				}
 				return false;
@@ -94,7 +94,8 @@ public class DrawingGrid extends Actor{
 					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
 					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
-					if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, newx, newy);
+					if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) 
+						processToolTap(newx, newy);
 
 					selected.set(newx, newy);
 				}else{
@@ -102,11 +103,27 @@ public class DrawingGrid extends Actor{
 					cursory = y;
 					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
-					if( !selected.equals(newx, newy) && GUI.gui.tool.drawOnMove) GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, newx, newy);
+					if( !selected.equals(newx, newy) && GUI.gui.tool.drawOnMove) processToolTap(newx, newy);
 					selected.set(newx, newy);
 				}
 			}
 		});
+	}
+	
+	private void processToolTap(int x, int y){
+		GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, x, y);
+		
+		if(vSymmetry){
+			GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, canvas.width() - 1 - x, y);
+		}
+		
+		if(hSymmetry){
+			GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, x, canvas.height() - 1 - y);
+			
+			if(vSymmetry){
+				GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
+			}
+		}
 	}
 
 	public void moveOffset(float x, float y){
@@ -145,11 +162,11 @@ public class DrawingGrid extends Actor{
 	public void setCanvas(PixelCanvas canvas){
 		if(this.canvas != null) this.canvas.dispose();
 
-		zoom = 1f;
-
 		this.canvas = canvas;
 
 		updateSize();
+
+		zoom = maxAspectRatio();
 
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
@@ -207,15 +224,25 @@ public class DrawingGrid extends Actor{
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
 		//draw selection
-		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
+		if((cursormode || (touches > 0 && GUI.gui.tool.moveCursor())) && GUI.gui.tool.drawCursor()){
 			batch.setColor(Color.CORAL);
-			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl - xt, getY() + selected.y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
-			batch.draw(Textures.get("grid_10"), getX() + selected.x * cscl, getY() + selected.y * cscl, cscl, cscl);
-		}else{
-			batch.draw(Textures.get("grid_10"), -999, -999, 1, 1); //don't ask me why this is necessary, but it is
-
+			
+			drawSelection(batch, selected.x, selected.y, cscl, xt);
+			
+		//	batch.setColor(Hue.blend(Color.CORAL, Color.WHITE, 0.5f));
+			if(vSymmetry){
+				drawSelection(batch, canvas.width() - 1 - selected.x, selected.y, cscl, xt);
+			}
+			
+			if(hSymmetry){
+				drawSelection(batch, selected.x, canvas.height() - 1 - selected.y, cscl, xt);
+			}
+			
+			if(vSymmetry && hSymmetry){
+				drawSelection(batch, canvas.width() - 1 - selected.x, canvas.height() - 1 - selected.y, cscl, xt);
+			}
 		}
-
+		
 		batch.setColor(Color.GRAY);
 
 		//draw screen edges
@@ -230,12 +257,21 @@ public class DrawingGrid extends Actor{
 		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
 			batch.draw(Textures.get("cursor"), getX() + cursorx - 15, getY() + cursory - 15, 30, 30);
+		}else{ //seriously, why is this necessary
+			batch.draw(Textures.get("cursor"), -999, -999, 30, 30);
 		}
+		
 		if(clip){
 			clipEnd();
 		}
 		batch.flush();
 		batch.setColor(Color.WHITE);
+	}
+	
+	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
+		batch.draw(Textures.get("grid_10"), getX() + x * cscl - xt, getY() + y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
+		batch.draw(Textures.get("grid_10"), getX() + x * cscl, getY() + y * cscl, cscl, cscl);
+
 	}
 
 	public void updateCursor(){

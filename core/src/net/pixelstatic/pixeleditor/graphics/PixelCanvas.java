@@ -53,13 +53,12 @@ public class PixelCanvas implements Disposable{
 		texture.draw(blank, x, height() - 1 - y);
 	}
 
-	//NOTE: assumes pixmap color is already set!
 	public void erasePixel(int x, int y){
 		temp.set(getIntColor(x, y));
 		
 		float newalpha = temp.a - alpha;
 
-		if(newalpha <0) newalpha = 0;
+		if(newalpha < 0) newalpha = 0;
 		int newcolor = Color.rgba8888(temp.r, temp.g, temp.b, newalpha);
 		
 
