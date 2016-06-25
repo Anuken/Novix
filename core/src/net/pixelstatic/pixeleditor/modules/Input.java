@@ -138,7 +138,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			if(input.<GUI>getModule(GUI.class).tool != Tool.zoom) return false;
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
-			if(newzoom < drawgrid().maxAspectRatio()) newzoom = drawgrid().maxAspectRatio();
+			if(newzoom < drawgrid().maxZoom()) newzoom = drawgrid().maxZoom();
 			drawgrid().setZoom(newzoom);
 			//toward.interpolate(to, s / 40f, Interpolation.linear);
 

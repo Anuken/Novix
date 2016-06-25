@@ -26,7 +26,7 @@ public class DrawingGrid extends Actor{
 	boolean moving;
 	public float zoom = 1f, offsetx = 0, offsety = 0;
 	public boolean clip = true;
-	public boolean vSymmetry = true, hSymmetry = false;
+	public boolean vSymmetry = false, hSymmetry = false;
 
 	public DrawingGrid(){
 		image = new GridImage(1, 1);
@@ -137,7 +137,7 @@ public class DrawingGrid extends Actor{
 	}
 
 	public void setZoom(float newzoom){
-		if(newzoom < maxAspectRatio()) newzoom = maxAspectRatio();
+		if(newzoom < maxZoom()) newzoom = maxZoom();
 
 		cursorx *= (newzoom / zoom);
 		cursory *= (newzoom / zoom);
@@ -166,7 +166,7 @@ public class DrawingGrid extends Actor{
 
 		updateSize();
 
-		zoom = maxAspectRatio();
+		zoom = maxZoom();
 
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
@@ -293,7 +293,9 @@ public class DrawingGrid extends Actor{
 
 	public void updateBounds(){
 		int toolheight = (Gdx.graphics.getHeight() - Gdx.graphics.getWidth()) / 2, colorheight = toolheight;
-
+		
+		System.out.println(zoom);
+		
 		if(aspectRatio() >= 1f){
 			if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth() / 2 - getWidth()) / zoom;
 			if(getX() > 0) offsetx = Gdx.graphics.getWidth() / 2 / zoom;
@@ -314,8 +316,8 @@ public class DrawingGrid extends Actor{
 		setY(Gdx.graphics.getHeight() / 2 - offsety * zoom);
 	}
 
-	public float maxAspectRatio(){
-		return Math.min(getWidth() / getHeight(), getHeight() / getWidth());
+	public float maxZoom(){
+		return Math.min(getWidth() / getHeight(), 1f);
 	}
 
 	public float aspectRatio(){
