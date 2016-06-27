@@ -4,6 +4,7 @@ import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.graphics.PixmapUtils;
 import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
@@ -20,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.kotcrab.vis.ui.util.dialog.Dialogs;
 import com.kotcrab.vis.ui.widget.*;
 
 public class DialogClasses{
@@ -62,7 +62,7 @@ public class DialogClasses{
 				result(width, height);
 			}catch(Exception e){
 				e.printStackTrace();
-				Dialogs.showDetailsDialog(getStage(), "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
+				AndroidDialogs.showError(getStage(), e);
 			}
 		}
 
@@ -92,7 +92,7 @@ public class DialogClasses{
 				}
 			});
 
-			getContentTable().add(label).align(Align.left).padTop(15f*s).row();
+			getContentTable().add(label).align(Align.left).padTop(15f * s).row();
 			getContentTable().add(slider).expand().fill().padBottom(30 * s);
 
 			updatePreview();
@@ -224,13 +224,13 @@ public class DialogClasses{
 			sslider.setValue(50f);
 			bslider.setValue(50f);
 
-			getContentTable().add(hlabel).align(Align.left).padTop(10*s).row();
+			getContentTable().add(hlabel).align(Align.left).padTop(10 * s).row();
 			getContentTable().add(hslider).expand().fill().row();
 
-			getContentTable().add(slabel).align(Align.left).padTop(5*s).row();
+			getContentTable().add(slabel).align(Align.left).padTop(5 * s).row();
 			getContentTable().add(sslider).expand().fill().row();
 
-			getContentTable().add(blabel).align(Align.left).padTop(5*s).row();
+			getContentTable().add(blabel).align(Align.left).padTop(5 * s).row();
 			getContentTable().add(bslider).expand().fill().padBottom(30 * s);
 
 			updatePreview();
@@ -461,7 +461,7 @@ public class DialogClasses{
 			ChangeListener scaleClickListener = new ChangeListener(){
 				public void changed(ChangeEvent event, Actor actor){
 					VisTextField field = (VisTextField)actor;
-					
+
 					System.out.println("change.");
 					float value = Float.parseFloat(field.getText());
 
@@ -475,7 +475,7 @@ public class DialogClasses{
 
 					int width = (int)(Float.parseFloat(xscalefield.getText()) * GUI.gui.drawgrid.canvas.width());
 					int height = (int)(Float.parseFloat(yscalefield.getText()) * GUI.gui.drawgrid.canvas.height());
-					
+
 					widthfield.setText(width + "");
 					heightfield.setText(height + "");
 				}
@@ -489,9 +489,9 @@ public class DialogClasses{
 
 			Table table = getContentTable();
 
-			float width = 135*s, height = 55*s, pad = 30*s, right = 80f*s;
+			float width = 135 * s, height = 55 * s, pad = 30 * s, right = 80f * s;
 
-			table.add().height(30f*s);
+			table.add().height(30f * s);
 			table.row();
 
 			table.add(new VisLabel("Size: "));
@@ -507,10 +507,10 @@ public class DialogClasses{
 			table.add(yscalefield).size(width, height).padTop(pad).padRight(right);
 
 			table.row();
-			table.add(box).colspan(4).padTop(15f*s);
+			table.add(box).colspan(4).padTop(15f * s);
 
 			table.row();
-			table.add().height(30f*s);
+			table.add().height(30f * s);
 		}
 
 		public void result(){
@@ -524,35 +524,40 @@ public class DialogClasses{
 				GUI.gui.updateToolColor();
 			}catch(Exception e){
 				e.printStackTrace();
-				Dialogs.showDetailsDialog(getStage(), "An exception has occured.", "Error", e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "" : e.getMessage()));
+				AndroidDialogs.showError(getStage(), e);
 			}
 		}
 	}
-	
+
+	public static class ShiftDialog extends MenuDialog{
+		public ShiftDialog(){
+			super("Shift Image");
+		}
+	}
+
 	public static class ClearDialog extends MenuDialog{
 		public ClearDialog(){
 			super("Confirm Clear Image");
-			
+
 			VisLabel label = new VisLabel("Are you sure you want\nto clear the image?");
-			
-			
+
 			label.setAlignment(Align.center);
-			getContentTable().center().add(label).pad(40*s).align(Align.center);
+			getContentTable().center().add(label).pad(40 * s).align(Align.center);
 		}
-		
+
 		public void result(){
 			PixelCanvas canvas = GUI.gui.drawgrid.canvas;
 			float alpha = canvas.getAlpha();
-			
+
 			canvas.setAlpha(1f);
-			
-			for(int x = 0; x < canvas.width(); x ++){
-				for(int y = 0; y < canvas.height(); y ++){
+
+			for(int x = 0;x < canvas.width();x ++){
+				for(int y = 0;y < canvas.height();y ++){
 					canvas.erasePixel(x, y);
 				}
 			}
 			canvas.pushActions();
-			
+
 			canvas.setAlpha(alpha);
 		}
 	}
@@ -562,6 +567,12 @@ public class DialogClasses{
 		public MenuDialog(String title){
 			super(title, "dialog");
 			getTitleLabel().setColor(Color.CORAL);
+			
+			addCloseButton();
+			//getTitleTable().row();
+			//getTitleTable().add(new Separator()).expandX().fillX().padTop(3*s);
+			
+			
 			addButtons();
 		}
 
@@ -574,7 +585,7 @@ public class DialogClasses{
 
 			getButtonsTable().add(cancel).size(130 * s, 60 * s);
 			getButtonsTable().add(ok).size(130 * s, 60 * s);
-			addCloseButton();
+			
 		}
 
 		protected void result(Object object){
