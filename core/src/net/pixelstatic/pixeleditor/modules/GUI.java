@@ -173,9 +173,11 @@ public class GUI extends Module<PixelEditor>{
 			
 			BorderImage border = new BorderImage();
 			border.setColor(Color.CORAL);
+			AlphaImage alpha = new AlphaImage(project.getWidth(), project.getHeight());
 			
 			Stack stack = new Stack();
 			
+			stack.add(alpha);
 			stack.add(image);
 			stack.add(border);
 			
@@ -184,8 +186,17 @@ public class GUI extends Module<PixelEditor>{
 			VisLabel sizelabel = new VisLabel("Size: " + project.getWidth() + "x" +project.getHeight());
 			sizelabel.setColor(Color.GRAY);
 			
+			VisTextButton openbutton = new VisTextButton("open");
+			VisTextButton copybutton = new VisTextButton("copy");
+			VisTextButton deletebutton = new VisTextButton("delete");
+			
+			
 			VisTable texttable = new VisTable();
 			VisTable buttontable = new VisTable();
+			
+			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft);
+			buttontable.add(copybutton);
+			buttontable.add(deletebutton);
 			
 			top().left();
 			//add(namelabel).row();
@@ -196,7 +207,9 @@ public class GUI extends Module<PixelEditor>{
 			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
 			texttable.row();
 			texttable.add(sizelabel).padLeft(8).padTop(10*s).align(Align.topLeft);
-			texttable.add(buttontable).grow();
+			texttable.row();
+			texttable.add(buttontable).grow().padLeft(8);
+			//setDebug(true, true);
 		}
 		
 		public float getPrefWidth(){
