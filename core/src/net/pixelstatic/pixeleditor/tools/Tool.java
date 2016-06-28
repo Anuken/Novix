@@ -31,7 +31,7 @@ public enum Tool{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			
-			Color dest = canvas.getColor(x, y);
+			int dest = canvas.getIntColor(x, y);
 
 			//if(colorEquals(color, dest)) return;
 			int width = canvas.width();
@@ -39,15 +39,16 @@ public enum Tool{
 			IntSet set = new IntSet();
 			Stack<Pos> points = new Stack<Pos>();
 			points.add(new Pos(x, y));
+			
+			canvas.setColor(color.cpy());
 
 			while( !points.isEmpty()){
 				Pos pos = points.pop();
 				set.add(pos.asInt(width));
 
-				Color pcolor = canvas.getColor(pos.x, pos.y);
+				int pcolor = canvas.getIntColor(pos.x, pos.y);
 				if(colorEquals(pcolor, dest)){
 
-					canvas.setColor(color);
 					canvas.drawPixel(pos.x, pos.y);
 
 					if(pos.x > 0 && !set.contains(Pos.asInt(pos.x - 1, pos.y, width))) points.add(pos.relative( -1, 0));
@@ -61,8 +62,8 @@ public enum Tool{
 
 		}
 
-		boolean colorEquals(Color a, Color b){
-			return a.equals(b);
+		boolean colorEquals(int a, int b){
+			return a == b;
 		}
 	},
 	pick(false){
@@ -70,8 +71,11 @@ public enum Tool{
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			Color selected = canvas.getColor(x, y);
 			selected.a = 1f;
-			GUI.gui.colorbox.setColor(selected);
-			GUI.gui.updateToolColor();
+			GUI.gui.setSelectedColor(selected);
+		}
+		
+		public boolean symmetric(){
+			return false;
 		}
 	},
 	zoom(false, false){
@@ -89,6 +93,10 @@ public enum Tool{
 		}
 		
 		public boolean drawCursor(){
+			return false;
+		}
+		
+		public boolean symmetric(){
 			return false;
 		}
 	},
@@ -137,6 +145,10 @@ public enum Tool{
 	}
 
 	public boolean selectable(){
+		return true;
+	}
+	
+	public boolean symmetric(){
 		return true;
 	}
 

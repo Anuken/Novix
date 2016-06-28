@@ -79,6 +79,15 @@ public enum Filter{
 			}
 		}
 	},
+	colorToAlpha{
+		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
+			Color from = (Color)args[0];
+			if(color.equals(from)){
+				pixmap.setColor(Color.CLEAR);
+				pixmap.drawPixel(x, y);
+			}
+		}
+	},
 	contrast{
 		@Override
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){

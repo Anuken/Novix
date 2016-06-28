@@ -116,7 +116,6 @@ public class DialogClasses{
 			final AndroidColorPicker picker = new AndroidColorPicker(false){
 				public void onColorChanged(){
 					selected.setColor(getSelectedColor());
-					updatePreview();
 				}
 			};
 			picker.setRecentColors(GUI.gui.apicker.getRecentColors());
@@ -125,6 +124,13 @@ public class DialogClasses{
 			dialog.getContentTable().add(picker).expand().fill();
 
 			VisTextButton button = new VisTextButton("OK");
+			
+			button.addListener(new ClickListener(){
+				@Override
+				public void clicked(InputEvent event, float x, float y){
+					updatePreview();
+				}
+			});
 
 			dialog.getButtonsTable().add(button).size(320 * s, 70 * s).pad(5f * s);
 			dialog.setObject(button, true);
@@ -188,6 +194,75 @@ public class DialogClasses{
 		@Override
 		Object[] getArgs(){
 			return new Object[]{from.getColor(), to.getColor()};
+		}
+	}
+	
+	public static class ColorAlphaDialog extends FilterDialog{
+		ColorBox selected;
+
+		public ColorAlphaDialog(){
+			super(Filter.colorToAlpha, "Color to Alpha");
+
+			selected = new ColorBox(GUI.gui.selectedColor());
+			
+			selected.addSelectListener();
+
+			final AndroidColorPicker picker = new AndroidColorPicker(false){
+				public void onColorChanged(){
+					selected.setColor(getSelectedColor());
+				}
+			};
+			picker.setRecentColors(GUI.gui.apicker.getRecentColors());
+
+			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
+			dialog.getContentTable().add(picker).expand().fill();
+
+			VisTextButton button = new VisTextButton("OK");
+			
+			button.addListener(new ClickListener(){
+				@Override
+				public void clicked(InputEvent event, float x, float y){
+					updatePreview();
+				}
+			});
+
+			dialog.getButtonsTable().add(button).size(320 * s, 70 * s).pad(5f * s);
+			dialog.setObject(button, true);
+
+			VisImageButton closeButton = new VisImageButton("close-window");
+			dialog.getTitleTable().add(closeButton).padRight( -getPadRight() + 0.7f);
+			closeButton.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					dialog.hide();
+				}
+			});
+
+			ClickListener listener = new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					selected = (ColorBox)event.getTarget();
+					picker.setSelectedColor(event.getTarget().getColor());
+					dialog.show(GUI.gui.stage);
+				}
+			};
+
+			selected.addListener(listener);
+
+			Table table = new VisTable();
+			
+			getContentTable().add(new VisLabel("Color:")).padTop(15f*s).row();
+			
+			getContentTable().add(table).expand().fill();
+			
+			
+			table.add(selected).size(70 * s).pad(5 * s);
+
+			updatePreview();
+		}
+
+		@Override
+		Object[] getArgs(){
+			return new Object[]{selected.getColor()};
 		}
 	}
 
@@ -416,11 +491,11 @@ public class DialogClasses{
 			TextFieldDialogListener.add(widthfield, 1, 3);
 			TextFieldDialogListener.add(heightfield, 1, 3);
 
-			xscalefield = new VisTextField("1.0");
-			yscalefield = new VisTextField("1.0");
+			xscalefield = new VisTextField("1");
+			yscalefield = new VisTextField("1");
 
-			TextFieldDialogListener.add(xscalefield, 2, 3);
-			TextFieldDialogListener.add(yscalefield, 2, 3);
+			TextFieldDialogListener.add(xscalefield, 2, 10);
+			TextFieldDialogListener.add(yscalefield, 2, 10);
 
 			final VisCheckBox box = new VisCheckBox("Keep Aspect Ratio", true);
 
@@ -452,8 +527,8 @@ public class DialogClasses{
 					float xscl = (float)Integer.parseInt(widthfield.getText()) / GUI.gui.drawgrid.canvas.width();
 					float yscl = (float)Integer.parseInt(heightfield.getText()) / GUI.gui.drawgrid.canvas.height();
 
-					xscalefield.setText(xscl + "");
-					yscalefield.setText(yscl + "");
+					xscalefield.setText(MiscUtils.displayFloat(xscl));
+					yscalefield.setText(MiscUtils.displayFloat(yscl));
 
 				}
 			};
@@ -467,9 +542,9 @@ public class DialogClasses{
 
 					if(box.isChecked()){
 						if(field == xscalefield){
-							yscalefield.setText(value + "");
+							yscalefield.setText(MiscUtils.displayFloat(value));
 						}else{
-							xscalefield.setText(value + "");
+							xscalefield.setText(MiscUtils.displayFloat(value));
 						}
 					}
 

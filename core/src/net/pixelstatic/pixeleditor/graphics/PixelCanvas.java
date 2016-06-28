@@ -17,6 +17,7 @@ public class PixelCanvas implements Disposable{
 	private Pixmap blank;
 	final public Pixmap pixmap;
 	final public Texture texture;
+	//final public Project project;
 	private float alpha = 1.0f;
 	private DrawAction action = new DrawAction();
 	public ActionStack actions = new ActionStack(this);
@@ -54,7 +55,9 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public void erasePixel(int x, int y){
-		temp.set(getIntColor(x, y));
+		int preColor = getIntColor(x, y);
+		
+		temp.set(preColor);
 		
 		float newalpha = temp.a - alpha;
 
@@ -73,6 +76,7 @@ public class PixelCanvas implements Disposable{
 		Pixmap.setBlending(Blending.SourceOver);
 
 		texture.draw(blank, x, height() - 1 - y);
+		action.push(x, y, preColor, newcolor);
 	}
 
 	public void drawRadius(int x, int y, int rad){
