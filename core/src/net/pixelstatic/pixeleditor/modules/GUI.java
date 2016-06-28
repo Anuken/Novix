@@ -117,7 +117,11 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupExtraMenus(){
 
-		settingsmenu = new VisDialog("Settings");
+		settingsmenu = new VisDialog("Settings"){
+			public void result(Object o){
+				prefs.flush();
+			}
+		};
 		settingsmenu.setFillParent(true);
 
 		settingsmenu.getTitleLabel().setColor(Color.CORAL);
@@ -280,6 +284,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	void newProject(){
+		
 		new NamedSizeDialog("New Project"){
 			
 			public void result(String name, int width, int height){
@@ -287,10 +292,11 @@ public class GUI extends Module<PixelEditor>{
 				PixelCanvas canvas = new PixelCanvas(pixmap);
 				PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
 				
-				loadProject(projectDirectory.child(name + ".png"));
+				Project project = loadProject(projectDirectory.child(name + ".png"));
 				drawgrid.setCanvas(canvas);
 				
 				updateProjectMenu();
+				openProject(project);
 			}
 		}.show(stage);
 	}
@@ -334,8 +340,10 @@ public class GUI extends Module<PixelEditor>{
 		}
 	}
 	
-	void loadProject(FileHandle file){
-		projects.add(new Project(file, file.nameWithoutExtension()));
+	Project loadProject(FileHandle file){
+		Project project = new Project(file, file.nameWithoutExtension());
+		projects.add(project);
+		return project;
 	}
 
 	void addScrollSetting(Table table, final String name, int min, int max, int value, ChangeListener listener){
@@ -375,7 +383,7 @@ public class GUI extends Module<PixelEditor>{
 
 		final PopupMenu imageMenu = new PopupMenu();
 
-		imageMenu.addItem(new ExtraMenuItem("resize", new ChangeListener(){
+		imageMenu.addItem(new ExtraMenuItem(ibutton, "resize", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new SizeDialog("Resize Canvas"){
@@ -388,13 +396,13 @@ public class GUI extends Module<PixelEditor>{
 			}
 		}));
 
-		imageMenu.addItem(new ExtraMenuItem("clear", new ChangeListener(){
+		imageMenu.addItem(new ExtraMenuItem(ibutton, "clear", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ClearDialog().show(stage);
 			}
 		}));
-		imageMenu.addItem(new ExtraMenuItem("symmetry", new ChangeListener(){
+		imageMenu.addItem(new ExtraMenuItem(ibutton, "symmetry", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new SymmetryDialog().show(stage);
@@ -406,31 +414,31 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton fbutton = addMenuButton("filters...");
 
 		final PopupMenu filterMenu = new PopupMenu();
-		filterMenu.addItem(new ExtraMenuItem("colorize", new ChangeListener(){
+		filterMenu.addItem(new ExtraMenuItem(fbutton, "colorize", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ColorizeDialog().show(stage);
 			}
 		}));
-		filterMenu.addItem(new ExtraMenuItem("invert", new ChangeListener(){
+		filterMenu.addItem(new ExtraMenuItem(fbutton, "invert", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new InvertDialog().show(stage);
 			}
 		}));
-		filterMenu.addItem(new ExtraMenuItem("replace", new ChangeListener(){
+		filterMenu.addItem(new ExtraMenuItem(fbutton, "replace", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ReplaceDialog().show(stage);
 			}
 		}));
-		filterMenu.addItem(new ExtraMenuItem("contrast", new ChangeListener(){
+		filterMenu.addItem(new ExtraMenuItem(fbutton, "contrast", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ContrastDialog().show(stage);
 			}
 		}));
-		filterMenu.addItem(new ExtraMenuItem("color to alpha", new ChangeListener(){
+		filterMenu.addItem(new ExtraMenuItem(fbutton, "color to alpha", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ColorAlphaDialog().show(stage);
@@ -442,25 +450,25 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton tbutton = addMenuButton("transform..");
 
 		final PopupMenu transformMenu = new PopupMenu();
-		transformMenu.addItem(new ExtraMenuItem("flip", new ChangeListener(){
+		transformMenu.addItem(new ExtraMenuItem(tbutton, "flip", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new FlipDialog().show(stage);
 			}
 		}));
-		transformMenu.addItem(new ExtraMenuItem("rotate", new ChangeListener(){
+		transformMenu.addItem(new ExtraMenuItem(tbutton, "rotate", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new RotateDialog().show(stage);
 			}
 		}));
-		transformMenu.addItem(new ExtraMenuItem("scale", new ChangeListener(){
+		transformMenu.addItem(new ExtraMenuItem(tbutton, "scale", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ScaleDialog().show(stage);
 			}
 		}));
-		transformMenu.addItem(new ExtraMenuItem("shift", new ChangeListener(){
+		transformMenu.addItem(new ExtraMenuItem(tbutton, "shift", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new ShiftDialog().show(stage);
@@ -472,7 +480,7 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton fibutton = addMenuButton("file..");
 
 		final PopupMenu fileMenu = new PopupMenu();
-		fileMenu.addItem(new ExtraMenuItem("new", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton, "new", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new SizeDialog("New Canvas"){
@@ -485,7 +493,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem("export", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton,"export", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
@@ -502,7 +510,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem("export scaled", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton,"export scaled", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
@@ -519,7 +527,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem("open", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton,"open", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
@@ -672,18 +680,22 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	private static class ExtraMenuItem extends MenuItem{
-
-		public ExtraMenuItem(String text){
+		private Button button;
+		
+		public ExtraMenuItem(Button button, String text){
 			super(text);
+			this.button = button;
+			validate();
 		}
 
-		public ExtraMenuItem(String text, ChangeListener changeListener){
+		public ExtraMenuItem(Button button, String text, ChangeListener changeListener){
 			super(text, changeListener);
+			this.button = button;
+			invalidate();
 		}
 
 		public float getPrefWidth(){
-			float buttons = 3f;
-			return Gdx.graphics.getWidth() / buttons - 4f * buttons * s;
+			return Gdx.graphics.getWidth()/4f-4;
 		}
 
 		public float getPrefHeight(){
@@ -695,7 +707,7 @@ public class GUI extends Module<PixelEditor>{
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).height(height).expandX().fillX().uniform().padTop(5f * s).align(Align.topLeft);
+		menutable.top().left().add(button).width(Gdx.graphics.getWidth()/4f-4).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
 		return button;
 	}
 
@@ -909,7 +921,7 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupCanvas(){
 		drawgrid = new DrawingGrid();
-		drawgrid.setCanvas(new PixelCanvas(20, 20));
+		drawgrid.setCanvas(new PixelCanvas(16, 16));
 		drawgrid.addAction(new Action(){
 			public boolean act(float delta){
 				drawgrid.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
