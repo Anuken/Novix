@@ -14,9 +14,12 @@ import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -42,16 +45,26 @@ public class DialogClasses{
 
 			TextFieldDialogListener.add(widthfield, 1, 3);
 			TextFieldDialogListener.add(heightfield, 1, 3);
+			
+			float twidth = 160*s, theight = 40*s;
 
 			getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
-			getContentTable().add(widthfield).size(140, 40).padRight(50 * s).padTop(40 * s);
+			getContentTable().add(widthfield).size(twidth, theight).padRight(50 * s).padTop(40 * s);
 
 			getContentTable().row();
 
 			getContentTable().add(new VisLabel("Height: ")).padLeft(50 * s).padTop(40 * s).padBottom(40f * s);
-			getContentTable().add(heightfield).size(140, 40).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
+			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
+			
+			ok.addAction(new Action(){
+				@Override
+				public boolean act(float delta){
+					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
+					return false;
+				}
+			});
 
 		}
 
@@ -62,7 +75,7 @@ public class DialogClasses{
 				result(width, height);
 			}catch(Exception e){
 				e.printStackTrace();
-				AndroidDialogs.showError(getStage(), e);
+				AndroidDialogs.showError(getStage(), "Image error!", e);
 			}
 		}
 
@@ -71,6 +84,69 @@ public class DialogClasses{
 		}
 
 	}
+	
+	public static class NamedSizeDialog extends MenuDialog{
+		VisTextField widthfield, heightfield, namefield;
+
+		public NamedSizeDialog(String title){
+			super(title);
+
+			widthfield = new VisTextField();
+			heightfield = new VisTextField();
+			namefield = new VisTextField();
+
+			widthfield.setText((GUI.gui.drawgrid.canvas.width()) + "");
+			heightfield.setText(GUI.gui.drawgrid.canvas.height() + "");
+
+			TextFieldDialogListener.add(widthfield, 1, 3);
+			TextFieldDialogListener.add(heightfield, 1, 3);
+			TextFieldDialogListener.add(namefield);
+			
+			
+			float twidth = 160*s, theight = 40*s;
+
+			getContentTable().add(new VisLabel("Name: ")).padLeft(50 * s).padTop(40 * s);
+			getContentTable().add(namefield).size(twidth, theight).padRight(50 * s).padTop(40 * s);
+
+			getContentTable().row();
+
+			getContentTable().add(new VisLabel("Width: ")).padLeft(50 * s).padTop(40 * s);
+			getContentTable().add(widthfield).size(twidth, theight).padRight(50 * s).padTop(40 * s);
+
+			getContentTable().row();
+			
+			getContentTable().add(new VisLabel("Height: ")).padLeft(50 * s).padTop(40 * s).padBottom(40f * s);
+			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
+
+			getContentTable().row();
+			
+			ok.addAction(new Action(){
+				@Override
+				public boolean act(float delta){
+					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty() || namefield.getText().replace(" ", "").isEmpty());
+					return false;
+				}
+			});
+
+		}
+
+		public void result(){
+			try{
+				int width = Integer.parseInt(widthfield.getText());
+				int height = Integer.parseInt(heightfield.getText());
+				result(namefield.getText(), width, height);
+			}catch(Exception e){
+				e.printStackTrace();
+				AndroidDialogs.showError(getStage(), "Image error!", e);
+			}
+		}
+
+		public void result(String name, int width, int height){
+
+		}
+
+	}
+
 
 	public static class ContrastDialog extends FilterDialog{
 		VisSlider slider;
@@ -636,9 +712,20 @@ public class DialogClasses{
 			canvas.setAlpha(alpha);
 		}
 	}
+	
+	public static class ConfirmDialog extends MenuDialog{
+		
+		public ConfirmDialog(String title, String text){
+			super(title);
+			
+			VisLabel label = new VisLabel(text);
+			getContentTable().center().add(label).pad(20*s);
+		}
+	}
 
 	public static abstract class MenuDialog extends VisDialog{
-
+		VisTextButton ok, cancel;
+		
 		public MenuDialog(String title){
 			super(title, "dialog");
 			getTitleLabel().setColor(Color.CORAL);
@@ -652,8 +739,8 @@ public class DialogClasses{
 		}
 
 		void addButtons(){
-			Button cancel = new VisTextButton("Cancel");
-			Button ok = new VisTextButton("OK");
+			cancel = new VisTextButton("Cancel");
+			ok = new VisTextButton("OK");
 
 			setObject(ok, true);
 			setObject(cancel, false);

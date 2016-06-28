@@ -1,6 +1,8 @@
 package net.pixelstatic.pixeleditor.modules;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
@@ -12,6 +14,7 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ContrastDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ScaleDialog;
@@ -32,6 +35,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -167,6 +171,12 @@ public class GUI extends Module<PixelEditor>{
 		VisTable newtable = new VisTable();
 		
 		VisTextButton newbutton = new VisTextButton("New Project");
+		newbutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				newProject();
+			}
+		});
+		
 		newtable.left().add(newbutton).padBottom(6*s);
 		
 		projectmenu.getContentTable().add(newtable).grow().row();
@@ -197,7 +207,7 @@ public class GUI extends Module<PixelEditor>{
 
 	static class ProjectTable extends VisTable{
 
-		public ProjectTable(Project project){
+		public ProjectTable(final Project project){
 
 			Image image = new Image(project.texture);
 
@@ -221,6 +231,24 @@ public class GUI extends Module<PixelEditor>{
 			VisImageButton openbutton = new VisImageButton(Textures.getDrawable("icon-open"));
 			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
 			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
+			
+			openbutton.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					GUI.gui.openProject(project);
+				}
+			});
+			
+			copybutton.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					GUI.gui.copyProject(project);
+				}
+			});
+			
+			deletebutton.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					GUI.gui.deleteProject(project);
+				}
+			});
 
 			openbutton.getImageCell().size(imagesize);
 			copybutton.getImageCell().size(imagesize);
@@ -250,15 +278,64 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 	}
+	
+	void newProject(){
+		new NamedSizeDialog("New Project"){
+			
+			public void result(String name, int width, int height){
+				Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
+				PixelCanvas canvas = new PixelCanvas(pixmap);
+				PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
+				
+				loadProject(projectDirectory.child(name + ".png"));
+				drawgrid.setCanvas(canvas);
+				
+				updateProjectMenu();
+			}
+		}.show(stage);
+	}
+	
+	void openProject(Project project){
+		PixelCanvas canvas = new PixelCanvas(project.pixmap);
+		drawgrid.setCanvas(canvas);
+		
+		projectmenu.hide();
+	}
+	
+	void copyProject(Project project){
+		try{
+			FileHandle newhandle =  project.file.parent().child(project.file.nameWithoutExtension() + "(copy).png" );
+			Files.copy(project.file.file().toPath(), newhandle.file().toPath());
+			
+			projects.insert(projects.indexOf(project, true)+1, new Project(newhandle, newhandle.nameWithoutExtension()));
+			updateProjectMenu();
+		}catch(IOException e){
+			AndroidDialogs.showError(stage, "Error copying file!", e);
+			e.printStackTrace();
+		}
+	}
+	
+	void deleteProject(final Project project){
+		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
+			public void result(){
+				projects.removeValue(project, true);
+				updateProjectMenu();
+			}
+		}.show(stage);
+	}
 
 	void loadProjects(){
 		FileHandle[] files = projectDirectory.list();
 
 		for(FileHandle file : files){
 			if(file.extension().equals("png")){
-				projects.add(new Project(file, file.nameWithoutExtension()));
+				loadProject(file);
 			}
 		}
+	}
+	
+	void loadProject(FileHandle file){
+		projects.add(new Project(file, file.nameWithoutExtension()));
 	}
 
 	void addScrollSetting(Table table, final String name, int min, int max, int value, ChangeListener listener){
@@ -493,7 +570,6 @@ public class GUI extends Module<PixelEditor>{
 			@Override
 			public boolean act(float delta){
 				alpha.setRightColor(colorbox.getColor());
-				System.out.println(colorbox.getColor().a);
 				return false;
 			}
 		});
