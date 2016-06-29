@@ -65,6 +65,7 @@ public class GUI extends Module<PixelEditor>{
 	public Stage stage;
 	public FileHandle projectDirectory;
 	Array<Project> projects = new Array<Project>();
+	Project currentProject;
 	int palettewidth = 8;
 	Skin skin;
 	Preferences prefs;
@@ -294,6 +295,7 @@ public class GUI extends Module<PixelEditor>{
 				
 				Project project = loadProject(projectDirectory.child(name + ".png"));
 				drawgrid.setCanvas(canvas);
+				tool.onColorChange(selectedColor(), drawgrid.canvas);
 				
 				updateProjectMenu();
 				openProject(project);
@@ -304,7 +306,8 @@ public class GUI extends Module<PixelEditor>{
 	void openProject(Project project){
 		PixelCanvas canvas = new PixelCanvas(project.pixmap);
 		drawgrid.setCanvas(canvas);
-		
+		updateToolColor();
+		currentProject = project;
 		projectmenu.hide();
 	}
 	
@@ -324,10 +327,20 @@ public class GUI extends Module<PixelEditor>{
 	void deleteProject(final Project project){
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
-				projects.removeValue(project, true);
-				updateProjectMenu();
+				try{
+					Files.delete(project.file.file().toPath());
+					projects.removeValue(project, true);
+					updateProjectMenu();
+				}catch(IOException e){
+					AndroidDialogs.showError(stage, "Error deleting file!", e);
+					e.printStackTrace();
+				}
 			}
 		}.show(stage);
+	}
+	
+	void saveProject(){
+		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
 	}
 
 	void loadProjects(){
@@ -491,6 +504,12 @@ public class GUI extends Module<PixelEditor>{
 						updateToolColor();
 					}
 				}.show(stage);
+			}
+		}));
+		fileMenu.addItem(new ExtraMenuItem(fibutton, "save", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				saveProject();
 			}
 		}));
 		fileMenu.addItem(new ExtraMenuItem(fibutton,"export", new ChangeListener(){
@@ -680,17 +699,14 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	private static class ExtraMenuItem extends MenuItem{
-		private Button button;
 		
 		public ExtraMenuItem(Button button, String text){
 			super(text);
-			this.button = button;
 			validate();
 		}
 
 		public ExtraMenuItem(Button button, String text, ChangeListener changeListener){
 			super(text, changeListener);
-			this.button = button;
 			invalidate();
 		}
 

@@ -69,6 +69,7 @@ public class DrawingGrid extends Actor{
 			public boolean keyUp(InputEvent event, int keycode){
 				if(keycode == Keys.E){
 					if(GUI.gui.tool.push){
+						System.out.println("pushing");
 						canvas.pushActions();
 					}
 					return true;
@@ -168,6 +169,9 @@ public class DrawingGrid extends Actor{
 		updateSize();
 
 		zoom = maxZoom();
+		
+		if(canvas.width() > 100 || canvas.height() > 100) grid = false;
+	
 
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
@@ -271,9 +275,9 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
-		batch.draw(Textures.get("grid_10"), getX() + x * cscl - xt, getY() + y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
-		batch.draw(Textures.get("grid_10"), getX() + x * cscl, getY() + y * cscl, cscl, cscl);
-
+		//batch.draw(Textures.get("grid_10"), getX() + x * cscl - xt, getY() + y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
+		//batch.draw(Textures.get("grid_10"), getX() + x * cscl, getY() + y * cscl, cscl, cscl);
+		MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 3, 6);
 	}
 
 	public void updateCursor(){

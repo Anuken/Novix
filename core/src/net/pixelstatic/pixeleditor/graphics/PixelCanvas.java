@@ -37,7 +37,6 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public void drawPixel(int x, int y){
-		//TODO FIX STAPH
 		int preColor = getIntColor(x, y);
 
 		pixmap.drawPixel(x, height() - 1 - y);
