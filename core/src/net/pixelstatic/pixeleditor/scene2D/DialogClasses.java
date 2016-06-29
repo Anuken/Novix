@@ -669,7 +669,7 @@ public class DialogClasses{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
 
-				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(GUI.gui.drawgrid.canvas.pixmap, xscale, yscale));
+				PixelCanvas canvas = new PixelCanvas(GUI.gui.currentProject, PixmapUtils.scale(GUI.gui.drawgrid.canvas.pixmap, xscale, yscale));
 
 				GUI.gui.drawgrid.setCanvas(canvas);
 				GUI.gui.updateToolColor();
@@ -710,6 +710,27 @@ public class DialogClasses{
 			canvas.pushActions();
 
 			canvas.setAlpha(alpha);
+		}
+	}
+	
+	public static class InputDialog extends MenuDialog{
+		VisTextField field;
+		
+		public InputDialog(String title, String fieldtext, String text){
+			super(title);
+			
+			field = new VisTextField(fieldtext);
+			TextFieldDialogListener.add(field);
+			getContentTable().center().add(new VisLabel(text));
+			getContentTable().center().add(field).pad(20*s).padLeft(0f);
+		}
+		
+		public final void result(){
+			result(field.getText());
+		}
+		
+		public void result(String string){
+			
 		}
 	}
 	

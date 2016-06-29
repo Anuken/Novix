@@ -57,6 +57,8 @@ import com.kotcrab.vis.ui.widget.color.ColorPickerAdapter;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXTextPrompt;
+import de.tomgrill.gdxdialogs.core.listener.TextPromptListener;
 
 public class GUI extends Module<PixelEditor>{
 	public static GUI gui;
@@ -65,7 +67,7 @@ public class GUI extends Module<PixelEditor>{
 	public Stage stage;
 	public FileHandle projectDirectory;
 	Array<Project> projects = new Array<Project>();
-	Project currentProject;
+	public Project currentProject;
 	int palettewidth = 8;
 	Skin skin;
 	Preferences prefs;
@@ -235,6 +237,7 @@ public class GUI extends Module<PixelEditor>{
 
 			VisImageButton openbutton = new VisImageButton(Textures.getDrawable("icon-open"));
 			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
+			VisImageButton renamebutton = new VisImageButton(Textures.getDrawable("icon-rename"));
 			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
 			
 			openbutton.addListener(new ClickListener(){
@@ -249,6 +252,12 @@ public class GUI extends Module<PixelEditor>{
 				}
 			});
 			
+			renamebutton.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					GUI.gui.renameProject(project);
+				}
+			});
+			
 			deletebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					GUI.gui.deleteProject(project);
@@ -257,16 +266,18 @@ public class GUI extends Module<PixelEditor>{
 
 			openbutton.getImageCell().size(imagesize);
 			copybutton.getImageCell().size(imagesize);
+			renamebutton.getImageCell().size(imagesize);
 			deletebutton.getImageCell().size(imagesize);
 
 			VisTable texttable = new VisTable();
 			VisTable buttontable = new VisTable();
 
-			float bwidth = 80, bheight = 50;
+			float bwidth = 60, bheight = 50;
 
 			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).size(bwidth, bheight);
 			buttontable.add(copybutton).size(bwidth, bheight);
 			buttontable.add(deletebutton).size(bwidth, bheight);
+			buttontable.add(renamebutton).size(bwidth, bheight);
 
 			top().left();
 
@@ -289,11 +300,11 @@ public class GUI extends Module<PixelEditor>{
 		new NamedSizeDialog("New Project"){
 			
 			public void result(String name, int width, int height){
-				Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
-				PixelCanvas canvas = new PixelCanvas(pixmap);
-				PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
 				
-				Project project = loadProject(projectDirectory.child(name + ".png"));
+				Project project = createNewProject(name, width, height);
+				
+				PixelCanvas canvas = new PixelCanvas(project, project.pixmap);
+				
 				drawgrid.setCanvas(canvas);
 				tool.onColorChange(selectedColor(), drawgrid.canvas);
 				
@@ -303,8 +314,17 @@ public class GUI extends Module<PixelEditor>{
 		}.show(stage);
 	}
 	
+	Project createNewProject(String name, int width, int height){
+		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
+		PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
+		
+		Project project = loadProject(projectDirectory.child(name + ".png"));
+		
+		return project;
+	}
+	
 	void openProject(Project project){
-		PixelCanvas canvas = new PixelCanvas(project.pixmap);
+		PixelCanvas canvas = new PixelCanvas(project, project.pixmap);
 		drawgrid.setCanvas(canvas);
 		updateToolColor();
 		currentProject = project;
@@ -324,6 +344,31 @@ public class GUI extends Module<PixelEditor>{
 		}
 	}
 	
+	void renameProject(final Project project){
+		GDXTextPrompt dialog = GDXDialogsSystem.getDialogManager().newDialog(GDXTextPrompt.class);
+		dialog.setMessage("Enter new project name:");
+		dialog.setConfirmButtonLabel("OK");
+		dialog.setCancelButtonLabel("Cancel");
+		dialog.setTextPromptListener(new TextPromptListener(){
+			@Override
+			public void cancel(){
+				
+			}
+
+			@Override
+			public void confirm(String text){
+				project.name = text;
+				updateProjectMenu();
+			}
+		});
+		dialog.build().show();
+		//new DialogClasses.InputDialog("Rename Dialog", project.name, "Name: "){
+		//	public void result(String name){
+				
+		//	}
+		//}.show(stage);
+	}
+	
 	void deleteProject(final Project project){
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
@@ -340,6 +385,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	void saveProject(){
+		currentProject.texture = drawgrid.canvas.texture;
 		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
 	}
 
@@ -350,6 +396,10 @@ public class GUI extends Module<PixelEditor>{
 			if(file.extension().equals("png")){
 				loadProject(file);
 			}
+		}
+		
+		if(projects.size == 0){
+			currentProject = createNewProject("Untitled", 16, 16);
 		}
 	}
 	
@@ -499,7 +549,7 @@ public class GUI extends Module<PixelEditor>{
 				new SizeDialog("New Canvas"){
 					@Override
 					public void result(int width, int height){
-						PixelCanvas canvas = new PixelCanvas(width, height);
+						PixelCanvas canvas = new PixelCanvas(currentProject, width, height);
 						drawgrid.setCanvas(canvas);
 						updateToolColor();
 					}
@@ -552,7 +602,7 @@ public class GUI extends Module<PixelEditor>{
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
-							drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
+							drawgrid.setCanvas(new PixelCanvas(currentProject, new Pixmap(file)));
 							tool.onColorChange(selectedColor(), drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();
@@ -937,7 +987,7 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupCanvas(){
 		drawgrid = new DrawingGrid();
-		drawgrid.setCanvas(new PixelCanvas(16, 16));
+		drawgrid.setCanvas(new PixelCanvas(currentProject));
 		drawgrid.addAction(new Action(){
 			public boolean act(float delta){
 				drawgrid.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);

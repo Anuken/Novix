@@ -17,20 +17,22 @@ public class PixelCanvas implements Disposable{
 	private Pixmap blank;
 	final public Pixmap pixmap;
 	final public Texture texture;
-	//final public Project project;
+	final public Project project;
 	private float alpha = 1.0f;
 	private DrawAction action = new DrawAction();
 	public ActionStack actions = new ActionStack(this);
 
-	public PixelCanvas(Pixmap pixmap){
+	public PixelCanvas(Project project, Pixmap pixmap){
 		this.pixmap = pixmap;
+		this.project = project;
 		texture = new Texture(pixmap);
 		blank = PixmapUtils.blankPixmap();
 		updateTexture();
 	}
 
-	public PixelCanvas(int width, int height){
-		pixmap = new Pixmap(width, height, Format.RGBA8888);
+	public PixelCanvas(Project project){
+		this.project = project;
+		pixmap = new Pixmap(project.texture.getWidth(), project.texture.getHeight(), Format.RGBA8888);
 		texture = new Texture(pixmap);
 		blank = PixmapUtils.blankPixmap();
 		updateTexture();
@@ -161,7 +163,7 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public PixelCanvas asResized(int newwidth, int newheight){
-		return new PixelCanvas(PixmapUtils.resize(pixmap, newwidth, newheight));
+		return new PixelCanvas(project, PixmapUtils.resize(pixmap, newwidth, newheight));
 	}
 
 	public void drawPixmap(Pixmap pixmap){
