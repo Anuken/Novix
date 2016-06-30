@@ -708,6 +708,7 @@ public class DialogClasses{
 				}
 			}
 			canvas.pushActions();
+			canvas.updateTexture();
 
 			canvas.setAlpha(alpha);
 		}

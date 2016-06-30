@@ -91,7 +91,7 @@ public class GUI extends Module<PixelEditor>{
 		Gdx.gl.glClearColor(0.13f, 0.13f, 0.13f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if(FocusManager.getFocusedWidget() != null) FocusManager.resetFocus(stage);
+		if(FocusManager.getFocusedWidget() != null && (!(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
 
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
@@ -144,23 +144,19 @@ public class GUI extends Module<PixelEditor>{
 		settingsmenu.getButtonsTable().add(back).width(Gdx.graphics.getWidth()).height(60 * s);
 		settingsmenu.setObject(back, false);
 
-		addScrollSetting(settings, "Cursor Size", 1, 10, 5, new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		addScrollSetting(settings, "Cursor Size", 1, 10, 5);
+		
 
-			}
-		});
-
-		addCheckSetting(settings, "Draw something", true, new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-
-			}
-		});
+		addCheckSetting(settings, "Autosave", true);
+			
 
 		VisTable scrolltable = new VisTable();
 		
-		final VisScrollPane pane = new VisScrollPane(scrolltable);
+		final VisScrollPane pane = new VisScrollPane(scrolltable){
+			public float getPrefHeight(){
+				return Gdx.graphics.getHeight();
+			}
+		};
 		pane.setFadeScrollBars(false);
 		
 		projectmenu = new VisDialog("Projects"){
@@ -188,7 +184,7 @@ public class GUI extends Module<PixelEditor>{
 		
 		projectmenu.getContentTable().add(newtable).grow().row();
 
-		projectmenu.getContentTable().top().left().add(pane).grow();
+		projectmenu.getContentTable().top().left().add(pane).align(Align.topLeft).grow();
 
 		VisTextButton projectback = new VisTextButton("Back");
 		projectback.add(new Image(Textures.getDrawable("icon-arrow-left"))).size(40 * s).center();
@@ -304,7 +300,7 @@ public class GUI extends Module<PixelEditor>{
 				
 				Project project = createNewProject(name, width, height);
 				
-				PixelCanvas canvas = new PixelCanvas(project, project.pixmap);
+				PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
 				
 				drawgrid.setCanvas(canvas);
 				tool.onColorChange(selectedColor(), drawgrid.canvas);
@@ -325,7 +321,8 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	void openProject(Project project){
-		PixelCanvas canvas = new PixelCanvas(project, project.pixmap);
+		prefs.putString("lastproject", project.name);
+		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
 		drawgrid.setCanvas(canvas);
 		updateToolColor();
 		currentProject = project;
@@ -357,17 +354,16 @@ public class GUI extends Module<PixelEditor>{
 			}
 
 			@Override
-			public void confirm(String text){
-				project.name = text;
-				updateProjectMenu();
+			public void confirm(final String text){
+				Gdx.app.postRunnable(new Runnable(){
+					public void run(){
+						project.name = text;
+						updateProjectMenu();
+					}
+				});
 			}
 		});
 		dialog.build().show();
-		//new DialogClasses.InputDialog("Rename Dialog", project.name, "Name: "){
-		//	public void result(String name){
-				
-		//	}
-		//}.show(stage);
 	}
 	
 	void deleteProject(final Project project){
@@ -386,8 +382,8 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	void saveProject(){
-		currentProject.texture = drawgrid.canvas.texture;
 		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
+		currentProject.reloadTexture();
 	}
 
 	void loadProjects(){
@@ -401,6 +397,16 @@ public class GUI extends Module<PixelEditor>{
 		
 		if(projects.size == 0){
 			currentProject = createNewProject("Untitled", 16, 16);
+		}else{
+			String last = prefs.getString("lastproject", "Untitled");
+			
+			for(Project project : projects){
+				if(project.name.equals(last)){
+					currentProject = project;
+					return;
+				}
+			}
+			currentProject = createNewProject("Untitled", 16, 16);
 		}
 	}
 	
@@ -410,10 +416,9 @@ public class GUI extends Module<PixelEditor>{
 		return project;
 	}
 
-	void addScrollSetting(Table table, final String name, int min, int max, int value, ChangeListener listener){
+	void addScrollSetting(Table table, final String name, int min, int max, int value){
 		final VisLabel label = new VisLabel(name + ": " + value);
 		final VisSlider slider = new VisSlider(min, max, 1, false);
-		slider.addListener(listener);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				label.setText(name + ": " + slider.getValue());
@@ -427,11 +432,10 @@ public class GUI extends Module<PixelEditor>{
 		table.row();
 	}
 
-	void addCheckSetting(Table table, final String name, boolean value, ChangeListener listener){
+	void addCheckSetting(Table table, final String name, boolean value){
 		final VisLabel label = new VisLabel(name);
 		final VisCheckBox box = new VisCheckBox("", prefs.getBoolean(name, value));
 		box.getImageStackCell().size(40 * s);
-		box.addListener(listener);
 		box.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				prefs.putBoolean(name, box.isChecked());
@@ -550,7 +554,7 @@ public class GUI extends Module<PixelEditor>{
 				new SizeDialog("New Canvas"){
 					@Override
 					public void result(int width, int height){
-						PixelCanvas canvas = new PixelCanvas(currentProject, width, height);
+						PixelCanvas canvas = new PixelCanvas(width, height);
 						drawgrid.setCanvas(canvas);
 						updateToolColor();
 					}
@@ -580,7 +584,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem(fibutton,"export scaled", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton,"export x", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
@@ -603,7 +607,7 @@ public class GUI extends Module<PixelEditor>{
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
-							drawgrid.setCanvas(new PixelCanvas(currentProject, new Pixmap(file)));
+							drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
 							tool.onColorChange(selectedColor(), drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();
@@ -988,7 +992,9 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupCanvas(){
 		drawgrid = new DrawingGrid();
-		drawgrid.setCanvas(new PixelCanvas(currentProject));
+		
+		drawgrid.setCanvas(new PixelCanvas(currentProject.getCachedPixmap()));
+		
 		drawgrid.addAction(new Action(){
 			public boolean act(float delta){
 				drawgrid.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
@@ -1112,6 +1118,7 @@ public class GUI extends Module<PixelEditor>{
 		VisUI.dispose();
 		picker.dispose();
 		Textures.dispose();
+		if(currentProject != null)prefs.putString("lastproject", currentProject.name);
 		prefs.flush();
 	}
 }
