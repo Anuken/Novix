@@ -215,12 +215,13 @@ public class GUI extends Module<PixelEditor>{
 	static class ProjectTable extends VisTable{
 
 		public ProjectTable(final Project project){
-
-			Image image = new Image(project.texture);
+			Texture texture = new Texture(project.file);
+			
+			Image image = new Image(texture);
 
 			BorderImage border = new BorderImage();
 			border.setColor(Color.CORAL);
-			AlphaImage alpha = new AlphaImage(project.getWidth(), project.getHeight());
+			AlphaImage alpha = new AlphaImage(texture.getWidth(), texture.getHeight());
 
 			Stack stack = new Stack();
 
@@ -230,7 +231,7 @@ public class GUI extends Module<PixelEditor>{
 
 			VisLabel namelabel = new VisLabel(project.name);
 
-			VisLabel sizelabel = new VisLabel("Size: " + project.getWidth() + "x" + project.getHeight());
+			VisLabel sizelabel = new VisLabel("Size: " + texture.getWidth() + "x" + texture.getHeight());
 			sizelabel.setColor(Color.GRAY);
 
 			int imagesize = 40;

@@ -69,7 +69,6 @@ public class DrawingGrid extends Actor{
 			public boolean keyUp(InputEvent event, int keycode){
 				if(keycode == Keys.E){
 					if(GUI.gui.tool.push){
-						System.out.println("pushing");
 						canvas.pushActions();
 					}
 					return true;

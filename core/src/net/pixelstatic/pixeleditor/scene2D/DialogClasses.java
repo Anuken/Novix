@@ -669,7 +669,7 @@ public class DialogClasses{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
 
-				PixelCanvas canvas = new PixelCanvas(GUI.gui.currentProject, PixmapUtils.scale(GUI.gui.drawgrid.canvas.pixmap, xscale, yscale));
+				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(GUI.gui.drawgrid.canvas.pixmap, xscale, yscale));
 
 				GUI.gui.drawgrid.setCanvas(canvas);
 				GUI.gui.updateToolColor();
