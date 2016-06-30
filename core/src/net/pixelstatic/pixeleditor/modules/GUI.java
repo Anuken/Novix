@@ -2,7 +2,6 @@ package net.pixelstatic.pixeleditor.modules;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
@@ -180,7 +179,9 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 		
-		newtable.left().add(newbutton).padBottom(6*s);
+		addIconToButton(newbutton, new Image(Textures.get("icon-plus")), 40*s);
+		
+		newtable.left().add(newbutton).padBottom(6*s).size(190*s, 60*s);
 		
 		projectmenu.getContentTable().add(newtable).grow().row();
 
@@ -260,7 +261,8 @@ public class GUI extends Module<PixelEditor>{
 					GUI.gui.deleteProject(project);
 				}
 			});
-
+			
+			
 			openbutton.getImageCell().size(imagesize);
 			copybutton.getImageCell().size(imagesize);
 			renamebutton.getImageCell().size(imagesize);
@@ -269,12 +271,12 @@ public class GUI extends Module<PixelEditor>{
 			VisTable texttable = new VisTable();
 			VisTable buttontable = new VisTable();
 
-			float bwidth = 60, bheight = 50;
+			float bheight = 50, space = 0;
 
-			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).size(bwidth, bheight);
-			buttontable.add(copybutton).size(bwidth, bheight);
-			buttontable.add(deletebutton).size(bwidth, bheight);
-			buttontable.add(renamebutton).size(bwidth, bheight);
+			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).height(bheight).growX().space(space);
+			buttontable.add(copybutton).height(bheight).growX().space(space);
+			buttontable.add(deletebutton).height(bheight).growX().space(space);
+			buttontable.add(renamebutton).height(bheight).growX().space(space);
 
 			top().left();
 
@@ -290,6 +292,13 @@ public class GUI extends Module<PixelEditor>{
 
 		}
 
+	}
+	
+	void addIconToButton(VisTextButton button, Image image, float size){
+		button.add(image).size(size).center();
+
+		button.getCells().reverse();
+		//button.getLabelCell().padLeft(size);
 	}
 	
 	void newProject(){
@@ -332,7 +341,7 @@ public class GUI extends Module<PixelEditor>{
 	void copyProject(Project project){
 		try{
 			FileHandle newhandle =  project.file.parent().child(project.file.nameWithoutExtension() + "(copy).png" );
-			Files.copy(project.file.file().toPath(), newhandle.file().toPath());
+			MiscUtils.copyFile(project.file.file(), newhandle.file());
 			
 			projects.insert(projects.indexOf(project, true)+1, new Project(newhandle, newhandle.nameWithoutExtension()));
 			updateProjectMenu();
@@ -370,10 +379,10 @@ public class GUI extends Module<PixelEditor>{
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
 				try{
-					Files.delete(project.file.file().toPath());
+					project.file.file().delete();
 					projects.removeValue(project, true);
 					updateProjectMenu();
-				}catch(IOException e){
+				}catch(Exception e){
 					AndroidDialogs.showError(stage, "Error deleting file!", e);
 					e.printStackTrace();
 				}
@@ -1115,6 +1124,8 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	public void dispose(){
+		saveProject();
+		
 		VisUI.dispose();
 		picker.dispose();
 		Textures.dispose();

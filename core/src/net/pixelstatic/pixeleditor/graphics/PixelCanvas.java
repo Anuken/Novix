@@ -58,8 +58,11 @@ public class PixelCanvas implements Disposable{
 		temp.set(preColor);
 		
 		float newalpha = temp.a - alpha;
-
-		if(newalpha < 0) newalpha = 0;
+		
+		if(newalpha <= 0 || MathUtils.isEqual(newalpha, 0)){
+			newalpha = 0;
+			temp.set(0, 0, 0, newalpha);
+		}
 		int newcolor = Color.rgba8888(temp.r, temp.g, temp.b, newalpha);
 		
 
@@ -86,7 +89,6 @@ public class PixelCanvas implements Disposable{
 
 		Pixmap.setBlending(Blending.SourceOver);
 
-		texture.draw(blank, x, height() - 1 - y);
 		action.push(x, y, color, 0);
 	}
 
