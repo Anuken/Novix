@@ -76,6 +76,19 @@ public class PixelCanvas implements Disposable{
 		texture.draw(blank, x, height() - 1 - y);
 		action.push(x, y, preColor, newcolor);
 	}
+	
+	public void erasePixelFullAlpha(int x, int y){
+		int color = getIntColor(x,y);
+		
+		Pixmap.setBlending(Blending.None);
+		
+		pixmap.drawPixel(x, height() - 1 - y, 0);
+
+		Pixmap.setBlending(Blending.SourceOver);
+
+		texture.draw(blank, x, height() - 1 - y);
+		action.push(x, y, color, 0);
+	}
 
 	public void drawRadius(int x, int y, int rad){
 		for(int rx = -rad;rx <= rad;rx ++){

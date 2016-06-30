@@ -704,7 +704,7 @@ public class DialogClasses{
 
 			for(int x = 0;x < canvas.width();x ++){
 				for(int y = 0;y < canvas.height();y ++){
-					canvas.erasePixel(x, y);
+					canvas.erasePixelFullAlpha(x, y);
 				}
 			}
 			canvas.pushActions();
