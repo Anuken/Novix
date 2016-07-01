@@ -10,15 +10,15 @@ import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -555,9 +555,17 @@ public class DialogClasses{
 
 			widthfield = new VisTextField(GUI.gui.drawgrid.canvas.width() + "");
 			heightfield = new VisTextField(GUI.gui.drawgrid.canvas.height() + "");
+			
+			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+
 
 			xscalefield = new VisTextField("1");
 			yscalefield = new VisTextField("1");
+			
+			xscalefield.setTextFieldFilter(new FloatFilter());
+			yscalefield.setTextFieldFilter(new FloatFilter());
+
 
 			final VisCheckBox box = new VisCheckBox("Keep Aspect Ratio", true);
 
@@ -598,8 +606,9 @@ public class DialogClasses{
 			ChangeListener scaleClickListener = new ChangeListener(){
 				public void changed(ChangeEvent event, Actor actor){
 					VisTextField field = (VisTextField)actor;
-
-					System.out.println("change.");
+					
+					if(field.getText().isEmpty() || field.getText().equals(".")) return;
+					
 					float value = Float.parseFloat(field.getText());
 
 					if(box.isChecked()){
@@ -669,6 +678,53 @@ public class DialogClasses{
 	public static class ShiftDialog extends MenuDialog{
 		public ShiftDialog(){
 			super("Shift Image");
+			
+			ShiftImagePreview preview = new ShiftImagePreview();
+			
+			
+			float ratio = GUI.gui.drawgrid.canvas.width() / GUI.gui.drawgrid.canvas.height();
+
+			float isize = 400;
+			float width = isize, height = isize / ratio;
+			if(height > width){
+				height = isize;
+				width = isize * ratio;
+			}
+			float sidePad = (isize - width) / 2f, topPad = (isize - height) / 2f;
+			getContentTable().add(preview).size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad + 2).padRight(sidePad + 2).row();
+			
+			
+		}
+		
+		class ShiftImagePreview extends Actor{
+			Stack stack;
+			ShiftedImage image;
+			
+			public ShiftImagePreview(){
+				stack = new Stack();
+				
+				AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
+				GridImage grid = new GridImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
+				image = new ShiftedImage(GUI.gui.drawgrid.canvas.texture);
+
+				stack.add(alpha);
+				stack.add(image);
+
+				if(GUI.gui.drawgrid.grid)stack.add(grid);
+				
+			}
+			
+			public void draw(Batch batch, float alpha){
+				stack.setBounds(getX(), getY(), getWidth(), getHeight());
+				
+				stack.draw(batch, alpha);
+				
+				Color color = Color.CORAL.cpy();
+				color.a = alpha;
+				batch.setColor(color);
+				MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2, 2);
+				batch.setColor(Color.WHITE);
+			}
 		}
 	}
 
@@ -761,9 +817,22 @@ public class DialogClasses{
 			if((Boolean)object == true) result();
 
 		}
+		
+		public void hide(){
+			super.hide();
+			Gdx.input.setOnscreenKeyboardVisible(false);
+		}
 
 		public void result(){
 
+		}
+	}
+	
+	static class FloatFilter implements VisTextField.TextFieldFilter{
+		@Override
+		public boolean acceptChar(VisTextField textField, char c){
+			
+			return Character.isDigit(c) || (c == '.' && !textField.getText().contains("."));
 		}
 	}
 }

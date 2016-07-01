@@ -10,9 +10,9 @@ public class Project{
 	private Pixmap cachedPixmap;
 	public final FileHandle file;
 	
-	public Project(FileHandle file, String name){
-		this.name = name;
+	public Project(FileHandle file){
 		this.file = file;
+		name = file.nameWithoutExtension();
 		reloadTexture();
 	}
 	

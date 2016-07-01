@@ -37,7 +37,6 @@ public class ImagePreview extends Actor{
 		batch.setColor(color);
 		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2, 2);
 		batch.setColor(Color.WHITE);
-		
 	}
 	
 	public PixmapImage getImage(){

@@ -61,8 +61,6 @@ import com.kotcrab.vis.ui.widget.color.ColorPickerAdapter;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
-import de.tomgrill.gdxdialogs.core.dialogs.GDXTextPrompt;
-import de.tomgrill.gdxdialogs.core.listener.TextPromptListener;
 
 public class GUI extends Module<PixelEditor>{
 	public static GUI gui;
@@ -162,6 +160,7 @@ public class GUI extends Module<PixelEditor>{
 			}
 		};
 		pane.setFadeScrollBars(false);
+		pane.setOverscroll(false, false);
 		
 		projectmenu = new VisDialog("Projects"){
 			public VisDialog show(Stage stage){
@@ -311,6 +310,7 @@ public class GUI extends Module<PixelEditor>{
 		new NamedSizeDialog("New Project"){
 			
 			public void result(String name, int width, int height){
+				if(showProjectExistsDialog(name)) return;
 				
 				Project project = createNewProject(name, width, height);
 				
@@ -343,20 +343,37 @@ public class GUI extends Module<PixelEditor>{
 		projectmenu.hide();
 	}
 	
-	void copyProject(Project project){
-		try{
-			FileHandle newhandle =  project.file.parent().child(project.file.nameWithoutExtension() + "(copy).png" );
-			MiscUtils.copyFile(project.file.file(), newhandle.file());
-			
-			projects.insert(projects.indexOf(project, true)+1, new Project(newhandle, newhandle.nameWithoutExtension()));
-			updateProjectMenu();
-		}catch(IOException e){
-			AndroidDialogs.showError(stage, "Error copying file!", e);
-			e.printStackTrace();
-		}
+	void copyProject(final Project project){
+		
+		new DialogClasses.InputDialog("Rename Copied Dialog", project.name,  "New Copy Name: "){
+			public void result(String text){
+				if(showProjectExistsDialog(text)) return;
+				
+				
+				try{
+					FileHandle newhandle =  project.file.parent().child(text+ ".png" );
+					MiscUtils.copyFile(project.file.file(), newhandle.file());
+					
+					projects.insert(projects.indexOf(project, true)+1, new Project(newhandle));
+					updateProjectMenu();
+				}catch(IOException e){
+					AndroidDialogs.showError(stage, "Error copying file!", e);
+					e.printStackTrace();
+				}
+			}
+		}.show(stage);
 	}
 	
 	void renameProject(final Project project){
+		new DialogClasses.InputDialog("Rename Project", project.name,  "Name: "){
+			public void result(String text){
+				if(showProjectExistsDialog(text, project)) return;
+				project.name = text;
+				updateProjectMenu();
+			}
+		}.show(stage);
+		
+		/*
 		GDXTextPrompt dialog = GDXDialogsSystem.getDialogManager().newDialog(GDXTextPrompt.class);
 		dialog.setMessage("Enter new project name:");
 		dialog.setConfirmButtonLabel("OK");
@@ -371,13 +388,13 @@ public class GUI extends Module<PixelEditor>{
 			public void confirm(final String text){
 				Gdx.app.postRunnable(new Runnable(){
 					public void run(){
-						project.name = text;
-						updateProjectMenu();
+						
 					}
 				});
 			}
 		});
 		dialog.build().show();
+		*/
 	}
 	
 	void deleteProject(final Project project){
@@ -425,9 +442,36 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	Project loadProject(FileHandle file){
-		Project project = new Project(file, file.nameWithoutExtension());
+		Project project = new Project(file);
 		projects.add(project);
 		return project;
+	}
+	
+	boolean checkIfProjectExists(String name, Project ignored){
+		for(Project project : projects){
+			if(project == ignored) continue;
+			if(project.name.equals(name)) return true;
+		}
+		return false;
+	}
+	
+	boolean showProjectExistsDialog(String name){
+		boolean exists = checkIfProjectExists(name, null);
+		
+		if(exists){
+			AndroidDialogs.showError(stage, "A project with that name already exists!");
+		}
+		
+		return exists;
+	}
+	
+	boolean showProjectExistsDialog(String name, Project project){
+		boolean exists = checkIfProjectExists(name, project);
+		if(exists){
+			AndroidDialogs.showError(stage, "A project with that name already exists!");
+		}
+		
+		return exists;
 	}
 
 	void addScrollSetting(Table table, final String name, int min, int max, int value){
@@ -1056,8 +1100,6 @@ public class GUI extends Module<PixelEditor>{
 				for(EventListener listener : field.getListeners()){
 					if(listener instanceof TextFieldDialogListener) return;
 				}
-				
-				
 				
 				Actor parent = MiscUtils.getTopParent(field);
 				
