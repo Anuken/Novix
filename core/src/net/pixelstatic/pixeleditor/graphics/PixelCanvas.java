@@ -55,6 +55,14 @@ public class PixelCanvas implements Disposable{
 
 		texture.draw(blank, x, height() - 1 - y);
 	}
+	
+	public void drawPixelBlendless(int x, int y, int color){
+		int preColor = getIntColor(x, y);
+		
+		pixmap.drawPixel(x, height() - 1 - y, color);
+		
+		action.push(x, y, preColor, color);
+	}
 
 	public void erasePixel(int x, int y){
 		int preColor = getIntColor(x, y);

@@ -13,11 +13,10 @@ import net.pixelstatic.utils.scene2D.ColorBox;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -476,17 +475,11 @@ public class DialogClasses{
 			this.filter = filter;
 			preview = new ImagePreview(PixmapUtils.copy(sourcePixmap()));
 
-			float ratio = (float)sourcePixmap().getWidth() / sourcePixmap().getHeight();
-
-			float isize = 400;
-			float width = isize, height = isize / ratio;
-			if(height > width){
-				height = isize;
-				width = isize * ratio;
-			}
-			float sidePad = (isize - width) / 2f, topPad = (isize - height) / 2f;
-			getContentTable().add(preview).size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad + 2).padRight(sidePad + 2).row();
-
+			Cell<?> cell = getContentTable().add(preview);
+			
+			resizeImageCell(cell);
+			
+			getContentTable().row();
 		}
 
 		abstract Object[] getArgs();
@@ -676,29 +669,113 @@ public class DialogClasses{
 	}
 
 	public static class ShiftDialog extends MenuDialog{
+		ShiftImagePreview preview;
+		
 		public ShiftDialog(){
 			super("Shift Image");
 			
-			ShiftImagePreview preview = new ShiftImagePreview();
-			
-			
-			float ratio = GUI.gui.drawgrid.canvas.width() / GUI.gui.drawgrid.canvas.height();
+			preview = new ShiftImagePreview();
 
-			float isize = 400;
-			float width = isize, height = isize / ratio;
-			if(height > width){
-				height = isize;
-				width = isize * ratio;
-			}
-			float sidePad = (isize - width) / 2f, topPad = (isize - height) / 2f;
-			getContentTable().add(preview).size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad + 2).padRight(sidePad + 2).row();
+			Cell<?> cell = getContentTable().add(preview);
 			
+			resizeImageCell(cell);
 			
+			getContentTable().row();
 		}
 		
-		class ShiftImagePreview extends Actor{
+		static class ShiftController extends Group{
+			VisImage left, right, up, down;
+			
+			public ShiftController(){
+				left = new VisImage(Textures.getDrawable("icon-arrow-left"));
+				right = new VisImage(Textures.getDrawable("icon-arrow-right"));
+				up = new VisImage(Textures.getDrawable("icon-arrow-up"));
+				down = new VisImage(Textures.getDrawable("icon-arrow-down"));
+				
+				final Color color = Color.PURPLE;
+				
+				up.setColor(color);
+				down.setColor(color);
+				left.setColor(color);
+				right.setColor(color);
+				
+				float size = 70;
+
+				left.setSize(size, size);
+				right.setSize(size, size);
+				up.setSize(size, size);
+				down.setSize(size, size);
+				
+				
+				InputListener colorlistener = new InputListener(){
+					public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+						event.getTarget().setColor(Color.CORAL);
+						return true;
+					}
+					
+					public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+						event.getTarget().setColor(color);
+					}
+				};
+				
+				up.addListener(colorlistener);
+				down.addListener(colorlistener);
+				left.addListener(colorlistener);
+				right.addListener(colorlistener);
+				
+				up.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						shifted(0, 1);
+					}
+				});
+				down.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						shifted(0, -1);
+					}
+				});
+				left.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						shifted(-1, 0);
+					}
+				});
+				right.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						shifted(1, 0);
+					}
+				});
+				
+				addActor(left);
+				addActor(right);
+				addActor(up);
+				addActor(down);
+			}
+			
+			public void draw(Batch batch, float alpha){
+				super.draw(batch, alpha);
+				float centerx = getX() + getWidth()/2f;
+				float centery = getY() + getHeight()/2f;
+				
+				float hwidth = getWidth()/2.5f;
+				float hheight = getHeight()/2.5f;
+				
+				up.setPosition(centerx, centery + hheight, Align.center);
+				down.setPosition(centerx, centery - hheight, Align.center);
+				left.setPosition(centerx - hwidth, centery, Align.center);
+				right.setPosition(centerx + hwidth, centery, Align.center);
+				
+				
+			}
+			
+			public void shifted(int x, int y){
+				
+			}
+		}
+		//note: call back, d
+		
+		class ShiftImagePreview extends Group{
 			Stack stack;
 			ShiftedImage image;
+			ShiftController controller;
 			
 			public ShiftImagePreview(){
 				stack = new Stack();
@@ -706,18 +783,27 @@ public class DialogClasses{
 				AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 				GridImage grid = new GridImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 				image = new ShiftedImage(GUI.gui.drawgrid.canvas.texture);
+				controller = new ShiftController(){
+					public void shifted(int x, int y){
+						image.offsetx += x;
+						image.offsety += y;
+					}
+				};
 
 				stack.add(alpha);
 				stack.add(image);
 
 				if(GUI.gui.drawgrid.grid)stack.add(grid);
 				
+
+				stack.add(controller);
+				
+				addActor(stack);
 			}
 			
 			public void draw(Batch batch, float alpha){
-				stack.setBounds(getX(), getY(), getWidth(), getHeight());
-				
-				stack.draw(batch, alpha);
+				super.draw(batch, alpha);
+				stack.setBounds(0, 0, getWidth(), getHeight());
 				
 				Color color = Color.CORAL.cpy();
 				color.a = alpha;
@@ -725,6 +811,27 @@ public class DialogClasses{
 				MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2, 2);
 				batch.setColor(Color.WHITE);
 			}
+		}
+		
+		public void result(){
+			PixelCanvas canvas = GUI.gui.drawgrid.canvas;
+			Pixmap temp = PixmapUtils.copy(canvas.pixmap);
+			
+			int offsetx= preview.image.offsetx, offsety = preview.image.offsety;
+			
+			Pixmap.setBlending(Blending.None);
+			for(int x = 0;x < canvas.width();x ++){
+				for(int y = 0;y < canvas.height();y ++){
+					if(x >= canvas.width() + offsetx || y >= canvas.height() + offsety || x < offsetx || y < offsety){
+						canvas.drawPixelBlendless(x, y, 0);
+					}
+					
+					canvas.drawPixelBlendless(x + offsetx, y + offsety, temp.getPixel(x, temp.getHeight() - 1 - y));
+				}
+			}
+			Pixmap.setBlending(Blending.SourceOver);
+			
+			canvas.updateAndPush();
 		}
 	}
 	
@@ -839,6 +946,20 @@ public class DialogClasses{
 		public void result(){
 
 		}
+	}
+	
+	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){
+		float ratio = GUI.gui.drawgrid.canvas.width() / GUI.gui.drawgrid.canvas.height();
+
+		float isize = 400;
+		float width = isize, height = isize / ratio;
+		if(height > width){
+			height = isize;
+			width = isize * ratio;
+		}
+		float sidePad = (isize - width) / 2f, topPad = (isize - height) / 2f;
+		
+		return cell.size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad + 2).padRight(sidePad + 2);
 	}
 	
 	static class FloatFilter implements VisTextField.TextFieldFilter{

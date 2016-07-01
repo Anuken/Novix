@@ -1145,6 +1145,9 @@ public class GUI extends Module<PixelEditor>{
 		setupExtraMenus();
 
 		updateToolColor();
+		
+		//for unpacking the atlas
+		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));
 	}
 
 	public void loadFonts(){
