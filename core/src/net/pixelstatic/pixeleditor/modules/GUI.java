@@ -12,6 +12,7 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ContrastDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.CropDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
@@ -56,8 +57,6 @@ import com.kotcrab.vis.ui.Focusable;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
-import com.kotcrab.vis.ui.widget.color.ColorPicker;
-import com.kotcrab.vis.ui.widget.color.ColorPickerAdapter;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
@@ -84,7 +83,6 @@ public class GUI extends Module<PixelEditor>{
 	FileChooser currentChooser;
 	public ColorBox colorbox;
 	ColorBox[] boxes;
-	ColorPicker picker;
 	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
 
@@ -314,32 +312,32 @@ public class GUI extends Module<PixelEditor>{
 				
 				Project project = createNewProject(name, width, height);
 				
-				PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
-				
-				drawgrid.setCanvas(canvas);
-				tool.onColorChange(selectedColor(), drawgrid.canvas);
-				
-				updateProjectMenu();
 				openProject(project);
+			
 			}
 		}.show(stage);
 	}
 	
 	Project createNewProject(String name, int width, int height){
+		Gdx.app.log("pedebugging", "Creating new project \"" + name+"\"");
 		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
 		PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
 		
 		Project project = loadProject(projectDirectory.child(name + ".png"));
+		Gdx.app.log("pedebugging", "Created new project with name " + name);
 		
 		return project;
 	}
 	
 	void openProject(Project project){
 		prefs.putString("lastproject", project.name);
+		currentProject = project;
+		
 		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
+		Gdx.app.log("pedebugging", "Opening project \"" + project.name+ "\"...");
+		
 		drawgrid.setCanvas(canvas);
 		updateToolColor();
-		currentProject = project;
 		projectmenu.hide();
 	}
 	
@@ -521,6 +519,13 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
+		
+		imageMenu.addItem(new ExtraMenuItem(ibutton, "crop", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new CropDialog().show(stage);
+			}
+		}));
 
 		imageMenu.addItem(new ExtraMenuItem(ibutton, "clear", new ChangeListener(){
 			@Override
@@ -606,6 +611,7 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton fibutton = addMenuButton("file..");
 
 		final PopupMenu fileMenu = new PopupMenu();
+		/*
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "new", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -619,6 +625,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
+		*/
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "save", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -721,7 +728,7 @@ public class GUI extends Module<PixelEditor>{
 		});
 
 		alpha.setColors(Color.CLEAR.cpy(), Color.WHITE);
-		alpha.setSize(Gdx.graphics.getWidth() - 40 * s, 50 * s);
+		alpha.setSize(Gdx.graphics.getWidth() - 80 * s, 50 * s);
 
 		optionstable.bottom().left();
 
@@ -780,15 +787,15 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 
-		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(20f * s);
-		extratooltable.add(menubutton).padTop(50f * s).size(120, 50).padLeft(20f);
+		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(00f * s);
+		extratooltable.add(menubutton).padTop(50f * s).size(120, 50).padLeft(5f);
 		extratooltable.row();
-		extratooltable.add(tbox).align(Align.left).padTop(5f * s).padLeft(20f * s);
-		extratooltable.add(settingsbutton).size(120, 50).padLeft(20f);
+		extratooltable.add(tbox).align(Align.left).padTop(5f * s).padLeft(00f * s);
+		extratooltable.add(settingsbutton).size(120, 50).padLeft(5f);
 		extratooltable.row();
 		extratooltable.add(grid).align(Align.left).padTop(55f * s).padLeft(20f * s);
 
-		optionstable.add(opacity).align(Align.left).padBottom(6f * s).colspan(2);
+		optionstable.add(opacity).align(Align.center).padBottom(6f * s).colspan(2);
 		optionstable.row();
 
 		optionstable.add(alpha).colspan(2).pad(3 * s).padBottom(15f * s);
@@ -932,16 +939,6 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupColors(){
 
-		picker = new ColorPicker(new ColorPickerAdapter(){
-			@Override
-			public void finished(Color color){
-				colorbox.setColor(color);
-				tool.onColorChange(color, drawgrid.canvas);
-			}
-		});
-
-		picker.setShowHexFields(false);
-
 		VisTable pickertable = new VisTable(){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
@@ -1013,11 +1010,6 @@ public class GUI extends Module<PixelEditor>{
 					box.selected = true;
 					box.toFront();
 					apicker.setSelectedColor(box.getColor());
-
-					if(getTapCount() > 1){
-						picker.setColor(box.getColor());
-						stage.addActor(picker.fadeIn());
-					}
 					updateToolColor();
 				}
 			});
@@ -1105,7 +1097,7 @@ public class GUI extends Module<PixelEditor>{
 				
 				float keypadding = 30;
 				
-				float parenty = parent.getY();
+				//float parenty = parent.getY();
 				float actory = field.localToStageCoordinates(new Vector2(0, 0)).y;
 				float keyheight = AndroidKeyboard.getCurrentKeyboardHeight() + keypadding;
 				
@@ -1118,11 +1110,11 @@ public class GUI extends Module<PixelEditor>{
 					moveActorUp(parent, diff);
 				}
 				
-				Gdx.app.error("AHHHHHHHHHHHH","parent y: " + parenty);
+				//Gdx.app.log("AHHHHHHHHHHHH","parent y: " + parenty);
 
-				Gdx.app.error("AHHHHHHHHHHHH","actor y: " + actory);
+				//Gdx.app.log("AHHHHHHHHHHHH","actor y: " + actory);
 				
-				Gdx.app.error("AHHHHHHHHHHHH","key move: "+ height);
+				//Gdx.app.log("AHHHHHHHHHHHH","key move: "+ height);
 				
 			}
 			
@@ -1238,7 +1230,6 @@ public class GUI extends Module<PixelEditor>{
 		saveProject();
 		
 		VisUI.dispose();
-		picker.dispose();
 		Textures.dispose();
 		if(currentProject != null)prefs.putString("lastproject", currentProject.name);
 		prefs.flush();

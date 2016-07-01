@@ -10,6 +10,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
+import com.kotcrab.vis.ui.FocusManager;
+import com.kotcrab.vis.ui.widget.VisTextField;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
 	private Input input;
@@ -23,7 +25,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		//PC only
 		float speed = 5f;
 
-		if(Gdx.input.isKeyPressed(Keys.W)) this.<GUI>getModule(GUI.class).drawgrid.offsety += speed;
+		if(Gdx.input.isKeyPressed(Keys.W)) this.getModule(GUI.class).drawgrid.offsety += speed;
 		if(Gdx.input.isKeyPressed(Keys.A)) this.<GUI>getModule(GUI.class).drawgrid.offsetx -= speed;
 		if(Gdx.input.isKeyPressed(Keys.S)) this.<GUI>getModule(GUI.class).drawgrid.offsety -= speed;
 		if(Gdx.input.isKeyPressed(Keys.D)) this.<GUI>getModule(GUI.class).drawgrid.offsetx += speed;
@@ -39,7 +41,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		InputMultiplexer plex = new InputMultiplexer();
 		plex.addProcessor(this);
-		plex.addProcessor(this.<GUI>getModule(GUI.class).stage);
+		plex.addProcessor(this.getModule(GUI.class).stage);
 		plex.addProcessor(gesture);
 
 		Gdx.input.setInputProcessor(plex);
@@ -57,6 +59,11 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	@Override
 	public boolean keyTyped(char character){
+		if((int)character == 10){ //char is "enter" key
+			if(FocusManager.getFocusedWidget() != null && FocusManager.getFocusedWidget() instanceof VisTextField){
+				Gdx.input.setOnscreenKeyboardVisible(false);
+			}
+		}
 		return false;
 	}
 

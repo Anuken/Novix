@@ -24,7 +24,7 @@ public class DrawingGrid extends Actor{
 	int tpointer;
 	int touches = 0;
 	boolean moving;
-	public float zoom = 1f, offsetx = 0, offsety = 0;
+	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
 	public boolean clip = true;
 	public boolean vSymmetry = false, hSymmetry = false;
 
@@ -88,8 +88,9 @@ public class DrawingGrid extends Actor{
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
 				if(cursormode){
 					if(pointer != tpointer || !GUI.gui.tool.moveCursor()) return;
-					cursorx += Gdx.input.getDeltaX(pointer);
-					cursory -= Gdx.input.getDeltaY(pointer);
+					cursorx += Gdx.input.getDeltaX(pointer) * cursorSpeed;
+					cursory -= Gdx.input.getDeltaY(pointer) * cursorSpeed;
+					
 					cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
 					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
 					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
@@ -161,9 +162,15 @@ public class DrawingGrid extends Actor{
 	}
 
 	public void setCanvas(PixelCanvas canvas){
-		if(this.canvas != null) this.canvas.dispose();
+		Gdx.app.log("pedebugging", "Drawgrid: setting new canvas.");
+		if(this.canvas != null){
+			Gdx.app.log("pedebugging", "Drawgrid: disposing old canvas: " + this.canvas.name);
+			this.canvas.dispose();
+		}
 
 		this.canvas = canvas;
+		
+		Gdx.app.log("pedebugging", "Drawgrid: new canvas \"" + canvas.name +"\" set.");
 
 		updateSize();
 

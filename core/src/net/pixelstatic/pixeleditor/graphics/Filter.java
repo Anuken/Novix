@@ -76,6 +76,8 @@ public enum Filter{
 			if(color.equals(from)){
 				pixmap.setColor(to);
 				pixmap.drawPixel(x, y);
+			}else{
+				pixmap.drawPixel(x, y, input.getPixel(x, y));
 			}
 		}
 	},
@@ -85,6 +87,8 @@ public enum Filter{
 			if(color.equals(from)){
 				pixmap.setColor(Color.CLEAR);
 				pixmap.drawPixel(x, y);
+			}else{
+				pixmap.drawPixel(x, y, input.getPixel(x, y));
 			}
 		}
 	},

@@ -727,6 +727,14 @@ public class DialogClasses{
 			}
 		}
 	}
+	
+	public static class CropDialog extends MenuDialog{
+		
+		public CropDialog(){
+			super("Crop Image");
+		}
+		
+	}
 
 	public static class ClearDialog extends MenuDialog{
 		public ClearDialog(){
@@ -820,6 +828,11 @@ public class DialogClasses{
 		
 		public void hide(){
 			super.hide();
+			Gdx.input.setOnscreenKeyboardVisible(false);
+		}
+		
+		public void close(){
+			super.close();
 			Gdx.input.setOnscreenKeyboardVisible(false);
 		}
 

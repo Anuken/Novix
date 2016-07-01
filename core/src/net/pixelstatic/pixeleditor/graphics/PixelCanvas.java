@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor.graphics;
 
+import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.pixeleditor.tools.ActionStack;
 import net.pixelstatic.pixeleditor.tools.DrawAction;
 import net.pixelstatic.utils.graphics.PixmapUtils;
@@ -17,12 +18,14 @@ public class PixelCanvas implements Disposable{
 	private Pixmap blank;
 	final public Pixmap pixmap;
 	final public Texture texture;
+	final public String name;
 	private float alpha = 1.0f;
 	private DrawAction action = new DrawAction();
 	public ActionStack actions = new ActionStack(this);
 
 	public PixelCanvas(Pixmap pixmap){
 		this.pixmap = pixmap;
+		name = GUI.gui.currentProject.name;
 		texture = new Texture(pixmap);
 		blank = PixmapUtils.blankPixmap();
 		updateTexture();
@@ -31,6 +34,7 @@ public class PixelCanvas implements Disposable{
 	public PixelCanvas(int width, int height){
 		pixmap = new Pixmap(width, height, Format.RGBA8888);
 		texture = new Texture(pixmap);
+		name = GUI.gui.currentProject.name;
 		blank = PixmapUtils.blankPixmap();
 		updateTexture();
 	}

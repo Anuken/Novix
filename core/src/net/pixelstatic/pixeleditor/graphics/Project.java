@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor.graphics;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,7 @@ public class Project{
 	public Project(FileHandle file){
 		this.file = file;
 		name = file.nameWithoutExtension();
+		Gdx.app.log("pedebugging", "Creating new project: \"" + name + "\"");
 		reloadTexture();
 	}
 	
@@ -21,7 +23,9 @@ public class Project{
 	}
 	
 	public void reloadTexture(){
-		if(cachedTexture != null)cachedTexture.dispose();
+		Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. texture is " + cachedTexture + ", pixmap is " + cachedPixmap);
+		
+		if(cachedTexture != null) cachedTexture.dispose();
 		cachedTexture = new Texture(file);
 		cachedTexture.getTextureData().prepare();
 		cachedPixmap = cachedTexture.getTextureData().consumePixmap();
