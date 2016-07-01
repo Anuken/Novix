@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.modules;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
@@ -21,6 +22,8 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ShiftDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
+import net.pixelstatic.utils.AndroidKeyboard;
+import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
@@ -42,12 +45,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
+import com.kotcrab.vis.ui.Focusable;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
@@ -1032,6 +1037,70 @@ public class GUI extends Module<PixelEditor>{
 		stage.setViewport(new ScreenViewport());
 		loadFonts();
 		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
+		
+		AndroidKeyboard.setListener(new AndroidKeyboardListener(){
+			HashMap<Actor, Float> moved = new HashMap<Actor, Float>();
+			
+			@Override
+			public void onSizeChange(int height){
+				Focusable focus = FocusManager.getFocusedWidget();
+				
+				if(focus == null) return;
+				
+				Actor actor = (Actor)focus;
+				
+				if(!(actor instanceof VisTextField)) return;
+				
+				VisTextField field = (VisTextField)actor;
+				
+				for(EventListener listener : field.getListeners()){
+					if(listener instanceof TextFieldDialogListener) return;
+				}
+				
+				
+				
+				Actor parent = MiscUtils.getTopParent(field);
+				
+				float keypadding = 30;
+				
+				float parenty = parent.getY();
+				float actory = field.localToStageCoordinates(new Vector2(0, 0)).y;
+				float keyheight = AndroidKeyboard.getCurrentKeyboardHeight() + keypadding;
+				
+				if(height > 0){
+					moveActorDown(parent);
+				}
+			
+				if(actory < keyheight){
+					float diff = keyheight - actory;
+					moveActorUp(parent, diff);
+				}
+				
+				Gdx.app.error("AHHHHHHHHHHHH","parent y: " + parenty);
+
+				Gdx.app.error("AHHHHHHHHHHHH","actor y: " + actory);
+				
+				Gdx.app.error("AHHHHHHHHHHHH","key move: "+ height);
+				
+			}
+			
+			void moveActorUp(Actor actor, float move){
+				actor.addAction(Actions.moveBy(0, move, 0.1f));
+				if(moved.containsKey(actor)){
+					moved.put(actor, moved.get(actor) + move);
+				}else{
+					moved.put(actor, move);
+				}
+			}
+			
+			void moveActorDown(Actor actor){
+				if(moved.containsKey(actor)){
+					float move = moved.get(actor);
+					actor.addAction(Actions.moveBy(0, -move, 0.1f));
+					moved.remove(actor);
+				}
+			}
+		});
 
 		loadProjects();
 

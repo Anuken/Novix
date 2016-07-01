@@ -9,7 +9,6 @@ import net.pixelstatic.utils.graphics.PixmapUtils;
 import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
 import net.pixelstatic.utils.scene2D.ColorBox;
-import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -42,9 +41,6 @@ public class DialogClasses{
 
 			widthfield.setText((GUI.gui.drawgrid.canvas.width()) + "");
 			heightfield.setText(GUI.gui.drawgrid.canvas.height() + "");
-
-			TextFieldDialogListener.add(widthfield, 1, 3);
-			TextFieldDialogListener.add(heightfield, 1, 3);
 			
 			float twidth = 160*s, theight = 40*s;
 
@@ -97,10 +93,6 @@ public class DialogClasses{
 
 			widthfield.setText((GUI.gui.drawgrid.canvas.width()) + "");
 			heightfield.setText(GUI.gui.drawgrid.canvas.height() + "");
-
-			TextFieldDialogListener.add(widthfield, 1, 3);
-			TextFieldDialogListener.add(heightfield, 1, 3);
-			TextFieldDialogListener.add(namefield);
 			
 			
 			float twidth = 160*s, theight = 40*s;
@@ -564,14 +556,8 @@ public class DialogClasses{
 			widthfield = new VisTextField(GUI.gui.drawgrid.canvas.width() + "");
 			heightfield = new VisTextField(GUI.gui.drawgrid.canvas.height() + "");
 
-			TextFieldDialogListener.add(widthfield, 1, 3);
-			TextFieldDialogListener.add(heightfield, 1, 3);
-
 			xscalefield = new VisTextField("1");
 			yscalefield = new VisTextField("1");
-
-			TextFieldDialogListener.add(xscalefield, 2, 10);
-			TextFieldDialogListener.add(yscalefield, 2, 10);
 
 			final VisCheckBox box = new VisCheckBox("Keep Aspect Ratio", true);
 
@@ -721,7 +707,6 @@ public class DialogClasses{
 			super(title);
 			
 			field = new VisTextField(fieldtext);
-			TextFieldDialogListener.add(field);
 			getContentTable().center().add(new VisLabel(text));
 			getContentTable().center().add(field).pad(20*s).padLeft(0f);
 		}
@@ -751,7 +736,7 @@ public class DialogClasses{
 		public MenuDialog(String title){
 			super(title, "dialog");
 			getTitleLabel().setColor(Color.CORAL);
-			
+			setMovable(false);
 			addCloseButton();
 			//getTitleTable().row();
 			//getTitleTable().add(new Separator()).expandX().fillX().padTop(3*s);
