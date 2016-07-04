@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
+import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.scene2D.*;
@@ -51,6 +52,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.Focusable;
@@ -81,6 +83,9 @@ public class GUI extends Module<PixelEditor>{
 	Table menutable, optionstable, tooloptiontable, extratooltable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
+	Array<Palette> palettes = new Array<Palette>();
+	final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
+	Json json;
 	public ColorBox colorbox;
 	ColorBox[] boxes;
 	public AndroidColorPicker apicker;
@@ -1024,9 +1029,28 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 		colortable.add().expandX().fillX();
-
+		
+		VisTextButton palettebutton = new VisTextButton("Palettes...");
+		
+		palettebutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				VisDialog dialog = new VisDialog("Palettes"){
+					
+				};
+				
+				if(palettes.size == 0){
+					dialog.getContentTable().add(new VisLabel("No palettes found."));
+				}
+				
+				dialog.getTitleLabel().setColor(Color.CORAL);
+				dialog.addCloseButton();
+				dialog.show(stage);
+			}
+		});
+		
 		pickertable.add(apicker).expand().fill().padTop(colorsize + 20 * s).padBottom(10f * s);
-
+		pickertable.row();
+		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).growX();
 		collapser.resetY();
 		collapser.setCollapsed(true, false);
 		setupBoxColors();
@@ -1072,7 +1096,8 @@ public class GUI extends Module<PixelEditor>{
 
 		projectDirectory = MiscUtils.getHomeDirectory().child("pixelprojects");
 		projectDirectory.mkdirs();
-
+		json = new Json();
+		loadPalettes();
 		prefs = Gdx.app.getPreferences("pixeleditor");
 		Textures.load("textures/");
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
@@ -1225,6 +1250,21 @@ public class GUI extends Module<PixelEditor>{
 			getStyle().imageUp = d;
 		}
 	}
+	
+	void savePalettes(){
+		String string = json.toJson(palettes);
+		paletteDirectory.writeString(string, false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	void loadPalettes(){
+		try{
+			palettes = json.fromJson(Array.class, paletteDirectory);
+			Gdx.app.log("pedebugging", "Palettes loaded.");
+		}catch (Exception e){
+			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
+		}
+	}
 
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
@@ -1250,7 +1290,7 @@ public class GUI extends Module<PixelEditor>{
 
 	public void dispose(){
 		saveProject();
-		
+		savePalettes();
 		VisUI.dispose();
 		Textures.dispose();
 		if(currentProject != null)prefs.putString("lastproject", currentProject.name);
