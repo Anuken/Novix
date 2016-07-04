@@ -12,4 +12,8 @@ public class Palette{
 		for(int i = 0; i < size; i ++)
 			colors[i] = Color.WHITE.cpy();
 	}
+	
+	public int size(){
+		return colors.length;
+	}
 }

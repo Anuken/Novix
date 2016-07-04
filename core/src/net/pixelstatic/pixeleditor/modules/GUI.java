@@ -1038,9 +1038,11 @@ public class GUI extends Module<PixelEditor>{
 					
 				};
 				
-				if(palettes.size == 0){
-					dialog.getContentTable().add(new VisLabel("No palettes found."));
-				}
+				
+				
+				//if(palettes.size == 0){
+				//	dialog.getContentTable().add(new VisLabel("No palettes found."));
+				//}
 				
 				dialog.getTitleLabel().setColor(Color.CORAL);
 				dialog.addCloseButton();
