@@ -215,7 +215,7 @@ public class GUI extends Module<PixelEditor>{
 
 		public ProjectTable(final Project project){
 			Texture texture = new Texture(project.file);
-			
+			/*
 			Image image = new Image(texture);
 
 			BorderImage border = new BorderImage();
@@ -227,7 +227,9 @@ public class GUI extends Module<PixelEditor>{
 			stack.add(alpha);
 			stack.add(image);
 			stack.add(border);
-
+*/
+			StaticPreviewImage image = new StaticPreviewImage(texture);
+			
 			VisLabel namelabel = new VisLabel(project.name);
 
 			VisLabel sizelabel = new VisLabel("Size: " + texture.getWidth() + "x" + texture.getHeight());
@@ -284,7 +286,7 @@ public class GUI extends Module<PixelEditor>{
 
 			background("button");
 			setColor(Hue.lightness(0.87f));
-			add(stack).padTop(4).padBottom(4).size(120 * s).padLeft(0f);
+			add(image).padTop(4).padBottom(4).size(128 * s).padLeft(0f);
 			add(texttable).grow();
 			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
 			texttable.row();
@@ -396,6 +398,11 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	void deleteProject(final Project project){
+		if(project == currentProject){
+			AndroidDialogs.showInfo(stage, "You cannot delete the canvas you are currently using!");
+			return;
+		}
+		
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
 				try{
@@ -1077,11 +1084,19 @@ public class GUI extends Module<PixelEditor>{
 		AndroidKeyboard.setListener(new AndroidKeyboardListener(){
 			HashMap<Actor, Float> moved = new HashMap<Actor, Float>();
 			
-			@Override
-			public void onSizeChange(int height){
+			void moveActor(final int height, boolean extra){
 				Focusable focus = FocusManager.getFocusedWidget();
 				
-				if(focus == null) return;
+				if(focus == null){
+					if(extra){
+						Gdx.app.postRunnable(new Runnable(){
+							public void run(){
+								moveActor(height, false);
+							}
+						});
+					}
+					return;
+				}
 				
 				Actor actor = (Actor)focus;
 				
@@ -1115,7 +1130,11 @@ public class GUI extends Module<PixelEditor>{
 				//Gdx.app.log("AHHHHHHHHHHHH","actor y: " + actory);
 				
 				//Gdx.app.log("AHHHHHHHHHHHH","key move: "+ height);
-				
+			}
+			
+			@Override
+			public void onSizeChange(int height){
+				moveActor(height, true);
 			}
 			
 			void moveActorUp(Actor actor, float move){

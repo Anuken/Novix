@@ -676,7 +676,11 @@ public class DialogClasses{
 			
 			preview = new ShiftImagePreview();
 
-			Cell<?> cell = getContentTable().add(preview);
+			VisTable table = new VisTable();
+			table.setClip(true);
+			table.add(preview).grow().pad(2);
+			
+			Cell<?> cell = getContentTable().add(table);
 			
 			resizeImageCell(cell);
 			
@@ -780,6 +784,7 @@ public class DialogClasses{
 			public ShiftImagePreview(){
 				stack = new Stack();
 				
+				
 				AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 				GridImage grid = new GridImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 				image = new ShiftedImage(GUI.gui.drawgrid.canvas.texture);
@@ -841,6 +846,20 @@ public class DialogClasses{
 			super("Crop Image");
 		}
 		
+		
+		static class CropImagePreview extends ImagePreview{
+			CropController controller;
+			
+			public CropImagePreview(){
+				super(GUI.gui.drawgrid.canvas.pixmap);
+				stack.add((controller = new CropController()));
+			}
+		
+		}
+		
+		static class CropController extends Actor{
+			int selx, sely, selwidth, selheight;
+		}
 	}
 
 	public static class ClearDialog extends MenuDialog{

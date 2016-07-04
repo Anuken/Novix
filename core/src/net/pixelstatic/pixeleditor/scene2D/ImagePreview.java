@@ -1,16 +1,15 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
 import net.pixelstatic.pixeleditor.modules.GUI;
-import net.pixelstatic.utils.MiscUtils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 
-public class ImagePreview extends Actor{
-	private Stack stack;
+public class ImagePreview extends Group{
+	protected Stack stack;
 	public final PixmapImage image;
 	
 	public ImagePreview(Pixmap pixmap){
@@ -20,23 +19,20 @@ public class ImagePreview extends Actor{
 		
 		AlphaImage alpha = new AlphaImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
 		GridImage grid = new GridImage(GUI.gui.drawgrid.canvas.width(), GUI.gui.drawgrid.canvas.height());
-
+		BorderImage border = new BorderImage();
+		border.setColor(Color.CORAL);
+		
 		stack.add(alpha);
 		stack.add(image);
 		if(GUI.gui.drawgrid.grid)stack.add(grid);
+		stack.add(border);
 		
+		addActor(stack);
 	}
 	
 	public void draw(Batch batch, float alpha){
-		stack.setBounds(getX(), getY(), getWidth(), getHeight());
-		
-		stack.draw(batch, alpha);
-		
-		Color color = Color.CORAL.cpy();
-		color.a = alpha;
-		batch.setColor(color);
-		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2, 2);
-		batch.setColor(Color.WHITE);
+		super.draw(batch, alpha);
+		stack.setBounds(0, 0, getWidth(), getHeight());
 	}
 	
 	public PixmapImage getImage(){
