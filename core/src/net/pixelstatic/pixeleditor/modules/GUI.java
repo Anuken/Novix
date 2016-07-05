@@ -1034,11 +1034,32 @@ public class GUI extends Module<PixelEditor>{
 		
 		palettebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				VisDialog dialog = new VisDialog("Palettes"){
+				VisDialog dialog = new VisDialog("Palettes", "dialog"){
 					
 				};
 				
+				Table table = new VisTable();
 				
+				VisScrollPane pane = new VisScrollPane(table);
+				pane.setFadeScrollBars(false);
+				pane.setOverscroll(false, false);
+				
+				//dialog.getContentTable().add(pane).width(340).maxHeight(300);
+				
+				palettes.clear();
+				palettes.add(new Palette("lel", 6));
+				palettes.add(new Palette("lel", 10));
+				palettes.add(new Palette("lel", 10));
+				palettes.add(new Palette("lel", 10));
+				palettes.add(new Palette("lel", 10));
+				palettes.add(new Palette("lel", 10));
+				
+				for(int i = 0; i < palettes.size; i ++){
+					PaletteWidget palette = new PaletteWidget(palettes.get(i));
+					dialog.getContentTable().add(palette).padBottom(6);
+					
+					if(i % 2 == 1) dialog.getContentTable().row();
+				}
 				
 				//if(palettes.size == 0){
 				//	dialog.getContentTable().add(new VisLabel("No palettes found."));
@@ -1264,6 +1285,7 @@ public class GUI extends Module<PixelEditor>{
 			palettes = json.fromJson(Array.class, paletteDirectory);
 			Gdx.app.log("pedebugging", "Palettes loaded.");
 		}catch (Exception e){
+			e.printStackTrace();
 			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
 		}
 	}
