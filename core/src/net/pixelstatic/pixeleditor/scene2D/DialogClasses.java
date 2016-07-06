@@ -841,9 +841,15 @@ public class DialogClasses{
 	}
 	
 	public static class CropDialog extends MenuDialog{
+		CropImagePreview preview;
 		
 		public CropDialog(){
 			super("Crop Image");
+			Cell<?> cell = getContentTable().add((preview = new CropImagePreview()));
+			
+			resizeImageCell(cell);
+			
+			getContentTable().row();
 		}
 		
 		
@@ -852,13 +858,51 @@ public class DialogClasses{
 			
 			public CropImagePreview(){
 				super(GUI.gui.drawgrid.canvas.pixmap);
-				stack.add((controller = new CropController()));
+				stack.add((controller = new CropController(this)));
 			}
 		
 		}
 		
 		static class CropController extends Actor{
-			int selx, sely, selwidth, selheight;
+			private float xscale, yscale;
+			int selx, sely, selwidth = 10, selheight = 10;
+			CropImagePreview preview;
+			
+			public CropController(CropImagePreview preview){
+				this.preview = preview;
+				
+				addListener(new InputListener(){
+					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+						touch(x,y);
+						
+						return true;
+					}
+					
+					public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+						
+					}
+					
+					public void touchDragged (InputEvent event, float x, float y, int pointer) {
+						touch(x,y);
+					}
+					
+					void touch(float x, float y){
+						int cx = (int)((x - getX())/xscale);
+						int cy = (int)((y - getY())/yscale);
+						
+						selx = cx;
+						sely = cy;
+					}
+				});
+			}
+			
+			public void draw(Batch batch, float alpha){
+				xscale = preview.getWidth() / preview.image.pixmap.getWidth();
+				yscale = preview.getHeight() / preview.image.pixmap.getHeight();
+				
+				batch.setColor(Color.PURPLE);
+				MiscUtils.drawBorder(batch, getX() + selx*xscale, getY() + sely*yscale, selwidth*xscale, selheight*yscale, 3);
+			}
 		}
 	}
 

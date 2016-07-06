@@ -1047,10 +1047,10 @@ public class GUI extends Module<PixelEditor>{
 				//dialog.getContentTable().add(pane).width(340).maxHeight(300);
 				
 				palettes.clear();
-				palettes.add(new Palette("lel", 6));
-				palettes.add(new Palette("lel", 10));
-				palettes.add(new Palette("lel", 10));
-				palettes.add(new Palette("lel", 10));
+				palettes.add(new Palette("aaaaa", 2));
+				palettes.add(new Palette("adsadd", 16));
+				palettes.add(new Palette("ggggggg", 10));
+				palettes.add(new Palette("hello hello hello", 10));
 				palettes.add(new Palette("lel", 10));
 				palettes.add(new Palette("lel", 10));
 				

@@ -5,6 +5,8 @@ import net.pixelstatic.utils.graphics.Hue;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
@@ -33,21 +35,28 @@ public class PaletteWidget extends VisTable{
 		
 		VisLabel label = new VisLabel(palette.name);
 		label.setColor(Color.LIGHT_GRAY);
-		add(label);
+		
+		add(label).align(Align.topLeft);
 		row();
 		
+		Table colortable = new VisTable();
+		colortable.top().left();
+		
+		top().left().add(colortable).grow();
+		
 		if(rowsize < maxsize){ // this means another row is needed
-			int extra = boxes.length - perow;
 			for(int i = 0; i < boxes.length; i ++){
-				add(boxes[i]).size(maxsize);
-				if(i == perow-1) row();
+				colortable.add(boxes[i]).size(maxsize);
+				if(i == perow-1) colortable.row();
 			}
 		}else{ //otherwise, put it in one row
 			for(int i = 0; i < boxes.length; i ++){
-				add(boxes[i]).size(maxsize);
+				colortable.add(boxes[i]).size(maxsize);
 			}
+			
+			//add blank cells
 			for(int i = 0; i < perow - boxes.length; i ++){
-				add().size(maxsize);
+				colortable.add().size(maxsize);
 			}
 		}
 		
