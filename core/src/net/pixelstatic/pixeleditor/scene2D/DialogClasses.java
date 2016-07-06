@@ -851,14 +851,20 @@ public class DialogClasses{
 			
 			resizeImageCell(cell);
 			
-			//float pad = 20;
-			
-			//cell.padBottom(cell.getPadBottom()+pad);
-			//cell.padLeft(cell.getPadLeft()+pad);
-			//cell.padRight(cell.getPadRight()+pad);
-			//cell.padTop(cell.getPadTop()+pad);
-			
 			getContentTable().row();
+		}
+		
+		public void result(){
+			int x=0,y=0,x2=0,y2=0;
+			
+			x = Math.min(preview.controller.selx1, preview.controller.selx2);
+			x2 = Math.max(preview.controller.selx1, preview.controller.selx2);
+			y = Math.min(preview.controller.sely1, preview.controller.sely2);
+			y2 = Math.max(preview.controller.sely1, preview.controller.sely2);
+			
+			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(GUI.gui.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
+			
+			GUI.gui.drawgrid.setCanvas(canvas);
 		}
 		
 		
@@ -876,12 +882,20 @@ public class DialogClasses{
 		static class CropController extends Actor{
 			private float xscale, yscale;
 			Vector2[] points = {new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2()};
-			int selx1, sely1, selx2 = 10, sely2 = 10;
+			int selx1, sely1, selx2, sely2;
 			CropImagePreview preview;
 			int point = 0;
 			
 			public CropController(final CropImagePreview preview){
 				this.preview = preview;
+				
+				int pwidth = preview.image.pixmap.getWidth(), pheight = preview.image.pixmap.getHeight();
+				
+				selx1 = pwidth / 2 - pwidth/3;
+				sely1 = pheight / 2 - pheight/3;
+				
+				selx2 = pwidth /2 + pwidth/3;
+				sely2 = pheight / 2 + pheight/3;
 				
 				addListener(new InputListener(){
 					
@@ -893,8 +907,6 @@ public class DialogClasses{
 								return true;
 							}
 						}
-						
-						
 						
 						return false;
 					}
@@ -967,7 +979,7 @@ public class DialogClasses{
 				batch.setColor(Color.PURPLE);
 				MiscUtils.setBatchAlpha(batch, alpha);
 				
-				MiscUtils.drawBorder(batch, getX() + selx1*xscale, getY() + sely1*yscale, (selx2-selx1)*xscale, (sely2-sely1)*yscale, 2*s, s*4);
+				MiscUtils.drawBorder(batch, getX() + selx1*xscale, getY() + sely1*yscale, (selx2-selx1)*xscale, (sely2-sely1)*yscale, s*4, s*2);
 				
 				Color color = Color.CORAL;
 				Color select = Color.PURPLE;
@@ -977,7 +989,6 @@ public class DialogClasses{
 				for(int i = 0; i < 8; i++){
 					batch.setColor(point == i ? select : color);
 					MiscUtils.setBatchAlpha(batch, alpha);
-					//MiscUtils.drawBorder(batch, points[i].x - size/2,  points[i].y - size/2, size, size, 2);
 					batch.draw(region, points[i].x - size/2,  points[i].y - size/2, size, size);
 				
 				}

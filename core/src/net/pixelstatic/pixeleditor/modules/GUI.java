@@ -35,6 +35,7 @@ import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
@@ -96,7 +97,7 @@ public class GUI extends Module<PixelEditor>{
 		Gdx.gl.glClearColor(0.13f, 0.13f, 0.13f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if(FocusManager.getFocusedWidget() != null && (!(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
+		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
 
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
@@ -150,13 +151,11 @@ public class GUI extends Module<PixelEditor>{
 		settingsmenu.setObject(back, false);
 
 		addScrollSetting(settings, "Cursor Size", 1, 10, 5);
-		
 
 		addCheckSetting(settings, "Autosave", true);
-			
 
 		VisTable scrolltable = new VisTable();
-		
+
 		final VisScrollPane pane = new VisScrollPane(scrolltable){
 			public float getPrefHeight(){
 				return Gdx.graphics.getHeight();
@@ -164,7 +163,7 @@ public class GUI extends Module<PixelEditor>{
 		};
 		pane.setFadeScrollBars(false);
 		pane.setOverscroll(false, false);
-		
+
 		projectmenu = new VisDialog("Projects"){
 			public VisDialog show(Stage stage){
 				super.show(stage);
@@ -178,18 +177,18 @@ public class GUI extends Module<PixelEditor>{
 		projectmenu.getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
 
 		VisTable newtable = new VisTable();
-		
+
 		VisTextButton newbutton = new VisTextButton("New Project");
 		newbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				newProject();
 			}
 		});
-		
-		addIconToButton(newbutton, new Image(Textures.get("icon-plus")), 40*s);
-		
-		newtable.left().add(newbutton).padBottom(6*s).size(190*s, 60*s);
-		
+
+		addIconToButton(newbutton, new Image(Textures.get("icon-plus")), 40 * s);
+
+		newtable.left().add(newbutton).padBottom(6 * s).size(190 * s, 60 * s);
+
 		projectmenu.getContentTable().add(newtable).grow().row();
 
 		projectmenu.getContentTable().top().left().add(pane).align(Align.topLeft).grow();
@@ -232,9 +231,9 @@ public class GUI extends Module<PixelEditor>{
 			stack.add(alpha);
 			stack.add(image);
 			stack.add(border);
-*/
+			*/
 			StaticPreviewImage image = new StaticPreviewImage(texture);
-			
+
 			VisLabel namelabel = new VisLabel(project.name);
 
 			VisLabel sizelabel = new VisLabel("Size: " + texture.getWidth() + "x" + texture.getHeight());
@@ -246,32 +245,31 @@ public class GUI extends Module<PixelEditor>{
 			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
 			VisImageButton renamebutton = new VisImageButton(Textures.getDrawable("icon-rename"));
 			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
-			
+
 			openbutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					GUI.gui.openProject(project);
 				}
 			});
-			
+
 			copybutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					GUI.gui.copyProject(project);
 				}
 			});
-			
+
 			renamebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					GUI.gui.renameProject(project);
 				}
 			});
-			
+
 			deletebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					GUI.gui.deleteProject(project);
 				}
 			});
-			
-			
+
 			openbutton.getImageCell().size(imagesize);
 			copybutton.getImageCell().size(imagesize);
 			renamebutton.getImageCell().size(imagesize);
@@ -302,64 +300,63 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 	}
-	
+
 	void addIconToButton(VisTextButton button, Image image, float size){
 		button.add(image).size(size).center();
 
 		button.getCells().reverse();
 		//button.getLabelCell().padLeft(size);
 	}
-	
+
 	void newProject(){
-		
+
 		new NamedSizeDialog("New Project"){
-			
+
 			public void result(String name, int width, int height){
 				if(showProjectExistsDialog(name)) return;
-				
+
 				Project project = createNewProject(name, width, height);
-				
+
 				openProject(project);
-			
+
 			}
 		}.show(stage);
 	}
-	
+
 	Project createNewProject(String name, int width, int height){
-		Gdx.app.log("pedebugging", "Creating new project \"" + name+"\"");
+		Gdx.app.log("pedebugging", "Creating new project \"" + name + "\"");
 		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
 		PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
-		
+
 		Project project = loadProject(projectDirectory.child(name + ".png"));
 		Gdx.app.log("pedebugging", "Created new project with name " + name);
-		
+
 		return project;
 	}
-	
+
 	void openProject(Project project){
 		prefs.putString("lastproject", project.name);
 		currentProject = project;
-		
+
 		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
-		Gdx.app.log("pedebugging", "Opening project \"" + project.name+ "\"...");
-		
+		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
+
 		drawgrid.setCanvas(canvas);
 		updateToolColor();
 		projectmenu.hide();
 	}
-	
+
 	void copyProject(final Project project){
-		
-		new DialogClasses.InputDialog("Rename Copied Dialog", project.name,  "New Copy Name: "){
+
+		new DialogClasses.InputDialog("Rename Copied Dialog", project.name, "New Copy Name: "){
 			public void result(String text){
 				if(showProjectExistsDialog(text)) return;
-				
-				
+
 				try{
-					FileHandle newhandle =  project.file.parent().child(text+ ".png" );
+					FileHandle newhandle = project.file.parent().child(text + ".png");
 					MiscUtils.copyFile(project.file.file(), newhandle.file());
-					
-					projects.insert(projects.indexOf(project, true)+1, new Project(newhandle));
+
+					projects.insert(projects.indexOf(project, true) + 1, new Project(newhandle));
 					updateProjectMenu();
 				}catch(IOException e){
 					AndroidDialogs.showError(stage, "Error copying file!", e);
@@ -368,16 +365,16 @@ public class GUI extends Module<PixelEditor>{
 			}
 		}.show(stage);
 	}
-	
+
 	void renameProject(final Project project){
-		new DialogClasses.InputDialog("Rename Project", project.name,  "Name: "){
+		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
 				if(showProjectExistsDialog(text, project)) return;
 				project.name = text;
 				updateProjectMenu();
 			}
 		}.show(stage);
-		
+
 		/*
 		GDXTextPrompt dialog = GDXDialogsSystem.getDialogManager().newDialog(GDXTextPrompt.class);
 		dialog.setMessage("Enter new project name:");
@@ -401,13 +398,13 @@ public class GUI extends Module<PixelEditor>{
 		dialog.build().show();
 		*/
 	}
-	
+
 	void deleteProject(final Project project){
 		if(project == currentProject){
 			AndroidDialogs.showInfo(stage, "You cannot delete the canvas you are currently using!");
 			return;
 		}
-		
+
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
 				try{
@@ -421,7 +418,7 @@ public class GUI extends Module<PixelEditor>{
 			}
 		}.show(stage);
 	}
-	
+
 	void saveProject(){
 		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
 		currentProject.reloadTexture();
@@ -435,12 +432,12 @@ public class GUI extends Module<PixelEditor>{
 				loadProject(file);
 			}
 		}
-		
+
 		if(projects.size == 0){
 			currentProject = createNewProject("Untitled", 16, 16);
 		}else{
 			String last = prefs.getString("lastproject", "Untitled");
-			
+
 			for(Project project : projects){
 				if(project.name.equals(last)){
 					currentProject = project;
@@ -450,13 +447,13 @@ public class GUI extends Module<PixelEditor>{
 			currentProject = createNewProject("Untitled", 16, 16);
 		}
 	}
-	
+
 	Project loadProject(FileHandle file){
 		Project project = new Project(file);
 		projects.add(project);
 		return project;
 	}
-	
+
 	boolean checkIfProjectExists(String name, Project ignored){
 		for(Project project : projects){
 			if(project == ignored) continue;
@@ -464,23 +461,23 @@ public class GUI extends Module<PixelEditor>{
 		}
 		return false;
 	}
-	
+
 	boolean showProjectExistsDialog(String name){
 		boolean exists = checkIfProjectExists(name, null);
-		
+
 		if(exists){
 			AndroidDialogs.showError(stage, "A project with that name already exists!");
 		}
-		
+
 		return exists;
 	}
-	
+
 	boolean showProjectExistsDialog(String name, Project project){
 		boolean exists = checkIfProjectExists(name, project);
 		if(exists){
 			AndroidDialogs.showError(stage, "A project with that name already exists!");
 		}
-		
+
 		return exists;
 	}
 
@@ -531,7 +528,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		
+
 		imageMenu.addItem(new ExtraMenuItem(ibutton, "crop", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -644,7 +641,7 @@ public class GUI extends Module<PixelEditor>{
 				saveProject();
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem(fibutton,"export", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton, "export", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
@@ -661,7 +658,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem(fibutton,"export x", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton, "export x", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
@@ -678,7 +675,7 @@ public class GUI extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-		fileMenu.addItem(new ExtraMenuItem(fibutton,"open", new ChangeListener(){
+		fileMenu.addItem(new ExtraMenuItem(fibutton, "open", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
@@ -831,7 +828,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	private static class ExtraMenuItem extends MenuItem{
-		
+
 		public ExtraMenuItem(Button button, String text){
 			super(text);
 			validate();
@@ -843,7 +840,7 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 		public float getPrefWidth(){
-			return Gdx.graphics.getWidth()/4f-4;
+			return Gdx.graphics.getWidth() / 4f - 4;
 		}
 
 		public float getPrefHeight(){
@@ -855,7 +852,7 @@ public class GUI extends Module<PixelEditor>{
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).width(Gdx.graphics.getWidth()/4f-4).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
+		menutable.top().left().add(button).width(Gdx.graphics.getWidth() / 4f - 4).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
 		return button;
 	}
 
@@ -1029,23 +1026,23 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 		colortable.add().expandX().fillX();
-		
+
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
-		
+
 		palettebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				VisDialog dialog = new VisDialog("Palettes", "dialog"){
-					
+
 				};
-				
+
 				Table table = new VisTable();
-				
+
 				VisScrollPane pane = new VisScrollPane(table);
 				pane.setFadeScrollBars(false);
 				pane.setOverscroll(false, false);
-				
+
 				//dialog.getContentTable().add(pane).width(340).maxHeight(300);
-				
+
 				palettes.clear();
 				palettes.add(new Palette("aaaaa", 2));
 				palettes.add(new Palette("adsadd", 16));
@@ -1053,24 +1050,24 @@ public class GUI extends Module<PixelEditor>{
 				palettes.add(new Palette("hello hello hello", 10));
 				palettes.add(new Palette("lel", 10));
 				palettes.add(new Palette("lel", 10));
-				
-				for(int i = 0; i < palettes.size; i ++){
+
+				for(int i = 0;i < palettes.size;i ++){
 					PaletteWidget palette = new PaletteWidget(palettes.get(i));
 					dialog.getContentTable().add(palette).padBottom(6);
-					
+
 					if(i % 2 == 1) dialog.getContentTable().row();
 				}
-				
+
 				//if(palettes.size == 0){
 				//	dialog.getContentTable().add(new VisLabel("No palettes found."));
 				//}
-				
+
 				dialog.getTitleLabel().setColor(Color.CORAL);
 				dialog.addCloseButton();
 				dialog.show(stage);
 			}
 		});
-		
+
 		pickertable.add(apicker).expand().fill().padTop(colorsize + 20 * s).padBottom(10f * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).growX();
@@ -1096,9 +1093,9 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupCanvas(){
 		drawgrid = new DrawingGrid();
-		
+
 		drawgrid.setCanvas(new PixelCanvas(currentProject.getCachedPixmap()));
-		
+
 		drawgrid.addAction(new Action(){
 			public boolean act(float delta){
 				drawgrid.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
@@ -1128,13 +1125,13 @@ public class GUI extends Module<PixelEditor>{
 		stage.setViewport(new ScreenViewport());
 		loadFonts();
 		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
-		
+
 		AndroidKeyboard.setListener(new AndroidKeyboardListener(){
 			HashMap<Actor, Float> moved = new HashMap<Actor, Float>();
-			
+
 			void moveActor(final int height, boolean extra){
 				Focusable focus = FocusManager.getFocusedWidget();
-				
+
 				if(focus == null){
 					if(extra){
 						Gdx.app.postRunnable(new Runnable(){
@@ -1145,46 +1142,46 @@ public class GUI extends Module<PixelEditor>{
 					}
 					return;
 				}
-				
+
 				Actor actor = (Actor)focus;
-				
-				if(!(actor instanceof VisTextField)) return;
-				
+
+				if( !(actor instanceof VisTextField)) return;
+
 				VisTextField field = (VisTextField)actor;
-				
+
 				for(EventListener listener : field.getListeners()){
 					if(listener instanceof TextFieldDialogListener) return;
 				}
-				
+
 				Actor parent = MiscUtils.getTopParent(field);
-				
+
 				float keypadding = 30;
-				
+
 				//float parenty = parent.getY();
 				float actory = field.localToStageCoordinates(new Vector2(0, 0)).y;
 				float keyheight = AndroidKeyboard.getCurrentKeyboardHeight() + keypadding;
-				
+
 				if(height > 0){
 					moveActorDown(parent);
 				}
-			
+
 				if(actory < keyheight){
 					float diff = keyheight - actory;
 					moveActorUp(parent, diff);
 				}
-				
+
 				//Gdx.app.log("AHHHHHHHHHHHH","parent y: " + parenty);
 
 				//Gdx.app.log("AHHHHHHHHHHHH","actor y: " + actory);
-				
+
 				//Gdx.app.log("AHHHHHHHHHHHH","key move: "+ height);
 			}
-			
+
 			@Override
 			public void onSizeChange(int height){
 				moveActor(height, true);
 			}
-			
+
 			void moveActorUp(Actor actor, float move){
 				actor.addAction(Actions.moveBy(0, move, 0.1f));
 				if(moved.containsKey(actor)){
@@ -1193,7 +1190,7 @@ public class GUI extends Module<PixelEditor>{
 					moved.put(actor, move);
 				}
 			}
-			
+
 			void moveActorDown(Actor actor){
 				if(moved.containsKey(actor)){
 					float move = moved.get(actor);
@@ -1212,7 +1209,16 @@ public class GUI extends Module<PixelEditor>{
 		setupExtraMenus();
 
 		updateToolColor();
-		
+
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+			public void run(){
+				if(Gdx.app.getType() != ApplicationType.Desktop){
+					saveProject();
+					savePalettes();
+				}
+			}
+		}));
+
 		//for unpacking the atlas
 		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));
 	}
@@ -1273,18 +1279,18 @@ public class GUI extends Module<PixelEditor>{
 			getStyle().imageUp = d;
 		}
 	}
-	
+
 	void savePalettes(){
 		String string = json.toJson(palettes);
 		paletteDirectory.writeString(string, false);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	void loadPalettes(){
 		try{
 			palettes = json.fromJson(Array.class, paletteDirectory);
 			Gdx.app.log("pedebugging", "Palettes loaded.");
-		}catch (Exception e){
+		}catch(Exception e){
 			e.printStackTrace();
 			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
 		}
@@ -1317,7 +1323,7 @@ public class GUI extends Module<PixelEditor>{
 		savePalettes();
 		VisUI.dispose();
 		Textures.dispose();
-		if(currentProject != null)prefs.putString("lastproject", currentProject.name);
+		if(currentProject != null) prefs.putString("lastproject", currentProject.name);
 		prefs.flush();
 	}
 }

@@ -27,9 +27,6 @@ public class GridImage extends Actor{
 		for(int y = 0; y <= imageHeight; y ++){
 			batch.draw(blank, getX() - s, (int)(getY() + y * yspace - s), getWidth(), 2);
 		}
-		//batch.setColor(1, 1, 1, alpha);
-		
-		//batch.draw(Textures.get("grid_25"), getX(), getY(), getWidth(), getHeight(), 0, 0, w, h);
 	}
 	
 	public void setImageSize(int w, int h){

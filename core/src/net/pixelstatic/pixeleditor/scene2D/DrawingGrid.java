@@ -260,9 +260,10 @@ public class DrawingGrid extends Actor{
 		MiscUtils.drawBorder(batch, Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), min(), 2);
 
 		batch.setColor(Color.CORAL);
-
+		
+		
 		//draw pic edges
-		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2);
+		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2, aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 		//draw cursor
 		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
@@ -281,9 +282,7 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
-		//batch.draw(Textures.get("grid_10"), getX() + x * cscl - xt, getY() + y * cscl - xt, cscl + xt * 2, cscl + xt * 2);
-		//batch.draw(Textures.get("grid_10"), getX() + x * cscl, getY() + y * cscl, cscl, cscl);
-		MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 3, 6);
+		MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 4, 2);
 	}
 
 	public void updateCursor(){
