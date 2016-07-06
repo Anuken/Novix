@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -850,6 +851,13 @@ public class DialogClasses{
 			
 			resizeImageCell(cell);
 			
+			//float pad = 20;
+			
+			//cell.padBottom(cell.getPadBottom()+pad);
+			//cell.padLeft(cell.getPadLeft()+pad);
+			//cell.padRight(cell.getPadRight()+pad);
+			//cell.padTop(cell.getPadTop()+pad);
+			
 			getContentTable().row();
 		}
 		
@@ -860,27 +868,39 @@ public class DialogClasses{
 			public CropImagePreview(){
 				super(GUI.gui.drawgrid.canvas.pixmap);
 				stack.add((controller = new CropController(this)));
+				
 			}
 		
 		}
 		
 		static class CropController extends Actor{
 			private float xscale, yscale;
+			Vector2[] points = {new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2()};
 			int selx1, sely1, selx2 = 10, sely2 = 10;
 			CropImagePreview preview;
+			int point = 0;
 			
 			public CropController(final CropImagePreview preview){
 				this.preview = preview;
 				
 				addListener(new InputListener(){
+					
 					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-						touch(x,y);
+						for(int i = 0; i < 8; i ++){
+							if(points[i].dst(x, y) < 30){
+								point = i;
+								touch(x,y);
+								return true;
+							}
+						}
 						
-						return true;
+						
+						
+						return false;
 					}
 					
 					public void touchUp(InputEvent event, float x, float y, int pointer, int button){
-						
+						point = -1;
 					}
 					
 					public void touchDragged (InputEvent event, float x, float y, int pointer) {
@@ -888,15 +908,42 @@ public class DialogClasses{
 					}
 					
 					void touch(float x, float y){
-						int cx = (int)((x - getX())/xscale + 0.5f);
-						int cy = (int)((y - getY())/yscale + 0.5f);
+						points[point].set(x,y);
 						
-						selx1 = cx;
-						sely1 = cy;
+						//0 is bottom left, 1 is bottom right, 2 is  top left, 3 is top right
+						// 4 is left, 5 is bottom, 6 is right, 7 is top
 						
-						selx1 = MiscUtils.clamp(selx1, 0, preview.image.pixmap.getWidth());
-
-						sely1 = MiscUtils.clamp(sely1, 0, preview.image.pixmap.getHeight());
+						Vector2 vector = points[point];
+						
+						vector.x = MiscUtils.clamp(vector.x, getX(), getX() + getWidth());
+						vector.y = MiscUtils.clamp(vector.y, getY(), getY() + getHeight());
+						
+						if(point == 4){
+							points[0].x = vector.x;
+							points[2].x = vector.x;
+						}else if(point == 5){
+							points[0].y = vector.y;
+							points[1].y = vector.y;
+						}else if(point == 6){
+							points[1].x = vector.x;
+							points[3].x = vector.x;
+						}else if(point == 7){
+							points[3].y = vector.y;
+							points[2].y = vector.y;
+						}
+							
+						if(point == 1){
+							points[0].y = vector.y;
+							points[3].x = vector.x;
+						}else if(point == 2){
+							points[0].x = vector.x;
+							points[3].y = vector.y;
+						}
+						
+						selx1 = (int)((points[0].x - getX())/xscale+0.5f);
+						sely1 = (int)((points[0].y - getY())/yscale+0.5f);
+						selx2 = (int)((points[3].x - getX())/xscale+0.5f);
+						sely2 = (int)((points[3].y - getY())/yscale+0.5f);
 					}
 				});
 			}
@@ -904,24 +951,51 @@ public class DialogClasses{
 			public void draw(Batch batch, float alpha){
 				xscale = preview.getWidth() / preview.image.pixmap.getWidth();
 				yscale = preview.getHeight() / preview.image.pixmap.getHeight();
-				
-				float width =  (selx2-selx1)*xscale, height = (sely2-sely1)*yscale;
+				updatePoints();
+
+				TextureRegion region = VisUI.getSkin().getAtlas().findRegion("white");
 				
 				int s = 1;
 				
 				if(selx1 > selx2 && sely1 > sely2) s = -1;
+				
+				batch.setColor(0,0,0,0.5f);
+				MiscUtils.setBatchAlpha(batch, alpha);
+				
+				MiscUtils.drawMasked(batch, region, getX(), getY(), getWidth(), getHeight(), getX() + selx1*xscale, getY() + sely1*yscale, (selx2-selx1)*xscale, (sely2-sely1)*yscale);
+					
 				batch.setColor(Color.PURPLE);
+				MiscUtils.setBatchAlpha(batch, alpha);
+				
 				MiscUtils.drawBorder(batch, getX() + selx1*xscale, getY() + sely1*yscale, (selx2-selx1)*xscale, (sely2-sely1)*yscale, 2*s, s*4);
 				
-				batch.setColor(Color.CORAL);
+				Color color = Color.CORAL;
+				Color select = Color.PURPLE;
 				
-				TextureRegion region = VisUI.getSkin().getAtlas().findRegion("white");
-				int size = 10;
+				int size = 40;
 				
-				batch.draw(region, getX() + selx1*xscale - size/2,  getY() + sely1*yscale - size/2, size, size);
-				batch.draw(region,  getX() + selx1*xscale - size/2+width,  getY() + sely1*yscale - size/2, size, size);
-				batch.draw(region,  getX() + selx1*xscale - size/2,  getY() + sely1*yscale - size/2+height, size, size);
-				batch.draw(region,  getX() + selx1*xscale - size/2+width,  getY() + sely1*yscale - size/2+height, size, size);
+				for(int i = 0; i < 8; i++){
+					batch.setColor(point == i ? select : color);
+					MiscUtils.setBatchAlpha(batch, alpha);
+					//MiscUtils.drawBorder(batch, points[i].x - size/2,  points[i].y - size/2, size, size, 2);
+					batch.draw(region, points[i].x - size/2,  points[i].y - size/2, size, size);
+				
+				}
+			}
+			
+			void updatePoints(){
+				float width =  (selx2-selx1)*xscale, height = (sely2-sely1)*yscale;
+				
+				//0 is bottom left, 1 is bottom right, 2 is  top left, 3 is top right
+				// 4 is left, 5 is bottom, 6 is right, 7 is top
+				points[0].set(getX() + selx1*xscale,  getY() + sely1*yscale);
+				points[1].set(getX() + selx1*xscale+width,  getY() + sely1*yscale);
+				points[2].set(getX() + selx1*xscale,  getY() + sely1*yscale+height);
+				points[3].set( getX() + selx1*xscale+width,  getY() + sely1*yscale+height);  
+				points[4].set(points[0].cpy().add(points[2]).scl(0.5f));
+				points[5].set(points[0].cpy().add(points[1]).scl(0.5f));
+				points[6].set(points[1].cpy().add(points[3]).scl(0.5f));
+				points[7].set(points[3].cpy().add(points[2]).scl(0.5f));
 			}
 		}
 	}
