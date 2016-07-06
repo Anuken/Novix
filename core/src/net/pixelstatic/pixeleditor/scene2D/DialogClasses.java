@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
 public class DialogClasses{
@@ -865,10 +866,10 @@ public class DialogClasses{
 		
 		static class CropController extends Actor{
 			private float xscale, yscale;
-			int selx, sely, selwidth = 10, selheight = 10;
+			int selx1, sely1, selx2 = 10, sely2 = 10;
 			CropImagePreview preview;
 			
-			public CropController(CropImagePreview preview){
+			public CropController(final CropImagePreview preview){
 				this.preview = preview;
 				
 				addListener(new InputListener(){
@@ -887,11 +888,15 @@ public class DialogClasses{
 					}
 					
 					void touch(float x, float y){
-						int cx = (int)((x - getX())/xscale);
-						int cy = (int)((y - getY())/yscale);
+						int cx = (int)((x - getX())/xscale + 0.5f);
+						int cy = (int)((y - getY())/yscale + 0.5f);
 						
-						selx = cx;
-						sely = cy;
+						selx1 = cx;
+						sely1 = cy;
+						
+						selx1 = MiscUtils.clamp(selx1, 0, preview.image.pixmap.getWidth());
+
+						sely1 = MiscUtils.clamp(sely1, 0, preview.image.pixmap.getHeight());
 					}
 				});
 			}
@@ -900,8 +905,23 @@ public class DialogClasses{
 				xscale = preview.getWidth() / preview.image.pixmap.getWidth();
 				yscale = preview.getHeight() / preview.image.pixmap.getHeight();
 				
+				float width =  (selx2-selx1)*xscale, height = (sely2-sely1)*yscale;
+				
+				int s = 1;
+				
+				if(selx1 > selx2 && sely1 > sely2) s = -1;
 				batch.setColor(Color.PURPLE);
-				MiscUtils.drawBorder(batch, getX() + selx*xscale, getY() + sely*yscale, selwidth*xscale, selheight*yscale, 3);
+				MiscUtils.drawBorder(batch, getX() + selx1*xscale, getY() + sely1*yscale, (selx2-selx1)*xscale, (sely2-sely1)*yscale, 2*s, s*4);
+				
+				batch.setColor(Color.CORAL);
+				
+				TextureRegion region = VisUI.getSkin().getAtlas().findRegion("white");
+				int size = 10;
+				
+				batch.draw(region, getX() + selx1*xscale - size/2,  getY() + sely1*yscale - size/2, size, size);
+				batch.draw(region,  getX() + selx1*xscale - size/2+width,  getY() + sely1*yscale - size/2, size, size);
+				batch.draw(region,  getX() + selx1*xscale - size/2,  getY() + sely1*yscale - size/2+height, size, size);
+				batch.draw(region,  getX() + selx1*xscale - size/2+width,  getY() + sely1*yscale - size/2+height, size, size);
 			}
 		}
 	}
