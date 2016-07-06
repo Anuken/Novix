@@ -8,9 +8,11 @@ import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.graphics.PixmapUtils;
 import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
+import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -539,6 +541,60 @@ public class DialogClasses{
 			return null;
 		}
 	}
+	
+	public static class ExportScaledDialog extends MenuDialog{
+		VisTextField field;
+		VisTextField directory;
+		
+		
+		public ExportScaledDialog(){
+			super("Export Scaled Image");
+			
+			field = new VisTextField("1");
+			field.setTextFieldFilter(new FloatFilter());
+			
+			VisTextButton button = new VisTextButton("...");
+			
+			directory = new VisTextField("");
+			directory.setTouchable(Touchable.disabled);
+			
+			button.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
+						public void fileSelected(FileHandle file){
+							directory.setText(file.file().getAbsolutePath());
+							MiscUtils.moveTextToSide(directory);
+						}
+					}.show(getStage());
+				}
+			});
+			
+			ok.addAction(new Action(){
+				@Override
+				public boolean act(float delta){
+					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
+					return false;
+				}
+			});
+			
+			float sidepad = 20*s;
+			
+			float height = 45 * s;
+			
+			getContentTable().add(new VisLabel("File:")).padTop(15*s).padLeft(sidepad);
+			getContentTable().add(directory).size(150*s, 50*s).padTop(15*s);
+			getContentTable().add(button).size(50*s).padTop(15*s).padRight(sidepad);
+			
+			getContentTable().row();
+			
+			getContentTable().add(new VisLabel("Scale:")).padTop(15*s).padBottom(30*s).padLeft(sidepad);
+			getContentTable().add(field).grow().height(height).padTop(15*s).padBottom(30*s).colspan(2).padRight(sidepad);
+		}
+		
+		public void result(){
+			GUI.gui.exportPixmap(PixmapUtils.scale(GUI.gui.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
+		}
+	}
 
 	public static class ScaleDialog extends MenuDialog{
 		VisTextField widthfield, heightfield, xscalefield, yscalefield;
@@ -865,6 +921,7 @@ public class DialogClasses{
 			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(GUI.gui.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
 			
 			GUI.gui.drawgrid.setCanvas(canvas);
+			GUI.gui.updateToolColor();
 		}
 		
 		

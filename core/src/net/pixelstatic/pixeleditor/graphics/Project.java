@@ -23,7 +23,7 @@ public class Project{
 	}
 	
 	public void reloadTexture(){
-		Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. texture is " + cachedTexture + ", pixmap is " + cachedPixmap);
+		Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. ");
 		
 		if(cachedTexture != null) cachedTexture.dispose();
 		cachedTexture = new Texture(file);

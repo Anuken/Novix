@@ -14,6 +14,7 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ContrastDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.CropDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ExportScaledDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
@@ -278,7 +279,7 @@ public class GUI extends Module<PixelEditor>{
 			VisTable texttable = new VisTable();
 			VisTable buttontable = new VisTable();
 
-			float bheight = 50, space = 0;
+			float bheight = 50, space = 4;
 
 			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).height(bheight).growX().space(space);
 			buttontable.add(copybutton).height(bheight).growX().space(space);
@@ -313,8 +314,8 @@ public class GUI extends Module<PixelEditor>{
 		new NamedSizeDialog("New Project"){
 
 			public void result(String name, int width, int height){
-				if(showProjectExistsDialog(name)) return;
-
+				if(validateProjectName(name)) return;
+				
 				Project project = createNewProject(name, width, height);
 
 				openProject(project);
@@ -324,7 +325,6 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	Project createNewProject(String name, int width, int height){
-		Gdx.app.log("pedebugging", "Creating new project \"" + name + "\"");
 		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
 		PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
 
@@ -350,7 +350,7 @@ public class GUI extends Module<PixelEditor>{
 
 		new DialogClasses.InputDialog("Rename Copied Dialog", project.name, "New Copy Name: "){
 			public void result(String text){
-				if(showProjectExistsDialog(text)) return;
+				if(validateProjectName(text)) return;
 
 				try{
 					FileHandle newhandle = project.file.parent().child(text + ".png");
@@ -369,7 +369,7 @@ public class GUI extends Module<PixelEditor>{
 	void renameProject(final Project project){
 		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
-				if(showProjectExistsDialog(text, project)) return;
+				if(validateProjectName(text, project)) return;
 				project.name = text;
 				updateProjectMenu();
 			}
@@ -429,7 +429,11 @@ public class GUI extends Module<PixelEditor>{
 
 		for(FileHandle file : files){
 			if(file.extension().equals("png")){
-				loadProject(file);
+				try{
+					loadProject(file);
+				}catch(Exception e){
+					Gdx.app.error("pedebugging", "Error loading project \"" + file.nameWithoutExtension() + " \", corrupt file?", e);
+				}
 			}
 		}
 
@@ -462,9 +466,14 @@ public class GUI extends Module<PixelEditor>{
 		return false;
 	}
 
-	boolean showProjectExistsDialog(String name){
+	boolean validateProjectName(String name){
 		boolean exists = checkIfProjectExists(name, null);
-
+		
+		if(!MiscUtils.isFileNameValid(name)){
+			AndroidDialogs.showError(stage, "Project name is invalid!");
+			return true;
+		}
+		
 		if(exists){
 			AndroidDialogs.showError(stage, "A project with that name already exists!");
 		}
@@ -472,8 +481,14 @@ public class GUI extends Module<PixelEditor>{
 		return exists;
 	}
 
-	boolean showProjectExistsDialog(String name, Project project){
+	boolean validateProjectName(String name, Project project){
+		if(!MiscUtils.isFileNameValid(name)){
+			AndroidDialogs.showError(stage, "Project name is invalid!");
+			return true;
+		}
+		
 		boolean exists = checkIfProjectExists(name, project);
+		
 		if(exists){
 			AndroidDialogs.showError(stage, "A project with that name already exists!");
 		}
@@ -620,21 +635,6 @@ public class GUI extends Module<PixelEditor>{
 		VisTextButton fibutton = addMenuButton("file..");
 
 		final PopupMenu fileMenu = new PopupMenu();
-		/*
-		fileMenu.addItem(new ExtraMenuItem(fibutton, "new", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-				new SizeDialog("New Canvas"){
-					@Override
-					public void result(int width, int height){
-						PixelCanvas canvas = new PixelCanvas(width, height);
-						drawgrid.setCanvas(canvas);
-						updateToolColor();
-					}
-				}.show(stage);
-			}
-		}));
-		*/
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "save", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -646,14 +646,7 @@ public class GUI extends Module<PixelEditor>{
 			public void changed(ChangeEvent event, Actor actor){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
 					public void fileSelected(FileHandle file){
-						try{
-							if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
-							PixmapIO.writePNG(file, drawgrid.canvas.pixmap);
-							AndroidDialogs.showInfo(stage, "Image exported to " + file + ".");
-						}catch(Exception e){
-							e.printStackTrace();
-							AndroidDialogs.showError(stage, e);
-						}
+						exportPixmap(drawgrid.canvas.pixmap, file);
 					}
 				}.show(stage);
 			}
@@ -661,18 +654,7 @@ public class GUI extends Module<PixelEditor>{
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "export x", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
-					public void fileSelected(FileHandle file){
-						try{
-							if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
-							PixmapIO.writePNG(file, drawgrid.canvas.pixmap);
-							AndroidDialogs.showInfo(stage, "Image exported to " + file + ".");
-						}catch(Exception e){
-							e.printStackTrace();
-							AndroidDialogs.showError(stage, e);
-						}
-					}
-				}.show(stage);
+				new ExportScaledDialog().show(stage);
 			}
 		}));
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "open", new ChangeListener(){
@@ -809,6 +791,17 @@ public class GUI extends Module<PixelEditor>{
 
 		optionstable.add(alpha).colspan(2).pad(3 * s).padBottom(15f * s);
 
+	}
+
+	public void exportPixmap(Pixmap pixmap, FileHandle file){
+		try{
+			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
+			PixmapIO.writePNG(file, drawgrid.canvas.pixmap);
+			AndroidDialogs.showInfo(stage, "Image exported to " + file + ".");
+		}catch(Exception e){
+			e.printStackTrace();
+			AndroidDialogs.showError(stage, e);
+		}
 	}
 
 	private class MenuListener extends ClickListener{
@@ -1114,7 +1107,7 @@ public class GUI extends Module<PixelEditor>{
 
 		GDXDialogsSystem.getDialogManager().registerDialog(TextFieldDialog.class.getCanonicalName(), AndroidTextFieldDialog.class.getCanonicalName());
 
-		projectDirectory = MiscUtils.getHomeDirectory().child("pixelprojects");
+		projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("pixelprojects");
 		projectDirectory.mkdirs();
 		json = new Json();
 		loadPalettes();
