@@ -219,19 +219,7 @@ public class GUI extends Module<PixelEditor>{
 
 		public ProjectTable(final Project project){
 			Texture texture = new Texture(project.file);
-			/*
-			Image image = new Image(texture);
-
-			BorderImage border = new BorderImage();
-			border.setColor(Color.CORAL);
-			AlphaImage alpha = new AlphaImage(texture.getWidth(), texture.getHeight());
-
-			Stack stack = new Stack();
-
-			stack.add(alpha);
-			stack.add(image);
-			stack.add(border);
-			*/
+			
 			StaticPreviewImage image = new StaticPreviewImage(texture);
 
 			VisLabel namelabel = new VisLabel(project.name);
@@ -289,7 +277,13 @@ public class GUI extends Module<PixelEditor>{
 
 			background("button");
 			setColor(Hue.lightness(0.87f));
-			add(image).padTop(4).padBottom(4).size(128 * s).padLeft(0f);
+			
+			Cell<?> cell = add(image);
+			
+			MiscUtils.fitCell(cell, 128 * s, (float)texture.getWidth() / texture.getHeight());
+			
+			cell.padTop(cell.getPadTop() + 4).padBottom(cell.getPadBottom() + 4);
+			
 			add(texttable).grow();
 			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
 			texttable.row();
@@ -1215,7 +1209,6 @@ public class GUI extends Module<PixelEditor>{
 		Timer.schedule(new Task(){
 			@Override
 			public void run(){
-				System.out.println("wew lad");
 				saveProject();
 			}
 		}, 20, 20);
