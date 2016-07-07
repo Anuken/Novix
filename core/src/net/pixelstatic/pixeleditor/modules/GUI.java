@@ -52,9 +52,8 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.Focusable;
@@ -209,7 +208,7 @@ public class GUI extends Module<PixelEditor>{
 	public void updateProjectMenu(){
 		VisTable scrolltable = ((VisTable)((VisScrollPane)projectmenu.getContentTable().getCells().get(1).getActor()).getChildren().first());
 
-		scrolltable.clear();
+		scrolltable.clearChildren();
 
 		for(Project project : projects){
 			scrolltable.top().left().add(new ProjectTable(project)).padTop(8).growX().padRight(10 * s).row();
@@ -422,6 +421,7 @@ public class GUI extends Module<PixelEditor>{
 	void saveProject(){
 		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
 		currentProject.reloadTexture();
+		Gdx.app.log("pedebugging", "Saving project.");
 	}
 
 	void loadProjects(){
@@ -751,8 +751,7 @@ public class GUI extends Module<PixelEditor>{
 
 		menubutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				updateProjectMenu();
-				projectmenu.show(stage);
+				showProjectMenu();
 			}
 		});
 
@@ -1211,6 +1210,15 @@ public class GUI extends Module<PixelEditor>{
 				}
 			}
 		}));
+		
+		//autosave
+		Timer.schedule(new Task(){
+			@Override
+			public void run(){
+				System.out.println("wew lad");
+				saveProject();
+			}
+		}, 20, 20);
 
 		//for unpacking the atlas
 		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));
@@ -1271,6 +1279,17 @@ public class GUI extends Module<PixelEditor>{
 		private void set(Drawable d){
 			getStyle().imageUp = d;
 		}
+	}
+	
+	public void actionPushed(){
+		
+	}
+	
+	void showProjectMenu(){
+		saveProject();
+		
+		updateProjectMenu();
+		projectmenu.show(stage);
 	}
 
 	void savePalettes(){

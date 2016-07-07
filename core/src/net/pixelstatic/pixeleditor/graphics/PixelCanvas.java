@@ -176,6 +176,7 @@ public class PixelCanvas implements Disposable{
 		if(action.positions.size == 0) return;
 		actions.add(action);
 		action = new DrawAction();
+		GUI.gui.actionPushed();
 	}
 
 	public int width(){
