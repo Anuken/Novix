@@ -72,6 +72,7 @@ public class GUI extends Module<PixelEditor>{
 	public FileHandle projectDirectory;
 	Array<Project> projects = new Array<Project>();
 	public Project currentProject;
+	Palette palette;
 	int palettewidth = 8;
 	Skin skin;
 	Preferences prefs;
