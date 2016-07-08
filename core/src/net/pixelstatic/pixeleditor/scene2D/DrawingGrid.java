@@ -185,6 +185,8 @@ public class DrawingGrid extends Actor{
 		offsetx = getWidth() / 2;
 		offsety = getHeight() / 2;
 		image.setImageSize(canvas.width(), canvas.height());
+		
+		GUI.gui.saveProject();
 	}
 
 	public void updateCursorSelection(){

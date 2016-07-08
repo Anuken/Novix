@@ -220,7 +220,7 @@ public class GUI extends Module<PixelEditor>{
 
 		public ProjectTable(final Project project){
 			Texture texture = new Texture(project.file);
-			
+
 			StaticPreviewImage image = new StaticPreviewImage(texture);
 
 			VisLabel namelabel = new VisLabel(project.name);
@@ -278,13 +278,13 @@ public class GUI extends Module<PixelEditor>{
 
 			background("button");
 			setColor(Hue.lightness(0.87f));
-			
+
 			Cell<?> cell = add(image);
-			
+
 			MiscUtils.fitCell(cell, 128 * s, (float)texture.getWidth() / texture.getHeight());
-			
+
 			cell.padTop(cell.getPadTop() + 4).padBottom(cell.getPadBottom() + 4);
-			
+
 			add(texttable).grow();
 			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
 			texttable.row();
@@ -309,7 +309,7 @@ public class GUI extends Module<PixelEditor>{
 
 			public void result(String name, int width, int height){
 				if(validateProjectName(name)) return;
-				
+
 				Project project = createNewProject(name, width, height);
 
 				openProject(project);
@@ -413,9 +413,8 @@ public class GUI extends Module<PixelEditor>{
 		}.show(stage);
 	}
 
-	void saveProject(){
+	public void saveProject(){
 		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
-		currentProject.reloadTexture();
 		Gdx.app.log("pedebugging", "Saving project.");
 	}
 
@@ -463,12 +462,12 @@ public class GUI extends Module<PixelEditor>{
 
 	boolean validateProjectName(String name){
 		boolean exists = checkIfProjectExists(name, null);
-		
-		if(!MiscUtils.isFileNameValid(name)){
+
+		if( !MiscUtils.isFileNameValid(name)){
 			AndroidDialogs.showError(stage, "Project name is invalid!");
 			return true;
 		}
-		
+
 		if(exists){
 			AndroidDialogs.showError(stage, "A project with that name already exists!");
 		}
@@ -477,13 +476,13 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	boolean validateProjectName(String name, Project project){
-		if(!MiscUtils.isFileNameValid(name)){
+		if( !MiscUtils.isFileNameValid(name)){
 			AndroidDialogs.showError(stage, "Project name is invalid!");
 			return true;
 		}
-		
+
 		boolean exists = checkIfProjectExists(name, project);
-		
+
 		if(exists){
 			AndroidDialogs.showError(stage, "A project with that name already exists!");
 		}
@@ -492,7 +491,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	void addScrollSetting(Table table, final String name, int min, int max, int value){
-		final VisLabel label = new VisLabel(name + ": " + value);
+		final VisLabel label = new VisLabel(name + ": " + prefs.getInteger(name, value));
 		final VisSlider slider = new VisSlider(min, max, 1, false);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
@@ -732,12 +731,13 @@ public class GUI extends Module<PixelEditor>{
 
 		grid.getImageStackCell().size(40 * s);
 
-		grid.setChecked(true);
+		grid.setChecked(prefs.getBoolean("grid", true));
 
 		grid.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				drawgrid.grid = grid.isChecked();
+				prefs.putBoolean("grid", drawgrid.cursormode);
 			}
 		});
 
@@ -759,7 +759,11 @@ public class GUI extends Module<PixelEditor>{
 		final VisRadioButton cbox = new VisRadioButton("cursor mode");
 		final VisRadioButton tbox = new VisRadioButton("tap mode");
 
-		cbox.setChecked(true);
+		if(prefs.getBoolean("cursormode", true)){
+			cbox.setChecked(true);
+		}else{
+			tbox.setChecked(true);
+		}
 
 		cbox.getImageStackCell().size(40 * s);
 		tbox.getImageStackCell().size(40 * s);
@@ -769,6 +773,7 @@ public class GUI extends Module<PixelEditor>{
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				drawgrid.cursormode = cbox.isChecked();
+				prefs.putBoolean("cursormode", drawgrid.cursormode);
 			}
 		});
 
@@ -1202,15 +1207,20 @@ public class GUI extends Module<PixelEditor>{
 				if(Gdx.app.getType() != ApplicationType.Desktop){
 					saveProject();
 					savePalettes();
+					prefs.flush();
 				}
 			}
 		}));
-		
+
 		//autosave
 		Timer.schedule(new Task(){
 			@Override
 			public void run(){
-				saveProject();
+				new Thread(new Runnable(){
+					public void run(){
+						saveProject();
+					}
+				}).start();
 			}
 		}, 20, 20);
 
@@ -1274,14 +1284,14 @@ public class GUI extends Module<PixelEditor>{
 			getStyle().imageUp = d;
 		}
 	}
-	
+
 	public void actionPushed(){
-		
+
 	}
-	
+
 	void showProjectMenu(){
 		saveProject();
-		
+
 		updateProjectMenu();
 		projectmenu.show(stage);
 	}
