@@ -37,6 +37,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	public void init(){
 		input = this;
+		Gdx.input.setCatchBackKey(true);
 		GestureDetector gesture = new GestureDetector(20, 0.5f, 2, 0.15f, new GestureDetectorListener());
 
 		InputMultiplexer plex = new InputMultiplexer();

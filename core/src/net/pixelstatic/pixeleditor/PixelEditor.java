@@ -18,7 +18,6 @@ public class PixelEditor extends ModuleController<PixelEditor>{
 	
 	@Override
 	public void render(){
-		System.out.println("updating");
 		try{
 			super.render();
 		}catch (Exception e){

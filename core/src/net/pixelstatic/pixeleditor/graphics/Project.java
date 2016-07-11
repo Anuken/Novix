@@ -1,5 +1,7 @@
 package net.pixelstatic.pixeleditor.graphics;
 
+import net.pixelstatic.utils.MiscUtils;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -19,6 +21,10 @@ public class Project{
 	}
 	
 	public Pixmap getCachedPixmap(){
+		if((Boolean)MiscUtils.getPrivate(cachedPixmap, "disposed")){
+			reloadTexture();
+		}
+			
 		return cachedPixmap;
 	}
 	

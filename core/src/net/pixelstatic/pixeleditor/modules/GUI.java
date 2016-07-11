@@ -101,8 +101,6 @@ public class GUI extends Module<PixelEditor>{
 		
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
 		
-		Gdx.app.log("pedebugging", "updating");
-		
 		stage.act(Gdx.graphics.getDeltaTime() > 2/60f ?1/60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
@@ -220,7 +218,7 @@ public class GUI extends Module<PixelEditor>{
 		}
 	}
 
-	static class ProjectTable extends VisTable{
+	class ProjectTable extends VisTable{
 
 		public ProjectTable(final Project project){
 			Texture texture = new Texture(project.file);
@@ -234,14 +232,21 @@ public class GUI extends Module<PixelEditor>{
 
 			int imagesize = 40;
 
-			VisImageButton openbutton = new VisImageButton(Textures.getDrawable("icon-open"));
+			VisImageButton openbutton = new VisImageButton(Textures.getDrawable( project == currentProject ? "icon-open-gray" : "icon-open"));
 			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
 			VisImageButton renamebutton = new VisImageButton(Textures.getDrawable("icon-rename"));
 			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
+			
+			if(project == currentProject){
+				openbutton.setDisabled(true);
+				openbutton.setColor(Hue.lightness(0.94f));
+			}
+			
+			
 
 			openbutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					GUI.gui.openProject(project);
+					if(project != currentProject) GUI.gui.openProject(project);
 				}
 			});
 
@@ -335,10 +340,11 @@ public class GUI extends Module<PixelEditor>{
 	void openProject(Project project){
 		prefs.putString("lastproject", project.name);
 		currentProject = project;
-
-		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
+		
 		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
 
+		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
+		
 		drawgrid.setCanvas(canvas);
 		updateToolColor();
 		projectmenu.hide();
