@@ -56,14 +56,21 @@ public class DialogClasses{
 			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
-
-			ok.addAction(new Action(){
+			
+			widthfield.addListener(new ChangeListener(){
 				@Override
-				public boolean act(float delta){
+				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
-					return false;
 				}
 			});
+			
+			heightfield.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
+				}
+			});
+
 
 		}
 
@@ -113,14 +120,17 @@ public class DialogClasses{
 			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
-
-			ok.addAction(new Action(){
+			
+			ChangeListener oklistener = new ChangeListener(){
 				@Override
-				public boolean act(float delta){
+				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty() || namefield.getText().replace(" ", "").isEmpty());
-					return false;
 				}
-			});
+			};
+
+			widthfield.addListener(oklistener);
+			heightfield.addListener(oklistener);
+			namefield.addListener(oklistener);
 
 		}
 
@@ -564,14 +574,16 @@ public class DialogClasses{
 					}.show(getStage());
 				}
 			});
-
-			ok.addAction(new Action(){
+			
+			ChangeListener oklistener = new ChangeListener(){
 				@Override
-				public boolean act(float delta){
+				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
-					return false;
 				}
-			});
+			};
+			
+			field.addListener(oklistener);
+			directory.addListener(oklistener);
 
 			float sidepad = 20 * s;
 

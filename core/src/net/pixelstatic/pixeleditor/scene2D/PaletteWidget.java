@@ -5,17 +5,28 @@ import net.pixelstatic.utils.graphics.Hue;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
-public class PaletteWidget extends VisTable{
+public class PaletteWidget extends Button{
 	private final Palette palette;
 	
 	public PaletteWidget(Palette palette){
+		super(VisUI.getSkin());
 		this.palette = palette;
+		
+	//	setTouchable(Touchable.enabled);
+	//	final Drawable drawable = getSkin().getDrawable("button-blue");
+		
+		
+		
 		setup();
+		
+		
 	}
 	
 	private void setup(){
@@ -28,7 +39,7 @@ public class PaletteWidget extends VisTable{
 		
 		int perow = (int)(getPrefWidth()/maxsize);
 		
-		background("button");
+		//background("button");
 		setColor(Hue.lightness(0.87f));
 		
 		top().left();
@@ -64,7 +75,7 @@ public class PaletteWidget extends VisTable{
 	
 	@Override
 	public float getPrefWidth(){
-		return 200;
+		return 220;
 	}
 	
 	@Override

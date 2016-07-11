@@ -72,8 +72,6 @@ public enum Filter{
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
 			Color from = (Color)args[0];
 			Color to = (Color)args[1];
-			
-			
 
 			if(Hue.approximate(from, color, 0.01f)){
 				pixmap.setColor(to);

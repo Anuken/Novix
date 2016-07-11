@@ -82,6 +82,7 @@ public class GUI extends Module<PixelEditor>{
 	VisTable projecttable;
 	VisDialog settingsmenu, projectmenu;
 	BrushSizeWidget brush;
+	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
@@ -97,17 +98,20 @@ public class GUI extends Module<PixelEditor>{
 	public void update(){
 		Gdx.gl.glClearColor(0.13f, 0.13f, 0.13f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
-
-		stage.act(Gdx.graphics.getDeltaTime());
+		
+		Gdx.app.log("pedebugging", "updating");
+		
+		stage.act(Gdx.graphics.getDeltaTime() > 2/60f ?1/60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
 		tool.update(drawgrid);
 
 		//pc debugging
 		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
-		//System.out.println(stage.getKeyboardFocus());
+		
+		
 	}
 
 	void setup(){
@@ -678,52 +682,31 @@ public class GUI extends Module<PixelEditor>{
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				brush.setBrushSize((int)slider.getValue());
-			}
-		});
-
-		brush.addAction(new Action(){
-			@Override
-			public boolean act(float delta){
 				brushlabel.setText("Brush Size: " + brush.getBrushSize());
 				brush.setColor(colorbox.getColor());
-				return false;
 			}
 		});
-
+		
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
 		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
 		tooloptiontable.row();
 		tooloptiontable.add(brush).align(Align.bottomLeft);
 
-		final ColorBar alpha = new ColorBar();
+		alphabar = new ColorBar();
 
-		alpha.addAction(new Action(){
-			@Override
-			public boolean act(float delta){
-				alpha.setRightColor(colorbox.getColor());
-				return false;
-			}
-		});
-
-		alpha.addListener(new InputListener(){
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button){
-
-			}
-		});
-
-		alpha.setColors(Color.CLEAR.cpy(), Color.WHITE);
-		alpha.setSize(Gdx.graphics.getWidth() - 80 * s, 50 * s);
+		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
+		alphabar.setSize(Gdx.graphics.getWidth() - 80 * s, 50 * s);
 
 		optionstable.bottom().left();
 
 		final VisLabel opacity = new VisLabel("opacity: 1.0");
 
-		alpha.addListener(new ChangeListener(){
+		alphabar.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				opacity.setText("opacity: " + MiscUtils.limit(alpha.getSelection() + "", 5));
-				drawgrid.canvas.setAlpha(alpha.getSelection());
+				opacity.setText("opacity: " + MiscUtils.limit(alphabar.getSelection() + "", 5));
+				drawgrid.canvas.setAlpha(alphabar.getSelection());
 			}
 		});
 
@@ -788,7 +771,7 @@ public class GUI extends Module<PixelEditor>{
 		optionstable.add(opacity).align(Align.center).padBottom(6f * s).colspan(2);
 		optionstable.row();
 
-		optionstable.add(alpha).colspan(2).pad(3 * s).padBottom(15f * s);
+		optionstable.add(alphabar).colspan(2).pad(3 * s).padBottom(15f * s);
 
 	}
 
@@ -1011,6 +994,8 @@ public class GUI extends Module<PixelEditor>{
 					box.selected = true;
 					box.toFront();
 					apicker.setSelectedColor(box.getColor());
+					alphabar.setRightColor(box.getColor());
+					brush.setColor(box.getColor());
 					updateToolColor();
 				}
 			});
@@ -1042,13 +1027,57 @@ public class GUI extends Module<PixelEditor>{
 				palettes.add(new Palette("hello hello hello", 10));
 				palettes.add(new Palette("lel", 10));
 				palettes.add(new Palette("lel", 10));
+				
+				ButtonGroup<PaletteWidget> group = new ButtonGroup<PaletteWidget>();
+				
+				PaletteWidget palettew = new PaletteWidget(palette);
+				group.add(palettew);
+				dialog.getContentTable().add(palettew).padBottom(6).colspan(2).row();
 
 				for(int i = 0;i < palettes.size;i ++){
 					PaletteWidget palette = new PaletteWidget(palettes.get(i));
+					group.add(palette);
+					
+					palette.addListener(new ClickListener(){
+						public void clicked(InputEvent event, float x, float y){
+							VisDialog palettedialog = new VisDialog("Palette", "dialog"){
+								
+							};
+							
+							palettedialog.getTitleLabel().setColor(Color.CORAL);
+							
+							VisTextButton newbutton = new VisTextButton("new");
+							VisTextButton renamebutton = new VisTextButton("rename");
+							VisTextButton resizebutton = new VisTextButton("resize");
+							VisTextButton deletebutton = new VisTextButton("delete");
+							VisTextButton savebutton = new VisTextButton("save");
+									
+							Table buttons = palettedialog.getContentTable();
+							
+							buttons.add(newbutton).grow();
+							buttons.add(renamebutton).grow();
+							buttons.add(resizebutton).grow();
+							buttons.add(deletebutton).grow();
+							buttons.add(savebutton).grow();
+							
+							palettedialog.addCloseButton();
+							
+							palettedialog.show(stage);
+						}
+					});
+					
 					dialog.getContentTable().add(palette).padBottom(6);
-
+					
 					if(i % 2 == 1) dialog.getContentTable().row();
 				}
+				
+				Table buttons = new VisTable();
+				
+				dialog.getContentTable().row();
+				
+				dialog.getContentTable().add(buttons).colspan(2).grow();
+				
+				
 
 				//if(palettes.size == 0){
 				//	dialog.getContentTable().add(new VisLabel("No palettes found."));
@@ -1062,7 +1091,7 @@ public class GUI extends Module<PixelEditor>{
 
 		pickertable.add(apicker).expand().fill().padTop(colorsize + 20 * s).padBottom(10f * s);
 		pickertable.row();
-		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).growX();
+		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60*s).growX();
 		collapser.resetY();
 		collapser.setCollapsed(true, false);
 		setupBoxColors();
@@ -1079,27 +1108,27 @@ public class GUI extends Module<PixelEditor>{
 			colorbox = boxes[0];
 			colorbox.selected = true;
 			apicker.setSelectedColor(colorbox.getColor());
+			alphabar.setRightColor(colorbox.getColor());
+			brush.setColor(colorbox.getColor());
 			colorbox.toFront();
 		}
 	}
 
 	void setupCanvas(){
 		drawgrid = new DrawingGrid();
-
+		
+		drawgrid.grid = prefs.getBoolean("grid", true);
+		drawgrid.cursormode = prefs.getBoolean("cursormode", true);
 		drawgrid.setCanvas(new PixelCanvas(currentProject.getCachedPixmap()));
 
-		drawgrid.addAction(new Action(){
-			public boolean act(float delta){
-				drawgrid.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
-				drawgrid.setZIndex(0);
-				return false;
-			}
-		});
 		stage.addActor(drawgrid);
 
 	}
 
 	public GUI(){
+		Gdx.graphics.setContinuousRendering(false);
+		//Gdx.graphics.requestRendering();
+		
 		gui = this;
 		s = MiscUtils.densityScale();
 		GDXDialogsSystem.install();
@@ -1115,6 +1144,7 @@ public class GUI extends Module<PixelEditor>{
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
+		//stage.setActionsRequestRendering(false);
 		loadFonts();
 		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
 
@@ -1305,10 +1335,25 @@ public class GUI extends Module<PixelEditor>{
 	void loadPalettes(){
 		try{
 			palettes = json.fromJson(Array.class, paletteDirectory);
+			
+			String name = prefs.getString("lastpalette");
+			if(name != null){
+				for(Palette palette : palettes){
+					if(palette.name == name){
+						this.palette = palette;
+						break;
+					}
+				}
+			}
+			
 			Gdx.app.log("pedebugging", "Palettes loaded.");
 		}catch(Exception e){
 			e.printStackTrace();
 			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
+		}
+		
+		if(palette == null){
+			palette = new Palette("Untitled", 8);
 		}
 	}
 

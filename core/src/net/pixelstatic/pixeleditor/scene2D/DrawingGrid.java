@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 
 public class DrawingGrid extends Actor{
@@ -86,25 +87,57 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
+				float deltax = Gdx.input.getDeltaX(pointer);
+				float deltay = -Gdx.input.getDeltaY(pointer);
+				
+				float movex = deltax;
+				float movey = deltay;
+				
+				int move = (Math.round(Math.max(Math.abs(movex), Math.abs(movey))));
+
+				
+				if(Math.abs(movex) > Math.abs(movey)){
+					movey /= Math.abs(movex);
+					movex /= Math.abs(movex);
+				}else{
+					movex /= Math.abs(movey);
+					movey /= Math.abs(movey);
+				}
+				
+				float currentx=0, currenty=0;
+				
+				for(int i = 0; i < move; i ++){
+					currentx += movex;
+					currenty += movey;
+				//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
+					if(cursormode){
+						int newx = (int)((cursorx+currentx) / (canvasScale() * zoom)), newy = (int)((cursory+currenty) / (canvasScale() * zoom));
+
+						if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) processToolTap(newx, newy);
+
+						selected.set(newx, newy);
+					}else{
+						int newx = (int)((cursorx+currentx) / (canvasScale() * zoom)), newy = (int)((cursory+currenty) / (canvasScale() * zoom));
+					
+						if( !selected.equals(newx, newy) && GUI.gui.tool.drawOnMove) processToolTap(newx, newy);
+						selected.set(newx, newy);
+					}
+				}
+				
+				System.out.println("end");
+				
 				if(cursormode){
 					if(pointer != tpointer || !GUI.gui.tool.moveCursor()) return;
-					cursorx += Gdx.input.getDeltaX(pointer) * cursorSpeed;
-					cursory -= Gdx.input.getDeltaY(pointer) * cursorSpeed;
-					
+
 					cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
 					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
-					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
-					if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && GUI.gui.tool.drawOnMove) processToolTap(newx, newy);
+					cursorx += deltax;
+					cursory += deltay;
 
-					selected.set(newx, newy);
 				}else{
 					cursorx = x;
 					cursory = y;
-					int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
-
-					if( !selected.equals(newx, newy) && GUI.gui.tool.drawOnMove) processToolTap(newx, newy);
-					selected.set(newx, newy);
 				}
 			}
 		});
@@ -169,15 +202,14 @@ public class DrawingGrid extends Actor{
 		}
 
 		this.canvas = canvas;
-		
-		Gdx.app.log("pedebugging", "Drawgrid: new canvas \"" + canvas.name +"\" set.");
+
+		Gdx.app.log("pedebugging", "Drawgrid: new canvas \"" + canvas.name + "\" set.");
 
 		updateSize();
 
 		zoom = maxZoom();
-		
+
 		if(canvas.width() > 100 || canvas.height() > 100) grid = false;
-	
 
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
@@ -185,7 +217,7 @@ public class DrawingGrid extends Actor{
 		offsetx = getWidth() / 2;
 		offsety = getHeight() / 2;
 		image.setImageSize(canvas.width(), canvas.height());
-		
+
 		GUI.gui.saveProject();
 	}
 
@@ -195,6 +227,9 @@ public class DrawingGrid extends Actor{
 	}
 
 	public void draw(Batch batch, float parentAlpha){
+		setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
+		setZIndex(0);
+		
 		updateSize();
 		updateBounds();
 		updateCursor();
@@ -229,10 +264,10 @@ public class DrawingGrid extends Actor{
 		}
 
 		//draw center of grid
-		batch.setColor(Color.CORAL);
+		//batch.setColor(Color.CORAL);
 
-		float size = 4;
-		batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), (int)(getX() + getWidth() / 2f - size / 2), (int)(getY() + getHeight() / 2f - size / 2), size, size);
+		//float size = 4;
+		//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), (int)(getX() + getWidth() / 2f - size / 2), (int)(getY() + getHeight() / 2f - size / 2), size, size);
 
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
@@ -262,7 +297,7 @@ public class DrawingGrid extends Actor{
 		MiscUtils.drawBorder(batch, Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), min(), 2);
 
 		batch.setColor(Color.CORAL);
-		
+
 		//draw pic edges
 		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2, aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
@@ -270,7 +305,7 @@ public class DrawingGrid extends Actor{
 		if(cursormode || (touches > 0 && GUI.gui.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
 			int csize = 30;
-			batch.draw(Textures.get("cursor"), getX() + cursorx - csize/2, getY() + cursory - csize/2, csize, csize);
+			batch.draw(Textures.get("cursor"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 		}else{ //seriously, why is this necessary
 			batch.draw(Textures.get("cursor"), -999, -999, 30, 30);
 		}
