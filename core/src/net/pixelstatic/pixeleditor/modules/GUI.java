@@ -82,6 +82,8 @@ public class GUI extends Module<PixelEditor>{
 	VisTable extratable;
 	VisTable projecttable;
 	VisDialog settingsmenu, projectmenu, palettedialog;
+	CollapseButton expander;
+	SmoothCollapsibleWidget colorcollapser;
 	BrushSizeWidget brush;
 	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
@@ -953,33 +955,67 @@ public class GUI extends Module<PixelEditor>{
 
 		filemenu.setMovable(false);
 
-		final CollapseButton expander = new CollapseButton();
+		expander = new CollapseButton();
 		expander.flip();
 
-		colortable.add(expander).expandX().fillX().colspan(currentPalette.size() + 2).height(MiscUtils.densityScale(50f));
-
-		colortable.row();
-
-		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(pickertable);
+		colorcollapser = new SmoothCollapsibleWidget(pickertable);
+		
+		stage.addActor(colorcollapser);
 
 		expander.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				if( !collapser.isCollapsed()){
+				if( !colorcollapser.isCollapsed()){
 					apicker.setSelectedColor(apicker.getSelectedColor());
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 				}
-				collapser.setCollapsed( !collapser.isCollapsed());
+				colorcollapser.setCollapsed( !colorcollapser.isCollapsed());
 				expander.flip();
 			}
 		});
 
-		extratable.top().left().add(collapser).fillX().expandX().padTop(50f);
+		updateColorMenu();
 
-		expander.setZIndex(collapser.getZIndex() + 10);
+		VisTextButton palettebutton = new VisTextButton("Palettes...");
+
+		palettedialog = new VisDialog("Palettes", "dialog");
+		palettedialog.setMovable(false);
+		palettedialog.getTitleLabel().setColor(Color.CORAL);
+		MiscUtils.addHideButton(palettedialog);
+
+		palettebutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				updatePaletteDialog();
+				palettedialog.show(stage);
+			}
+		});
+
+		pickertable.add(apicker).expand().fill().padTop( 20 * s).padBottom(10f * s);
+		pickertable.row();
+		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
+
+		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight() - 155*s);
+		colorcollapser.toBack();
+		colorcollapser.resetY();
+		colorcollapser.setCollapsed(true, false);
+		setupBoxColors();
+	}
+	
+	void updateColorMenu(){
+		colortable.clear();
+		
+		//colortable.add(colorcollapser).colspan(currentPalette.size() + 2).row();
+		colortable.add(expander).expandX().fillX().colspan(currentPalette.size() + 2).height(50f*s);
+		expander.setZIndex(colorcollapser.getZIndex() + 10);
+		
+		colortable.row();
+		
+		int maxcolorsize = 65;
 
 		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
+		
+		colorsize = Math.min(maxcolorsize, colorsize);
 
-		colortable.add().expandX().fillX();
+		colortable.add().growX();
 
 		boxes = new ColorBox[currentPalette.size()];
 
@@ -1004,29 +1040,8 @@ public class GUI extends Module<PixelEditor>{
 			});
 
 		}
-
+		
 		colortable.add().expandX().fillX();
-
-		VisTextButton palettebutton = new VisTextButton("Palettes...");
-
-		palettedialog = new VisDialog("Palettes", "dialog");
-		palettedialog.setMovable(false);
-		palettedialog.getTitleLabel().setColor(Color.CORAL);
-		MiscUtils.addHideButton(palettedialog);
-
-		palettebutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				updatePaletteDialog();
-				palettedialog.show(stage);
-			}
-		});
-
-		pickertable.add(apicker).expand().fill().padTop(colorsize + 20 * s).padBottom(10f * s);
-		pickertable.row();
-		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		collapser.resetY();
-		collapser.setCollapsed(true, false);
-		setupBoxColors();
 	}
 
 	void updatePaletteDialog(){
@@ -1106,14 +1121,11 @@ public class GUI extends Module<PixelEditor>{
 								
 								palette.colors = newcolors;
 								
-								colors.clearChildren();
-								Table newtable = PaletteWidget.generatePaletteTable(40, 320, palette.colors);
-								colors.getCells().addAll(newtable.getCells());
-								colors.getChildren().addAll(newtable.getChildren());
-								colors.invalidate();
+								
+								editpalettedialog.getContentTable().clear();
+								editpalettedialog.getContentTable().add(PaletteWidget.generatePaletteTable(40, 320, palette.colors)).pad(40 * s);
+								editpalettedialog.pack();
 								updatePaletteDialog();
-								
-								
 							}
 						}.show(stage);
 					}
@@ -1181,9 +1193,11 @@ public class GUI extends Module<PixelEditor>{
 			
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					if(!widget.extrabutton.isOver())setPalette(palette);
+					if(!widget.extrabutton.isOver()) setPalette(palette);
 				}
 			});
+			
+			widget.addExtraButtonListener(new PaletteListener(palette));
 			
 			//widget.addListener(new PaletteListener(palette));
 
@@ -1194,7 +1208,7 @@ public class GUI extends Module<PixelEditor>{
 		}
 		
 		if(palettes.size == 1)
-			palettedialog.getContentTable().add().grow().prefSize(220, 80);
+			palettedialog.getContentTable().add().grow().prefSize(220, 105);
 		
 		VisTextButton addpalettebutton = new VisTextButton("New Palette");
 		
@@ -1236,6 +1250,7 @@ public class GUI extends Module<PixelEditor>{
 		updatePaletteDialog();
 		prefs.putString("lastpalette", palette.name);
 		prefs.flush();
+		updateColorMenu();
 	}
 
 	void setupBoxColors(){

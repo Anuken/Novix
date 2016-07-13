@@ -7,6 +7,7 @@ import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -64,6 +65,10 @@ public class PaletteWidget extends VisTable{
 
 		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2);
 	}
+	
+	public void addExtraButtonListener(EventListener listener){
+		extrabutton.addListener(listener);
+	}
 
 	public static Table generatePaletteTable(float size, float width, Color[] colors){
 		VisTable table = new VisTable();
@@ -103,7 +108,7 @@ public class PaletteWidget extends VisTable{
 
 	@Override
 	public float getPrefHeight(){
-		return 80;
+		return 105;
 	}
 
 }
