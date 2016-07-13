@@ -75,6 +75,7 @@ public class GUI extends Module<PixelEditor>{
 	Array<Project> projects = new Array<Project>();
 	public Project currentProject;
 	Palette currentPalette;
+	public int paletteColor;
 	Skin skin;
 	Preferences prefs;
 	VisTable tooltable;
@@ -92,7 +93,7 @@ public class GUI extends Module<PixelEditor>{
 	ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
 	Json json;
-	public ColorBox colorbox;
+	//public ColorBox colorbox;
 	ColorBox[] boxes;
 	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
@@ -681,20 +682,20 @@ public class GUI extends Module<PixelEditor>{
 
 		brush = new BrushSizeWidget();
 		final VisLabel brushlabel = new VisLabel("Brush Size: 1");
-		final VisSlider slider = new VisSlider(1, 5, 0.01f, false);
+		final VisSlider brushslider = new VisSlider(1, 5, 0.01f, false);
 
-		slider.addListener(new ChangeListener(){
+		brushslider.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				brush.setBrushSize((int)slider.getValue());
+				brush.setBrushSize((int)brushslider.getValue());
 				brushlabel.setText("Brush Size: " + brush.getBrushSize());
-				brush.setColor(colorbox.getColor());
+				//brush.setColor(colorbox.getColor());
 			}
 		});
 
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
-		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
+		tooloptiontable.add(brushslider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
 		tooloptiontable.row();
 		tooloptiontable.add(brush).align(Align.bottomLeft);
 
@@ -937,7 +938,7 @@ public class GUI extends Module<PixelEditor>{
 
 		apicker = new AndroidColorPicker(){
 			public void onColorChanged(){
-				colorbox.setColor(apicker.getSelectedColor());
+				updateSelectedColor(apicker.getSelectedColor());
 			}
 		};
 
@@ -993,7 +994,7 @@ public class GUI extends Module<PixelEditor>{
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 
-		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight() - 155*s);
+		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight() - 100*s);
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
@@ -1009,7 +1010,7 @@ public class GUI extends Module<PixelEditor>{
 		
 		colortable.row();
 		
-		int maxcolorsize = 65;
+		int maxcolorsize = 60;
 
 		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
 		
@@ -1020,16 +1021,18 @@ public class GUI extends Module<PixelEditor>{
 		boxes = new ColorBox[currentPalette.size()];
 
 		for(int i = 0;i < currentPalette.size();i ++){
-
+			final int index = i;
 			final ColorBox box = new ColorBox();
 
 			boxes[i] = box;
 			colortable.add(box).size(colorsize);
+			
+			box.setColor(currentPalette.colors[i]);
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					colorbox.selected = false;
-					colorbox = box;
+					boxes[paletteColor].selected = false;
+					paletteColor = index;
 					box.selected = true;
 					box.toFront();
 					apicker.setSelectedColor(box.getColor());
@@ -1079,11 +1082,9 @@ public class GUI extends Module<PixelEditor>{
 
 				editpalettedialog.getTitleLabel().setColor(Color.CORAL);
 
-				VisTextButton newbutton = new VisTextButton("new");
 				VisTextButton renamebutton = new VisTextButton("rename");
 				VisTextButton resizebutton = new VisTextButton("resize");
 				VisTextButton deletebutton = new VisTextButton("delete");
-				VisTextButton savebutton = new VisTextButton("save");
 				
 				Table buttons = editpalettedialog.getContentTable();
 				
@@ -1254,12 +1255,10 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	void setupBoxColors(){
-		for(int i = 0;i < boxes.length;i ++){
-			boxes[i].setColor(Hue.fromHSB((float)i / currentPalette.size(), 1f, 1f));
-		}
-
 		apicker.setRecentColors(boxes);
-
+		boxes[0].selected = true;
+		boxes[0].toFront();
+/*
 		if(colorbox == null){
 			colorbox = boxes[0];
 			colorbox.selected = true;
@@ -1268,6 +1267,7 @@ public class GUI extends Module<PixelEditor>{
 			brush.setColor(colorbox.getColor());
 			colorbox.toFront();
 		}
+		*/
 	}
 
 	void setupCanvas(){
@@ -1520,17 +1520,25 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	public Color selectedColor(){
-		return colorbox.getColor().cpy();
+		return currentPalette.colors[paletteColor];
 	}
-
-	public void updateToolColor(){
-		tool.onColorChange(selectedColor(), drawgrid.canvas);
+	
+	public void updateSelectedColor(Color color){
+		boxes[paletteColor].setColor(color);
+		currentPalette.colors[paletteColor] = color;
+		alphabar.setRightColor(color);
+		brush.setColor(color);
+		updateToolColor();
 	}
 
 	public void setSelectedColor(Color color){
-		colorbox.setColor(color);
+		updateSelectedColor(color);
 		apicker.setSelectedColor(color);
 		updateToolColor();
+	}
+	
+	public void updateToolColor(){
+		tool.onColorChange(selectedColor(), drawgrid.canvas);
 	}
 
 	public void dispose(){

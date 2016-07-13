@@ -142,18 +142,18 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void processToolTap(int x, int y){
-		GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, x, y);
+		GUI.gui.tool.clicked(GUI.gui.selectedColor(), canvas, x, y);
 
 		if(GUI.gui.tool.symmetric()){
 			if(vSymmetry){
-				GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, canvas.width() - 1 - x, y);
+				GUI.gui.tool.clicked(GUI.gui.selectedColor(), canvas, canvas.width() - 1 - x, y);
 			}
 
 			if(hSymmetry){
-				GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, x, canvas.height() - 1 - y);
+				GUI.gui.tool.clicked(GUI.gui.selectedColor(), canvas, x, canvas.height() - 1 - y);
 
 				if(vSymmetry){
-					GUI.gui.tool.clicked(GUI.gui.colorbox.getColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
+					GUI.gui.tool.clicked(GUI.gui.selectedColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
 				}
 			}
 		}
