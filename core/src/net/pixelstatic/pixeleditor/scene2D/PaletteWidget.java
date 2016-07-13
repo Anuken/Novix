@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.scene2D;
 
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.utils.graphics.Hue;
+import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
@@ -33,9 +35,18 @@ public class PaletteWidget extends Button{
 		label.setColor(Color.LIGHT_GRAY);
 
 		add(label).align(Align.topLeft);
+		
+		VisImageButton extrabutton = new VisImageButton(Textures.getDrawable("icon-rename"));
+		extrabutton.getImageCell().size(40);
+		
+		add(extrabutton).size(42);
+		
+		
 		row();
 
-		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow();
+		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2);
+		
+		
 
 		if(selected){
 			Image image = new Image(getSkin().getDrawable("border"));

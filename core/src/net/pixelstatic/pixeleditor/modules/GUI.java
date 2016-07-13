@@ -1081,6 +1081,10 @@ public class GUI extends Module<PixelEditor>{
 								palettes.remove(palette.name);
 								palette.name = string;
 								palettes.put(string, palette);
+								if(palette == currentPalette){
+									prefs.putString("currentpalette", palette.name);
+									prefs.flush();
+								}
 								editpalettedialog.getTitleLabel().setText("Palette: " + palette.name);
 								updatePaletteDialog();
 							}
@@ -1169,10 +1173,19 @@ public class GUI extends Module<PixelEditor>{
 		//palettew.addListener(new PaletteListener(palette));
 		int i = 0;
 
-		for(Palette palette : palettes.values()){
+		for(final Palette palette : palettes.values()){
 			PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
-
-			widget.addListener(new PaletteListener(palette));
+			
+			//widget.setDisabled(palette == currentPalette);
+			widget.setTouchable(palette == currentPalette ? Touchable.childrenOnly : Touchable.enabled);
+			
+			widget.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					setPalette(palette);
+				}
+			});
+			
+			//widget.addListener(new PaletteListener(palette));
 
 			palettedialog.getContentTable().add(widget).padBottom(6);
 
@@ -1182,7 +1195,7 @@ public class GUI extends Module<PixelEditor>{
 		
 		if(palettes.size == 1)
 			palettedialog.getContentTable().add().grow().prefSize(220, 80);
-		//TODO
+		
 		VisTextButton addpalettebutton = new VisTextButton("New Palette");
 		
 		addpalettebutton.addListener(new ClickListener(){
@@ -1217,6 +1230,13 @@ public class GUI extends Module<PixelEditor>{
 		palettedialog.getButtonsTable().add(addpalettebutton).size(200*s, 50*s);
 		palettedialog.pack();
 	}
+	
+	void setPalette(Palette palette){
+		currentPalette = palette;
+		updatePaletteDialog();
+		prefs.putString("lastpalette", palette.name);
+		prefs.flush();
+	}
 
 	void setupBoxColors(){
 		for(int i = 0;i < boxes.length;i ++){
@@ -1248,7 +1268,6 @@ public class GUI extends Module<PixelEditor>{
 
 	public GUI(){
 		Gdx.graphics.setContinuousRendering(false);
-		//Gdx.graphics.requestRendering();
 
 		gui = this;
 		s = MiscUtils.densityScale();
@@ -1259,13 +1278,12 @@ public class GUI extends Module<PixelEditor>{
 		projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("pixelprojects");
 		projectDirectory.mkdirs();
 		json = new Json();
-		loadPalettes();
 		prefs = Gdx.app.getPreferences("pixeleditor");
+		loadPalettes();
 		Textures.load("textures/");
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
-		//stage.setActionsRequestRendering(false);
 		loadFonts();
 		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
 
