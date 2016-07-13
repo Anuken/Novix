@@ -6,6 +6,7 @@ import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
@@ -13,74 +14,76 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
 public class PaletteWidget extends Button{
-	private final Palette palette;
-	
-	public PaletteWidget(Palette palette){
+	public final Palette palette;
+
+	public PaletteWidget(Palette palette, boolean selected){
 		super(VisUI.getSkin());
 		this.palette = palette;
-		
-	//	setTouchable(Touchable.enabled);
-	//	final Drawable drawable = getSkin().getDrawable("button-blue");
-		
-		
-		
-		setup();
-		
-		
+		setup(selected);
 	}
-	
-	private void setup(){
+
+	private void setup(boolean selected){
 		float maxsize = 25;
-		
-		ColorBox[] boxes = new ColorBox[palette.size()];
-		for(int i = 0; i < boxes.length; i ++) boxes[i] = new ColorBox(palette.colors[i]);
-		
-		float rowsize = getPrefWidth() / boxes.length;
-		
-		int perow = (int)(getPrefWidth()/maxsize);
-		
-		//background("button");
+
 		setColor(Hue.lightness(0.87f));
-		
+
 		top().left();
-		
+
 		VisLabel label = new VisLabel(palette.name);
 		label.setColor(Color.LIGHT_GRAY);
-		
+
 		add(label).align(Align.topLeft);
 		row();
-		
-		Table colortable = new VisTable();
-		colortable.top().left();
-		
-		top().left().add(colortable).grow();
-		
-		if(rowsize < maxsize){ // this means another row is needed
-			for(int i = 0; i < boxes.length; i ++){
-				colortable.add(boxes[i]).size(maxsize);
-				if(i == perow-1) colortable.row();
+
+		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow();
+
+		if(selected){
+			Image image = new Image(getSkin().getDrawable("border"));
+
+			image.setFillParent(true);
+			addActor(image);
+		}
+	}
+
+	public static Table generatePaletteTable(float size, float width, Color[] colors){
+		VisTable table = new VisTable();
+
+		ColorBox[] boxes = new ColorBox[colors.length];
+		for(int i = 0;i < boxes.length;i ++)
+			boxes[i] = new ColorBox(colors[i]);
+
+		float rowsize = width / boxes.length;
+
+		int perow = (int)(width / size);
+
+		table.top().left();
+
+		if(rowsize < size){ // this means another row is needed
+			for(int i = 0;i < boxes.length;i ++){
+				table.add(boxes[i]).size(size);
+				if(i == perow - 1) table.row();
 			}
 		}else{ //otherwise, put it in one row
-			for(int i = 0; i < boxes.length; i ++){
-				colortable.add(boxes[i]).size(maxsize);
+			for(int i = 0;i < boxes.length;i ++){
+				table.add(boxes[i]).size(size);
 			}
-			
+
 			//add blank cells
-			for(int i = 0; i < perow - boxes.length; i ++){
-				colortable.add().size(maxsize);
+			for(int i = 0;i < perow - boxes.length;i ++){
+				table.add().size(size);
 			}
 		}
-		
+		return table;
 	}
-	
+
 	@Override
 	public float getPrefWidth(){
 		return 220;
 	}
-	
+
 	@Override
 	public float getPrefHeight(){
 		return 80;
 	}
-	
+
 }

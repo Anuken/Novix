@@ -87,8 +87,8 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
-				float deltax = Gdx.input.getDeltaX(pointer);
-				float deltay = -Gdx.input.getDeltaY(pointer);
+				float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
+				float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
 				
 				float movex = deltax;
 				float movey = deltay;
@@ -123,8 +123,6 @@ public class DrawingGrid extends Actor{
 						selected.set(newx, newy);
 					}
 				}
-				
-				System.out.println("end");
 				
 				if(cursormode){
 					if(pointer != tpointer || !GUI.gui.tool.moveCursor()) return;

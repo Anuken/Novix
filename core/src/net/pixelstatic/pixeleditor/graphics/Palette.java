@@ -3,8 +3,8 @@ package net.pixelstatic.pixeleditor.graphics;
 import com.badlogic.gdx.graphics.Color;
 
 public class Palette{
-	public final Color[] colors;
-	public final String name;
+	public Color[] colors;
+	public String name;
 	
 	public Palette(String name, int size){
 		this.name = name;

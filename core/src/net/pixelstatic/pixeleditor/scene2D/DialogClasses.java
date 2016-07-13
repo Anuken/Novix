@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 public class DialogClasses{
 	static float s = GUI.s;
@@ -584,6 +585,9 @@ public class DialogClasses{
 			
 			field.addListener(oklistener);
 			directory.addListener(oklistener);
+			
+			field.fire(new ChangeListener.ChangeEvent());
+			directory.fire(new ChangeListener.ChangeEvent());
 
 			float sidepad = 20 * s;
 
@@ -898,6 +902,8 @@ public class DialogClasses{
 			Pixmap.setBlending(Blending.SourceOver);
 
 			canvas.updateAndPush();
+			preview.image.offsetx = 0;
+			preview.image.offsety = 0;
 		}
 	}
 
@@ -1124,22 +1130,44 @@ public class DialogClasses{
 	}
 
 	public static class InputDialog extends MenuDialog{
-		VisTextField field;
+		protected VisTextField textfield;
 
 		public InputDialog(String title, String fieldtext, String text){
 			super(title);
 
-			field = new VisTextField(fieldtext);
+			textfield = new VisTextField(fieldtext);
 			getContentTable().center().add(new VisLabel(text));
-			getContentTable().center().add(field).pad(20 * s).padLeft(0f);
+			getContentTable().center().add(textfield).pad(20 * s).padLeft(0f);
 		}
 
 		public final void result(){
-			result(field.getText());
+			result(textfield.getText());
 		}
 
 		public void result(String string){
 
+		}
+	}
+	
+	public static class NumberInputDialog extends MenuDialog{
+		protected VisTextField numberfield;
+
+		public NumberInputDialog(String title, String fieldtext, String text){
+			super(title);
+
+			numberfield = new VisTextField(fieldtext);
+			numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
+			getContentTable().center().add(new VisLabel(text));
+			getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f);
+		}
+
+		public final void result(){
+			if(!numberfield.getText().isEmpty())
+			result(Integer.parseInt(numberfield.getText()));
+		}
+
+		public void result(int i){
+			
 		}
 	}
 
@@ -1154,7 +1182,8 @@ public class DialogClasses{
 	}
 
 	public static abstract class MenuDialog extends VisDialog{
-		VisTextButton ok, cancel;
+		protected VisTextButton ok;
+		VisTextButton cancel;
 
 		public MenuDialog(String title){
 			super(title, "dialog");

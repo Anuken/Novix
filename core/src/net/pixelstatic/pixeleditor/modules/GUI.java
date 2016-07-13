@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.modules;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
@@ -25,9 +26,9 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ShiftDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
-import net.pixelstatic.utils.AndroidKeyboard;
+import net.pixelstatic.utils.*;
 import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
-import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.MiscUtils.TextFieldEmptyListener;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
@@ -60,6 +61,7 @@ import com.kotcrab.vis.ui.Focusable;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
+import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
@@ -72,21 +74,20 @@ public class GUI extends Module<PixelEditor>{
 	public FileHandle projectDirectory;
 	Array<Project> projects = new Array<Project>();
 	public Project currentProject;
-	Palette palette;
-	int palettewidth = 8;
+	Palette currentPalette;
 	Skin skin;
 	Preferences prefs;
 	VisTable tooltable;
 	VisTable colortable;
 	VisTable extratable;
 	VisTable projecttable;
-	VisDialog settingsmenu, projectmenu;
+	VisDialog settingsmenu, projectmenu, palettedialog;
 	BrushSizeWidget brush;
 	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
 	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
-	Array<Palette> palettes = new Array<Palette>();
+	ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
 	Json json;
 	public ColorBox colorbox;
@@ -98,18 +99,17 @@ public class GUI extends Module<PixelEditor>{
 	public void update(){
 		Gdx.gl.glClearColor(0.13f, 0.13f, 0.13f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
-		
-		stage.act(Gdx.graphics.getDeltaTime() > 2/60f ?1/60f : Gdx.graphics.getDeltaTime());
+
+		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
 		tool.update(drawgrid);
 
 		//pc debugging
 		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
-		
-		
+
 	}
 
 	void setup(){
@@ -232,17 +232,15 @@ public class GUI extends Module<PixelEditor>{
 
 			int imagesize = 40;
 
-			VisImageButton openbutton = new VisImageButton(Textures.getDrawable( project == currentProject ? "icon-open-gray" : "icon-open"));
+			VisImageButton openbutton = new VisImageButton(Textures.getDrawable(project == currentProject ? "icon-open-gray" : "icon-open"));
 			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
 			VisImageButton renamebutton = new VisImageButton(Textures.getDrawable("icon-rename"));
 			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
-			
+
 			if(project == currentProject){
 				openbutton.setDisabled(true);
 				openbutton.setColor(Hue.lightness(0.94f));
 			}
-			
-			
 
 			openbutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -307,9 +305,7 @@ public class GUI extends Module<PixelEditor>{
 
 	void addIconToButton(VisTextButton button, Image image, float size){
 		button.add(image).size(size).center();
-
 		button.getCells().reverse();
-		//button.getLabelCell().padLeft(size);
 	}
 
 	void newProject(){
@@ -339,12 +335,13 @@ public class GUI extends Module<PixelEditor>{
 
 	void openProject(Project project){
 		prefs.putString("lastproject", project.name);
+		prefs.flush();
 		currentProject = project;
-		
+
 		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
 
 		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
-		
+
 		drawgrid.setCanvas(canvas);
 		updateToolColor();
 		projectmenu.hide();
@@ -692,7 +689,7 @@ public class GUI extends Module<PixelEditor>{
 				brush.setColor(colorbox.getColor());
 			}
 		});
-		
+
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
 		tooloptiontable.add(slider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
@@ -959,7 +956,7 @@ public class GUI extends Module<PixelEditor>{
 		final CollapseButton expander = new CollapseButton();
 		expander.flip();
 
-		colortable.add(expander).expandX().fillX().colspan(palettewidth + 2).height(MiscUtils.densityScale(50f));
+		colortable.add(expander).expandX().fillX().colspan(currentPalette.size() + 2).height(MiscUtils.densityScale(50f));
 
 		colortable.row();
 
@@ -980,13 +977,13 @@ public class GUI extends Module<PixelEditor>{
 
 		expander.setZIndex(collapser.getZIndex() + 10);
 
-		int colorsize = Gdx.graphics.getWidth() / palettewidth - MiscUtils.densityScale(3);
+		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
 
 		colortable.add().expandX().fillX();
 
-		boxes = new ColorBox[palettewidth];
+		boxes = new ColorBox[currentPalette.size()];
 
-		for(int i = 0;i < palettewidth;i ++){
+		for(int i = 0;i < currentPalette.size();i ++){
 
 			final ColorBox box = new ColorBox();
 
@@ -1012,100 +1009,218 @@ public class GUI extends Module<PixelEditor>{
 
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
 
+		palettedialog = new VisDialog("Palettes", "dialog");
+		palettedialog.setMovable(false);
+		palettedialog.getTitleLabel().setColor(Color.CORAL);
+		MiscUtils.addHideButton(palettedialog);
+
 		palettebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				VisDialog dialog = new VisDialog("Palettes", "dialog"){
-
-				};
-
-				Table table = new VisTable();
-
-				VisScrollPane pane = new VisScrollPane(table);
-				pane.setFadeScrollBars(false);
-				pane.setOverscroll(false, false);
-
-				//dialog.getContentTable().add(pane).width(340).maxHeight(300);
-
-				palettes.clear();
-				palettes.add(new Palette("aaaaa", 2));
-				palettes.add(new Palette("adsadd", 16));
-				palettes.add(new Palette("ggggggg", 10));
-				palettes.add(new Palette("hello hello hello", 10));
-				palettes.add(new Palette("lel", 10));
-				palettes.add(new Palette("lel", 10));
-				
-				ButtonGroup<PaletteWidget> group = new ButtonGroup<PaletteWidget>();
-				
-				PaletteWidget palettew = new PaletteWidget(palette);
-				group.add(palettew);
-				dialog.getContentTable().add(palettew).padBottom(6).colspan(2).row();
-
-				for(int i = 0;i < palettes.size;i ++){
-					PaletteWidget palette = new PaletteWidget(palettes.get(i));
-					group.add(palette);
-					
-					palette.addListener(new ClickListener(){
-						public void clicked(InputEvent event, float x, float y){
-							VisDialog palettedialog = new VisDialog("Palette", "dialog"){
-								
-							};
-							
-							palettedialog.getTitleLabel().setColor(Color.CORAL);
-							
-							VisTextButton newbutton = new VisTextButton("new");
-							VisTextButton renamebutton = new VisTextButton("rename");
-							VisTextButton resizebutton = new VisTextButton("resize");
-							VisTextButton deletebutton = new VisTextButton("delete");
-							VisTextButton savebutton = new VisTextButton("save");
-									
-							Table buttons = palettedialog.getContentTable();
-							
-							buttons.add(newbutton).grow();
-							buttons.add(renamebutton).grow();
-							buttons.add(resizebutton).grow();
-							buttons.add(deletebutton).grow();
-							buttons.add(savebutton).grow();
-							
-							palettedialog.addCloseButton();
-							
-							palettedialog.show(stage);
-						}
-					});
-					
-					dialog.getContentTable().add(palette).padBottom(6);
-					
-					if(i % 2 == 1) dialog.getContentTable().row();
-				}
-				
-				Table buttons = new VisTable();
-				
-				dialog.getContentTable().row();
-				
-				dialog.getContentTable().add(buttons).colspan(2).grow();
-				
-				
-
-				//if(palettes.size == 0){
-				//	dialog.getContentTable().add(new VisLabel("No palettes found."));
-				//}
-
-				dialog.getTitleLabel().setColor(Color.CORAL);
-				dialog.addCloseButton();
-				dialog.show(stage);
+				updatePaletteDialog();
+				palettedialog.show(stage);
 			}
 		});
 
 		pickertable.add(apicker).expand().fill().padTop(colorsize + 20 * s).padBottom(10f * s);
 		pickertable.row();
-		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60*s).growX();
+		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		collapser.resetY();
 		collapser.setCollapsed(true, false);
 		setupBoxColors();
 	}
 
+	void updatePaletteDialog(){
+		palettedialog.getContentTable().clearChildren();
+		palettedialog.getButtonsTable().clearChildren();
+/*
+		palettes.clear();
+		palettes.add(new Palette("aaaaa", 2));
+		palettes.add(new Palette("adsadd", 16));
+		palettes.add(new Palette("ggggggg", 10));
+		palettes.add(new Palette("hello hello hello", 10));
+		palettes.add(new Palette("lel", 10));
+		palettes.add(new Palette("lel", 10));
+*/
+		//ButtonGroup<PaletteWidget> group = new ButtonGroup<PaletteWidget>();
+
+		
+		//group.add(palettew);
+		
+		//PaletteWidget palettew = new PaletteWidget(palette, true);
+		//palettedialog.getContentTable().add(palettew).padBottom(6).colspan(2).row();
+		
+		
+		class PaletteListener extends ClickListener{
+			Palette palette;
+			
+			public PaletteListener(Palette palette){
+				this.palette = palette;
+			}
+			
+			public void clicked(InputEvent event, float x, float y){
+				final VisDialog editpalettedialog = new VisDialog("Palette: " + palette.name, "dialog"){
+
+				};
+
+				editpalettedialog.getTitleLabel().setColor(Color.CORAL);
+
+				VisTextButton newbutton = new VisTextButton("new");
+				VisTextButton renamebutton = new VisTextButton("rename");
+				VisTextButton resizebutton = new VisTextButton("resize");
+				VisTextButton deletebutton = new VisTextButton("delete");
+				VisTextButton savebutton = new VisTextButton("save");
+				
+				Table buttons = editpalettedialog.getContentTable();
+				
+				final Table colors = PaletteWidget.generatePaletteTable(40, 320, palette.colors);
+
+				renamebutton.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
+							public void result(String string){
+								palettes.remove(palette.name);
+								palette.name = string;
+								palettes.put(string, palette);
+								editpalettedialog.getTitleLabel().setText("Palette: " + palette.name);
+								updatePaletteDialog();
+							}
+						}.show(stage);
+					}
+				});
+				
+				resizebutton.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						new DialogClasses.NumberInputDialog("Resize Palette", palette.size() + "", "Size: "){
+							public void result(int size){
+								Color[] newcolors = new Color[size];
+								
+								Arrays.fill(newcolors, Color.WHITE.cpy());
+								
+								for(int i = 0; i < size && i < palette.size(); i ++){
+									newcolors[i] = palette.colors[i];
+								}
+								
+								palette.colors = newcolors;
+								
+								colors.clearChildren();
+								Table newtable = PaletteWidget.generatePaletteTable(40, 320, palette.colors);
+								colors.getCells().addAll(newtable.getCells());
+								colors.getChildren().addAll(newtable.getChildren());
+								colors.invalidate();
+								updatePaletteDialog();
+								
+								
+							}
+						}.show(stage);
+					}
+				});
+
+				deletebutton.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
+							public void result(){
+								palettes.remove(palette.name);
+								editpalettedialog.hide();
+								updatePaletteDialog();
+								
+							}
+						}.show(stage);
+					}
+				});
+
+				
+				for(Actor actor : colors.getChildren()){
+					final ColorBox box = (ColorBox)actor;
+					box.addListener(new ClickListener(){
+						public void clicked(InputEvent event, float x, float y){
+							//box.selected = true;
+							//box.toFront();
+						}
+					});
+				}
+				
+				buttons.add(colors).pad(40 * s);
+				
+				Table edittable = new VisTable();
+				
+				
+				
+				editpalettedialog.row();
+				editpalettedialog.add(edittable).grow();
+				
+				//buttons.add(new PaletteWidget(palettes.get(index))).row();
+
+				buttons = editpalettedialog.getButtonsTable();
+
+				float buttonwidth = 150, buttonheight = 60;
+
+				//buttons.add(newbutton).grow();
+				buttons.add(renamebutton).size(buttonwidth, buttonheight);
+				buttons.add(resizebutton).size(buttonwidth, buttonheight);
+				buttons.add(deletebutton).size(buttonwidth, buttonheight);
+				//	buttons.add(savebutton).grow();
+
+				editpalettedialog.addCloseButton();
+				editpalettedialog.setMovable(false);
+				editpalettedialog.show(stage);
+			}
+		};
+		
+		//palettew.addListener(new PaletteListener(palette));
+		int i = 0;
+
+		for(Palette palette : palettes.values()){
+			PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
+
+			widget.addListener(new PaletteListener(palette));
+
+			palettedialog.getContentTable().add(widget).padBottom(6);
+
+			if(i % 2 == 1) palettedialog.getContentTable().row();
+			i++;
+		}
+		
+		if(palettes.size == 1)
+			palettedialog.getContentTable().add().grow().prefSize(220, 80);
+		//TODO
+		VisTextButton addpalettebutton = new VisTextButton("New Palette");
+		
+		addpalettebutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				new DialogClasses.InputDialog("New Palette", "", "Name:"){
+					protected VisTextField numberfield;
+					
+					{
+						numberfield = new VisTextField("8");
+						numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
+						
+						getContentTable().row();
+						
+						getContentTable().center().add(new VisLabel("Size:")).padTop(0f);
+						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0);
+						
+						new TextFieldEmptyListener(ok, textfield, numberfield);
+					}
+					
+					public void result(String string){
+						palettes.put(string, new Palette(string, Integer.parseInt(numberfield.getText())));
+						updatePaletteDialog();
+					}
+					
+					
+				}.show(stage);
+			}
+		});
+		
+		addIconToButton(addpalettebutton, new Image(Textures.get("icon-plus")), 40);
+		
+		palettedialog.getButtonsTable().add(addpalettebutton).size(200*s, 50*s);
+		palettedialog.pack();
+	}
+
 	void setupBoxColors(){
 		for(int i = 0;i < boxes.length;i ++){
-			boxes[i].setColor(Hue.fromHSB((float)i / palettewidth, 1f, 1f));
+			boxes[i].setColor(Hue.fromHSB((float)i / currentPalette.size(), 1f, 1f));
 		}
 
 		apicker.setRecentColors(boxes);
@@ -1122,7 +1237,7 @@ public class GUI extends Module<PixelEditor>{
 
 	void setupCanvas(){
 		drawgrid = new DrawingGrid();
-		
+
 		drawgrid.grid = prefs.getBoolean("grid", true);
 		drawgrid.cursormode = prefs.getBoolean("cursormode", true);
 		drawgrid.setCanvas(new PixelCanvas(currentProject.getCachedPixmap()));
@@ -1134,7 +1249,7 @@ public class GUI extends Module<PixelEditor>{
 	public GUI(){
 		Gdx.graphics.setContinuousRendering(false);
 		//Gdx.graphics.requestRendering();
-		
+
 		gui = this;
 		s = MiscUtils.densityScale();
 		GDXDialogsSystem.install();
@@ -1340,26 +1455,26 @@ public class GUI extends Module<PixelEditor>{
 	@SuppressWarnings("unchecked")
 	void loadPalettes(){
 		try{
-			palettes = json.fromJson(Array.class, paletteDirectory);
-			
+			palettes = json.fromJson(ObjectMap.class, paletteDirectory);
+
 			String name = prefs.getString("lastpalette");
 			if(name != null){
-				for(Palette palette : palettes){
-					if(palette.name == name){
-						this.palette = palette;
-						break;
-					}
-				}
+				currentPalette = palettes.get(name);
 			}
-			
+
 			Gdx.app.log("pedebugging", "Palettes loaded.");
 		}catch(Exception e){
 			e.printStackTrace();
 			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
 		}
-		
-		if(palette == null){
-			palette = new Palette("Untitled", 8);
+
+		if(currentPalette == null){
+			if(!palettes.containsKey("Untitled")){
+				currentPalette = new Palette("Untitled", 8);
+				palettes.put("Untitled", currentPalette);
+			}else{
+				currentPalette = palettes.get("Untitled");
+			}
 		}
 	}
 
