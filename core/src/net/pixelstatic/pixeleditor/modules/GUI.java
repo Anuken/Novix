@@ -378,29 +378,6 @@ public class GUI extends Module<PixelEditor>{
 				updateProjectMenu();
 			}
 		}.show(stage);
-
-		/*
-		GDXTextPrompt dialog = GDXDialogsSystem.getDialogManager().newDialog(GDXTextPrompt.class);
-		dialog.setMessage("Enter new project name:");
-		dialog.setConfirmButtonLabel("OK");
-		dialog.setCancelButtonLabel("Cancel");
-		dialog.setTextPromptListener(new TextPromptListener(){
-			@Override
-			public void cancel(){
-				
-			}
-
-			@Override
-			public void confirm(final String text){
-				Gdx.app.postRunnable(new Runnable(){
-					public void run(){
-						
-					}
-				});
-			}
-		});
-		dialog.build().show();
-		*/
 	}
 
 	void deleteProject(final Project project){
@@ -1247,27 +1224,21 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	void setPalette(Palette palette){
+		paletteColor = 0;
 		currentPalette = palette;
 		updatePaletteDialog();
 		prefs.putString("lastpalette", palette.name);
 		prefs.flush();
 		updateColorMenu();
+		setSelectedColor(palette.colors[0]);
+		setupBoxColors();
 	}
 
 	void setupBoxColors(){
 		apicker.setRecentColors(boxes);
 		boxes[0].selected = true;
 		boxes[0].toFront();
-/*
-		if(colorbox == null){
-			colorbox = boxes[0];
-			colorbox.selected = true;
-			apicker.setSelectedColor(colorbox.getColor());
-			alphabar.setRightColor(colorbox.getColor());
-			brush.setColor(colorbox.getColor());
-			colorbox.toFront();
-		}
-		*/
+		apicker.setSelectedColor(currentPalette.colors[0]);
 	}
 
 	void setupCanvas(){
@@ -1538,7 +1509,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 	
 	public void updateToolColor(){
-		tool.onColorChange(selectedColor(), drawgrid.canvas);
+		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor(), drawgrid.canvas);
 	}
 
 	public void dispose(){
