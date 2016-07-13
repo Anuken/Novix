@@ -1174,14 +1174,14 @@ public class GUI extends Module<PixelEditor>{
 		int i = 0;
 
 		for(final Palette palette : palettes.values()){
-			PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
+			final PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
 			
 			//widget.setDisabled(palette == currentPalette);
 			widget.setTouchable(palette == currentPalette ? Touchable.childrenOnly : Touchable.enabled);
 			
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					setPalette(palette);
+					if(!widget.extrabutton.isOver())setPalette(palette);
 				}
 			});
 			

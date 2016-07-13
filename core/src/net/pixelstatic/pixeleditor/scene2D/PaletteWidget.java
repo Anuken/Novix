@@ -6,27 +6,38 @@ import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
-public class PaletteWidget extends Button{
+public class PaletteWidget extends VisTable{
 	public final Palette palette;
+	public final boolean selected;
+	public VisImageButton extrabutton;
 
 	public PaletteWidget(Palette palette, boolean selected){
-		super(VisUI.getSkin());
+		//super(VisUI.getSkin());
 		this.palette = palette;
-		setup(selected);
+		this.selected = selected;
+		setup();
+	}
+	
+	public void draw(Batch batch, float parentAlpha){
+		super.draw(batch, parentAlpha);
+		if(selected){
+			batch.setColor(1,1,1,parentAlpha);
+			getSkin().getDrawable("border").draw(batch, getX(), getY(), getWidth(), getHeight());
+		}
 	}
 
-	private void setup(boolean selected){
+	private void setup(){
 		float maxsize = 25;
-
+		background("button");
 		setColor(Hue.lightness(0.87f));
 
 		top().left();
@@ -34,26 +45,24 @@ public class PaletteWidget extends Button{
 		VisLabel label = new VisLabel(palette.name);
 		label.setColor(Color.LIGHT_GRAY);
 
-		add(label).align(Align.topLeft);
+		add(label).align(Align.left);
 		
-		VisImageButton extrabutton = new VisImageButton(Textures.getDrawable("icon-rename"));
+		extrabutton = new VisImageButton(Textures.getDrawable("icon-dots"));
+		extrabutton.setColor(getColor());
 		extrabutton.getImageCell().size(40);
 		
-		add(extrabutton).size(42);
+		extrabutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				
+			}
+		});
+		
+		add(extrabutton).size(42).align(Align.topRight).padRight(0);
 		
 		
 		row();
 
 		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2);
-		
-		
-
-		if(selected){
-			Image image = new Image(getSkin().getDrawable("border"));
-
-			image.setFillParent(true);
-			addActor(image);
-		}
 	}
 
 	public static Table generatePaletteTable(float size, float width, Color[] colors){
