@@ -894,16 +894,6 @@ public class GUI extends Module<PixelEditor>{
 		}
 	}
 
-	VisTextButton menuButton(int height){
-		VisTextButton ham = new VisTextButton("|||");
-		ham.getLabel().setFontScale(0.8f, 1.2f);
-		ham.setTransform(true);
-		ham.setOrigin(height / 2, height / 2);
-		ham.getLabelCell().padBottom(5.5f);
-		ham.setRotation(90);
-		return ham;
-	}
-
 	void setupColors(){
 
 		VisTable pickertable = new VisTable(){
@@ -967,7 +957,7 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 
-		pickertable.add(apicker).expand().fill().padTop( 20 * s).padBottom(10f * s);
+		pickertable.add(apicker).expand().fill().padTop(65*s + 20 * s).padBottom(10f * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 
@@ -987,7 +977,7 @@ public class GUI extends Module<PixelEditor>{
 		
 		colortable.row();
 		
-		int maxcolorsize = 60;
+		int maxcolorsize = 65;
 
 		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
 		
@@ -1104,6 +1094,7 @@ public class GUI extends Module<PixelEditor>{
 								editpalettedialog.getContentTable().add(PaletteWidget.generatePaletteTable(40, 320, palette.colors)).pad(40 * s);
 								editpalettedialog.pack();
 								updatePaletteDialog();
+								updateColorMenu();
 							}
 						}.show(stage);
 					}
@@ -1188,6 +1179,14 @@ public class GUI extends Module<PixelEditor>{
 		if(palettes.size == 1)
 			palettedialog.getContentTable().add().grow().prefSize(220, 105);
 		
+		VisTextButton backbutton = new VisTextButton("Back");
+		
+		backbutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				palettedialog.hide();
+			}
+		});
+		
 		VisTextButton addpalettebutton = new VisTextButton("New Palette");
 		
 		addpalettebutton.addListener(new ClickListener(){
@@ -1218,8 +1217,11 @@ public class GUI extends Module<PixelEditor>{
 		});
 		
 		addIconToButton(addpalettebutton, new Image(Textures.get("icon-plus")), 40);
-		
+		addIconToButton(backbutton, new Image(Textures.get("icon-arrow-left")), 40);
+
+		palettedialog.getButtonsTable().add(backbutton).size(150*s, 50*s);
 		palettedialog.getButtonsTable().add(addpalettebutton).size(200*s, 50*s);
+		
 		palettedialog.pack();
 	}
 	
