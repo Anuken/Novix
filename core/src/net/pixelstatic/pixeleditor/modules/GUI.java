@@ -805,6 +805,17 @@ public class GUI extends Module<PixelEditor>{
 			return super.getPrefHeight() * 2f - 3f;
 		}
 	}
+	
+	private static class TallMenuItem extends MenuItem{
+
+		public TallMenuItem(String text, ChangeListener listener){
+			super(text, listener);
+		}
+
+		public float getPrefHeight(){
+			return super.getPrefHeight() * 1.4f;
+		}
+	}
 
 	VisTextButton addMenuButton(String text){
 		float height = 70f;
@@ -1036,6 +1047,70 @@ public class GUI extends Module<PixelEditor>{
 		
 		
 		class PaletteListener extends ClickListener{
+			PaletteWidget widget;
+			Palette palette;
+			
+			public PaletteListener(PaletteWidget palette){
+				widget = palette;
+				this.palette = widget.palette;
+			}
+			//TODO
+			public void clicked(InputEvent event, float x, float y){
+				PopupMenu menu = new PopupMenu();
+				menu.addItem(new TallMenuItem("resize", new ChangeListener(){
+					public void changed(ChangeEvent event, Actor actor){
+						new DialogClasses.NumberInputDialog("Resize Palette", palette.size() + "", "Size: "){
+							public void result(int size){
+								Color[] newcolors = new Color[size];
+								
+								Arrays.fill(newcolors, Color.WHITE.cpy());
+								
+								for(int i = 0; i < size && i < palette.size(); i ++){
+									newcolors[i] = palette.colors[i];
+								}
+								
+								palette.colors = newcolors;
+								
+								updatePaletteDialog();
+								updateColorMenu();
+							}
+						}.show(stage);
+					}
+				}));
+				menu.addItem(new TallMenuItem("rename", new ChangeListener(){
+					public void changed(ChangeEvent event, Actor actor){
+						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
+							public void result(String string){
+								palettes.remove(palette.name);
+								palette.name = string;
+								palettes.put(string, palette);
+								if(palette == currentPalette){
+									prefs.putString("currentpalette", palette.name);
+									prefs.flush();
+								}
+								updatePaletteDialog();
+							}
+						}.show(stage);
+					}
+				}));
+				menu.addItem(new TallMenuItem("delete", new ChangeListener(){
+					public void changed(ChangeEvent event, Actor actor){
+						new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
+							public void result(){
+								palettes.remove(palette.name);
+								updatePaletteDialog();
+							}
+						}.show(stage);
+					}
+				}));
+				
+				Vector2 coords = widget.extrabutton.localToStageCoordinates(new Vector2());
+				menu.showMenu(stage, coords.x - menu.getWidth() + widget.extrabutton.getWidth(), coords.y);
+			}
+		}
+		
+		/*
+		class PaletteListener extends ClickListener{
 			Palette palette;
 			
 			public PaletteListener(Palette palette){
@@ -1150,6 +1225,7 @@ public class GUI extends Module<PixelEditor>{
 				editpalettedialog.show(stage);
 			}
 		};
+		*/
 		
 		//palettew.addListener(new PaletteListener(palette));
 		int i = 0;
@@ -1166,7 +1242,7 @@ public class GUI extends Module<PixelEditor>{
 				}
 			});
 			
-			widget.addExtraButtonListener(new PaletteListener(palette));
+			widget.addExtraButtonListener(new PaletteListener(widget));
 			
 			//widget.addListener(new PaletteListener(palette));
 
@@ -1200,7 +1276,7 @@ public class GUI extends Module<PixelEditor>{
 						
 						getContentTable().row();
 						
-						getContentTable().center().add(new VisLabel("Size:")).padTop(0f);
+						getContentTable().center().add(new VisLabel("Size:")).padTop(0f).padBottom(20f*s);
 						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0);
 						
 						new TextFieldEmptyListener(ok, textfield, numberfield);

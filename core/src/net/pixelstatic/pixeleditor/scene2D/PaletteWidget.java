@@ -12,9 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.kotcrab.vis.ui.widget.VisImageButton;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 public class PaletteWidget extends VisTable{
 	public final Palette palette;
@@ -49,6 +48,10 @@ public class PaletteWidget extends VisTable{
 		add(label).align(Align.left);
 		
 		extrabutton = new VisImageButton(Textures.getDrawable("icon-dots"));
+		extrabutton.setStyle(new VisImageButtonStyle(extrabutton.getStyle()));
+		extrabutton.getStyle().down = extrabutton.getStyle().up;
+		extrabutton.getStyle().over = extrabutton.getStyle().up;
+		extrabutton.getStyle().imageDown = Textures.getDrawable("icon-dots-down");
 		extrabutton.setColor(getColor());
 		extrabutton.getImageCell().size(40);
 		
