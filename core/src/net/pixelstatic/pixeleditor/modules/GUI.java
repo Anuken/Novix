@@ -1109,8 +1109,6 @@ public class GUI extends Module<PixelEditor>{
 
 		palettedialog.getContentTable().add(pane).left().grow().maxHeight(Gdx.graphics.getHeight() / 2);
 
-		int i = 0;
-
 		for(final Palette palette : palettes.values()){
 			final PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
 
@@ -1125,13 +1123,9 @@ public class GUI extends Module<PixelEditor>{
 			widget.addExtraButtonListener(new PaletteListener(widget));
 
 			palettetable.add(widget).padBottom(6);
-
-			/*if(i % 2 == 1) */palettetable.row();
-			i ++;
+			palettetable.row();
 		}
-
-		if(palettes.size == 1) palettedialog.getContentTable().add().grow().prefSize(PaletteWidget.defaultWidth, PaletteWidget.defaultHeight);
-
+		
 		VisTextButton backbutton = new VisTextButton("Back");
 
 		backbutton.addListener(new ClickListener(){
@@ -1331,6 +1325,7 @@ public class GUI extends Module<PixelEditor>{
 				new Thread(new Runnable(){
 					public void run(){
 						saveProject();
+						savePalettes();
 					}
 				}).start();
 			}
