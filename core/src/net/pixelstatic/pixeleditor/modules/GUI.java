@@ -805,7 +805,7 @@ public class GUI extends Module<PixelEditor>{
 			return super.getPrefHeight() * 2f - 3f;
 		}
 	}
-	
+
 	private static class TallMenuItem extends MenuItem{
 
 		public TallMenuItem(String text, ChangeListener listener){
@@ -938,7 +938,7 @@ public class GUI extends Module<PixelEditor>{
 		expander.flip();
 
 		colorcollapser = new SmoothCollapsibleWidget(pickertable);
-		
+
 		stage.addActor(colorcollapser);
 
 		expander.addListener(new ClickListener(){
@@ -956,7 +956,13 @@ public class GUI extends Module<PixelEditor>{
 
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
 
-		palettedialog = new VisDialog("Palettes", "dialog");
+		palettedialog = new VisDialog("Palettes", "dialog"){
+			public VisDialog show(Stage stage){
+				super.show(stage);
+				stage.setScrollFocus(getContentTable().getChildren().first());
+				return this;
+			}
+		};
 		palettedialog.setMovable(false);
 		palettedialog.getTitleLabel().setColor(Color.CORAL);
 		MiscUtils.addHideButton(palettedialog);
@@ -968,30 +974,30 @@ public class GUI extends Module<PixelEditor>{
 			}
 		});
 
-		pickertable.add(apicker).expand().fill().padTop(65*s + 20 * s).padBottom(10f * s);
+		pickertable.add(apicker).expand().fill().padTop(25 * s + 20 * s).padBottom(10f * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 
-		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight() - 100*s);
+		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight() - 100 * s);
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
 	}
-	
+
 	void updateColorMenu(){
 		colortable.clear();
-		
+
 		//colortable.add(colorcollapser).colspan(currentPalette.size() + 2).row();
-		colortable.add(expander).expandX().fillX().colspan(currentPalette.size() + 2).height(50f*s);
+		colortable.add(expander).expandX().fillX().colspan(currentPalette.size() + 2).height(50f * s);
 		expander.setZIndex(colorcollapser.getZIndex() + 10);
-		
+
 		colortable.row();
-		
+
 		int maxcolorsize = 65;
 
 		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
-		
+
 		colorsize = Math.min(maxcolorsize, colorsize);
 
 		colortable.add().growX();
@@ -1004,7 +1010,7 @@ public class GUI extends Module<PixelEditor>{
 
 			boxes[i] = box;
 			colortable.add(box).size(colorsize);
-			
+
 			box.setColor(currentPalette.colors[i]);
 
 			box.addListener(new ClickListener(){
@@ -1021,39 +1027,25 @@ public class GUI extends Module<PixelEditor>{
 			});
 
 		}
-		
+
 		colortable.add().expandX().fillX();
 	}
 
 	void updatePaletteDialog(){
+		float scrolly = palettedialog.getContentTable().getChildren().size == 0 ? 0 : ((ScrollPane)palettedialog.getContentTable().getChildren().first()).getScrollPercentY();
+
 		palettedialog.getContentTable().clearChildren();
 		palettedialog.getButtonsTable().clearChildren();
-/*
-		palettes.clear();
-		palettes.add(new Palette("aaaaa", 2));
-		palettes.add(new Palette("adsadd", 16));
-		palettes.add(new Palette("ggggggg", 10));
-		palettes.add(new Palette("hello hello hello", 10));
-		palettes.add(new Palette("lel", 10));
-		palettes.add(new Palette("lel", 10));
-*/
-		//ButtonGroup<PaletteWidget> group = new ButtonGroup<PaletteWidget>();
 
-		
-		//group.add(palettew);
-		
-		//PaletteWidget palettew = new PaletteWidget(palette, true);
-		//palettedialog.getContentTable().add(palettew).padBottom(6).colspan(2).row();
-		
-		
 		class PaletteListener extends ClickListener{
 			PaletteWidget widget;
 			Palette palette;
-			
+
 			public PaletteListener(PaletteWidget palette){
 				widget = palette;
 				this.palette = widget.palette;
 			}
+
 			//TODO
 			public void clicked(InputEvent event, float x, float y){
 				PopupMenu menu = new PopupMenu();
@@ -1062,15 +1054,15 @@ public class GUI extends Module<PixelEditor>{
 						new DialogClasses.NumberInputDialog("Resize Palette", palette.size() + "", "Size: "){
 							public void result(int size){
 								Color[] newcolors = new Color[size];
-								
+
 								Arrays.fill(newcolors, Color.WHITE.cpy());
-								
-								for(int i = 0; i < size && i < palette.size(); i ++){
+
+								for(int i = 0;i < size && i < palette.size();i ++){
 									newcolors[i] = palette.colors[i];
 								}
-								
+
 								palette.colors = newcolors;
-								
+
 								updatePaletteDialog();
 								updateColorMenu();
 							}
@@ -1103,213 +1095,110 @@ public class GUI extends Module<PixelEditor>{
 						}.show(stage);
 					}
 				}));
-				
+
 				Vector2 coords = widget.extrabutton.localToStageCoordinates(new Vector2());
 				menu.showMenu(stage, coords.x - menu.getWidth() + widget.extrabutton.getWidth(), coords.y);
 			}
 		}
-		
-		/*
-		class PaletteListener extends ClickListener{
-			Palette palette;
-			
-			public PaletteListener(Palette palette){
-				this.palette = palette;
-			}
-			
-			public void clicked(InputEvent event, float x, float y){
-				final VisDialog editpalettedialog = new VisDialog("Palette: " + palette.name, "dialog"){
 
-				};
+		VisTable palettetable = new VisTable();
 
-				editpalettedialog.getTitleLabel().setColor(Color.CORAL);
+		final VisScrollPane pane = new VisScrollPane(palettetable);
+		pane.setFadeScrollBars(false);
+		pane.setOverscroll(false, false);
 
-				VisTextButton renamebutton = new VisTextButton("rename");
-				VisTextButton resizebutton = new VisTextButton("resize");
-				VisTextButton deletebutton = new VisTextButton("delete");
-				
-				Table buttons = editpalettedialog.getContentTable();
-				
-				final Table colors = PaletteWidget.generatePaletteTable(40, 320, palette.colors);
+		palettedialog.getContentTable().add(pane).left().grow().maxHeight(Gdx.graphics.getHeight() / 2);
 
-				renamebutton.addListener(new ClickListener(){
-					public void clicked(InputEvent event, float x, float y){
-						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
-							public void result(String string){
-								palettes.remove(palette.name);
-								palette.name = string;
-								palettes.put(string, palette);
-								if(palette == currentPalette){
-									prefs.putString("currentpalette", palette.name);
-									prefs.flush();
-								}
-								editpalettedialog.getTitleLabel().setText("Palette: " + palette.name);
-								updatePaletteDialog();
-							}
-						}.show(stage);
-					}
-				});
-				
-				resizebutton.addListener(new ClickListener(){
-					public void clicked(InputEvent event, float x, float y){
-						new DialogClasses.NumberInputDialog("Resize Palette", palette.size() + "", "Size: "){
-							public void result(int size){
-								Color[] newcolors = new Color[size];
-								
-								Arrays.fill(newcolors, Color.WHITE.cpy());
-								
-								for(int i = 0; i < size && i < palette.size(); i ++){
-									newcolors[i] = palette.colors[i];
-								}
-								
-								palette.colors = newcolors;
-								
-								
-								editpalettedialog.getContentTable().clear();
-								editpalettedialog.getContentTable().add(PaletteWidget.generatePaletteTable(40, 320, palette.colors)).pad(40 * s);
-								editpalettedialog.pack();
-								updatePaletteDialog();
-								updateColorMenu();
-							}
-						}.show(stage);
-					}
-				});
-
-				deletebutton.addListener(new ClickListener(){
-					public void clicked(InputEvent event, float x, float y){
-						new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
-							public void result(){
-								palettes.remove(palette.name);
-								editpalettedialog.hide();
-								updatePaletteDialog();
-								
-							}
-						}.show(stage);
-					}
-				});
-
-				
-				for(Actor actor : colors.getChildren()){
-					final ColorBox box = (ColorBox)actor;
-					box.addListener(new ClickListener(){
-						public void clicked(InputEvent event, float x, float y){
-							//box.selected = true;
-							//box.toFront();
-						}
-					});
-				}
-				
-				buttons.add(colors).pad(40 * s);
-				
-				Table edittable = new VisTable();
-				
-				
-				
-				editpalettedialog.row();
-				editpalettedialog.add(edittable).grow();
-				
-				//buttons.add(new PaletteWidget(palettes.get(index))).row();
-
-				buttons = editpalettedialog.getButtonsTable();
-
-				float buttonwidth = 150, buttonheight = 60;
-
-				//buttons.add(newbutton).grow();
-				buttons.add(renamebutton).size(buttonwidth, buttonheight);
-				buttons.add(resizebutton).size(buttonwidth, buttonheight);
-				buttons.add(deletebutton).size(buttonwidth, buttonheight);
-				//	buttons.add(savebutton).grow();
-
-				editpalettedialog.addCloseButton();
-				editpalettedialog.setMovable(false);
-				editpalettedialog.show(stage);
-			}
-		};
-		*/
-		
-		//palettew.addListener(new PaletteListener(palette));
 		int i = 0;
 
 		for(final Palette palette : palettes.values()){
 			final PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
-			
-			//widget.setDisabled(palette == currentPalette);
+
 			widget.setTouchable(palette == currentPalette ? Touchable.childrenOnly : Touchable.enabled);
-			
+
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					if(!widget.extrabutton.isOver()) setPalette(palette);
+					if( !widget.extrabutton.isOver()) setPalette(palette);
 				}
 			});
-			
+
 			widget.addExtraButtonListener(new PaletteListener(widget));
-			
-			//widget.addListener(new PaletteListener(palette));
 
-			palettedialog.getContentTable().add(widget).padBottom(6);
+			palettetable.add(widget).padBottom(6);
 
-			if(i % 2 == 1) palettedialog.getContentTable().row();
-			i++;
+			/*if(i % 2 == 1) */palettetable.row();
+			i ++;
 		}
-		
-		if(palettes.size == 1)
-			palettedialog.getContentTable().add().grow().prefSize(220, 105);
-		
+
+		if(palettes.size == 1) palettedialog.getContentTable().add().grow().prefSize(PaletteWidget.defaultWidth, PaletteWidget.defaultHeight);
+
 		VisTextButton backbutton = new VisTextButton("Back");
-		
+
 		backbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				palettedialog.hide();
 			}
 		});
-		
+
 		VisTextButton addpalettebutton = new VisTextButton("New Palette");
-		
+
 		addpalettebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				new DialogClasses.InputDialog("New Palette", "", "Name:"){
 					protected VisTextField numberfield;
-					
+
 					{
 						numberfield = new VisTextField("8");
 						numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-						
+
 						getContentTable().row();
-						
-						getContentTable().center().add(new VisLabel("Size:")).padTop(0f).padBottom(20f*s);
+
+						getContentTable().center().add(new VisLabel("Size:")).padTop(0f).padBottom(20f * s);
 						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0);
-						
+
 						new TextFieldEmptyListener(ok, textfield, numberfield);
 					}
-					
+
 					public void result(String string){
 						palettes.put(string, new Palette(string, Integer.parseInt(numberfield.getText())));
 						updatePaletteDialog();
 					}
-					
-					
+
 				}.show(stage);
 			}
 		});
-		
+
 		addIconToButton(addpalettebutton, new Image(Textures.get("icon-plus")), 40);
 		addIconToButton(backbutton, new Image(Textures.get("icon-arrow-left")), 40);
 
-		palettedialog.getButtonsTable().add(backbutton).size(150*s, 50*s);
-		palettedialog.getButtonsTable().add(addpalettebutton).size(200*s, 50*s);
-		
+		palettedialog.getButtonsTable().add(backbutton).size(150 * s, 50 * s);
+		palettedialog.getButtonsTable().add(addpalettebutton).size(200 * s, 50 * s);
+
 		palettedialog.pack();
+		
+		stage.setScrollFocus(pane);
+		
+		pane.setSmoothScrolling(false);
+		pane.setScrollPercentY(scrolly);
+
+		pane.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
+			@Override
+			public boolean act(float delta){
+				pane.setSmoothScrolling(true);
+				return true;
+			}
+		}));
 	}
-	
+
 	void setPalette(Palette palette){
 		paletteColor = 0;
 		currentPalette = palette;
-		updatePaletteDialog();
 		prefs.putString("lastpalette", palette.name);
 		prefs.flush();
 		updateColorMenu();
 		setSelectedColor(palette.colors[0]);
 		setupBoxColors();
+		updatePaletteDialog();
 	}
 
 	void setupBoxColors(){
@@ -1435,16 +1324,6 @@ public class GUI extends Module<PixelEditor>{
 
 		updateToolColor();
 
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
-			public void run(){
-				if(Gdx.app.getType() != ApplicationType.Desktop){
-					saveProject();
-					savePalettes();
-					prefs.flush();
-				}
-			}
-		}));
-
 		//autosave
 		Timer.schedule(new Task(){
 			@Override
@@ -1523,7 +1402,11 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	void showProjectMenu(){
-		saveProject();
+		new Thread(new Runnable(){
+			public void run(){
+				saveProject();
+			}
+		}).start();
 
 		updateProjectMenu();
 		projectmenu.show(stage);
@@ -1551,7 +1434,7 @@ public class GUI extends Module<PixelEditor>{
 		}
 
 		if(currentPalette == null){
-			if(!palettes.containsKey("Untitled")){
+			if( !palettes.containsKey("Untitled")){
 				currentPalette = new Palette("Untitled", 8);
 				palettes.put("Untitled", currentPalette);
 			}else{
@@ -1571,7 +1454,7 @@ public class GUI extends Module<PixelEditor>{
 	public Color selectedColor(){
 		return currentPalette.colors[paletteColor];
 	}
-	
+
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color);
 		currentPalette.colors[paletteColor] = color;
@@ -1585,11 +1468,22 @@ public class GUI extends Module<PixelEditor>{
 		apicker.setSelectedColor(color);
 		updateToolColor();
 	}
-	
+
 	public void updateToolColor(){
 		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor(), drawgrid.canvas);
 	}
 
+	@Override
+	public void pause(){
+		if(Gdx.app.getType() != ApplicationType.Desktop){
+			Gdx.app.log("pedebugging", "Pausing and saving everything.");
+			saveProject();
+			savePalettes();
+			prefs.flush();
+		}
+	}
+
+	@Override
 	public void dispose(){
 		saveProject();
 		savePalettes();

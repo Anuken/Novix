@@ -16,6 +16,8 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 public class PaletteWidget extends VisTable{
+	public static final int defaultWidth = 280;
+	public static final int defaultHeight = 140;
 	public final Palette palette;
 	public final boolean selected;
 	public VisImageButton extrabutton;
@@ -36,7 +38,7 @@ public class PaletteWidget extends VisTable{
 	}
 
 	private void setup(){
-		float maxsize = 25;
+		float maxsize = 35;
 		background("button");
 		setColor(Hue.lightness(0.87f));
 
@@ -49,11 +51,12 @@ public class PaletteWidget extends VisTable{
 		
 		extrabutton = new VisImageButton(Textures.getDrawable("icon-dots"));
 		extrabutton.setStyle(new VisImageButtonStyle(extrabutton.getStyle()));
+		//if(selected)extrabutton.getStyle().up = extrabutton.getStyle().down;
 		extrabutton.getStyle().down = extrabutton.getStyle().up;
 		extrabutton.getStyle().over = extrabutton.getStyle().up;
 		extrabutton.getStyle().imageDown = Textures.getDrawable("icon-dots-down");
 		extrabutton.setColor(getColor());
-		extrabutton.getImageCell().size(40);
+		extrabutton.getImageCell().size(44);
 		
 		extrabutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -61,12 +64,12 @@ public class PaletteWidget extends VisTable{
 			}
 		});
 		
-		add(extrabutton).size(42).align(Align.topRight).padRight(0);
+		add(extrabutton).size(46).align(Align.topRight).padRight(0);
 		
 		
 		row();
 
-		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2);
+		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2).padTop(5);
 	}
 	
 	public void addExtraButtonListener(EventListener listener){
@@ -106,12 +109,12 @@ public class PaletteWidget extends VisTable{
 
 	@Override
 	public float getPrefWidth(){
-		return 220;
+		return defaultWidth;
 	}
 
 	@Override
 	public float getPrefHeight(){
-		return 105;
+		return defaultHeight;
 	}
 
 }
