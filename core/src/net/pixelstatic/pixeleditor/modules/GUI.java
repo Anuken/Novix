@@ -83,8 +83,8 @@ public class GUI extends Module<PixelEditor>{
 	VisTable extratable;
 	VisTable projecttable;
 	VisDialog settingsmenu, projectmenu, palettedialog;
-	CollapseButton expander;
-	SmoothCollapsibleWidget colorcollapser;
+	CollapseButton colorcollapsebutton, toolcollapsebutton;
+	SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	BrushSizeWidget brush;
 	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
@@ -849,22 +849,26 @@ public class GUI extends Module<PixelEditor>{
 
 		setupMenu();
 
-		final SmoothCollapsibleWidget collapser = new SmoothCollapsibleWidget(extratable, false);
+		toolcollapser = new SmoothCollapsibleWidget(extratable, false);
 
-		collapser.setCollapsed(true);
+		toolcollapser.setCollapsed(true);
 
-		final CollapseButton expandbutton = new CollapseButton();
+		toolcollapsebutton = new CollapseButton();
 
-		expandbutton.addListener(new ClickListener(){
+		toolcollapsebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				collapser.setCollapsed( !collapser.isCollapsed());
-				expandbutton.flip();
+				toolcollapser.setCollapsed( !toolcollapser.isCollapsed());
+				toolcollapsebutton.flip();
+				
+				if(!colorcollapser.isCollapsed() && event != null){
+					((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, x, y);
+				}
 			}
 		});
 
-		tooltable.bottom().left().add(collapser).height(20 * s).colspan(7).fillX().expandX();
+		tooltable.bottom().left().add(toolcollapser).height(20 * s).colspan(7).fillX().expandX();
 		tooltable.row();
-		tooltable.bottom().left().add(expandbutton).height(60 * s).colspan(7).fillX().expandX();
+		tooltable.bottom().left().add(toolcollapsebutton).height(60 * s).colspan(7).fillX().expandX();
 		tooltable.row();
 
 		tools.addAll(Tool.values());
@@ -934,21 +938,25 @@ public class GUI extends Module<PixelEditor>{
 
 		filemenu.setMovable(false);
 
-		expander = new CollapseButton();
-		expander.flip();
+		colorcollapsebutton = new CollapseButton();
+		colorcollapsebutton.flip();
 
 		colorcollapser = new SmoothCollapsibleWidget(pickertable);
 
 		stage.addActor(colorcollapser);
 
-		expander.addListener(new ClickListener(){
+		colorcollapsebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				if( !colorcollapser.isCollapsed()){
 					apicker.setSelectedColor(apicker.getSelectedColor());
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 				}
 				colorcollapser.setCollapsed( !colorcollapser.isCollapsed());
-				expander.flip();
+				colorcollapsebutton.flip();
+				
+				if(!toolcollapser.isCollapsed() && event != null){
+					((ClickListener)toolcollapsebutton.getListeners().get(2)).clicked(null, x, y);
+				}
 			}
 		});
 
@@ -989,8 +997,8 @@ public class GUI extends Module<PixelEditor>{
 		colortable.clear();
 
 		//colortable.add(colorcollapser).colspan(currentPalette.size() + 2).row();
-		colortable.add(expander).expandX().fillX().colspan(currentPalette.size() + 2).height(50f * s);
-		expander.setZIndex(colorcollapser.getZIndex() + 10);
+		colortable.add(colorcollapsebutton).expandX().fillX().colspan(currentPalette.size() + 2).height(50f * s);
+		colorcollapsebutton.setZIndex(colorcollapser.getZIndex() + 10);
 
 		colortable.row();
 
@@ -1277,12 +1285,6 @@ public class GUI extends Module<PixelEditor>{
 					float diff = keyheight - actory;
 					moveActorUp(parent, diff);
 				}
-
-				//Gdx.app.log("AHHHHHHHHHHHH","parent y: " + parenty);
-
-				//Gdx.app.log("AHHHHHHHHHHHH","actor y: " + actory);
-
-				//Gdx.app.log("AHHHHHHHHHHHH","key move: "+ height);
 			}
 
 			@Override

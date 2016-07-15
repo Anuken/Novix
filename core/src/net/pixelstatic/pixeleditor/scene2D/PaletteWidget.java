@@ -16,7 +16,7 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 public class PaletteWidget extends VisTable{
-	public static final int defaultWidth = 280;
+	public static final int defaultWidth = 300;
 	public static final int defaultHeight = 140;
 	public final Palette palette;
 	public final boolean selected;
@@ -38,7 +38,7 @@ public class PaletteWidget extends VisTable{
 	}
 
 	private void setup(){
-		float maxsize = 35;
+		float maxsize = 36;
 		background("button");
 		setColor(Hue.lightness(0.87f));
 
