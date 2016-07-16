@@ -37,6 +37,7 @@ import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
@@ -212,11 +213,6 @@ public class GUI extends Module<PixelEditor>{
 
 	public ProjectTable updateProjectMenu(boolean loaded){
 		VisTable scrolltable = ((VisTable)((VisScrollPane)projectmenu.getContentTable().getCells().get(1).getActor()).getChildren().first());
-
-		for(Actor actor : scrolltable.getChildren()){
-			ProjectTable table = (ProjectTable)actor;
-			//table.utexture.dispose();
-		}
 
 		scrolltable.clearChildren();
 
@@ -1040,17 +1036,24 @@ public class GUI extends Module<PixelEditor>{
 	void updateColorMenu(){
 		colortable.clear();
 
-		//colortable.add(colorcollapser).colspan(currentPalette.size() + 2).row();
-		colortable.add(colorcollapsebutton).expandX().fillX().colspan(currentPalette.size() + 2).height(50f * s);
+		int maxcolorsize = 65;
+		int mincolorsize = 30;
+
+		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
+		
+		int perow = 0; //colors per row
+
+		colorsize = Math.min(maxcolorsize, colorsize);
+		
+		if(colorsize < mincolorsize){
+			colorsize = mincolorsize;
+			perow = Gdx.graphics.getWidth() / colorsize;
+		}
+		
+		colortable.add(colorcollapsebutton).expandX().fillX().colspan((perow == 0 ? currentPalette.size() : perow) + 2).height(50f * s);
 		colorcollapsebutton.setZIndex(colorcollapser.getZIndex() + 10);
 
 		colortable.row();
-
-		int maxcolorsize = 65;
-
-		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
-
-		colorsize = Math.min(maxcolorsize, colorsize);
 
 		colortable.add().growX();
 
@@ -1062,7 +1065,7 @@ public class GUI extends Module<PixelEditor>{
 
 			boxes[i] = box;
 			colortable.add(box).size(colorsize);
-
+			
 			box.setColor(currentPalette.colors[i]);
 
 			box.addListener(new ClickListener(){
@@ -1077,10 +1080,16 @@ public class GUI extends Module<PixelEditor>{
 					updateToolColor();
 				}
 			});
-
+			
+			if(perow != 0 && i % perow == perow -1){
+				System.out.println("i is: " + i +", adding row" );
+				colortable.add().growX();
+				colortable.row();
+				colortable.add().growX();
+			}
 		}
 
-		colortable.add().expandX().fillX();
+		if(perow == 0)colortable.add().growX();
 	}
 
 	void updatePaletteDialog(){
@@ -1370,6 +1379,7 @@ public class GUI extends Module<PixelEditor>{
 					public void run(){
 						saveProject();
 						savePalettes();
+						prefs.flush();
 					}
 				}).start();
 			}
@@ -1527,6 +1537,7 @@ public class GUI extends Module<PixelEditor>{
 
 	@Override
 	public void dispose(){
+		if(Gdx.app.getType() == ApplicationType.Android) pause();
 		VisUI.dispose();
 		Textures.dispose();
 	}

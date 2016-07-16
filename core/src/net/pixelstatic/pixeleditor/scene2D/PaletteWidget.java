@@ -92,7 +92,7 @@ public class PaletteWidget extends VisTable{
 		if(rowsize < size){ // this means another row is needed
 			for(int i = 0;i < boxes.length;i ++){
 				table.add(boxes[i]).size(size);
-				if(i == perow - 1) table.row();
+				if((i%perow) == perow - 1) table.row();
 			}
 		}else{ //otherwise, put it in one row
 			for(int i = 0;i < boxes.length;i ++){
