@@ -37,7 +37,6 @@ import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
@@ -208,29 +207,45 @@ public class GUI extends Module<PixelEditor>{
 		projectmenu.getButtonsTable().add(projectback).width(Gdx.graphics.getWidth()).height(60 * s);
 		projectmenu.setObject(projectback, false);
 
-		updateProjectMenu();
+		updateProjectMenu(true);
 	}
 
-	public void updateProjectMenu(){
+	public ProjectTable updateProjectMenu(boolean loaded){
 		VisTable scrolltable = ((VisTable)((VisScrollPane)projectmenu.getContentTable().getCells().get(1).getActor()).getChildren().first());
+
+		for(Actor actor : scrolltable.getChildren()){
+			ProjectTable table = (ProjectTable)actor;
+			//table.utexture.dispose();
+		}
 
 		scrolltable.clearChildren();
 
+		ProjectTable current = null;
+
 		for(Project project : projects){
-			scrolltable.top().left().add(new ProjectTable(project)).padTop(8).growX().padRight(10 * s).row();
+			ProjectTable table = new ProjectTable(project, project == currentProject ? loaded : true);
+			scrolltable.top().left().add(table).padTop(8).growX().padRight(10 * s).row();
+			if(project == currentProject) current = table;
 		}
+
+		return current;
 	}
 
 	class ProjectTable extends VisTable{
+		public final Project project;
+		public boolean loaded;
+		private boolean created;
+		private Label sizelabel;
+		private Cell<?> imagecell;
 
-		public ProjectTable(final Project project){
-			Texture texture = new Texture(project.file);
-
-			StaticPreviewImage image = new StaticPreviewImage(texture);
+		//TODO
+		public ProjectTable(final Project project, boolean startloaded){
+			this.project = project;
+			this.loaded = startloaded;
 
 			VisLabel namelabel = new VisLabel(project.name);
 
-			VisLabel sizelabel = new VisLabel("Size: " + texture.getWidth() + "x" + texture.getHeight());
+			sizelabel = new VisLabel("Loading...");
 			sizelabel.setColor(Color.GRAY);
 
 			int imagesize = 40;
@@ -289,11 +304,10 @@ public class GUI extends Module<PixelEditor>{
 			background("button");
 			setColor(Hue.lightness(0.87f));
 
-			Cell<?> cell = add(image);
+			imagecell = stack(new AnimatedImage(Textures.getDrawable("icon-load-1"), Textures.getDrawable("icon-load-2"), Textures.getDrawable("icon-load-3")), new BorderImage());
+			imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
 
-			MiscUtils.fitCell(cell, 128 * s, (float)texture.getWidth() / texture.getHeight());
-
-			cell.padTop(cell.getPadTop() + 4).padBottom(cell.getPadBottom() + 4);
+			MiscUtils.fitCell(imagecell, 128 * s, 1);
 
 			add(texttable).grow();
 			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
@@ -301,6 +315,32 @@ public class GUI extends Module<PixelEditor>{
 			texttable.add(sizelabel).padLeft(8).padTop(10 * s).align(Align.topLeft);
 			texttable.row();
 			texttable.add(buttontable).grow().padLeft(8);
+
+			addAction(new Action(){
+
+				public boolean act(float delta){
+					if(created) return true;
+					if( !loaded) return false;
+
+					project.reloadTexture();
+
+					Texture texture = project.cachedTexture;
+
+					sizelabel.setText("Size: " + texture.getWidth() + "x" + texture.getHeight());
+
+					StaticPreviewImage image = new StaticPreviewImage(texture);
+					imagecell.setActor(image);
+
+					MiscUtils.fitCell(imagecell, 128 * s, (float)texture.getWidth() / texture.getHeight());
+
+					imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
+
+					pack();
+
+					created = true;
+					return true;
+				}
+			});
 
 		}
 
@@ -361,7 +401,7 @@ public class GUI extends Module<PixelEditor>{
 					MiscUtils.copyFile(project.file.file(), newhandle.file());
 
 					projects.insert(projects.indexOf(project, true) + 1, new Project(newhandle));
-					updateProjectMenu();
+					updateProjectMenu(true);
 				}catch(IOException e){
 					AndroidDialogs.showError(stage, "Error copying file!", e);
 					e.printStackTrace();
@@ -375,7 +415,7 @@ public class GUI extends Module<PixelEditor>{
 			public void result(String text){
 				if(validateProjectName(text, project)) return;
 				project.name = text;
-				updateProjectMenu();
+				updateProjectMenu(true);
 			}
 		}.show(stage);
 	}
@@ -391,7 +431,7 @@ public class GUI extends Module<PixelEditor>{
 				try{
 					project.file.file().delete();
 					projects.removeValue(project, true);
-					updateProjectMenu();
+					updateProjectMenu(true);
 				}catch(Exception e){
 					AndroidDialogs.showError(stage, "Error deleting file!", e);
 					e.printStackTrace();
@@ -431,6 +471,8 @@ public class GUI extends Module<PixelEditor>{
 			}
 			currentProject = createNewProject("Untitled", 16, 16);
 		}
+		
+		currentProject.reloadTexture();
 	}
 
 	Project loadProject(FileHandle file){
@@ -859,8 +901,8 @@ public class GUI extends Module<PixelEditor>{
 			public void clicked(InputEvent event, float x, float y){
 				toolcollapser.setCollapsed( !toolcollapser.isCollapsed());
 				toolcollapsebutton.flip();
-				
-				if(!colorcollapser.isCollapsed() && event != null){
+
+				if( !colorcollapser.isCollapsed() && event != null){
 					((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, x, y);
 				}
 			}
@@ -953,8 +995,8 @@ public class GUI extends Module<PixelEditor>{
 				}
 				colorcollapser.setCollapsed( !colorcollapser.isCollapsed());
 				colorcollapsebutton.flip();
-				
-				if(!toolcollapser.isCollapsed() && event != null){
+
+				if( !toolcollapser.isCollapsed() && event != null){
 					((ClickListener)toolcollapsebutton.getListeners().get(2)).clicked(null, x, y);
 				}
 			}
@@ -1054,7 +1096,6 @@ public class GUI extends Module<PixelEditor>{
 				this.palette = widget.palette;
 			}
 
-			//TODO
 			public void clicked(InputEvent event, float x, float y){
 				PopupMenu menu = new PopupMenu();
 				menu.addItem(new TallMenuItem("resize", new ChangeListener(){
@@ -1133,7 +1174,7 @@ public class GUI extends Module<PixelEditor>{
 			palettetable.add(widget).padBottom(6);
 			palettetable.row();
 		}
-		
+
 		VisTextButton backbutton = new VisTextButton("Back");
 
 		backbutton.addListener(new ClickListener(){
@@ -1177,9 +1218,9 @@ public class GUI extends Module<PixelEditor>{
 		palettedialog.getButtonsTable().add(addpalettebutton).size(200 * s, 50 * s);
 
 		palettedialog.pack();
-		
+
 		stage.setScrollFocus(pane);
-		
+
 		pane.setSmoothScrolling(false);
 		pane.setScrollPercentY(scrolly);
 
@@ -1218,7 +1259,6 @@ public class GUI extends Module<PixelEditor>{
 		drawgrid.setCanvas(new PixelCanvas(currentProject.getCachedPixmap()));
 
 		stage.addActor(drawgrid);
-
 	}
 
 	public GUI(){
@@ -1398,15 +1438,19 @@ public class GUI extends Module<PixelEditor>{
 
 	}
 
+	//TODO
 	void showProjectMenu(){
+		final ProjectTable table = updateProjectMenu(false);
+		projectmenu.show(stage);
+
 		new Thread(new Runnable(){
 			public void run(){
+				System.out.println("save thread running");
 				saveProject();
+				table.loaded = true;
+				System.out.println("save thread done");
 			}
 		}).start();
-
-		updateProjectMenu();
-		projectmenu.show(stage);
 	}
 
 	void savePalettes(){
@@ -1472,21 +1516,16 @@ public class GUI extends Module<PixelEditor>{
 
 	@Override
 	public void pause(){
-		if(Gdx.app.getType() != ApplicationType.Desktop){
-			Gdx.app.log("pedebugging", "Pausing and saving everything.");
-			saveProject();
-			savePalettes();
-			prefs.flush();
-		}
+		Gdx.app.log("pedebugging", "Pausing and saving everything.");
+		saveProject();
+		savePalettes();
+		if(currentProject != null) prefs.putString("lastproject", currentProject.name);
+		prefs.flush();
 	}
 
 	@Override
 	public void dispose(){
-		saveProject();
-		savePalettes();
 		VisUI.dispose();
 		Textures.dispose();
-		if(currentProject != null) prefs.putString("lastproject", currentProject.name);
-		prefs.flush();
 	}
 }

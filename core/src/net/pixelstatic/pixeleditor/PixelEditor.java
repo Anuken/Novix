@@ -2,11 +2,7 @@ package net.pixelstatic.pixeleditor;
 
 import net.pixelstatic.pixeleditor.modules.GUI;
 import net.pixelstatic.pixeleditor.modules.Input;
-import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.modules.ModuleController;
-
-import com.kotcrab.vis.ui.util.dialog.Dialogs;
-import com.kotcrab.vis.ui.util.dialog.Dialogs.DetailsDialog;
 
 public class PixelEditor extends ModuleController<PixelEditor>{
 	
@@ -15,7 +11,7 @@ public class PixelEditor extends ModuleController<PixelEditor>{
 		addModule(Input.class);
 		addModule(GUI.class);
 	}
-	
+	/*
 	@Override
 	public void render(){
 		try{
@@ -27,4 +23,5 @@ public class PixelEditor extends ModuleController<PixelEditor>{
 			dialog.setCopyDetailsButtonVisible(false);
 		}
 	}
+	*/
 }

@@ -17,14 +17,14 @@ public class Project{
 		this.file = file;
 		name = file.nameWithoutExtension();
 		Gdx.app.log("pedebugging", "Creating new project: \"" + name + "\"");
-		reloadTexture();
+		//reloadTexture();
 	}
 	
 	public Pixmap getCachedPixmap(){
-		if((Boolean)MiscUtils.getPrivate(cachedPixmap, "disposed")){
+		if(cachedPixmap == null || (Boolean)MiscUtils.getPrivate(cachedPixmap, "disposed")){
 			reloadTexture();
 		}
-			
+		
 		return cachedPixmap;
 	}
 	
