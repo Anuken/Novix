@@ -1074,15 +1074,11 @@ public class GUI extends Module<PixelEditor>{
 					paletteColor = index;
 					box.selected = true;
 					box.toFront();
-					apicker.setSelectedColor(box.getColor());
-					alphabar.setRightColor(box.getColor());
-					brush.setColor(box.getColor());
-					updateToolColor();
+					updateSelectedColor(box.getColor()); 
 				}
 			});
 			
 			if(perow != 0 && i % perow == perow -1){
-				System.out.println("i is: " + i +", adding row" );
 				colortable.add().growX();
 				colortable.row();
 				colortable.add().growX();
@@ -1511,7 +1507,7 @@ public class GUI extends Module<PixelEditor>{
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color);
 		currentPalette.colors[paletteColor] = color;
-		alphabar.setRightColor(color);
+		alphabar.setRightColor(color.cpy());
 		brush.setColor(color);
 		updateToolColor();
 	}
