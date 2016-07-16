@@ -6,8 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Disposable;
 
-public class Project{
+public class Project implements Disposable{
 	public String name;
 	public Texture cachedTexture;
 	private Pixmap cachedPixmap;
@@ -17,7 +18,7 @@ public class Project{
 		this.file = file;
 		name = file.nameWithoutExtension();
 		Gdx.app.log("pedebugging", "Creating new project: \"" + name + "\"");
-		//reloadTexture();
+		reloadTexture();
 	}
 	
 	public Pixmap getCachedPixmap(){
@@ -35,5 +36,10 @@ public class Project{
 		cachedTexture = new Texture(file);
 		cachedTexture.getTextureData().prepare();
 		cachedPixmap = cachedTexture.getTextureData().consumePixmap();
+	}
+	
+	public void dispose(){
+		cachedTexture.dispose();
+		cachedPixmap.dispose();
 	}
 }

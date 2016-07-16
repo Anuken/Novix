@@ -71,7 +71,7 @@ public class GUI extends Module<PixelEditor>{
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
-	Array<Project> projects = new Array<Project>();
+	ObjectMap<String, Project> projects = new ObjectMap<String, Project>();
 	public Project currentProject;
 	Palette currentPalette;
 	public int paletteColor;
@@ -222,7 +222,7 @@ public class GUI extends Module<PixelEditor>{
 
 		ProjectTable current = null;
 
-		for(Project project : projects){
+		for(Project project : projects.values()){
 			ProjectTable table = new ProjectTable(project, project == currentProject ? loaded : true);
 			scrolltable.top().left().add(table).padTop(8).growX().padRight(10 * s).row();
 			if(project == currentProject) current = table;
@@ -400,7 +400,7 @@ public class GUI extends Module<PixelEditor>{
 					FileHandle newhandle = project.file.parent().child(text + ".png");
 					MiscUtils.copyFile(project.file.file(), newhandle.file());
 
-					projects.insert(projects.indexOf(project, true) + 1, new Project(newhandle));
+					projects.put(text, new Project(newhandle));
 					updateProjectMenu(true);
 				}catch(IOException e){
 					AndroidDialogs.showError(stage, "Error copying file!", e);
@@ -414,7 +414,9 @@ public class GUI extends Module<PixelEditor>{
 		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
 				if(validateProjectName(text, project)) return;
+				projects.remove(project.name);
 				project.name = text;
+				projects.put(text, project);
 				updateProjectMenu(true);
 			}
 		}.show(stage);
@@ -430,7 +432,8 @@ public class GUI extends Module<PixelEditor>{
 			public void result(){
 				try{
 					project.file.file().delete();
-					projects.removeValue(project, true);
+					project.dispose();
+					projects.remove(project.name);
 					updateProjectMenu(true);
 				}catch(Exception e){
 					AndroidDialogs.showError(stage, "Error deleting file!", e);
@@ -454,6 +457,7 @@ public class GUI extends Module<PixelEditor>{
 					loadProject(file);
 				}catch(Exception e){
 					Gdx.app.error("pedebugging", "Error loading project \"" + file.nameWithoutExtension() + " \", corrupt file?", e);
+					//projects.remove(file.nameWithoutExtension());
 				}
 			}
 		}
@@ -462,27 +466,25 @@ public class GUI extends Module<PixelEditor>{
 			currentProject = createNewProject("Untitled", 16, 16);
 		}else{
 			String last = prefs.getString("lastproject", "Untitled");
-
-			for(Project project : projects){
-				if(project.name.equals(last)){
-					currentProject = project;
-					return;
-				}
+			
+			try{
+				currentProject = projects.get(last);
+				currentProject.reloadTexture();
+			}catch (Exception e){
+				e.printStackTrace();
+				currentProject = createNewProject("Untitled", 16, 16);
 			}
-			currentProject = createNewProject("Untitled", 16, 16);
 		}
-		
-		currentProject.reloadTexture();
 	}
 
 	Project loadProject(FileHandle file){
 		Project project = new Project(file);
-		projects.add(project);
+		projects.put(project.name, project);
 		return project;
 	}
 
 	boolean checkIfProjectExists(String name, Project ignored){
-		for(Project project : projects){
+		for(Project project : projects.values()){
 			if(project == ignored) continue;
 			if(project.name.equals(name)) return true;
 		}
@@ -1511,7 +1513,7 @@ public class GUI extends Module<PixelEditor>{
 	}
 
 	public void updateToolColor(){
-		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor(), drawgrid.canvas);
+		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor().cpy(), drawgrid.canvas);
 	}
 
 	@Override
