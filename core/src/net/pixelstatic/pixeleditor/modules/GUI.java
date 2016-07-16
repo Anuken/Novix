@@ -322,7 +322,7 @@ public class GUI extends Module<PixelEditor>{
 					if(created) return true;
 					if( !loaded) return false;
 
-					project.reloadTexture();
+					if(project == currentProject) project.reloadTexture();
 
 					Texture texture = project.cachedTexture;
 
