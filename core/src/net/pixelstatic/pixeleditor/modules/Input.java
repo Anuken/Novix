@@ -25,14 +25,14 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		//PC only
 		float speed = 5f;
 
-		if(Gdx.input.isKeyPressed(Keys.W)) this.getModule(GUI.class).drawgrid.offsety += speed;
-		if(Gdx.input.isKeyPressed(Keys.A)) this.<GUI>getModule(GUI.class).drawgrid.offsetx -= speed;
-		if(Gdx.input.isKeyPressed(Keys.S)) this.<GUI>getModule(GUI.class).drawgrid.offsety -= speed;
-		if(Gdx.input.isKeyPressed(Keys.D)) this.<GUI>getModule(GUI.class).drawgrid.offsetx += speed;
+		if(Gdx.input.isKeyPressed(Keys.W)) this.getModule(Main.class).drawgrid.offsety += speed;
+		if(Gdx.input.isKeyPressed(Keys.A)) this.<Main>getModule(Main.class).drawgrid.offsetx -= speed;
+		if(Gdx.input.isKeyPressed(Keys.S)) this.<Main>getModule(Main.class).drawgrid.offsety -= speed;
+		if(Gdx.input.isKeyPressed(Keys.D)) this.<Main>getModule(Main.class).drawgrid.offsetx += speed;
 
-		this.<GUI>getModule(GUI.class).drawgrid.updateSize();
+		this.<Main>getModule(Main.class).drawgrid.updateSize();
 
-		this.<GUI>getModule(GUI.class).drawgrid.updateBounds();
+		this.<Main>getModule(Main.class).drawgrid.updateBounds();
 	}
 
 	public void init(){
@@ -42,7 +42,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		InputMultiplexer plex = new InputMultiplexer();
 		plex.addProcessor(this);
-		plex.addProcessor(this.getModule(GUI.class).stage);
+		plex.addProcessor(this.getModule(Main.class).stage);
 		plex.addProcessor(gesture);
 
 		Gdx.input.setInputProcessor(plex);
@@ -91,8 +91,8 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	@Override
 	public boolean scrolled(int amount){
 		//PC only
-		float newzoom = this.<GUI>getModule(GUI.class).drawgrid.zoom - amount / 10f;
-		this.<GUI>getModule(GUI.class).drawgrid.setZoom(newzoom);
+		float newzoom = this.<Main>getModule(Main.class).drawgrid.zoom - amount / 10f;
+		this.<Main>getModule(Main.class).drawgrid.setZoom(newzoom);
 		return false;
 	}
 
@@ -105,7 +105,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean touchDown(float x, float y, int pointer, int button){
-			initzoom = input.<GUI>getModule(GUI.class).drawgrid.zoom;
+			initzoom = input.<Main>getModule(Main.class).drawgrid.zoom;
 			return false;
 		}
 
@@ -133,7 +133,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 					DrawingGrid grid = drawgrid();
 					grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
 				}else*/
-			if(input.<GUI>getModule(GUI.class).tool == Tool.zoom){
+			if(input.<Main>getModule(Main.class).tool == Tool.zoom){
 				drawgrid().offsetx -= deltaX / drawgrid().zoom;
 				drawgrid().offsety += deltaY / drawgrid().zoom;
 				drawgrid().updateBounds();
@@ -143,7 +143,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean zoom(float initialDistance, float distance){
-			if(input.<GUI>getModule(GUI.class).tool != Tool.zoom) return false;
+			if(input.<Main>getModule(Main.class).tool != Tool.zoom) return false;
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
 			if(newzoom < drawgrid().maxZoom()) newzoom = drawgrid().maxZoom();
@@ -157,7 +157,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2){
-			if(input.<GUI>getModule(GUI.class).tool != Tool.zoom) return false;
+			if(input.<Main>getModule(Main.class).tool != Tool.zoom) return false;
 
 			Vector2 afirst = initialPointer1.cpy().add(initialPointer2).scl(0.5f);
 			Vector2 alast = pointer1.cpy().add(pointer2).scl(0.5f);
@@ -182,13 +182,13 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean panStop(float x, float y, int pointer, int button){
-			initzoom = input.<GUI>getModule(GUI.class).drawgrid.zoom;
+			initzoom = input.<Main>getModule(Main.class).drawgrid.zoom;
 			return false;
 		}
 
 	}
 
 	public DrawingGrid drawgrid(){
-		return input.<GUI>getModule(GUI.class).drawgrid;
+		return input.<Main>getModule(Main.class).drawgrid;
 	}
 }

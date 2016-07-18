@@ -66,8 +66,8 @@ import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
-public class GUI extends Module<PixelEditor>{
-	public static GUI gui;
+public class Main extends Module<PixelEditor>{
+	public static Main gui;
 	public static float s = 1f; //density scale
 	public DrawingGrid drawgrid;
 	public Stage stage;
@@ -88,12 +88,10 @@ public class GUI extends Module<PixelEditor>{
 	BrushSizeWidget brush;
 	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
-	Array<Tool> tools = new Array<Tool>();
 	FileChooser currentChooser;
 	ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
 	Json json;
-	//public ColorBox colorbox;
 	ColorBox[] boxes;
 	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
@@ -234,7 +232,6 @@ public class GUI extends Module<PixelEditor>{
 		private Label sizelabel;
 		private Cell<?> imagecell;
 
-		//TODO
 		public ProjectTable(final Project project, boolean startloaded){
 			this.project = project;
 			this.loaded = startloaded;
@@ -258,25 +255,25 @@ public class GUI extends Module<PixelEditor>{
 
 			openbutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					if(project != currentProject) GUI.gui.openProject(project);
+					if(project != currentProject) Main.gui.openProject(project);
 				}
 			});
 
 			copybutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					GUI.gui.copyProject(project);
+					Main.gui.copyProject(project);
 				}
 			});
 
 			renamebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					GUI.gui.renameProject(project);
+					Main.gui.renameProject(project);
 				}
 			});
 
 			deletebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					GUI.gui.deleteProject(project);
+					Main.gui.deleteProject(project);
 				}
 			});
 
@@ -910,11 +907,11 @@ public class GUI extends Module<PixelEditor>{
 		tooltable.row();
 		tooltable.bottom().left().add(toolcollapsebutton).height(60 * s).colspan(7).fillX().expandX();
 		tooltable.row();
+		
+		Tool[] tools = Tool.values();
 
-		tools.addAll(Tool.values());
-
-		for(int i = 0;i < tools.size;i ++){
-			final Tool ctool = tools.get(i);
+		for(int i = 0;i < tools.length; i ++){
+			final Tool ctool = tools[i];
 
 			final VisImageButton button = new VisImageButton((Drawable)null);
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
@@ -966,18 +963,6 @@ public class GUI extends Module<PixelEditor>{
 
 		colortable.top().left();
 
-		VisDialog filemenu = new VisDialog(""){
-			public float getPrefWidth(){
-				return Gdx.graphics.getWidth();
-			}
-
-			public float getPrefHeight(){
-				return 300f;
-			}
-		};
-
-		filemenu.setMovable(false);
-
 		colorcollapsebutton = new CollapseButton();
 		colorcollapsebutton.flip();
 
@@ -1021,12 +1006,13 @@ public class GUI extends Module<PixelEditor>{
 				palettedialog.show(stage);
 			}
 		});
-
-		pickertable.add(apicker).expand().fill().padTop(25 * s + 20 * s).padBottom(10f * s);
+		
+		pickertable.add(apicker).expand().fill().padBottom(10f * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-
-		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight() - 100 * s);
+		
+		//TODO
+		colorcollapser.setY(Gdx.graphics.getWidth() / Tool.values().length + toolcollapsebutton.getHeight()*2);
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
@@ -1166,7 +1152,7 @@ public class GUI extends Module<PixelEditor>{
 		palettedialog.getContentTable().add(pane).left().grow().maxHeight(Gdx.graphics.getHeight() / 2);
 
 		for(final Palette palette : palettes.values()){
-			final PaletteWidget widget = new PaletteWidget(palette, palette == GUI.gui.currentPalette);
+			final PaletteWidget widget = new PaletteWidget(palette, palette == Main.gui.currentPalette);
 
 			widget.setTouchable(palette == currentPalette ? Touchable.childrenOnly : Touchable.enabled);
 
@@ -1268,7 +1254,7 @@ public class GUI extends Module<PixelEditor>{
 		stage.addActor(drawgrid);
 	}
 
-	public GUI(){
+	public Main(){
 		Gdx.graphics.setContinuousRendering(false);
 
 		gui = this;
@@ -1380,7 +1366,12 @@ public class GUI extends Module<PixelEditor>{
 				}).start();
 			}
 		}, 20, 20);
-
+		
+		//TextureUnpacker packer = new TextureUnpacker();
+		
+		//TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
+		//packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
+		
 		//for unpacking the atlas
 		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));
 	}
@@ -1442,21 +1433,14 @@ public class GUI extends Module<PixelEditor>{
 		}
 	}
 
-	public void actionPushed(){
-
-	}
-
-	//TODO
 	void showProjectMenu(){
 		final ProjectTable table = updateProjectMenu(false);
 		projectmenu.show(stage);
 
 		new Thread(new Runnable(){
 			public void run(){
-				System.out.println("save thread running");
 				saveProject();
 				table.loaded = true;
-				System.out.println("save thread done");
 			}
 		}).start();
 	}

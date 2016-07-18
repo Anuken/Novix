@@ -3,7 +3,7 @@ package net.pixelstatic.pixeleditor.tools;
 import java.util.Stack;
 
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.modules.GUI;
+import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
 
@@ -14,13 +14,13 @@ public enum Tool{
 	pencil{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.drawRadius(x, y, GUI.gui.getBrushSize());
+			canvas.drawRadius(x, y, Main.gui.getBrushSize());
 		}
 	},
 	eraser{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.eraseRadius(x, y, GUI.gui.getBrushSize());
+			canvas.eraseRadius(x, y, Main.gui.getBrushSize());
 		}
 		
 		public void onColorChange(Color color, PixelCanvas canvas){
@@ -71,7 +71,7 @@ public enum Tool{
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			Color selected = canvas.getColor(x, y);
 			selected.a = 1f;
-			GUI.gui.setSelectedColor(selected);
+			Main.gui.setSelectedColor(selected);
 		}
 		
 		public boolean symmetric(){
@@ -103,7 +103,7 @@ public enum Tool{
 
 	undo(false, false){
 		public void onSelected(){
-			GUI.gui.drawgrid.canvas.actions.undo();
+			Main.gui.drawgrid.canvas.actions.undo();
 		}
 
 		public boolean selectable(){
@@ -112,7 +112,7 @@ public enum Tool{
 	},
 	redo(false, false){
 		public void onSelected(){
-			GUI.gui.drawgrid.canvas.actions.redo();
+			Main.gui.drawgrid.canvas.actions.redo();
 		}
 
 		public boolean selectable(){
