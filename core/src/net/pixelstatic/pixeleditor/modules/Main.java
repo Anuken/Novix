@@ -37,7 +37,6 @@ import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
@@ -691,9 +690,10 @@ public class Main extends Module<PixelEditor>{
 				}.show(stage);
 			}
 		}));
-
+		
 		fibutton.addListener(new MenuListener(fileMenu, fibutton));
-
+		
+		
 		brush = new BrushSizeWidget();
 		final VisLabel brushlabel = new VisLabel("Brush Size: 1");
 		final VisSlider brushslider = new VisSlider(1, 5, 0.01f, false);
@@ -706,13 +706,13 @@ public class Main extends Module<PixelEditor>{
 				//brush.setColor(colorbox.getColor());
 			}
 		});
-
+/*
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
 		tooloptiontable.add(brushslider).align(Align.bottomLeft).spaceBottom(10f).width(brush.getWidth());
 		tooloptiontable.row();
 		tooloptiontable.add(brush).align(Align.bottomLeft);
-
+*/
 		alphabar = new ColorBar();
 
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
@@ -741,6 +741,7 @@ public class Main extends Module<PixelEditor>{
 			public void changed(ChangeEvent event, Actor actor){
 				drawgrid.grid = grid.isChecked();
 				prefs.putBoolean("grid", drawgrid.cursormode);
+				
 			}
 		});
 
@@ -779,7 +780,47 @@ public class Main extends Module<PixelEditor>{
 				prefs.putBoolean("cursormode", drawgrid.cursormode);
 			}
 		});
-
+		
+		VisImageButtonStyle style = VisUI.getSkin().get("toggle", VisImageButtonStyle.class);
+		
+		VisImageButtonStyle modestyle = new VisImageButtonStyle(style);
+		VisImageButtonStyle gridstyle = new VisImageButtonStyle(style);
+		
+		modestyle.imageUp = Textures.getDrawable("icon-cursor");
+		gridstyle.imageUp = Textures.getDrawable("icon-grid");
+		
+		final VisImageButton modebutton = new VisImageButton(modestyle);
+		modebutton.setChecked(prefs.getBoolean("cursormode", true));
+		
+		modebutton.getImageCell().size(50*s);
+		
+		modebutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				prefs.putBoolean("cursormode", modebutton.isChecked());
+				drawgrid.cursormode = modebutton.isChecked();
+			}
+		});
+		
+		final VisImageButton gridbutton = new VisImageButton(gridstyle);
+		gridbutton.setChecked(prefs.getBoolean("grid", true));
+		
+		gridbutton.getImageCell().size(50*s);
+		
+		gridbutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				prefs.putBoolean("grid", gridbutton.isChecked());
+				drawgrid.grid = gridbutton.isChecked();
+				
+			}
+		});
+		
+		
+		
+		
+		optionstable.top().left().add(modebutton).size(70*s);
+		optionstable.top().left().add(gridbutton).size(70*s);
+		
+/*
 		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(00f * s);
 		extratooltable.add(menubutton).padTop(50f * s).size(120, 50).padLeft(5f);
 		extratooltable.row();
@@ -792,7 +833,7 @@ public class Main extends Module<PixelEditor>{
 		optionstable.row();
 
 		optionstable.add(alphabar).colspan(2).pad(3 * s).padBottom(15f * s);
-
+*/
 	}
 
 	public void exportPixmap(Pixmap pixmap, FileHandle file){
@@ -880,8 +921,8 @@ public class Main extends Module<PixelEditor>{
 		extratooltable = new VisTable();
 		extratable.top().left().add(menutable).align(Align.topLeft).expand().fill().row();
 		extratable.top().left().add(optionstable).expand().fill().row();
-		optionstable.add(tooloptiontable).minWidth(150 * s);
-		optionstable.add(extratooltable).expand().fill();
+		//optionstable.add(tooloptiontable).minWidth(150 * s);
+		//optionstable.add(extratooltable).expand().fill();
 		optionstable.row();
 
 		setupMenu();
@@ -1490,7 +1531,7 @@ public class Main extends Module<PixelEditor>{
 
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color);
-		currentPalette.colors[paletteColor] = color;
+		currentPalette.colors[paletteColor] = color.cpy();
 		alphabar.setRightColor(color.cpy());
 		brush.setColor(color);
 		updateToolColor();
@@ -1512,12 +1553,13 @@ public class Main extends Module<PixelEditor>{
 		saveProject();
 		savePalettes();
 		if(currentProject != null) prefs.putString("lastproject", currentProject.name);
+		System.out.println(prefs.getBoolean("grid"));
 		prefs.flush();
 	}
 
 	@Override
 	public void dispose(){
-		if(Gdx.app.getType() == ApplicationType.Android) pause();
+		/*if(Gdx.app.getType() == ApplicationType.Android)*/ pause();
 		VisUI.dispose();
 		Textures.dispose();
 	}
