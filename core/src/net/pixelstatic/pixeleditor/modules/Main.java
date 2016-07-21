@@ -71,6 +71,7 @@ public class Main extends Module<PixelEditor>{
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
+	public boolean savingProject = false;
 	ObjectMap<String, Project> projects = new ObjectMap<String, Project>();
 	public Project currentProject;
 	Palette currentPalette;
@@ -178,6 +179,7 @@ public class Main extends Module<PixelEditor>{
 		projectmenu.getTitleLabel().setColor(Color.CORAL);
 		projectmenu.getTitleTable().row();
 		projectmenu.getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
+		
 
 		VisTable newtable = new VisTable();
 
@@ -189,8 +191,18 @@ public class Main extends Module<PixelEditor>{
 		});
 
 		addIconToButton(newbutton, new Image(Textures.get("icon-plus")), 40 * s);
+		
+		VisTextButton settingsbutton = new VisTextButton("Settings");
+		settingsbutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				settingsmenu.show(stage);
+			}
+		});
+		
 
 		newtable.left().add(newbutton).padBottom(6 * s).size(190 * s, 60 * s);
+		newtable.left().add().grow();
+		newtable.left().add(settingsbutton).padBottom(6 * s).size(120 * s, 60 * s).align(Align.topRight);
 
 		projectmenu.getContentTable().add(newtable).grow().row();
 
@@ -436,8 +448,11 @@ public class Main extends Module<PixelEditor>{
 	}
 
 	public void saveProject(){
+		savingProject = true;
+		Gdx.app.log("pedebugging", "Starting save..");
 		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
 		Gdx.app.log("pedebugging", "Saving project.");
+		savingProject = false;
 	}
 
 	void loadProjects(){
@@ -818,7 +833,10 @@ public class Main extends Module<PixelEditor>{
 		
 		
 		optionstable.top().left().add(modebutton).size(70*s);
-		optionstable.top().left().add(gridbutton).size(70*s);
+		optionstable.add(gridbutton).size(70*s);
+		optionstable.add(menubutton);
+		optionstable.add(brush);
+		optionstable.add(brushslider);
 		
 /*
 		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(00f * s);

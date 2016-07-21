@@ -30,6 +30,7 @@ public enum Tool{
 	fill(true, false){
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
+			canvas.texture.bind();
 			
 			int dest = canvas.getIntColor(x, y);
 
@@ -49,7 +50,7 @@ public enum Tool{
 				int pcolor = canvas.getIntColor(pos.x, pos.y);
 				if(colorEquals(pcolor, dest)){
 
-					canvas.drawPixel(pos.x, pos.y);
+					canvas.drawPixel(pos.x, pos.y, false);
 
 					if(pos.x > 0 && !set.contains(Pos.asInt(pos.x - 1, pos.y, width))) points.add(pos.relative( -1, 0));
 					if(pos.y > 0 && !set.contains(Pos.asInt(pos.x, pos.y - 1, width))) points.add(pos.relative(0, -1));

@@ -5,6 +5,7 @@ import net.pixelstatic.pixeleditor.tools.ActionStack;
 import net.pixelstatic.pixeleditor.tools.DrawAction;
 import net.pixelstatic.utils.graphics.PixmapUtils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -15,19 +16,19 @@ import com.badlogic.gdx.utils.Disposable;
 public class PixelCanvas implements Disposable{
 	private Color color; // pixmap color
 	private Color temp = new Color();
-	private Pixmap blank;
+	//private Pixmap blank;
 	final public Pixmap pixmap;
 	final public Texture texture;
 	final public String name;
 	private float alpha = 1.0f;
 	private DrawAction action = new DrawAction();
 	public ActionStack actions = new ActionStack(this);
+	public boolean drawn;
 
 	public PixelCanvas(Pixmap pixmap){
 		this.pixmap = pixmap;
 		name = Main.gui.currentProject.name;
 		texture = new Texture(pixmap);
-		blank = PixmapUtils.blankPixmap();
 		updateTexture();
 	}
 
@@ -35,68 +36,64 @@ public class PixelCanvas implements Disposable{
 		pixmap = new Pixmap(width, height, Format.RGBA8888);
 		texture = new Texture(pixmap);
 		name = Main.gui.currentProject.name;
-		blank = PixmapUtils.blankPixmap();
 		updateTexture();
 	}
 
-	public void drawPixel(int x, int y){
+	public void drawPixel(int x, int y, boolean update){
 		int preColor = getIntColor(x, y);
 
 		pixmap.drawPixel(x, height() - 1 - y);
 
 		action.push(x, y, preColor, getIntColor(x, y));
-
-		//set blank color, since draw color does not equal output color
-		if( !MathUtils.isEqual(alpha, 1f)){
-			Pixmap.setBlending(Blending.None);
-			blank.drawPixel(0, 0, getIntColor(x, y));
-			Pixmap.setBlending(Blending.SourceOver);
+		
+		if(update){
+			//set blank color, since draw color does not equal output color
+			
+			PixmapUtils.drawPixel(texture, x, height() - 1 - y, getIntColor(x, y));
+			//texture.draw(blank, x, height() - 1 - y);
 		}
-
-		texture.draw(blank, x, height() - 1 - y);
+		drawn = true;
 	}
-	
+
 	public void drawPixelBlendless(int x, int y, int color){
 		int preColor = getIntColor(x, y);
-		
+
 		pixmap.drawPixel(x, height() - 1 - y, color);
-		
+
 		action.push(x, y, preColor, color);
 	}
 
-	public void erasePixel(int x, int y){
+	public void erasePixel(int x, int y, boolean update){
 		int preColor = getIntColor(x, y);
-		
+
 		temp.set(preColor);
-		
+
 		float newalpha = temp.a - alpha;
-		
+
 		if(newalpha <= 0 || MathUtils.isEqual(newalpha, 0)){
 			newalpha = 0;
 			temp.set(0, 0, 0, newalpha);
 		}
 		int newcolor = Color.rgba8888(temp.r, temp.g, temp.b, newalpha);
-		
-
-		Pixmap.setBlending(Blending.None);
-		blank.drawPixel(0, 0, newcolor);
-		Pixmap.setBlending(Blending.SourceOver);
 
 		Pixmap.setBlending(Blending.None);
 
 		pixmap.drawPixel(x, height() - 1 - y, newcolor);
 
 		Pixmap.setBlending(Blending.SourceOver);
-
-		texture.draw(blank, x, height() - 1 - y);
+		
+		if(update)PixmapUtils.drawPixel(texture, x, height() - 1 - y, newcolor);
+		
 		action.push(x, y, preColor, newcolor);
+		
+		drawn = true;
 	}
-	
+
 	public void erasePixelFullAlpha(int x, int y){
-		int color = getIntColor(x,y);
-		
+		int color = getIntColor(x, y);
+
 		Pixmap.setBlending(Blending.None);
-		
+
 		pixmap.drawPixel(x, height() - 1 - y, 0);
 
 		Pixmap.setBlending(Blending.SourceOver);
@@ -105,24 +102,34 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public void drawRadius(int x, int y, int rad){
+		texture.bind();
 		for(int rx = -rad;rx <= rad;rx ++){
 			for(int ry = -rad;ry <= rad;ry ++){
-				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) drawPixel(x + rx, y + ry);
+				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) drawPixel(x + rx, y + ry, false);
 			}
 		}
+		
 	}
 
 	public void eraseRadius(int x, int y, int rad){
+		texture.bind();
 		for(int rx = -rad;rx <= rad;rx ++){
 			for(int ry = -rad;ry <= rad;ry ++){
-				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) erasePixel(x + rx, y + ry);
+				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) erasePixel(x + rx, y + ry, false);
 			}
+		}
+	}
+	
+	public void update(){
+		if(drawn){
+			updateTexture();
+			drawn = false;
 		}
 	}
 
 	public void drawPixel(int x, int y, Color color){
 		setColor(color);
-		drawPixel(x, y);
+		drawPixel(x, y, true);
 	}
 
 	public void drawPixelActionless(int x, int y, int color){
@@ -154,17 +161,16 @@ public class PixelCanvas implements Disposable{
 	public void setColor(Color color, boolean ignoreAlpha){
 		this.color = color;
 		if( !ignoreAlpha) color.a = alpha;
-		blank.setColor(color);
-
-		Pixmap.setBlending(Blending.None);
-		blank.drawPixel(0, 0);
-		Pixmap.setBlending(Blending.SourceOver);
 
 		pixmap.setColor(color);
 	}
 
 	public void updateTexture(){
-		texture.draw(pixmap, 0, 0);
+		if(!Main.gui.savingProject){
+			texture.draw(pixmap, 0, 0);
+		}else{
+			Gdx.app.log("pedebugging", "skipping drawing...");
+		}
 	}
 
 	public void updateAndPush(){
@@ -203,7 +209,7 @@ public class PixelCanvas implements Disposable{
 
 		updateAndPush();
 	}
-	
+
 	public float getAlpha(){
 		return alpha;
 	}
@@ -212,7 +218,6 @@ public class PixelCanvas implements Disposable{
 	public void dispose(){
 		texture.dispose();
 		pixmap.dispose();
-		blank.dispose();
 	}
 
 }

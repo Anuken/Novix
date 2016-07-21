@@ -19,7 +19,8 @@ import com.kotcrab.vis.ui.VisUI;
 public class DrawingGrid extends Actor{
 	public PixelCanvas canvas;
 	public Pos selected = new Pos();
-	GridImage image;
+	GridImage gridimage;
+	AlphaImage alphaimage;
 	public boolean grid = true, cursormode = true;;
 	private float cursorx, cursory;
 	int tpointer;
@@ -30,7 +31,8 @@ public class DrawingGrid extends Actor{
 	public boolean vSymmetry = false, hSymmetry = false;
 
 	public DrawingGrid(){
-		image = new GridImage(1, 1);
+		gridimage = new GridImage(1, 1);
+		alphaimage = new AlphaImage(1, 1);
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				if( !Main.gui.tool.moveCursor()) return false;
@@ -214,7 +216,8 @@ public class DrawingGrid extends Actor{
 		selected.set(cursorx / canvasScale(), cursory / canvasScale());
 		offsetx = getWidth() / 2;
 		offsety = getHeight() / 2;
-		image.setImageSize(canvas.width(), canvas.height());
+		gridimage.setImageSize(canvas.width(), canvas.height());
+		alphaimage.setImageSize(canvas.width(), canvas.height());
 
 		Main.gui.saveProject();
 	}
@@ -225,6 +228,7 @@ public class DrawingGrid extends Actor{
 	}
 
 	public void draw(Batch batch, float parentAlpha){
+		canvas.update();
 		setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
 		setZIndex(0);
 		
@@ -240,13 +244,16 @@ public class DrawingGrid extends Actor{
 		float cscl = canvasScale() * zoom;
 
 		batch.setColor(Color.WHITE);
-		batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+		
+		alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
+		alphaimage.draw(batch, parentAlpha);
+	//	batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
 		if(grid){
-			image.setBounds(getX(), getY(), getWidth(), getHeight());
-			image.draw(batch, parentAlpha);
+			gridimage.setBounds(getX(), getY(), getWidth(), getHeight());
+			gridimage.draw(batch, parentAlpha);
 		}
 
 		//draw symmetry lines
