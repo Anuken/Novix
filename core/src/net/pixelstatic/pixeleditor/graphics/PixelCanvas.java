@@ -122,8 +122,9 @@ public class PixelCanvas implements Disposable{
 	
 	public void update(){
 		if(drawn){
-			updateTexture();
 			drawn = false;
+			updateTexture();
+			
 		}
 	}
 
@@ -168,8 +169,10 @@ public class PixelCanvas implements Disposable{
 	public void updateTexture(){
 		if(!Main.gui.savingProject){
 			texture.draw(pixmap, 0, 0);
+			drawn = true;
 		}else{
 			Gdx.app.log("pedebugging", "skipping drawing...");
+			drawn = false;
 		}
 	}
 

@@ -6,6 +6,7 @@ import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.Pos;
 import net.pixelstatic.utils.graphics.Textures;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -89,6 +90,8 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
+				if(pointer != 1 && Gdx.app.getType() != ApplicationType.Desktop) return; //not the second pointer
+				
 				float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
 				float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
 				

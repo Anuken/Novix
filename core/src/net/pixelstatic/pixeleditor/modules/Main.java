@@ -710,17 +710,21 @@ public class Main extends Module<PixelEditor>{
 		
 		
 		brush = new BrushSizeWidget();
-		final VisLabel brushlabel = new VisLabel("Brush Size: 1");
+	
 		final VisSlider brushslider = new VisSlider(1, 5, 0.01f, false);
+		brushslider.setValue(prefs.getInteger("brushsize", 1));
+		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());
 
 		brushslider.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				brush.setBrushSize((int)brushslider.getValue());
 				brushlabel.setText("Brush Size: " + brush.getBrushSize());
-				//brush.setColor(colorbox.getColor());
+				prefs.putInteger("brushsize", (int)brushslider.getValue());
 			}
 		});
+		
+		brushslider.fire(new ChangeListener.ChangeEvent());
 /*
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
@@ -732,16 +736,18 @@ public class Main extends Module<PixelEditor>{
 
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
 		alphabar.setSize(Gdx.graphics.getWidth() - 80 * s, 50 * s);
+		alphabar.setSelection(prefs.getFloat("opacity", 1f));
 
 		optionstable.bottom().left();
 
-		final VisLabel opacity = new VisLabel("opacity: 1.0");
+		final VisLabel opacity = new VisLabel("opacity: " + alphabar.getSelection());
 
 		alphabar.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				opacity.setText("opacity: " + MiscUtils.limit(alphabar.getSelection() + "", 5));
 				drawgrid.canvas.setAlpha(alphabar.getSelection());
+				prefs.putFloat("opacity", alphabar.getSelection());
 			}
 		});
 
@@ -830,13 +836,15 @@ public class Main extends Module<PixelEditor>{
 		});
 		
 		
+		//TODO
+		optionstable.top().left();
 		
-		
-		optionstable.top().left().add(modebutton).size(70*s);
-		optionstable.add(gridbutton).size(70*s);
-		optionstable.add(menubutton);
-		optionstable.add(brush);
+		optionstable.add(menubutton).size(70*s).align(Align.topLeft).row();
+		optionstable.add(modebutton).size(70*s).align(Align.topLeft).row();
+		optionstable.add(gridbutton).size(70*s).align(Align.topLeft);
+		//optionstable.add(brush);
 		optionstable.add(brushslider);
+		optionstable.add(alphabar);
 		
 /*
 		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(00f * s);
@@ -937,7 +945,7 @@ public class Main extends Module<PixelEditor>{
 		optionstable = new VisTable();
 		tooloptiontable = new VisTable();
 		extratooltable = new VisTable();
-		extratable.top().left().add(menutable).align(Align.topLeft).expand().fill().row();
+		//extratable.top().left().add(menutable).align(Align.topLeft).expand().fill().row();
 		extratable.top().left().add(optionstable).expand().fill().row();
 		//optionstable.add(tooloptiontable).minWidth(150 * s);
 		//optionstable.add(extratooltable).expand().fill();
@@ -1070,7 +1078,7 @@ public class Main extends Module<PixelEditor>{
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		
-		//TODO
+		//TODO COLOR TABLE
 		colorcollapser.setY(Gdx.graphics.getWidth() / Tool.values().length + toolcollapsebutton.getHeight()*2);
 		colorcollapser.toBack();
 		colorcollapser.resetY();
@@ -1117,6 +1125,7 @@ public class Main extends Module<PixelEditor>{
 				public void clicked(InputEvent event, float x, float y){
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
+					prefs.putInteger("palettecolor", paletteColor);
 					box.selected = true;
 					box.toFront();
 					updateSelectedColor(box.getColor()); 
@@ -1297,10 +1306,12 @@ public class Main extends Module<PixelEditor>{
 	}
 
 	void setupBoxColors(){
+		paletteColor = prefs.getInteger("palettecolor", 0);
+		
 		apicker.setRecentColors(boxes);
-		boxes[0].selected = true;
-		boxes[0].toFront();
-		apicker.setSelectedColor(currentPalette.colors[0]);
+		boxes[paletteColor].selected = true;
+		boxes[paletteColor].toFront();
+		apicker.setSelectedColor(currentPalette.colors[paletteColor]);
 	}
 
 	void setupCanvas(){
@@ -1411,6 +1422,8 @@ public class Main extends Module<PixelEditor>{
 		setupExtraMenus();
 
 		updateToolColor();
+		
+		alphabar.fire(new ChangeListener.ChangeEvent()); //update alpha
 
 		//autosave
 		Timer.schedule(new Task(){
@@ -1571,7 +1584,6 @@ public class Main extends Module<PixelEditor>{
 		saveProject();
 		savePalettes();
 		if(currentProject != null) prefs.putString("lastproject", currentProject.name);
-		System.out.println(prefs.getBoolean("grid"));
 		prefs.flush();
 	}
 
