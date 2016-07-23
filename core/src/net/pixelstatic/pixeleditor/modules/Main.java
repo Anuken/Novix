@@ -708,10 +708,11 @@ public class Main extends Module<PixelEditor>{
 		
 		fibutton.addListener(new MenuListener(fileMenu, fibutton));
 		
+		final VisLabel infolabel = new VisLabel();
 		
 		brush = new BrushSizeWidget();
 	
-		final VisSlider brushslider = new VisSlider(1, 5, 0.01f, false);
+		final VisSlider brushslider = new VisSlider(1, 10, 0.01f, true);
 		brushslider.setValue(prefs.getInteger("brushsize", 1));
 		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());
 
@@ -720,11 +721,11 @@ public class Main extends Module<PixelEditor>{
 			public void changed(ChangeEvent event, Actor actor){
 				brush.setBrushSize((int)brushslider.getValue());
 				brushlabel.setText("Brush Size: " + brush.getBrushSize());
+				infolabel.setText("Brush Size: " + brush.getBrushSize() + "\nOpacity: " + (int)(alphabar.getSelection()*100));
 				prefs.putInteger("brushsize", (int)brushslider.getValue());
 			}
 		});
-		
-		brushslider.fire(new ChangeListener.ChangeEvent());
+
 /*
 		tooloptiontable.bottom().left().add(brushlabel).align(Align.bottomLeft);
 		tooloptiontable.row();
@@ -732,10 +733,12 @@ public class Main extends Module<PixelEditor>{
 		tooloptiontable.row();
 		tooloptiontable.add(brush).align(Align.bottomLeft);
 */
-		alphabar = new ColorBar();
+		alphabar = new ColorBar(true);
+		
+		brushslider.fire(new ChangeListener.ChangeEvent());
 
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
-		alphabar.setSize(Gdx.graphics.getWidth() - 80 * s, 50 * s);
+		alphabar.setSize(50 * s, 300 * s);
 		alphabar.setSelection(prefs.getFloat("opacity", 1f));
 
 		optionstable.bottom().left();
@@ -746,6 +749,7 @@ public class Main extends Module<PixelEditor>{
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				opacity.setText("opacity: " + MiscUtils.limit(alphabar.getSelection() + "", 5));
+				infolabel.setText("Brush Size: " + brush.getBrushSize() + "\nOpacity: " + (int)(alphabar.getSelection()*100));
 				drawgrid.canvas.setAlpha(alphabar.getSelection());
 				prefs.putFloat("opacity", alphabar.getSelection());
 			}
@@ -835,16 +839,32 @@ public class Main extends Module<PixelEditor>{
 			}
 		});
 		
+		Table menutable = new VisTable();
+		Table othertable = new VisTable();
+		
+		optionstable.top().left();
+		optionstable.add(menutable).growY();
+		optionstable.add(othertable).grow();
+		
+		
 		
 		//TODO
-		optionstable.top().left();
 		
-		optionstable.add(menubutton).size(70*s).align(Align.topLeft).row();
-		optionstable.add(modebutton).size(70*s).align(Align.topLeft).row();
-		optionstable.add(gridbutton).size(70*s).align(Align.topLeft);
+		menutable.top().left();
+		
+		menutable.add(menubutton).size(70*s).align(Align.topLeft).row();
+		menutable.add(modebutton).size(70*s).align(Align.topLeft).row();
+		menutable.add(gridbutton).size(70*s).align(Align.topLeft);
+		
+		othertable.bottom().right();
+		
+		othertable.add(infolabel).align(Align.topLeft).padTop(20);
+		
+		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(20);
+		othertable.add(alphabar).padTop(20).padBottom(20);
 		//optionstable.add(brush);
-		optionstable.add(brushslider);
-		optionstable.add(alphabar);
+		//optionstable.add(brushslider);
+		//optionstable.add(alphabar);
 		
 /*
 		extratooltable.top().left().add(cbox).padTop(50f * s).padLeft(00f * s);
