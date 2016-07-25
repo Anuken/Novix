@@ -841,12 +841,12 @@ public class Main extends Module<PixelEditor>{
 		
 		Table menutable = new VisTable();
 		Table othertable = new VisTable();
-		
+
 		optionstable.top().left();
 		optionstable.add(menutable).growY();
 		optionstable.add(othertable).grow();
 		
-		
+	//	optionstable.setDebug(true, true);
 		
 		//TODO
 		
@@ -858,9 +858,11 @@ public class Main extends Module<PixelEditor>{
 		
 		othertable.bottom().right();
 		
-		othertable.add(infolabel).align(Align.topLeft).padTop(20);
+		infolabel.setAlignment(Align.topLeft, Align.left);
+		othertable.add(infolabel).padTop(20).padRight(10).grow().align(Align.top);
 		
-		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(20);
+		
+		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(15);
 		othertable.add(alphabar).padTop(20).padBottom(20);
 		//optionstable.add(brush);
 		//optionstable.add(brushslider);

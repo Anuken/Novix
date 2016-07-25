@@ -248,6 +248,15 @@ public class DrawingGrid extends Actor{
 
 		batch.setColor(Color.WHITE);
 		
+		//alphaimage.zoom = (int)((int)(zoom))+1;
+		//alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
+		
+		float modx = ((getX()) % (getWidth() / canvas.texture.getWidth()));
+		float mody = ((getY()) % (getHeight() / canvas.texture.getHeight()));
+		
+		int izoom = (int)zoom;
+		alphaimage.setImageSize(canvas.width(), canvas.height());
+		//System.out.println(alphaimage.zoom);
 		alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
 		alphaimage.draw(batch, parentAlpha);
 	//	batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());

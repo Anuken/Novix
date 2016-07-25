@@ -23,16 +23,16 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		}
 
 		//PC only
-		float speed = 5f;
+		float speed = 10f;
 
 		if(Gdx.input.isKeyPressed(Keys.W)) this.getModule(Main.class).drawgrid.offsety += speed;
 		if(Gdx.input.isKeyPressed(Keys.A)) this.<Main>getModule(Main.class).drawgrid.offsetx -= speed;
 		if(Gdx.input.isKeyPressed(Keys.S)) this.<Main>getModule(Main.class).drawgrid.offsety -= speed;
 		if(Gdx.input.isKeyPressed(Keys.D)) this.<Main>getModule(Main.class).drawgrid.offsetx += speed;
 
-		this.<Main>getModule(Main.class).drawgrid.updateSize();
+		getModule(Main.class).drawgrid.updateSize();
 
-		this.<Main>getModule(Main.class).drawgrid.updateBounds();
+		getModule(Main.class).drawgrid.updateBounds();
 	}
 
 	public void init(){
@@ -91,8 +91,8 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	@Override
 	public boolean scrolled(int amount){
 		//PC only
-		float newzoom = this.<Main>getModule(Main.class).drawgrid.zoom - amount / 10f;
-		this.<Main>getModule(Main.class).drawgrid.setZoom(newzoom);
+		float newzoom = getModule(Main.class).drawgrid.zoom - (amount / 10f * getModule(Main.class).drawgrid.zoom);
+		getModule(Main.class).drawgrid.setZoom(newzoom);
 		return false;
 	}
 

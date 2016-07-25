@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class AlphaImage extends Actor{
 	private int imageWidth, imageHeight;
+	float zoom = 1;
 	
 	public AlphaImage(int w, int h){
 		this.imageWidth = w;
@@ -16,7 +17,7 @@ public class AlphaImage extends Actor{
 	public void draw(Batch batch, float alpha){
 		batch.setColor(1, 1, 1, alpha);
 		
-		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), 0, 0, imageWidth, imageHeight);
+		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), 0, 0, imageWidth*zoom, imageHeight*zoom);
 	}
 	
 	public void setImageSize(int w, int h){
