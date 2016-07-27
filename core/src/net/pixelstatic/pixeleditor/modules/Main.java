@@ -559,6 +559,9 @@ public class Main extends Module<PixelEditor>{
 	}
 
 	void setupMenu(){
+		//VisTextButton menu = addMenuButton("menu");
+
+		
 		VisTextButton ibutton = addMenuButton("image...");
 
 		final PopupMenu imageMenu = new PopupMenu();
@@ -852,14 +855,14 @@ public class Main extends Module<PixelEditor>{
 		
 		menutable.top().left();
 		
-		menutable.add(menubutton).size(70*s).align(Align.topLeft).row();
-		menutable.add(modebutton).size(70*s).align(Align.topLeft).row();
-		menutable.add(gridbutton).size(70*s).align(Align.topLeft);
+		menutable.add(menubutton).size(80*s).align(Align.topLeft).padTop(8*s).row();
+		menutable.add(modebutton).size(80*s).align(Align.topLeft).row();
+		menutable.add(gridbutton).size(80*s).align(Align.topLeft);
 		
 		othertable.bottom().right();
 		
 		infolabel.setAlignment(Align.topLeft, Align.left);
-		othertable.add(infolabel).padTop(20).padRight(10).grow().align(Align.top);
+		othertable.add(infolabel).padTop(20).padRight(10).padLeft(40).grow().align(Align.top);
 		
 		
 		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(15);
@@ -967,7 +970,7 @@ public class Main extends Module<PixelEditor>{
 		optionstable = new VisTable();
 		tooloptiontable = new VisTable();
 		extratooltable = new VisTable();
-		//extratable.top().left().add(menutable).align(Align.topLeft).expand().fill().row();
+		extratable.top().left().add(menutable).align(Align.topLeft).expand().fill().row();
 		extratable.top().left().add(optionstable).expand().fill().row();
 		//optionstable.add(tooloptiontable).minWidth(150 * s);
 		//optionstable.add(extratooltable).expand().fill();
