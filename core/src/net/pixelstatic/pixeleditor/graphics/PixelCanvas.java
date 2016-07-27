@@ -1,9 +1,10 @@
 package net.pixelstatic.pixeleditor.graphics;
 
+
+import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.tools.ActionStack;
 import net.pixelstatic.pixeleditor.tools.DrawAction;
-import net.pixelstatic.utils.graphics.PixmapUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;

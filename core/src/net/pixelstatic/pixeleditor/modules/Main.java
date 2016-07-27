@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import net.pixelstatic.gdxutils.graphics.Hue;
+import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
@@ -32,8 +34,6 @@ import net.pixelstatic.utils.MiscUtils.TextFieldEmptyListener;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
-import net.pixelstatic.utils.graphics.Hue;
-import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 

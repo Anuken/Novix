@@ -1,7 +1,8 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+
+import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.graphics.Textures;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;

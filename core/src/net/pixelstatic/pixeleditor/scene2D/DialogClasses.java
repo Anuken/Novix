@@ -1,12 +1,13 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+
+import net.pixelstatic.gdxutils.graphics.PixmapUtils;
+import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
-import net.pixelstatic.utils.graphics.PixmapUtils;
-import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
 import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBox;

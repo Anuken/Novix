@@ -1,10 +1,11 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+
+import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.Pos;
-import net.pixelstatic.utils.graphics.Textures;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;

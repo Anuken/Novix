@@ -1,8 +1,10 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+
+
+import net.pixelstatic.gdxutils.graphics.Hue;
+import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Palette;
-import net.pixelstatic.utils.graphics.Hue;
-import net.pixelstatic.utils.graphics.Textures;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;

@@ -1,6 +1,8 @@
 package net.pixelstatic.pixeleditor.graphics;
 
-import net.pixelstatic.utils.graphics.Hue;
+
+
+import net.pixelstatic.gdxutils.graphics.Hue;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
