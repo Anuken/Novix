@@ -8,6 +8,7 @@ import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.graphics.Project;
+import net.pixelstatic.pixeleditor.managers.PaletteManager;
 import net.pixelstatic.pixeleditor.managers.ProjectManager;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
@@ -68,10 +69,11 @@ public class Main extends Module<PixelEditor>{
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
-	public Palette currentPalette;
+	public final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
 	public int paletteColor;
 	public Preferences prefs;
 	public ProjectManager projectmanager;
+	public PaletteManager palettemanager;
 	VisTable tooltable;
 	VisTable colortable;
 	VisTable extratable;
@@ -87,9 +89,7 @@ public class Main extends Module<PixelEditor>{
 	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
 	FileChooser currentChooser;
-	public ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
-	final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
-	Json json;
+	public Json json;
 	ColorBox[] boxes;
 	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
@@ -139,7 +139,6 @@ public class Main extends Module<PixelEditor>{
 
 		projectmenu.update(true);
 	}
-
 	
 	public void openSettingsMenu(){
 		settingsmenu.show(stage);
@@ -262,14 +261,7 @@ public class Main extends Module<PixelEditor>{
 		VisTextButton fibutton = addMenuButton("file..");
 
 		final PopupMenu fileMenu = new PopupMenu();
-		/*
-		fileMenu.addItem(new ExtraMenuItem(fibutton, "save", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-				saveProject();
-			}
-		}));
-		*/
+
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "export", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -697,7 +689,7 @@ public class Main extends Module<PixelEditor>{
 		int maxcolorsize = 65;
 		int mincolorsize = 30;
 
-		int colorsize = Gdx.graphics.getWidth() / currentPalette.size() - MiscUtils.densityScale(3);
+		int colorsize = Gdx.graphics.getWidth() / getCurrentPalette().size() - MiscUtils.densityScale(3);
 		
 		int perow = 0; //colors per row
 
@@ -708,23 +700,23 @@ public class Main extends Module<PixelEditor>{
 			perow = Gdx.graphics.getWidth() / colorsize;
 		}
 		
-		colortable.add(colorcollapsebutton).expandX().fillX().colspan((perow == 0 ? currentPalette.size() : perow) + 2).height(50f * s);
+		colortable.add(colorcollapsebutton).expandX().fillX().colspan((perow == 0 ? getCurrentPalette().size() : perow) + 2).height(50f * s);
 		colorcollapsebutton.setZIndex(colorcollapser.getZIndex() + 10);
 
 		colortable.row();
 
 		colortable.add().growX();
 
-		boxes = new ColorBox[currentPalette.size()];
+		boxes = new ColorBox[getCurrentPalette().size()];
 
-		for(int i = 0;i < currentPalette.size();i ++){
+		for(int i = 0;i < getCurrentPalette().size();i ++){
 			final int index = i;
 			final ColorBox box = new ColorBox();
 
 			boxes[i] = box;
 			colortable.add(box).size(colorsize);
 			
-			box.setColor(currentPalette.colors[i]);
+			box.setColor(getCurrentPalette().colors[i]);
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -753,7 +745,7 @@ public class Main extends Module<PixelEditor>{
 
 	public void setPalette(Palette palette){
 		paletteColor = 0;
-		currentPalette = palette;
+		palettemanager.setCurrentPalette(palette);
 		prefs.putString("lastpalette", palette.name);
 		prefs.flush();
 		updateColorMenu();
@@ -768,7 +760,7 @@ public class Main extends Module<PixelEditor>{
 		apicker.setRecentColors(boxes);
 		boxes[paletteColor].selected = true;
 		boxes[paletteColor].toFront();
-		apicker.setSelectedColor(currentPalette.colors[paletteColor]);
+		apicker.setSelectedColor(getCurrentPalette().colors[paletteColor]);
 	}
 
 	void setupCanvas(){
@@ -794,7 +786,7 @@ public class Main extends Module<PixelEditor>{
 		projectDirectory.mkdirs();
 		json = new Json();
 		prefs = Gdx.app.getPreferences("pixeleditor");
-		loadPalettes();
+		palettemanager.loadPalettes();
 		Textures.load("textures/");
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
@@ -889,7 +881,7 @@ public class Main extends Module<PixelEditor>{
 				new Thread(new Runnable(){
 					public void run(){
 						projectmanager.saveProject();
-						savePalettes();
+						palettemanager.savePalettes();
 						prefs.flush();
 					}
 				}).start();
@@ -974,36 +966,7 @@ public class Main extends Module<PixelEditor>{
 		}).start();
 	}
 
-	void savePalettes(){
-		String string = json.toJson(palettes);
-		paletteDirectory.writeString(string, false);
-	}
 
-	@SuppressWarnings("unchecked")
-	void loadPalettes(){
-		try{
-			palettes = json.fromJson(ObjectMap.class, paletteDirectory);
-
-			String name = prefs.getString("lastpalette");
-			if(name != null){
-				currentPalette = palettes.get(name);
-			}
-
-			Gdx.app.log("pedebugging", "Palettes loaded.");
-		}catch(Exception e){
-			e.printStackTrace();
-			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
-		}
-
-		if(currentPalette == null){
-			if( !palettes.containsKey("Untitled")){
-				currentPalette = new Palette("Untitled", 8);
-				palettes.put("Untitled", currentPalette);
-			}else{
-				currentPalette = palettes.get("Untitled");
-			}
-		}
-	}
 
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
@@ -1014,12 +977,12 @@ public class Main extends Module<PixelEditor>{
 	}
 
 	public Color selectedColor(){
-		return currentPalette.colors[paletteColor];
+		return getCurrentPalette().colors[paletteColor];
 	}
 
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color);
-		currentPalette.colors[paletteColor] = color.cpy();
+		getCurrentPalette().colors[paletteColor] = color.cpy();
 		alphabar.setRightColor(color.cpy());
 		brush.setColor(color);
 		updateToolColor();
@@ -1038,12 +1001,16 @@ public class Main extends Module<PixelEditor>{
 	public Project getCurrentProject(){
 		return projectmanager.getCurrentProject();
 	}
+	
+	public Palette getCurrentPalette(){
+		return palettemanager.getCurrentPalette();
+	}
 
 	@Override
 	public void pause(){
 		Gdx.app.log("pedebugging", "Pausing and saving everything.");
 		projectmanager.saveProject();
-		savePalettes();
+		palettemanager.savePalettes();
 		if(getCurrentProject() != null) prefs.putString("lastproject", getCurrentProject().name);
 		prefs.flush();
 	}

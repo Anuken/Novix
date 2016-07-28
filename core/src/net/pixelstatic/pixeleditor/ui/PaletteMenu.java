@@ -77,10 +77,10 @@ public class PaletteMenu extends VisDialog{
 					public void changed(ChangeEvent event, Actor actor){
 						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
 							public void result(String string){
-								main.palettes.remove(palette.name);
+								main.palettemanager.removePalette(palette);
 								palette.name = string;
-								main.palettes.put(string, palette);
-								if(palette == main.currentPalette){
+								main.palettemanager.addPalette(palette);
+								if(palette == main.getCurrentPalette()){
 									main.prefs.putString("currentpalette", palette.name);
 									main.prefs.flush();
 								}
@@ -93,7 +93,7 @@ public class PaletteMenu extends VisDialog{
 					public void changed(ChangeEvent event, Actor actor){
 						new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
 							public void result(){
-								main.palettes.remove(palette.name);
+								main.palettemanager.removePalette(palette);
 								update();
 							}
 						}.show(getStage());
@@ -113,10 +113,10 @@ public class PaletteMenu extends VisDialog{
 
 		getContentTable().add(pane).left().grow().maxHeight(Gdx.graphics.getHeight() / 2);
 
-		for(final Palette palette : main.palettes.values()){
-			final PaletteWidget widget = new PaletteWidget(palette, palette == Main.i.currentPalette);
+		for(final Palette palette : main.palettemanager.getPalettes()){
+			final PaletteWidget widget = new PaletteWidget(palette, palette == main.getCurrentPalette());
 
-			widget.setTouchable(palette == main.currentPalette ? Touchable.childrenOnly : Touchable.enabled);
+			widget.setTouchable(palette == main.getCurrentPalette() ? Touchable.childrenOnly : Touchable.enabled);
 
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -158,7 +158,7 @@ public class PaletteMenu extends VisDialog{
 					}
 
 					public void result(String string){
-						main.palettes.put(string, new Palette(string, Integer.parseInt(numberfield.getText())));
+						main.palettemanager.addPalette(new Palette(string, Integer.parseInt(numberfield.getText())));
 						update();
 					}
 
