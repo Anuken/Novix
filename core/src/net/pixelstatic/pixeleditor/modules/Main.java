@@ -1,16 +1,14 @@
 package net.pixelstatic.pixeleditor.modules;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashMap;
 
-import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.graphics.Project;
+import net.pixelstatic.pixeleditor.managers.ProjectManager;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
@@ -20,7 +18,6 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.CropDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ExportScaledDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
-import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ScaleDialog;
@@ -28,9 +25,11 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ShiftDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import net.pixelstatic.pixeleditor.tools.Tool;
-import net.pixelstatic.utils.*;
+import net.pixelstatic.pixeleditor.ui.*;
+import net.pixelstatic.pixeleditor.ui.ProjectMenu.ProjectTable;
+import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
-import net.pixelstatic.utils.MiscUtils.TextFieldEmptyListener;
+import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
@@ -41,7 +40,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -60,36 +58,36 @@ import com.kotcrab.vis.ui.Focusable;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
-import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
 public class Main extends Module<PixelEditor>{
-	public static Main gui;
+	public static Main i;
 	public static float s = 1f; //density scale
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
-	public boolean savingProject = false;
-	ObjectMap<String, Project> projects = new ObjectMap<String, Project>();
-	public Project currentProject;
-	Palette currentPalette;
+	public Palette currentPalette;
 	public int paletteColor;
-	Skin skin;
-	Preferences prefs;
+	public Preferences prefs;
+	public ProjectManager projectmanager;
 	VisTable tooltable;
 	VisTable colortable;
 	VisTable extratable;
 	VisTable projecttable;
-	VisDialog settingsmenu, projectmenu, palettedialog;
+	VisTable pickertable;
+	SettingsMenu settingsmenu;
+	public ProjectMenu projectmenu;
+	PaletteMenu palettemenu;
+	Cell<AndroidColorPicker> pickercell;
 	CollapseButton colorcollapsebutton, toolcollapsebutton;
 	SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	BrushSizeWidget brush;
 	ColorBar alphabar;
 	Table menutable, optionstable, tooloptiontable, extratooltable;
 	FileChooser currentChooser;
-	ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
+	public ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
 	Json json;
 	ColorBox[] boxes;
@@ -130,436 +128,30 @@ public class Main extends Module<PixelEditor>{
 
 	void setupExtraMenus(){
 
-		settingsmenu = new VisDialog("Settings"){
-			public void result(Object o){
-				prefs.flush();
-			}
-		};
-		settingsmenu.setFillParent(true);
-
-		settingsmenu.getTitleLabel().setColor(Color.CORAL);
-		settingsmenu.getTitleTable().row();
-		settingsmenu.getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
-
-		Table settings = settingsmenu.getContentTable();
-
-		settings.add().height(20).row();
-
-		VisTextButton back = new VisTextButton("Back");
-		back.add(new Image(Textures.getDrawable("icon-arrow-left"))).size(40 * s).center();
-
-		back.getCells().reverse();
-		back.getLabelCell().padRight(40f * s);
-
-		settingsmenu.getButtonsTable().add(back).width(Gdx.graphics.getWidth()).height(60 * s);
-		settingsmenu.setObject(back, false);
-
-		addScrollSetting(settings, "Cursor Size", 1, 10, 5);
-
-		addCheckSetting(settings, "Autosave", true);
-
-		VisTable scrolltable = new VisTable();
-
-		final VisScrollPane pane = new VisScrollPane(scrolltable){
-			public float getPrefHeight(){
-				return Gdx.graphics.getHeight();
-			}
-		};
-		pane.setFadeScrollBars(false);
-		pane.setOverscroll(false, false);
-
-		projectmenu = new VisDialog("Projects"){
-			public VisDialog show(Stage stage){
-				super.show(stage);
-				stage.setScrollFocus(pane);
-				return this;
-			}
-		};
-		projectmenu.setFillParent(true);
-		projectmenu.getTitleLabel().setColor(Color.CORAL);
-		projectmenu.getTitleTable().row();
-		projectmenu.getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
+		settingsmenu = new SettingsMenu(this);
 		
-
-		VisTable newtable = new VisTable();
-
-		VisTextButton newbutton = new VisTextButton("New Project");
-		newbutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				newProject();
-			}
-		});
-
-		addIconToButton(newbutton, new Image(Textures.get("icon-plus")), 40 * s);
 		
-		VisTextButton settingsbutton = new VisTextButton("Settings");
-		settingsbutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				settingsmenu.show(stage);
-			}
-		});
+		settingsmenu.addScrollSetting("Cursor Size", 1, 10, 5);
+
+		settingsmenu.addCheckSetting("Autosave", true);
 		
+		projectmenu = new ProjectMenu(this);
 
-		newtable.left().add(newbutton).padBottom(6 * s).size(190 * s, 60 * s);
-		newtable.left().add().grow();
-		newtable.left().add(settingsbutton).padBottom(6 * s).size(120 * s, 60 * s).align(Align.topRight);
-
-		projectmenu.getContentTable().add(newtable).grow().row();
-
-		projectmenu.getContentTable().top().left().add(pane).align(Align.topLeft).grow();
-
-		VisTextButton projectback = new VisTextButton("Back");
-		projectback.add(new Image(Textures.getDrawable("icon-arrow-left"))).size(40 * s).center();
-
-		projectback.getCells().reverse();
-		projectback.getLabelCell().padRight(40f * s);
-
-		projectmenu.getButtonsTable().add(projectback).width(Gdx.graphics.getWidth()).height(60 * s);
-		projectmenu.setObject(projectback, false);
-
-		updateProjectMenu(true);
+		projectmenu.update(true);
 	}
 
-	public ProjectTable updateProjectMenu(boolean loaded){
-		VisTable scrolltable = ((VisTable)((VisScrollPane)projectmenu.getContentTable().getCells().get(1).getActor()).getChildren().first());
-
-		scrolltable.clearChildren();
-
-		ProjectTable current = null;
-
-		for(Project project : projects.values()){
-			ProjectTable table = new ProjectTable(project, project == currentProject ? loaded : true);
-			scrolltable.top().left().add(table).padTop(8).growX().padRight(10 * s).row();
-			if(project == currentProject) current = table;
-		}
-
-		return current;
-	}
-
-	class ProjectTable extends VisTable{
-		public final Project project;
-		public boolean loaded;
-		private boolean created;
-		private Label sizelabel;
-		private Cell<?> imagecell;
-
-		public ProjectTable(final Project project, boolean startloaded){
-			this.project = project;
-			this.loaded = startloaded;
-
-			VisLabel namelabel = new VisLabel(project.name);
-
-			sizelabel = new VisLabel("Loading...");
-			sizelabel.setColor(Color.GRAY);
-
-			int imagesize = 40;
-
-			VisImageButton openbutton = new VisImageButton(Textures.getDrawable(project == currentProject ? "icon-open-gray" : "icon-open"));
-			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
-			VisImageButton renamebutton = new VisImageButton(Textures.getDrawable("icon-rename"));
-			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
-
-			if(project == currentProject){
-				openbutton.setDisabled(true);
-				openbutton.setColor(Hue.lightness(0.94f));
-			}
-
-			openbutton.addListener(new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					if(project != currentProject) Main.gui.openProject(project);
-				}
-			});
-
-			copybutton.addListener(new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					Main.gui.copyProject(project);
-				}
-			});
-
-			renamebutton.addListener(new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					Main.gui.renameProject(project);
-				}
-			});
-
-			deletebutton.addListener(new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					Main.gui.deleteProject(project);
-				}
-			});
-
-			openbutton.getImageCell().size(imagesize);
-			copybutton.getImageCell().size(imagesize);
-			renamebutton.getImageCell().size(imagesize);
-			deletebutton.getImageCell().size(imagesize);
-
-			VisTable texttable = new VisTable();
-			VisTable buttontable = new VisTable();
-
-			float bheight = 50, space = 4;
-
-			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).height(bheight).growX().space(space);
-			buttontable.add(copybutton).height(bheight).growX().space(space);
-			buttontable.add(deletebutton).height(bheight).growX().space(space);
-			buttontable.add(renamebutton).height(bheight).growX().space(space);
-
-			top().left();
-
-			background("button");
-			setColor(Hue.lightness(0.87f));
-
-			imagecell = stack(new AnimatedImage(Textures.getDrawable("icon-load-1"), Textures.getDrawable("icon-load-2"), Textures.getDrawable("icon-load-3")), new BorderImage());
-			imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
-
-			MiscUtils.fitCell(imagecell, 128 * s, 1);
-
-			add(texttable).grow();
-			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
-			texttable.row();
-			texttable.add(sizelabel).padLeft(8).padTop(10 * s).align(Align.topLeft);
-			texttable.row();
-			texttable.add(buttontable).grow().padLeft(8);
-
-			addAction(new Action(){
-
-				public boolean act(float delta){
-					if(created) return true;
-					if( !loaded) return false;
-
-					if(project == currentProject) project.reloadTexture();
-
-					Texture texture = project.cachedTexture;
-
-					sizelabel.setText("Size: " + texture.getWidth() + "x" + texture.getHeight());
-
-					StaticPreviewImage image = new StaticPreviewImage(texture);
-					imagecell.setActor(image);
-
-					MiscUtils.fitCell(imagecell, 128 * s, (float)texture.getWidth() / texture.getHeight());
-
-					imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
-
-					pack();
-
-					created = true;
-					return true;
-				}
-			});
-
-		}
-
-	}
-
-	void addIconToButton(VisTextButton button, Image image, float size){
-		button.add(image).size(size).center();
-		button.getCells().reverse();
-	}
-
-	void newProject(){
-
-		new NamedSizeDialog("New Project"){
-
-			public void result(String name, int width, int height){
-				if(validateProjectName(name)) return;
-
-				Project project = createNewProject(name, width, height);
-
-				openProject(project);
-
-			}
-		}.show(stage);
-	}
-
-	Project createNewProject(String name, int width, int height){
-		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
-		PixmapIO.writePNG(projectDirectory.child(name + ".png"), pixmap);
-
-		Project project = loadProject(projectDirectory.child(name + ".png"));
-		Gdx.app.log("pedebugging", "Created new project with name " + name);
-
-		return project;
-	}
-
-	void openProject(Project project){
-		prefs.putString("lastproject", project.name);
-		prefs.flush();
-		currentProject = project;
-
-		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
-
-		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
-
-		drawgrid.setCanvas(canvas);
-		updateToolColor();
-		projectmenu.hide();
-	}
-
-	void copyProject(final Project project){
-
-		new DialogClasses.InputDialog("Rename Copied Dialog", project.name, "New Copy Name: "){
-			public void result(String text){
-				if(validateProjectName(text)) return;
-
-				try{
-					FileHandle newhandle = project.file.parent().child(text + ".png");
-					MiscUtils.copyFile(project.file.file(), newhandle.file());
-
-					projects.put(text, new Project(newhandle));
-					updateProjectMenu(true);
-				}catch(IOException e){
-					AndroidDialogs.showError(stage, "Error copying file!", e);
-					e.printStackTrace();
-				}
-			}
-		}.show(stage);
-	}
-
-	void renameProject(final Project project){
-		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
-			public void result(String text){
-				if(validateProjectName(text, project)) return;
-				projects.remove(project.name);
-				project.name = text;
-				projects.put(text, project);
-				updateProjectMenu(true);
-			}
-		}.show(stage);
-	}
-
-	void deleteProject(final Project project){
-		if(project == currentProject){
-			AndroidDialogs.showInfo(stage, "You cannot delete the canvas you are currently using!");
-			return;
-		}
-
-		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
-			public void result(){
-				try{
-					project.file.file().delete();
-					project.dispose();
-					projects.remove(project.name);
-					updateProjectMenu(true);
-				}catch(Exception e){
-					AndroidDialogs.showError(stage, "Error deleting file!", e);
-					e.printStackTrace();
-				}
-			}
-		}.show(stage);
-	}
-
-	public void saveProject(){
-		savingProject = true;
-		Gdx.app.log("pedebugging", "Starting save..");
-		PixmapIO.writePNG(currentProject.file, drawgrid.canvas.pixmap);
-		Gdx.app.log("pedebugging", "Saving project.");
-		savingProject = false;
-	}
-
-	void loadProjects(){
-		FileHandle[] files = projectDirectory.list();
-
-		for(FileHandle file : files){
-			if(file.extension().equals("png")){
-				try{
-					loadProject(file);
-				}catch(Exception e){
-					Gdx.app.error("pedebugging", "Error loading project \"" + file.nameWithoutExtension() + " \", corrupt file?", e);
-					//projects.remove(file.nameWithoutExtension());
-				}
-			}
-		}
-
-		if(projects.size == 0){
-			currentProject = createNewProject("Untitled", 16, 16);
-		}else{
-			String last = prefs.getString("lastproject", "Untitled");
-			
-			try{
-				currentProject = projects.get(last);
-				currentProject.reloadTexture();
-			}catch (Exception e){
-				e.printStackTrace();
-				currentProject = createNewProject("Untitled", 16, 16);
-			}
-		}
-	}
-
-	Project loadProject(FileHandle file){
-		Project project = new Project(file);
-		projects.put(project.name, project);
-		return project;
-	}
-
-	boolean checkIfProjectExists(String name, Project ignored){
-		for(Project project : projects.values()){
-			if(project == ignored) continue;
-			if(project.name.equals(name)) return true;
-		}
-		return false;
-	}
-
-	boolean validateProjectName(String name){
-		boolean exists = checkIfProjectExists(name, null);
-
-		if( !MiscUtils.isFileNameValid(name)){
-			AndroidDialogs.showError(stage, "Project name is invalid!");
-			return true;
-		}
-
-		if(exists){
-			AndroidDialogs.showError(stage, "A project with that name already exists!");
-		}
-
-		return exists;
-	}
-
-	boolean validateProjectName(String name, Project project){
-		if( !MiscUtils.isFileNameValid(name)){
-			AndroidDialogs.showError(stage, "Project name is invalid!");
-			return true;
-		}
-
-		boolean exists = checkIfProjectExists(name, project);
-
-		if(exists){
-			AndroidDialogs.showError(stage, "A project with that name already exists!");
-		}
-
-		return exists;
-	}
-
-	void addScrollSetting(Table table, final String name, int min, int max, int value){
-		final VisLabel label = new VisLabel(name + ": " + prefs.getInteger(name, value));
-		final VisSlider slider = new VisSlider(min, max, 1, false);
-		slider.addListener(new ChangeListener(){
-			public void changed(ChangeEvent event, Actor actor){
-				label.setText(name + ": " + slider.getValue());
-				prefs.putInteger(name, (int)slider.getValue());
-			}
-		});
-		slider.setValue(prefs.getInteger(name));
-		table.top().left().add(label).align(Align.left);
-		table.row();
-		table.add(slider).width(200 * s).padBottom(40f);
-		table.row();
-	}
-
-	void addCheckSetting(Table table, final String name, boolean value){
-		final VisLabel label = new VisLabel(name);
-		final VisCheckBox box = new VisCheckBox("", prefs.getBoolean(name, value));
-		box.getImageStackCell().size(40 * s);
-		box.addListener(new ChangeListener(){
-			public void changed(ChangeEvent event, Actor actor){
-				prefs.putBoolean(name, box.isChecked());
-			}
-		});
-		table.top().left().add(label).align(Align.left);
-		table.add(box);
-		table.row();
+	
+	public void openSettingsMenu(){
+		settingsmenu.show(stage);
 	}
 
 	void setupMenu(){
-		//VisTextButton menu = addMenuButton("menu");
+		VisTextButton menu = addMenuButton("menu");
+		menu.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				showProjectMenu();
+			}
+		});
 
 		
 		VisTextButton ibutton = addMenuButton("image...");
@@ -637,7 +229,7 @@ public class Main extends Module<PixelEditor>{
 
 		fbutton.addListener(new MenuListener(filterMenu, fbutton));
 
-		VisTextButton tbutton = addMenuButton("transform..");
+		VisTextButton tbutton = addMenuButton("edit..");
 
 		final PopupMenu transformMenu = new PopupMenu();
 		transformMenu.addItem(new ExtraMenuItem(tbutton, "flip", new ChangeListener(){
@@ -670,12 +262,14 @@ public class Main extends Module<PixelEditor>{
 		VisTextButton fibutton = addMenuButton("file..");
 
 		final PopupMenu fileMenu = new PopupMenu();
+		/*
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "save", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				saveProject();
 			}
 		}));
+		*/
 		fileMenu.addItem(new ExtraMenuItem(fibutton, "export", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -746,13 +340,13 @@ public class Main extends Module<PixelEditor>{
 
 		optionstable.bottom().left();
 
-		final VisLabel opacity = new VisLabel("opacity: " + alphabar.getSelection());
+		final VisLabel opacity = new VisLabel("Opacity: " + (int)(alphabar.getSelection()*100) + "%");
 
 		alphabar.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				opacity.setText("opacity: " + MiscUtils.limit(alphabar.getSelection() + "", 5));
-				infolabel.setText("Brush Size: " + brush.getBrushSize() + "\nOpacity: " + (int)(alphabar.getSelection()*100));
+				opacity.setText("Opacity: " + (int)(alphabar.getSelection()*100) + "%");
+				infolabel.setText("Brush Size: " + brush.getBrushSize() + "\nOpacity: " + (int)(alphabar.getSelection()*100) + "%");
 				drawgrid.canvas.setAlpha(alphabar.getSelection());
 				prefs.putFloat("opacity", alphabar.getSelection());
 			}
@@ -855,16 +449,18 @@ public class Main extends Module<PixelEditor>{
 		
 		menutable.top().left();
 		
-		menutable.add(menubutton).size(80*s).align(Align.topLeft).padTop(8*s).row();
-		menutable.add(modebutton).size(80*s).align(Align.topLeft).row();
+		//menutable.add(menubutton).size(80*s).align(Align.topLeft).padTop(8*s).row();
+		menutable.add(modebutton).size(80*s).align(Align.topLeft).padTop(8*s).row();
 		menutable.add(gridbutton).size(80*s).align(Align.topLeft);
 		
 		othertable.bottom().right();
 		
 		infolabel.setAlignment(Align.topLeft, Align.left);
-		othertable.add(infolabel).padTop(20).padRight(10).padLeft(40).grow().align(Align.top);
+		//othertable.add(infolabel).padTop(20).padRight(10).padLeft(40).grow().align(Align.top);
 		
-		
+		othertable.add(brushlabel).padRight(10).minWidth(150).align(Align.center);
+		othertable.add(opacity).minWidth(150).align(Align.center);
+		othertable.row();
 		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(15);
 		othertable.add(alphabar).padTop(20).padBottom(20);
 		//optionstable.add(brush);
@@ -935,22 +531,11 @@ public class Main extends Module<PixelEditor>{
 		}
 	}
 
-	private static class TallMenuItem extends MenuItem{
-
-		public TallMenuItem(String text, ChangeListener listener){
-			super(text, listener);
-		}
-
-		public float getPrefHeight(){
-			return super.getPrefHeight() * 1.4f;
-		}
-	}
-
 	VisTextButton addMenuButton(String text){
 		float height = 70f;
 
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).width(Gdx.graphics.getWidth() / 4f - 4).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
+		menutable.top().left().add(button).width(Gdx.graphics.getWidth() / 5 - 3).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
 		return button;
 	}
 
@@ -1038,9 +623,9 @@ public class Main extends Module<PixelEditor>{
 		}
 	}
 
-	void setupColors(){
+	void setupColorPicker(){
 
-		VisTable pickertable = new VisTable(){
+		pickertable = new VisTable(){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
@@ -1080,38 +665,33 @@ public class Main extends Module<PixelEditor>{
 		updateColorMenu();
 
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
-
-		palettedialog = new VisDialog("Palettes", "dialog"){
-			public VisDialog show(Stage stage){
-				super.show(stage);
-				stage.setScrollFocus(getContentTable().getChildren().first());
-				return this;
-			}
-		};
-		palettedialog.setMovable(false);
-		palettedialog.getTitleLabel().setColor(Color.CORAL);
-		MiscUtils.addHideButton(palettedialog);
+		
+		palettemenu = new PaletteMenu(this);
 
 		palettebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				updatePaletteDialog();
-				palettedialog.show(stage);
+				openPaletteMenu();
 			}
 		});
 		
-		pickertable.add(apicker).expand().fill().padBottom(10f * s);
+		pickercell = pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(200f);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		
 		//TODO COLOR TABLE
-		colorcollapser.setY(Gdx.graphics.getWidth() / Tool.values().length + toolcollapsebutton.getHeight()*2);
+		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight());
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
 	}
+	
+	void openPaletteMenu(){
+		palettemenu.update();
+		palettemenu.show(stage);
+	}
 
-	void updateColorMenu(){
+	public void updateColorMenu(){
 		colortable.clear();
 
 		int maxcolorsize = 65;
@@ -1165,161 +745,13 @@ public class Main extends Module<PixelEditor>{
 		}
 
 		if(perow == 0)colortable.add().growX();
+		
+		//if(pickercell != null)pickercell.padTop(1000);
+		
+		//pickertable.pack();
 	}
 
-	void updatePaletteDialog(){
-		float scrolly = palettedialog.getContentTable().getChildren().size == 0 ? 0 : ((ScrollPane)palettedialog.getContentTable().getChildren().first()).getScrollPercentY();
-
-		palettedialog.getContentTable().clearChildren();
-		palettedialog.getButtonsTable().clearChildren();
-
-		class PaletteListener extends ClickListener{
-			PaletteWidget widget;
-			Palette palette;
-
-			public PaletteListener(PaletteWidget palette){
-				widget = palette;
-				this.palette = widget.palette;
-			}
-
-			public void clicked(InputEvent event, float x, float y){
-				PopupMenu menu = new PopupMenu();
-				menu.addItem(new TallMenuItem("resize", new ChangeListener(){
-					public void changed(ChangeEvent event, Actor actor){
-						new DialogClasses.NumberInputDialog("Resize Palette", palette.size() + "", "Size: "){
-							public void result(int size){
-								Color[] newcolors = new Color[size];
-
-								Arrays.fill(newcolors, Color.WHITE.cpy());
-
-								for(int i = 0;i < size && i < palette.size();i ++){
-									newcolors[i] = palette.colors[i];
-								}
-
-								palette.colors = newcolors;
-
-								updatePaletteDialog();
-								updateColorMenu();
-							}
-						}.show(stage);
-					}
-				}));
-				menu.addItem(new TallMenuItem("rename", new ChangeListener(){
-					public void changed(ChangeEvent event, Actor actor){
-						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
-							public void result(String string){
-								palettes.remove(palette.name);
-								palette.name = string;
-								palettes.put(string, palette);
-								if(palette == currentPalette){
-									prefs.putString("currentpalette", palette.name);
-									prefs.flush();
-								}
-								updatePaletteDialog();
-							}
-						}.show(stage);
-					}
-				}));
-				menu.addItem(new TallMenuItem("delete", new ChangeListener(){
-					public void changed(ChangeEvent event, Actor actor){
-						new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
-							public void result(){
-								palettes.remove(palette.name);
-								updatePaletteDialog();
-							}
-						}.show(stage);
-					}
-				}));
-
-				Vector2 coords = widget.extrabutton.localToStageCoordinates(new Vector2());
-				menu.showMenu(stage, coords.x - menu.getWidth() + widget.extrabutton.getWidth(), coords.y);
-			}
-		}
-
-		VisTable palettetable = new VisTable();
-
-		final VisScrollPane pane = new VisScrollPane(palettetable);
-		pane.setFadeScrollBars(false);
-		pane.setOverscroll(false, false);
-
-		palettedialog.getContentTable().add(pane).left().grow().maxHeight(Gdx.graphics.getHeight() / 2);
-
-		for(final Palette palette : palettes.values()){
-			final PaletteWidget widget = new PaletteWidget(palette, palette == Main.gui.currentPalette);
-
-			widget.setTouchable(palette == currentPalette ? Touchable.childrenOnly : Touchable.enabled);
-
-			widget.addListener(new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					if( !widget.extrabutton.isOver()) setPalette(palette);
-				}
-			});
-
-			widget.addExtraButtonListener(new PaletteListener(widget));
-
-			palettetable.add(widget).padBottom(6);
-			palettetable.row();
-		}
-
-		VisTextButton backbutton = new VisTextButton("Back");
-
-		backbutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				palettedialog.hide();
-			}
-		});
-
-		VisTextButton addpalettebutton = new VisTextButton("New Palette");
-
-		addpalettebutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				new DialogClasses.InputDialog("New Palette", "", "Name:"){
-					protected VisTextField numberfield;
-
-					{
-						numberfield = new VisTextField("8");
-						numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-
-						getContentTable().row();
-
-						getContentTable().center().add(new VisLabel("Size:")).padTop(0f).padBottom(20f * s);
-						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0);
-
-						new TextFieldEmptyListener(ok, textfield, numberfield);
-					}
-
-					public void result(String string){
-						palettes.put(string, new Palette(string, Integer.parseInt(numberfield.getText())));
-						updatePaletteDialog();
-					}
-
-				}.show(stage);
-			}
-		});
-
-		addIconToButton(addpalettebutton, new Image(Textures.get("icon-plus")), 40);
-		addIconToButton(backbutton, new Image(Textures.get("icon-arrow-left")), 40);
-
-		palettedialog.getButtonsTable().add(backbutton).size(150 * s, 50 * s);
-		palettedialog.getButtonsTable().add(addpalettebutton).size(200 * s, 50 * s);
-
-		palettedialog.pack();
-
-		stage.setScrollFocus(pane);
-
-		pane.setSmoothScrolling(false);
-		pane.setScrollPercentY(scrolly);
-
-		pane.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
-			@Override
-			public boolean act(float delta){
-				pane.setSmoothScrolling(true);
-				return true;
-			}
-		}));
-	}
-
-	void setPalette(Palette palette){
+	public void setPalette(Palette palette){
 		paletteColor = 0;
 		currentPalette = palette;
 		prefs.putString("lastpalette", palette.name);
@@ -1327,7 +759,7 @@ public class Main extends Module<PixelEditor>{
 		updateColorMenu();
 		setSelectedColor(palette.colors[0]);
 		setupBoxColors();
-		updatePaletteDialog();
+		palettemenu.update();
 	}
 
 	void setupBoxColors(){
@@ -1344,7 +776,7 @@ public class Main extends Module<PixelEditor>{
 
 		drawgrid.grid = prefs.getBoolean("grid", true);
 		drawgrid.cursormode = prefs.getBoolean("cursormode", true);
-		drawgrid.setCanvas(new PixelCanvas(currentProject.getCachedPixmap()));
+		drawgrid.setCanvas(new PixelCanvas(getCurrentProject().getCachedPixmap()));
 
 		stage.addActor(drawgrid);
 	}
@@ -1352,7 +784,7 @@ public class Main extends Module<PixelEditor>{
 	public Main(){
 		Gdx.graphics.setContinuousRendering(false);
 
-		gui = this;
+		i = this;
 		s = MiscUtils.densityScale();
 		GDXDialogsSystem.install();
 
@@ -1367,8 +799,8 @@ public class Main extends Module<PixelEditor>{
 		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
+		projectmanager = new ProjectManager(this);
 		loadFonts();
-		skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
 
 		AndroidKeyboard.setListener(new AndroidKeyboardListener(){
 			HashMap<Actor, Float> moved = new HashMap<Actor, Float>();
@@ -1438,11 +870,11 @@ public class Main extends Module<PixelEditor>{
 			}
 		});
 
-		loadProjects();
+		projectmanager.loadProjects();
 
 		setup();
 		setupTools();
-		setupColors();
+		setupColorPicker();
 		setupCanvas();
 		setupExtraMenus();
 
@@ -1456,7 +888,7 @@ public class Main extends Module<PixelEditor>{
 			public void run(){
 				new Thread(new Runnable(){
 					public void run(){
-						saveProject();
+						projectmanager.saveProject();
 						savePalettes();
 						prefs.flush();
 					}
@@ -1531,12 +963,12 @@ public class Main extends Module<PixelEditor>{
 	}
 
 	void showProjectMenu(){
-		final ProjectTable table = updateProjectMenu(false);
+		final ProjectTable table = 	projectmenu.update(false);
 		projectmenu.show(stage);
 
 		new Thread(new Runnable(){
 			public void run(){
-				saveProject();
+				projectmanager.saveProject();
 				table.loaded = true;
 			}
 		}).start();
@@ -1602,13 +1034,17 @@ public class Main extends Module<PixelEditor>{
 	public void updateToolColor(){
 		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor().cpy(), drawgrid.canvas);
 	}
+	
+	public Project getCurrentProject(){
+		return projectmanager.getCurrentProject();
+	}
 
 	@Override
 	public void pause(){
 		Gdx.app.log("pedebugging", "Pausing and saving everything.");
-		saveProject();
+		projectmanager.saveProject();
 		savePalettes();
-		if(currentProject != null) prefs.putString("lastproject", currentProject.name);
+		if(getCurrentProject() != null) prefs.putString("lastproject", getCurrentProject().name);
 		prefs.flush();
 	}
 

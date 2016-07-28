@@ -14,13 +14,13 @@ public enum Tool{
 	pencil{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.drawRadius(x, y, Main.gui.getBrushSize());
+			canvas.drawRadius(x, y, Main.i.getBrushSize());
 		}
 	},
 	eraser{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.eraseRadius(x, y, Main.gui.getBrushSize());
+			canvas.eraseRadius(x, y, Main.i.getBrushSize());
 		}
 		
 		public void onColorChange(Color color, PixelCanvas canvas){
@@ -72,7 +72,7 @@ public enum Tool{
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			Color selected = canvas.getColor(x, y);
 			selected.a = 1f;
-			Main.gui.setSelectedColor(selected);
+			Main.i.setSelectedColor(selected);
 		}
 		
 		public boolean symmetric(){
@@ -104,7 +104,7 @@ public enum Tool{
 
 	undo(false, false){
 		public void onSelected(){
-			Main.gui.drawgrid.canvas.actions.undo();
+			Main.i.drawgrid.canvas.actions.undo();
 		}
 
 		public boolean selectable(){
@@ -113,7 +113,7 @@ public enum Tool{
 	},
 	redo(false, false){
 		public void onSelected(){
-			Main.gui.drawgrid.canvas.actions.redo();
+			Main.i.drawgrid.canvas.actions.redo();
 		}
 
 		public boolean selectable(){

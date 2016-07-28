@@ -17,14 +17,14 @@ public class ImagePreview extends Group{
 		
 		image = new PixmapImage(pixmap);
 		
-		AlphaImage alpha = new AlphaImage(Main.gui.drawgrid.canvas.width(), Main.gui.drawgrid.canvas.height());
-		GridImage grid = new GridImage(Main.gui.drawgrid.canvas.width(), Main.gui.drawgrid.canvas.height());
+		AlphaImage alpha = new AlphaImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
+		GridImage grid = new GridImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
 		BorderImage border = new BorderImage();
 		border.setColor(Color.CORAL);
 		
 		stack.add(alpha);
 		stack.add(image);
-		if(Main.gui.drawgrid.grid)stack.add(grid);
+		if(Main.i.drawgrid.grid)stack.add(grid);
 		stack.add(border);
 		
 		addActor(stack);

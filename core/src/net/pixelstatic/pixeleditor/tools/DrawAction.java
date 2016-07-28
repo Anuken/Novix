@@ -14,7 +14,7 @@ public class DrawAction{
 
 	public void push(int x, int y, int from, int to){
 		if(from == to) return; //ignore action that doesn't do anything
-		int key = Pos.asInt(x, y, Main.gui.drawgrid.canvas.width());
+		int key = Pos.asInt(x, y, Main.i.drawgrid.canvas.width());
 		if(positions.containsKey(key)){
 			ColorPair pos = positions.get(key);
 			pos.tocolor = to;
@@ -33,8 +33,8 @@ public class DrawAction{
 		
 		for(Integer i : keys){
 			ColorPair pos = positions.get(i);
-			int x = i % Main.gui.drawgrid.canvas.width();
-			int y = i / Main.gui.drawgrid.canvas.width();
+			int x = i % Main.i.drawgrid.canvas.width();
+			int y = i / Main.i.drawgrid.canvas.width();
 			
 			Pixmap.setBlending(Blending.None);
 			canvas.drawPixelActionless(x, y, reapply ? pos.tocolor : pos.fromcolor);

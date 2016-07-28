@@ -28,7 +28,7 @@ public class PixelCanvas implements Disposable{
 
 	public PixelCanvas(Pixmap pixmap){
 		this.pixmap = pixmap;
-		name = Main.gui.currentProject.name;
+		name = Main.i.getCurrentProject().name;
 		texture = new Texture(pixmap);
 		updateTexture();
 	}
@@ -36,7 +36,7 @@ public class PixelCanvas implements Disposable{
 	public PixelCanvas(int width, int height){
 		pixmap = new Pixmap(width, height, Format.RGBA8888);
 		texture = new Texture(pixmap);
-		name = Main.gui.currentProject.name;
+		name = Main.i.getCurrentProject().name;
 		updateTexture();
 	}
 
@@ -168,7 +168,7 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public void updateTexture(){
-		if(!Main.gui.savingProject){
+		if(!Main.i.projectmanager.isSavingProject()){
 			texture.draw(pixmap, 0, 0);
 			drawn = true;
 		}else{

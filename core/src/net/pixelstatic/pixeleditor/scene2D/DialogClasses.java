@@ -1,6 +1,7 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
 
+import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Filter;
@@ -31,7 +32,6 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 public class DialogClasses{
-	static float s = Main.s;
 
 	public static class SizeDialog extends MenuDialog{
 		VisTextField widthfield, heightfield;
@@ -44,8 +44,8 @@ public class DialogClasses{
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 
-			widthfield.setText((Main.gui.drawgrid.canvas.width()) + "");
-			heightfield.setText(Main.gui.drawgrid.canvas.height() + "");
+			widthfield.setText((Main.i.drawgrid.canvas.width()) + "");
+			heightfield.setText(Main.i.drawgrid.canvas.height() + "");
 
 			float twidth = 160 * s, theight = 40 * s;
 
@@ -103,8 +103,8 @@ public class DialogClasses{
 			heightfield = new VisTextField();
 			namefield = new VisTextField();
 
-			widthfield.setText((Main.gui.drawgrid.canvas.width()) + "");
-			heightfield.setText(Main.gui.drawgrid.canvas.height() + "");
+			widthfield.setText((Main.i.drawgrid.canvas.width()) + "");
+			heightfield.setText(Main.i.drawgrid.canvas.height() + "");
 
 			float twidth = 160 * s, theight = 40 * s;
 
@@ -191,7 +191,7 @@ public class DialogClasses{
 		public ReplaceDialog(){
 			super(Filter.replace, "Replace Colors");
 
-			from = new ColorBox(Main.gui.selectedColor());
+			from = new ColorBox(Main.i.selectedColor());
 			to = new ColorBox();
 
 			final AndroidColorPicker picker = new AndroidColorPicker(false){
@@ -199,7 +199,7 @@ public class DialogClasses{
 					selected.setColor(getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Main.gui.apicker.getRecentColors());
+			picker.setRecentColors(Main.i.apicker.getRecentColors());
 
 			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
 			dialog.getContentTable().add(picker).expand().fill();
@@ -229,7 +229,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Main.gui.stage);
+					dialog.show(Main.i.stage);
 				}
 			};
 
@@ -284,7 +284,7 @@ public class DialogClasses{
 		public ColorAlphaDialog(){
 			super(Filter.colorToAlpha, "Color to Alpha");
 
-			selected = new ColorBox(Main.gui.selectedColor());
+			selected = new ColorBox(Main.i.selectedColor());
 
 			selected.addSelectListener();
 
@@ -293,7 +293,7 @@ public class DialogClasses{
 					selected.setColor(getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Main.gui.apicker.getRecentColors());
+			picker.setRecentColors(Main.i.apicker.getRecentColors());
 
 			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
 			dialog.getContentTable().add(picker).expand().fill();
@@ -323,7 +323,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Main.gui.stage);
+					dialog.show(Main.i.stage);
 				}
 			};
 
@@ -504,12 +504,12 @@ public class DialogClasses{
 
 		public final void result(){
 			filter.apply(sourcePixmap(), pixmap(), getArgs());
-			Main.gui.drawgrid.canvas.drawPixmap(pixmap());
+			Main.i.drawgrid.canvas.drawPixmap(pixmap());
 			pixmap().dispose();
 		}
 
 		public Pixmap sourcePixmap(){
-			return Main.gui.drawgrid.canvas.pixmap;
+			return Main.i.drawgrid.canvas.pixmap;
 		}
 
 		public Pixmap pixmap(){
@@ -523,14 +523,14 @@ public class DialogClasses{
 		public SymmetryDialog(){
 			super("Edit Symmetry");
 
-			vbox = new VisCheckBox("Vertical Symmetry", Main.gui.drawgrid.vSymmetry);
-			hbox = new VisCheckBox("Horizontal Symmetry", Main.gui.drawgrid.hSymmetry);
+			vbox = new VisCheckBox("Vertical Symmetry", Main.i.drawgrid.vSymmetry);
+			hbox = new VisCheckBox("Horizontal Symmetry", Main.i.drawgrid.hSymmetry);
 
 			ChangeListener listener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					Main.gui.drawgrid.hSymmetry = hbox.isChecked();
-					Main.gui.drawgrid.vSymmetry = vbox.isChecked();
+					Main.i.drawgrid.hSymmetry = hbox.isChecked();
+					Main.i.drawgrid.vSymmetry = vbox.isChecked();
 				}
 			};
 
@@ -605,7 +605,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			Main.gui.exportPixmap(PixmapUtils.scale(Main.gui.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
+			Main.i.exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
 
@@ -615,10 +615,10 @@ public class DialogClasses{
 		public ScaleDialog(){
 			super("Scale Image");
 
-			final float aspectRatio = (float)Main.gui.drawgrid.canvas.width() / Main.gui.drawgrid.canvas.height();
+			final float aspectRatio = (float)Main.i.drawgrid.canvas.width() / Main.i.drawgrid.canvas.height();
 
-			widthfield = new VisTextField(Main.gui.drawgrid.canvas.width() + "");
-			heightfield = new VisTextField(Main.gui.drawgrid.canvas.height() + "");
+			widthfield = new VisTextField(Main.i.drawgrid.canvas.width() + "");
+			heightfield = new VisTextField(Main.i.drawgrid.canvas.height() + "");
 
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
@@ -656,8 +656,8 @@ public class DialogClasses{
 						}
 					}
 
-					float xscl = (float)Integer.parseInt(widthfield.getText()) / Main.gui.drawgrid.canvas.width();
-					float yscl = (float)Integer.parseInt(heightfield.getText()) / Main.gui.drawgrid.canvas.height();
+					float xscl = (float)Integer.parseInt(widthfield.getText()) / Main.i.drawgrid.canvas.width();
+					float yscl = (float)Integer.parseInt(heightfield.getText()) / Main.i.drawgrid.canvas.height();
 
 					xscalefield.setText(MiscUtils.displayFloat(xscl));
 					yscalefield.setText(MiscUtils.displayFloat(yscl));
@@ -681,8 +681,8 @@ public class DialogClasses{
 						}
 					}
 
-					int width = (int)(Float.parseFloat(xscalefield.getText()) * Main.gui.drawgrid.canvas.width());
-					int height = (int)(Float.parseFloat(yscalefield.getText()) * Main.gui.drawgrid.canvas.height());
+					int width = (int)(Float.parseFloat(xscalefield.getText()) * Main.i.drawgrid.canvas.width());
+					int height = (int)(Float.parseFloat(yscalefield.getText()) * Main.i.drawgrid.canvas.height());
 
 					widthfield.setText(width + "");
 					heightfield.setText(height + "");
@@ -726,10 +726,10 @@ public class DialogClasses{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
 
-				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Main.gui.drawgrid.canvas.pixmap, xscale, yscale));
+				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, xscale, yscale));
 
-				Main.gui.drawgrid.setCanvas(canvas);
-				Main.gui.updateToolColor();
+				Main.i.drawgrid.setCanvas(canvas);
+				Main.i.updateToolColor();
 			}catch(Exception e){
 				e.printStackTrace();
 				AndroidDialogs.showError(getStage(), e);
@@ -852,9 +852,9 @@ public class DialogClasses{
 			public ShiftImagePreview(){
 				stack = new Stack();
 
-				AlphaImage alpha = new AlphaImage(Main.gui.drawgrid.canvas.width(), Main.gui.drawgrid.canvas.height());
-				GridImage grid = new GridImage(Main.gui.drawgrid.canvas.width(), Main.gui.drawgrid.canvas.height());
-				image = new ShiftedImage(Main.gui.drawgrid.canvas.texture);
+				AlphaImage alpha = new AlphaImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
+				GridImage grid = new GridImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
+				image = new ShiftedImage(Main.i.drawgrid.canvas.texture);
 				controller = new ShiftController(){
 					public void shifted(int x, int y){
 						image.offsetx += x;
@@ -865,7 +865,7 @@ public class DialogClasses{
 				stack.add(alpha);
 				stack.add(image);
 
-				if(Main.gui.drawgrid.grid) stack.add(grid);
+				if(Main.i.drawgrid.grid) stack.add(grid);
 
 				stack.add(controller);
 
@@ -885,7 +885,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Main.gui.drawgrid.canvas;
+			PixelCanvas canvas = Main.i.drawgrid.canvas;
 			Pixmap temp = PixmapUtils.copy(canvas.pixmap);
 
 			int offsetx = preview.image.offsetx, offsety = preview.image.offsety;
@@ -928,17 +928,17 @@ public class DialogClasses{
 			y = Math.min(preview.controller.sely1, preview.controller.sely2);
 			y2 = Math.max(preview.controller.sely1, preview.controller.sely2);
 
-			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(Main.gui.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
+			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(Main.i.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
 
-			Main.gui.drawgrid.setCanvas(canvas);
-			Main.gui.updateToolColor();
+			Main.i.drawgrid.setCanvas(canvas);
+			Main.i.updateToolColor();
 		}
 
 		static class CropImagePreview extends ImagePreview{
 			CropController controller;
 
 			public CropImagePreview(){
-				super(Main.gui.drawgrid.canvas.pixmap);
+				super(Main.i.drawgrid.canvas.pixmap);
 				stack.add((controller = new CropController(this)));
 
 			}
@@ -1113,7 +1113,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Main.gui.drawgrid.canvas;
+			PixelCanvas canvas = Main.i.drawgrid.canvas;
 			float alpha = canvas.getAlpha();
 
 			canvas.setAlpha(1f);
@@ -1230,7 +1230,7 @@ public class DialogClasses{
 	}
 
 	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){
-		float ratio = Main.gui.drawgrid.canvas.width() / Main.gui.drawgrid.canvas.height();
+		float ratio = Main.i.drawgrid.canvas.width() / Main.i.drawgrid.canvas.height();
 
 		float isize = 400;
 		float width = isize, height = isize / ratio;
