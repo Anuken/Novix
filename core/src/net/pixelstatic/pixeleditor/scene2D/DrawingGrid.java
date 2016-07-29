@@ -19,18 +19,20 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 
 public class DrawingGrid extends Actor{
-	public PixelCanvas canvas;
-	public Pos selected = new Pos();
-	GridImage gridimage;
-	AlphaImage alphaimage;
-	public boolean grid = true, cursormode = true;;
 	private float cursorx, cursory;
-	int tpointer;
-	int touches = 0;
-	boolean moving;
+	private int tpointer;
+	private int touches = 0;
+	private boolean moving;
+	private Pos selected = new Pos();
+	private GridImage gridimage;
+	private AlphaImage alphaimage;
+	private final boolean clip = true;
+	
+	public PixelCanvas canvas;
+	public boolean grid = true, cursormode = true;
 	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
-	public boolean clip = true;
 	public boolean vSymmetry = false, hSymmetry = false;
+	public int brushSize;
 
 	public DrawingGrid(){
 		gridimage = new GridImage(1, 1);

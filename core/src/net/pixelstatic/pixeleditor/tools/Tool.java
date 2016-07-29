@@ -14,13 +14,13 @@ public enum Tool{
 	pencil{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.drawRadius(x, y, Main.i.getBrushSize());
+			canvas.drawRadius(x, y, Main.i.drawgrid.brushSize);
 		}
 	},
 	eraser{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.eraseRadius(x, y, Main.i.getBrushSize());
+			canvas.eraseRadius(x, y, Main.i.drawgrid.brushSize);
 		}
 		
 		public void onColorChange(Color color, PixelCanvas canvas){
