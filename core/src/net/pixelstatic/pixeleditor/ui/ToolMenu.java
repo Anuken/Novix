@@ -2,13 +2,35 @@ package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.Textures;
+import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ContrastDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.CropDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ExportScaledDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ScaleDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ShiftDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
+import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.dialogs.AndroidDialogs;
+import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBar;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -54,9 +76,13 @@ public class ToolMenu extends VisTable{
 		return button;
 	}
 	
-	private void addMenu(String name){
+	private void addMenu(String name, MenuButton... buttonlist){
 		final ButtonMenu buttons = new ButtonMenu(name);
-		buttons.addItem("this is a test", "some description...");
+		buttons.getContentTable().top().left();
+		for(MenuButton button : buttonlist){
+			buttons.getContentTable().add(button).width(350*s).padTop(10*s).row();
+		}
+		//buttons.addItem("this is a test", "some description...");
 		
 		addMenuButton(name+ "...").addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -65,20 +91,45 @@ public class ToolMenu extends VisTable{
 		});
 	}
 	
+	private static class MenuButton extends VisTextButton{
+		public MenuButton(String name, String desc){
+			super(name);
+			
+			getLabel().setAlignment(Align.topLeft);
+			left();
+			
+			row(); //this is necessary for a new row... apparently?
+			add();
+			row();
+			
+			VisLabel desclabel = new VisLabel(desc);
+			desclabel.setColor(Color.GRAY);
+			
+			add(desclabel).align(Align.topLeft).padTop(10*s).padBottom(3*s);
+			
+			addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					
+					MenuButton.this.clicked();
+				}
+			});
+		}
+		
+		public void clicked(){
+			
+		}
+	}
+	
 	private static class ButtonMenu extends VisDialog{
 		public ButtonMenu(String name){
 			super(name, "dialog");
-		}
-		
-		public void addItem(String name, String desc){
-			VisTextButton button = new VisTextButton(name);
-			button.row();
-			button.add(new VisLabel(desc));
-			getContentTable().add(button);
+			MiscUtils.addHideButton(this);
 		}
 	}
 	
 	private void setupMenu(){
+		final Stage stage = main.stage;
+		
 		VisTextButton menu = addMenuButton("Menu");
 		menu.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -86,151 +137,105 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		addMenu("Image");
-		addMenu("Filters");
-		addMenu("Edit");
-		addMenu("File");
-		
-		/*
-		VisTextButton ibutton = addMenuButton("image...");
-		VisTextButton fbutton = addMenuButton("filters...");
-		VisTextButton tbutton = addMenuButton("edit..");
-		VisTextButton fibutton = addMenuButton("file..");
-		
-		/*
-		VisTextButton ibutton = addMenuButton("image...");
-
-		final PopupMenu imageMenu = new PopupMenu();
-
-		imageMenu.addItem(new ExtraMenuItem(ibutton, "resize", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		addMenu("Image",
+		new MenuButton("Resize", "Change the canvas size."){
+			public void clicked(){
 				new SizeDialog("Resize Canvas"){
 					@Override
 					public void result(int width, int height){
-						drawgrid.setCanvas(drawgrid.canvas.asResized(width, height));
-						updateToolColor();
+						main.drawgrid.setCanvas(main.drawgrid.canvas.asResized(width, height));
+						main.updateToolColor();
 					}
 				}.show(stage);
 			}
-		}));
-
-		imageMenu.addItem(new ExtraMenuItem(ibutton, "crop", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Crop", "Cut out a part of the image."){
+			public void clicked(){
 				new CropDialog().show(stage);
 			}
-		}));
-
-		imageMenu.addItem(new ExtraMenuItem(ibutton, "clear", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Clear", "Clear the image."){
+			public void clicked(){
 				new ClearDialog().show(stage);
 			}
-		}));
-		imageMenu.addItem(new ExtraMenuItem(ibutton, "symmetry", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Symmetry", "Configure symmetry."){
+			public void clicked(){
 				new SymmetryDialog().show(stage);
 			}
-		}));
-
-		ibutton.addListener(new MenuListener(imageMenu, ibutton));
-
-		VisTextButton fbutton = addMenuButton("filters...");
-
-		final PopupMenu filterMenu = new PopupMenu();
-		filterMenu.addItem(new ExtraMenuItem(fbutton, "colorize", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		});
+		
+		addMenu("Filters", 
+		new MenuButton("Colorize", "Configure image hue,\nbrightness and saturation."){
+			public void clicked(){
 				new ColorizeDialog().show(stage);
 			}
-		}));
-		filterMenu.addItem(new ExtraMenuItem(fbutton, "invert", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Invert", "Invert the image color."){
+			public void clicked(){
 				new InvertDialog().show(stage);
 			}
-		}));
-		filterMenu.addItem(new ExtraMenuItem(fbutton, "replace", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Replace", "Replace a color with\nanother color."){
+			public void clicked(){
 				new ReplaceDialog().show(stage);
 			}
-		}));
-		filterMenu.addItem(new ExtraMenuItem(fbutton, "contrast", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Contrast", "Change image contrast."){
+			public void clicked(){
 				new ContrastDialog().show(stage);
 			}
-		}));
-		filterMenu.addItem(new ExtraMenuItem(fbutton, "color to alpha", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Erase Color", "Remove a certain color\nfrom the image."){
+			public void clicked(){
 				new ColorAlphaDialog().show(stage);
 			}
-		}));
-
-		fbutton.addListener(new MenuListener(filterMenu, fbutton));
-
-		VisTextButton tbutton = addMenuButton("edit..");
-
-		final PopupMenu transformMenu = new PopupMenu();
-		transformMenu.addItem(new ExtraMenuItem(tbutton, "flip", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		});
+		
+		addMenu("Edit", 
+		new MenuButton("Flip", "Flip the image."){
+			public void clicked(){
 				new FlipDialog().show(stage);
 			}
-		}));
-		transformMenu.addItem(new ExtraMenuItem(tbutton, "rotate", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Rotate", "Rotate the image."){
+			public void clicked(){
 				new RotateDialog().show(stage);
 			}
-		}));
-		transformMenu.addItem(new ExtraMenuItem(tbutton, "scale", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Scale", "Scale the image."){
+			public void clicked(){
 				new ScaleDialog().show(stage);
 			}
-		}));
-		transformMenu.addItem(new ExtraMenuItem(tbutton, "shift", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Shift", "Move the image."){
+			public void clicked(){
 				new ShiftDialog().show(stage);
 			}
-		}));
-
-		tbutton.addListener(new MenuListener(transformMenu, tbutton));
-
-		VisTextButton fibutton = addMenuButton("file..");
-
-		final PopupMenu fileMenu = new PopupMenu();
-
-		fileMenu.addItem(new ExtraMenuItem(fibutton, "export", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		});
+		
+		addMenu("File",
+		new MenuButton("Export", "Export the image as a PNG."){
+			public void clicked(){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
 					public void fileSelected(FileHandle file){
-						exportPixmap(drawgrid.canvas.pixmap, file);
+						DialogClasses.exportPixmap(main.drawgrid.canvas.pixmap, file);
 					}
 				}.show(stage);
 			}
-		}));
-		fileMenu.addItem(new ExtraMenuItem(fibutton, "export x", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Export Scaled", "Scale, then export the image."){
+			public void clicked(){
 				new ExportScaledDialog().show(stage);
 			}
-		}));
-		fileMenu.addItem(new ExtraMenuItem(fibutton, "open", new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
+		},
+		new MenuButton("Open", "Open an image file."){
+			public void clicked(){
 				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
-							drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
-							tool.onColorChange(selectedColor(), drawgrid.canvas);
+							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
+							main.tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();
 							AndroidDialogs.showError(stage, e);
@@ -238,10 +243,8 @@ public class ToolMenu extends VisTable{
 					}
 				}.show(stage);
 			}
-		}));
+		});
 		
-		fibutton.addListener(new MenuListener(fileMenu, fibutton));
-		*/
 		final VisLabel infolabel = new VisLabel();
 	
 		brushslider = new VisSlider(1, 10, 0.01f, true);
@@ -384,7 +387,7 @@ public class ToolMenu extends VisTable{
 		othertable.add(alphabar).padTop(20).padBottom(20);
 
 	}
-	
+
 	public float getPrefWidth(){
 		return Gdx.graphics.getWidth();
 	}
