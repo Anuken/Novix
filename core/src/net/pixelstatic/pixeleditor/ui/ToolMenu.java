@@ -49,19 +49,54 @@ public class ToolMenu extends VisTable{
 	
 	private VisTextButton addMenuButton(String text){
 		float height = 70f;
-
 		VisTextButton button = new VisTextButton(text);
 		menutable.top().left().add(button).width(Gdx.graphics.getWidth() / 5 - 3).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
 		return button;
 	}
 	
+	private void addMenu(String name){
+		final ButtonMenu buttons = new ButtonMenu(name);
+		buttons.addItem("this is a test", "some description...");
+		
+		addMenuButton(name+ "...").addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				buttons.show(getStage());
+			}
+		});
+	}
+	
+	private static class ButtonMenu extends VisDialog{
+		public ButtonMenu(String name){
+			super(name, "dialog");
+		}
+		
+		public void addItem(String name, String desc){
+			VisTextButton button = new VisTextButton(name);
+			button.row();
+			button.add(new VisLabel(desc));
+			getContentTable().add(button);
+		}
+	}
+	
 	private void setupMenu(){
-		VisTextButton menu = addMenuButton("menu");
+		VisTextButton menu = addMenuButton("Menu");
 		menu.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				main.openProjectMenu();
 			}
 		});
+		
+		addMenu("Image");
+		addMenu("Filters");
+		addMenu("Edit");
+		addMenu("File");
+		
+		/*
+		VisTextButton ibutton = addMenuButton("image...");
+		VisTextButton fbutton = addMenuButton("filters...");
+		VisTextButton tbutton = addMenuButton("edit..");
+		VisTextButton fibutton = addMenuButton("file..");
+		
 		/*
 		VisTextButton ibutton = addMenuButton("image...");
 

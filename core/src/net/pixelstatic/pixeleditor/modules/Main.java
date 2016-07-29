@@ -17,7 +17,6 @@ import net.pixelstatic.pixeleditor.ui.*;
 import net.pixelstatic.pixeleditor.ui.ProjectMenu.ProjectTable;
 import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
 import net.pixelstatic.utils.modules.Module;
@@ -28,7 +27,8 @@ import net.pixelstatic.utils.scene2D.SmoothCollapsibleWidget;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,14 +42,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
-import com.kotcrab.vis.ui.widget.file.FileChooser;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
@@ -64,18 +64,13 @@ public class Main extends Module<PixelEditor>{
 	public Preferences prefs;
 	public ProjectManager projectmanager;
 	public PaletteManager palettemanager;
-	VisTable tooltable;
 	VisTable colortable;
-	VisTable projecttable;
-	VisTable pickertable;
 	public SettingsMenu settingsmenu;
 	public ProjectMenu projectmenu;
 	public PaletteMenu palettemenu;
 	public ToolMenu toolmenu;
 	CollapseButton colorcollapsebutton, toolcollapsebutton;
 	SmoothCollapsibleWidget colorcollapser, toolcollapser;
-	FileChooser currentChooser;
-	public Json json;
 	ColorBox[] boxes;
 	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
@@ -108,19 +103,8 @@ public class Main extends Module<PixelEditor>{
 		projectmenu.update(true);
 	}
 
-	public void exportPixmap(Pixmap pixmap, FileHandle file){
-		try{
-			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
-			PixmapIO.writePNG(file, drawgrid.canvas.pixmap);
-			AndroidDialogs.showInfo(stage, "Image exported to " + file + ".");
-		}catch(Exception e){
-			e.printStackTrace();
-			AndroidDialogs.showError(stage, e);
-		}
-	}
-
 	void setupTools(){
-		tooltable = new VisTable();
+		final VisTable tooltable = new VisTable();
 		tooltable.setFillParent(true);
 		stage.addActor(tooltable);
 		
@@ -193,7 +177,7 @@ public class Main extends Module<PixelEditor>{
 		colortable.setFillParent(true);
 		stage.addActor(colortable);
 
-		pickertable = new VisTable(){
+		VisTable pickertable = new VisTable(){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
@@ -338,7 +322,90 @@ public class Main extends Module<PixelEditor>{
 
 		stage.addActor(drawgrid);
 	}
+	
+	public void setPalette(Palette palette){
+		paletteColor = 0;
+		palettemanager.setCurrentPalette(palette);
+		prefs.putString("lastpalette", palette.name);
+		prefs.flush();
+		updateColorMenu();
+		setSelectedColor(palette.colors[0]);
+		setupBoxColors();
+		palettemenu.update();
+	}
 
+	public void openProjectMenu(){
+		final ProjectTable table = 	projectmenu.update(false);
+		projectmenu.show(stage);
+
+		new Thread(new Runnable(){
+			public void run(){
+				projectmanager.saveProject();
+				table.loaded = true;
+			}
+		}).start();
+	}
+
+	public Color selectedColor(){
+		return getCurrentPalette().colors[paletteColor];
+	}
+
+	public void updateSelectedColor(Color color){
+		boxes[paletteColor].setColor(color);
+		getCurrentPalette().colors[paletteColor] = color.cpy();
+		toolmenu.updateColor(color.cpy());
+		updateToolColor();
+	}
+
+	public void setSelectedColor(Color color){
+		updateSelectedColor(color);
+		apicker.setSelectedColor(color);
+		updateToolColor();
+	}
+
+	public void updateToolColor(){
+		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor().cpy(), drawgrid.canvas);
+	}
+	
+	public Project getCurrentProject(){
+		return projectmanager.getCurrentProject();
+	}
+	
+	public Palette getCurrentPalette(){
+		return palettemanager.getCurrentPalette();
+	}
+	
+	public void loadFonts(){
+		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
+		Skin skin = new Skin();
+
+		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
+		if(atlasFile.exists()){
+			TextureAtlas atlas = new TextureAtlas(atlasFile);
+			try{
+				Field field = skin.getClass().getDeclaredField("atlas");
+				field.setAccessible(true);
+				field.set(skin, atlas);
+			}catch(Exception e){
+				throw new RuntimeException(e);
+			}
+			skin.addRegions(atlas);
+		}
+
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = (int)(22 * MiscUtils.densityScale());
+		BitmapFont font = generator.generateFont(parameter);
+
+		skin.add("default-font", font);
+
+		skin.load(skinFile);
+
+		VisUI.load(skin);
+
+		generator.dispose();
+	}
+	
 	public Main(){
 		Gdx.graphics.setContinuousRendering(false);
 
@@ -350,7 +417,6 @@ public class Main extends Module<PixelEditor>{
 
 		projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("pixelprojects");
 		projectDirectory.mkdirs();
-		json = new Json();
 		prefs = Gdx.app.getPreferences("pixeleditor");
 
 		palettemanager = new PaletteManager(this);
@@ -398,95 +464,10 @@ public class Main extends Module<PixelEditor>{
 		//for unpacking the atlas
 		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));
 	}
-
-	public void loadFonts(){
-		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
-		Skin skin = new Skin();
-
-		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
-		if(atlasFile.exists()){
-			TextureAtlas atlas = new TextureAtlas(atlasFile);
-			try{
-				Field field = skin.getClass().getDeclaredField("atlas");
-				field.setAccessible(true);
-				field.set(skin, atlas);
-			}catch(Exception e){
-				throw new RuntimeException(e);
-			}
-			skin.addRegions(atlas);
-		}
-
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = (int)(22 * MiscUtils.densityScale());
-		//if(Gdx.app.getType() == ApplicationType.Desktop) parameter.size = 22;
-		BitmapFont font = generator.generateFont(parameter);
-
-		skin.add("default-font", font);
-
-		skin.load(skinFile);
-
-		VisUI.load(skin);
-
-		generator.dispose();
-	}
 	
-	public void setPalette(Palette palette){
-		paletteColor = 0;
-		palettemanager.setCurrentPalette(palette);
-		prefs.putString("lastpalette", palette.name);
-		prefs.flush();
-		updateColorMenu();
-		setSelectedColor(palette.colors[0]);
-		setupBoxColors();
-		palettemenu.update();
-	}
-
-	public void openProjectMenu(){
-		final ProjectTable table = 	projectmenu.update(false);
-		projectmenu.show(stage);
-
-		new Thread(new Runnable(){
-			public void run(){
-				projectmanager.saveProject();
-				table.loaded = true;
-			}
-		}).start();
-	}
-
-
-
+	@Override
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
-	}
-
-	public Color selectedColor(){
-		return getCurrentPalette().colors[paletteColor];
-	}
-
-	public void updateSelectedColor(Color color){
-		boxes[paletteColor].setColor(color);
-		getCurrentPalette().colors[paletteColor] = color.cpy();
-		toolmenu.updateColor(color.cpy());
-		updateToolColor();
-	}
-
-	public void setSelectedColor(Color color){
-		updateSelectedColor(color);
-		apicker.setSelectedColor(color);
-		updateToolColor();
-	}
-
-	public void updateToolColor(){
-		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor().cpy(), drawgrid.canvas);
-	}
-	
-	public Project getCurrentProject(){
-		return projectmanager.getCurrentProject();
-	}
-	
-	public Palette getCurrentPalette(){
-		return palettemanager.getCurrentPalette();
 	}
 
 	@Override

@@ -15,8 +15,7 @@ import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -605,7 +604,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			Main.i.exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
+			exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
 
@@ -1226,6 +1225,17 @@ public class DialogClasses{
 
 		public void result(){
 
+		}
+	}
+	
+	public static void exportPixmap(Pixmap pixmap, FileHandle file){
+		try{
+			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
+			PixmapIO.writePNG(file, Main.i.drawgrid.canvas.pixmap);
+			AndroidDialogs.showInfo(Main.i.stage, "Image exported to " + file + ".");
+		}catch(Exception e){
+			e.printStackTrace();
+			AndroidDialogs.showError(Main.i.stage, e);
 		}
 	}
 
