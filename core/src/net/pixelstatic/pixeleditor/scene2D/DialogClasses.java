@@ -6,6 +6,7 @@ import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
+import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
@@ -132,6 +133,7 @@ public class DialogClasses{
 			widthfield.addListener(oklistener);
 			heightfield.addListener(oklistener);
 			namefield.addListener(oklistener);
+			widthfield.fire(new ChangeListener.ChangeEvent());
 
 		}
 
@@ -605,6 +607,68 @@ public class DialogClasses{
 
 		public void result(){
 			exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
+		}
+	}
+	
+	public static class OpenProjectFileDialog extends MenuDialog{
+		VisTextField field;
+		VisTextField directory;
+
+		public OpenProjectFileDialog(){
+			super("Open Project File");
+
+			field = new VisTextField("");
+			field.setTextFieldFilter(new FloatFilter());
+
+			VisTextButton button = new VisTextButton("...");
+
+			directory = new VisTextField("");
+			directory.setTouchable(Touchable.disabled);
+
+			button.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
+						public void fileSelected(FileHandle file){
+							directory.setText(file.file().getAbsolutePath());
+							MiscUtils.moveTextToSide(directory);
+						}
+					}.show(getStage());
+				}
+			});
+			
+			ChangeListener oklistener = new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
+				}
+			};
+			
+			field.addListener(oklistener);
+			directory.addListener(oklistener);
+			
+			field.fire(new ChangeListener.ChangeEvent());
+			directory.fire(new ChangeListener.ChangeEvent());
+
+			float sidepad = 20 * s;
+
+			float height = 45 * s;
+
+			getContentTable().add(new VisLabel("File:")).padTop(15 * s).padLeft(sidepad);
+			getContentTable().add(directory).size(150 * s, 50 * s).padTop(15 * s);
+			getContentTable().add(button).size(50 * s).padTop(15 * s).padRight(sidepad);
+
+			getContentTable().row();
+
+			getContentTable().add(new VisLabel("Name:")).padTop(15 * s).padBottom(30 * s).padLeft(sidepad);
+			getContentTable().add(field).grow().height(height).padTop(15 * s).padBottom(30 * s).colspan(2).padRight(sidepad);
+		}
+
+		public void result(){
+			FileHandle file = Gdx.files.absolute(directory.getText());
+			file.copyTo(Main.i.projectDirectory.child(field.getText() + ".png"));
+			Project project = Main.i.projectmanager.loadProject(file);
+			Main.i.projectmanager.openProject(project);
+			//exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
 

@@ -5,9 +5,8 @@ import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.modules.Main;
-import net.pixelstatic.pixeleditor.scene2D.BorderImage;
-import net.pixelstatic.pixeleditor.scene2D.StaticPreviewImage;
-import net.pixelstatic.pixeleditor.scene2D.TallMenuItem;
+import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.AnimatedImage;
 
@@ -48,18 +47,56 @@ public class ProjectMenu extends VisDialog{
 		
 		VisTable newtable = new VisTable();
 		
-		PopupMenu popup = new PopupMenu();
-		popup.addItem(new TallMenuItem("New", new ChangeListener(){
+		final float newbuttonwidth = 190*s;
+		
+		final VisTextButton newbutton = new VisTextButton("New Project");
+		
+		final PopupMenu popup = new PopupMenu(){
+			public float getPrefWidth(){
+				return newbuttonwidth;
+			}
+		};
+		popup.addItem(new TallMenuItem("New...", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				
+				main.projectmanager.newProject();
 			}
-		}));
+		}){
+			public float getPrefWidth(){
+				return newbuttonwidth;
+			}
+		});
+		popup.addItem(new TallMenuItem("From File..", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				new OpenProjectFileDialog().show(main.stage);
+				/*
+				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
+					public void fileSelected(FileHandle file){
+						try{
+							file.copyTo(dest);
+							/*
+							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
+							main.tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
+							
+						}catch(Exception e){
+							e.printStackTrace();
+							AndroidDialogs.showError(main.stage, e);
+						}
+					}
+				}.show(main.stage);
+				*/
+			}
+		}){
+			public float getPrefWidth(){
+				return newbuttonwidth;
+			}
+		});
 		
-		VisTextButton newbutton = new VisTextButton("New Project");
 		newbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.projectmanager.newProject();
+				popup.showMenu(main.stage, newbutton);
+				//main.projectmanager.newProject();
 			}
 		});
 
@@ -73,7 +110,7 @@ public class ProjectMenu extends VisDialog{
 		});
 		
 
-		newtable.left().add(newbutton).padBottom(6 * s).size(190 * s, 60 * s);
+		newtable.left().add(newbutton).padBottom(6 * s).size(newbuttonwidth, 60 * s);
 		newtable.left().add().grow();
 		newtable.left().add(settingsbutton).padBottom(6 * s).size(120 * s, 60 * s).align(Align.topRight);
 
