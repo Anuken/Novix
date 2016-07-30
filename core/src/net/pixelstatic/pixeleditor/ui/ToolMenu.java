@@ -32,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -45,6 +46,7 @@ public class ToolMenu extends VisTable{
 	private VisTable menutable, optionstable;
 	private VisSlider brushslider;
 	private ColorBar alphabar;
+	private static ButtonMenu currentMenu;
 	
 	public ToolMenu(Main main){
 		this.main = main;
@@ -82,11 +84,25 @@ public class ToolMenu extends VisTable{
 		for(MenuButton button : buttonlist){
 			buttons.getContentTable().add(button).width(350*s).padTop(10*s).row();
 		}
+		
+		VisTextButton backbutton = new VisTextButton("Back");
+		backbutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				currentMenu.hide();
+			}
+		});
+		MiscUtils.addIconToButton(backbutton, new Image(Textures.getDrawable("icon-arrow-left")), 40*s);
+		backbutton.getLabelCell().padRight(40);
+		
+		buttons.getContentTable().row();
+		buttons.getContentTable().add(new Separator()).padTop(10*s).growX().row();
+		buttons.getButtonsTable().add(backbutton).height(60*s).width(350*s);
 		//buttons.addItem("this is a test", "some description...");
 		
 		addMenuButton(name+ "...").addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				buttons.show(getStage());
+				currentMenu = buttons;
 			}
 		});
 	}
@@ -109,8 +125,8 @@ public class ToolMenu extends VisTable{
 			
 			addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					
 					MenuButton.this.clicked();
+					currentMenu.hide();
 				}
 			});
 		}
@@ -123,7 +139,9 @@ public class ToolMenu extends VisTable{
 	private static class ButtonMenu extends VisDialog{
 		public ButtonMenu(String name){
 			super(name, "dialog");
-			MiscUtils.addHideButton(this);
+			getTitleLabel().setColor(Color.CORAL);
+			getTitleTable().row();
+			getTitleTable().add(new Separator()).growX();
 		}
 	}
 	

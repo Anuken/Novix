@@ -17,7 +17,7 @@ public class StaticPreviewImage extends Group{
 
 		BorderImage border = new BorderImage();
 		border.setColor(Color.CORAL);
-		AlphaImage alpha = new AlphaImage(4, 4);
+		AlphaImage alpha = new AlphaImage(8, 8);
 
 		stack = new Stack();
 
