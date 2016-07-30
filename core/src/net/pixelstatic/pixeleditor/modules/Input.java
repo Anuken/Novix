@@ -3,6 +3,7 @@ package net.pixelstatic.pixeleditor.modules;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
+import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.modules.Module;
 
 import com.badlogic.gdx.*;
@@ -10,7 +11,9 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.kotcrab.vis.ui.FocusManager;
+import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisTextField;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
@@ -50,6 +53,13 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode){
+		if(Main.i.stage.getScrollFocus() != null)
+		if(keycode == Keys.BACK){
+			Actor actor = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
+			if(actor instanceof VisDialog){
+				((VisDialog)actor).hide();
+			}
+		}
 		return false;
 	}
 

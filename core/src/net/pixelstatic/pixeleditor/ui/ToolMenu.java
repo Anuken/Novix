@@ -121,7 +121,7 @@ public class ToolMenu extends VisTable{
 			VisLabel desclabel = new VisLabel(desc);
 			desclabel.setColor(Color.GRAY);
 			
-			add(desclabel).align(Align.topLeft).padTop(10*s).padBottom(3*s);
+			add(desclabel).align(Align.topLeft).padTop(15*s).padBottom(5*s);
 			
 			addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -141,7 +141,7 @@ public class ToolMenu extends VisTable{
 			super(name, "dialog");
 			getTitleLabel().setColor(Color.CORAL);
 			getTitleTable().row();
-			getTitleTable().add(new Separator()).growX();
+			getTitleTable().add(new Separator()).growX().padTop(2*s);
 		}
 	}
 	

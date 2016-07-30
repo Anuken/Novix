@@ -93,7 +93,7 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
-				if(pointer != 1 && Gdx.app.getType() != ApplicationType.Desktop) return; //not the second pointer
+				if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop) return; //not the second pointer
 				
 				float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
 				float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
@@ -122,7 +122,8 @@ public class DrawingGrid extends Actor{
 						int newx = (int)((cursorx+currentx) / (canvasScale() * zoom)), newy = (int)((cursory+currenty) / (canvasScale() * zoom));
 
 						if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Main.i.tool.drawOnMove) processToolTap(newx, newy);
-
+						
+						
 						selected.set(newx, newy);
 					}else{
 						int newx = (int)((cursorx+currentx) / (canvasScale() * zoom)), newy = (int)((cursory+currenty) / (canvasScale() * zoom));
@@ -135,11 +136,13 @@ public class DrawingGrid extends Actor{
 				if(cursormode){
 					if(pointer != tpointer || !Main.i.tool.moveCursor()) return;
 
-					cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
-					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+					
 
 					cursorx += deltax;
 					cursory += deltay;
+					
+					cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
+					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
 
 				}else{
 					cursorx = x;

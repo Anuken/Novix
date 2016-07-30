@@ -7,18 +7,18 @@ import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.BorderImage;
 import net.pixelstatic.pixeleditor.scene2D.StaticPreviewImage;
+import net.pixelstatic.pixeleditor.scene2D.TallMenuItem;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.AnimatedImage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.widget.*;
@@ -47,6 +47,14 @@ public class ProjectMenu extends VisDialog{
 		pane.setOverscroll(false, false);
 		
 		VisTable newtable = new VisTable();
+		
+		PopupMenu popup = new PopupMenu();
+		popup.addItem(new TallMenuItem("New", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				
+			}
+		}));
 		
 		VisTextButton newbutton = new VisTextButton("New Project");
 		newbutton.addListener(new ClickListener(){

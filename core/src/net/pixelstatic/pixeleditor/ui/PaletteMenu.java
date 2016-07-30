@@ -41,6 +41,7 @@ public class PaletteMenu extends VisDialog{
 		float scrolly = getContentTable().getChildren().size == 0 ? 0 : ((ScrollPane)getContentTable().getChildren().first()).getScrollPercentY();
 
 		getContentTable().clearChildren();
+		getButtonsTable().clearChildren();
 
 		class PaletteListener extends ClickListener{
 			PaletteWidget widget;
@@ -174,7 +175,7 @@ public class PaletteMenu extends VisDialog{
 
 		pack();
 
-		getStage().setScrollFocus(pane);
+		main.stage.setScrollFocus(pane);
 
 		pane.setSmoothScrolling(false);
 		pane.setScrollPercentY(scrolly);
