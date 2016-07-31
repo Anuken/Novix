@@ -8,7 +8,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GestureManager implements GestureListener{
 	private Main main;
-	private boolean nearToolMenu = false, nearColorMenu;
+	private float touchy;
+	private Vector2 vector = new Vector2();
+	private final float flingvelocity = 400;
 	
 	public GestureManager(Main main){
 		this.main = main;
@@ -16,11 +18,15 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button){
+		//touchx = x;
+		touchy = Gdx.graphics.getHeight() - y;
+		/*
 		float tooltop = main.toolmenu.localToStageCoordinates(new Vector2()).y + main.toolmenu.getHeight();
 		float colortop = main.toolmenu.localToStageCoordinates(new Vector2()).y + main.toolmenu.getHeight();
 		
 		nearToolMenu = !main.toolMenuCollapsed() && Gdx.graphics.getHeight() - y > tooltop - 60;
 		nearColorMenu = !main.colorMenuCollapsed() && Gdx.graphics.getHeight() - y > tooltop - 60;
+		*/
 		return false;
 	}
 
@@ -38,12 +44,17 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
-		System.out.println(nearToolMenu);
-		if(nearToolMenu && velocityY > 400){
+		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0,0)).y + main.toolmenu.getHeight();
+		float colortop = main.pickertable.localToStageCoordinates(vector.set(0,0)).y;
+		
+		if(!main.toolMenuCollapsed() && touchy > tooltop - 60 && velocityY > flingvelocity){
 			main.collapseToolMenu();
 		}
 		
-		System.out.printf("Fling: %f, %f\n", velocityX, velocityY);
+		if(!main.colorMenuCollapsed() && touchy < colortop + 320 && velocityY < flingvelocity){
+			main.collapseColorMenu();
+		}
+		
 		return false;
 	}
 
