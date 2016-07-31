@@ -19,6 +19,7 @@ import com.kotcrab.vis.ui.widget.VisTextField;
 
 public class Input extends Module<PixelEditor> implements InputProcessor{
 	private Input input;
+	private Vector2 vector = new Vector2();
 
 	@Override
 	public void update(){
@@ -55,8 +56,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode){
-		if(Main.i.stage.getScrollFocus() != null)
-		if(keycode == Keys.BACK){
+		if(Main.i.stage.getScrollFocus() != null) if(keycode == Keys.BACK){
 			Actor actor = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
 			if(actor instanceof VisDialog){
 				((VisDialog)actor).hide();
@@ -82,6 +82,18 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button){
+		
+		if(Main.i.stage.getScrollFocus() != null){
+			Actor parent = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
+			
+			if( !(parent instanceof VisDialog)) return false;
+			
+			VisDialog dialog = (VisDialog)parent;
+			
+			if(!MiscUtils.mouseOnActor(dialog, vector)){
+				dialog.hide();
+			}
+		}
 		return false;
 	}
 
@@ -183,9 +195,8 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			}
 
 			lastpinch.sub(alast);
-			
+
 			drawgrid().moveOffset(lastpinch.x / drawgrid().zoom, -lastpinch.y / drawgrid().zoom);
-			
 
 			lastpinch = alast;
 
