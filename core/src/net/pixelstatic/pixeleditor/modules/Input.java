@@ -1,6 +1,7 @@
 package net.pixelstatic.pixeleditor.modules;
 
 import net.pixelstatic.pixeleditor.PixelEditor;
+import net.pixelstatic.pixeleditor.managers.GestureManager;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.MiscUtils;
@@ -44,6 +45,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		GestureDetector gesture = new GestureDetector(20, 0.5f, 2, 0.15f, new GestureDetectorListener());
 
 		InputMultiplexer plex = new InputMultiplexer();
+		plex.addProcessor(new GestureDetector(20, 0.5f, 2, 0.15f, new GestureManager(Main.i)));
 		plex.addProcessor(this);
 		plex.addProcessor(this.getModule(Main.class).stage);
 		plex.addProcessor(gesture);

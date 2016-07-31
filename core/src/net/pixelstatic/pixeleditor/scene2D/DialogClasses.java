@@ -618,7 +618,6 @@ public class DialogClasses{
 			super("Open Project File");
 
 			field = new VisTextField("");
-			field.setTextFieldFilter(new FloatFilter());
 
 			VisTextButton button = new VisTextButton("...");
 
@@ -631,6 +630,7 @@ public class DialogClasses{
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
 							MiscUtils.moveTextToSide(directory);
+							directory.fire(new ChangeListener.ChangeEvent());
 						}
 					}.show(getStage());
 				}
@@ -665,8 +665,9 @@ public class DialogClasses{
 
 		public void result(){
 			FileHandle file = Gdx.files.absolute(directory.getText());
-			file.copyTo(Main.i.projectDirectory.child(field.getText() + ".png"));
-			Project project = Main.i.projectmanager.loadProject(file);
+			FileHandle to = Main.i.projectDirectory.child(field.getText() + ".png");
+			file.copyTo(to);
+			Project project = Main.i.projectmanager.loadProject(to);
 			Main.i.projectmanager.openProject(project);
 			//exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}

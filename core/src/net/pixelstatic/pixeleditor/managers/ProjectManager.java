@@ -169,6 +169,7 @@ public class ProjectManager{
 	}
 
 	public Project loadProject(FileHandle file){
+		if(!file.parent().equals(main.projectDirectory)) throw new IllegalArgumentException("File " + file + " is not in the project directory!");
 		Project project = new Project(file);
 		projects.put(project.name, project);
 		return project;

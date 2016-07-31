@@ -64,7 +64,7 @@ public class Main extends Module<PixelEditor>{
 	public Preferences prefs;
 	public ProjectManager projectmanager;
 	public PaletteManager palettemanager;
-	VisTable colortable;
+	public VisTable colortable, pickertable;
 	public SettingsMenu settingsmenu;
 	public ProjectMenu projectmenu;
 	public PaletteMenu palettemenu;
@@ -81,7 +81,7 @@ public class Main extends Module<PixelEditor>{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
-
+		
 		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
@@ -177,11 +177,12 @@ public class Main extends Module<PixelEditor>{
 		colortable.setFillParent(true);
 		stage.addActor(colortable);
 
-		VisTable pickertable = new VisTable(){
+		pickertable = new VisTable(){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
 		};
+		
 		pickertable.background("button-window-bg");
 
 		apicker = new AndroidColorPicker(){
@@ -373,6 +374,22 @@ public class Main extends Module<PixelEditor>{
 	
 	public Palette getCurrentPalette(){
 		return palettemanager.getCurrentPalette();
+	}
+	
+	public boolean toolMenuCollapsed(){
+		return toolcollapser.isCollapsed();
+	}
+	
+	public boolean colorMenuCollapsed(){
+		return colorcollapser.isCollapsed();
+	}
+	
+	public void collapseToolMenu(){
+		((ClickListener)toolcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
+	}
+	
+	public void collapseColorMenu(){
+		((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
 	}
 	
 	public void loadFonts(){
