@@ -18,27 +18,17 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button){
-		//touchx = x;
 		touchy = Gdx.graphics.getHeight() - y;
-		/*
-		float tooltop = main.toolmenu.localToStageCoordinates(new Vector2()).y + main.toolmenu.getHeight();
-		float colortop = main.toolmenu.localToStageCoordinates(new Vector2()).y + main.toolmenu.getHeight();
-		
-		nearToolMenu = !main.toolMenuCollapsed() && Gdx.graphics.getHeight() - y > tooltop - 60;
-		nearColorMenu = !main.colorMenuCollapsed() && Gdx.graphics.getHeight() - y > tooltop - 60;
-		*/
 		return false;
 	}
 
 	@Override
 	public boolean tap(float x, float y, int count, int button){
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean longPress(float x, float y){
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -60,25 +50,21 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY){
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean panStop(float x, float y, int pointer, int button){
-		
 		return false;
 	}
 
 	@Override
 	public boolean zoom(float initialDistance, float distance){
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2){
-		
 		return false;
 	}
 }

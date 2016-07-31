@@ -70,22 +70,6 @@ public class ProjectMenu extends VisDialog{
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				new OpenProjectFileDialog().show(main.stage);
-				/*
-				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
-					public void fileSelected(FileHandle file){
-						try{
-							file.copyTo(dest);
-							/*
-							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
-							main.tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
-							
-						}catch(Exception e){
-							e.printStackTrace();
-							AndroidDialogs.showError(main.stage, e);
-						}
-					}
-				}.show(main.stage);
-				*/
 			}
 		}){
 			public float getPrefWidth(){
@@ -96,7 +80,6 @@ public class ProjectMenu extends VisDialog{
 		newbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				popup.showMenu(main.stage, newbutton);
-				//main.projectmanager.newProject();
 			}
 		});
 
