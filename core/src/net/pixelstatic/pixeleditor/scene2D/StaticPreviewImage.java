@@ -17,7 +17,9 @@ public class StaticPreviewImage extends Group{
 
 		BorderImage border = new BorderImage();
 		border.setColor(Color.CORAL);
-		AlphaImage alpha = new AlphaImage(8, 8);
+		int scale = 16;
+		float ratio = 1f/((float)texture.getWidth() / texture.getHeight());
+		AlphaImage alpha = new AlphaImage(scale, (int)(scale*ratio));
 
 		stack = new Stack();
 

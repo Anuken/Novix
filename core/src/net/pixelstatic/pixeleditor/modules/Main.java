@@ -409,6 +409,9 @@ public class Main extends Module<PixelEditor>{
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = (int)(22 * MiscUtils.densityScale());
+		parameter.shadowColor = new Color(0,0,0,0.4f);
+		//parameter.shadowOffsetY = 2;
+		//parameter.shadowOffsetX = 2;
 		BitmapFont font = generator.generateFont(parameter);
 
 		skin.add("default-font", font);

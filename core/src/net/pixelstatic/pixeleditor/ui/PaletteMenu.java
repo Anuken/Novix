@@ -121,7 +121,15 @@ public class PaletteMenu extends VisDialog{
 
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					if( !widget.extrabutton.isOver()) main.setPalette(palette);
+					//delay action to make sure the isOver() check works properly
+					Actions.sequence(Actions.delay(0.001f), new Action(){
+						@Override
+						public boolean act(float delta){
+							if( !widget.extrabutton.isOver()) main.setPalette(palette);
+							return true;
+						}
+					});
+					
 				}
 			});
 
