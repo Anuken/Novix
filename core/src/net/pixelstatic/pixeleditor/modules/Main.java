@@ -53,6 +53,7 @@ import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 public class Main extends Module<PixelEditor>{
 	public static Main i;
 	public static float s = 1f; //density scale
+	public final int largeImageSize = 128*128;
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
@@ -224,7 +225,7 @@ public class Main extends Module<PixelEditor>{
 			}
 		});
 		
-		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(200f);
+		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		
@@ -387,6 +388,10 @@ public class Main extends Module<PixelEditor>{
 	
 	public void collapseColorMenu(){
 		((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
+	}
+	
+	public boolean isImageLarge(){
+		return drawgrid.canvas.width() * drawgrid.canvas.height() > largeImageSize;
 	}
 	
 	public void loadFonts(){

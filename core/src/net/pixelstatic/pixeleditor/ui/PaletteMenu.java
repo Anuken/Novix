@@ -129,7 +129,6 @@ public class PaletteMenu extends VisDialog{
 							return true;
 						}
 					});
-					
 				}
 			});
 

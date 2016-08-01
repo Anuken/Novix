@@ -1,6 +1,5 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
-
 import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
@@ -58,21 +57,20 @@ public class DialogClasses{
 			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
-			
+
 			widthfield.addListener(new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
 				}
 			});
-			
+
 			heightfield.addListener(new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
 				}
 			});
-
 
 		}
 
@@ -122,7 +120,7 @@ public class DialogClasses{
 			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
-			
+
 			ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
@@ -170,9 +168,10 @@ public class DialogClasses{
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					label.setText("Contrast: " + slider.getValue());
-					updatePreview();
 				}
 			});
+
+			addSliderChangeListener(slider);
 
 			getContentTable().add(label).align(Align.left).padTop(15f * s).row();
 			getContentTable().add(slider).expand().fill().padBottom(30 * s);
@@ -281,7 +280,7 @@ public class DialogClasses{
 
 	public static class ColorAlphaDialog extends FilterDialog{
 		ColorBox selected;
-		
+
 		public ColorAlphaDialog(Filter filter, String name, String colorname){
 			super(filter, name);
 			setup(colorname);
@@ -290,7 +289,7 @@ public class DialogClasses{
 		public ColorAlphaDialog(){
 			this(Filter.colorToAlpha, "Color to Alpha", "Color:");
 		}
-		
+
 		private void setup(String colorname){
 
 			selected = new ColorBox(Main.i.selectedColor());
@@ -354,7 +353,7 @@ public class DialogClasses{
 			return new Object[]{selected.getColor()};
 		}
 	}
-	
+
 	public static class OutlineDialog extends ColorAlphaDialog{
 		public OutlineDialog(){
 			super(Filter.outline, "Add Outline", "Outline Color:");
@@ -381,14 +380,14 @@ public class DialogClasses{
 					hlabel.setText("Hue: " + hslider.getValue());
 					slabel.setText("Saturation: " + sslider.getValue());
 					blabel.setText("Brightness: " + bslider.getValue());
-
-					updatePreview();
 				}
 			};
 
 			hslider.addListener(listener);
 			sslider.addListener(listener);
 			bslider.addListener(listener);
+
+			addSliderChangeListener(hslider, sslider, bslider);
 
 			hslider.setValue(180f);
 			sslider.setValue(50f);
@@ -454,8 +453,8 @@ public class DialogClasses{
 
 			Table table = getContentTable();
 
-			table.add(vbox).align(Align.left).padTop(25 * s).padLeft(40f*s).row();
-			table.add(hbox).align(Align.left).padTop(25 * s).padLeft(40f*s).padBottom(25 * s);
+			table.add(vbox).align(Align.left).padTop(25 * s).padLeft(40f * s).row();
+			table.add(hbox).align(Align.left).padTop(25 * s).padLeft(40f * s).padBottom(25 * s);
 			updatePreview();
 		}
 
@@ -530,6 +529,31 @@ public class DialogClasses{
 		public Pixmap pixmap(){
 			return preview.image.pixmap;
 		}
+
+		void addSliderChangeListener(VisSlider...sliders){
+			EventListener listener = null;
+
+			if(Main.i.isImageLarge()){
+				listener = new InputListener(){
+					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+						return true;
+					}
+
+					public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+						updatePreview();
+					}
+				};
+			}else{
+				listener = new ChangeListener(){
+					public void changed(ChangeEvent event, Actor actor){
+						updatePreview();
+					}
+				};
+			}
+
+			for(VisSlider slider : sliders)
+				slider.addListener(listener);
+		}
 	}
 
 	public static class SymmetryDialog extends MenuDialog{
@@ -591,17 +615,17 @@ public class DialogClasses{
 					}.show(getStage());
 				}
 			});
-			
+
 			ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
 				}
 			};
-			
+
 			field.addListener(oklistener);
 			directory.addListener(oklistener);
-			
+
 			field.fire(new ChangeListener.ChangeEvent());
 			directory.fire(new ChangeListener.ChangeEvent());
 
@@ -623,7 +647,7 @@ public class DialogClasses{
 			exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
-	
+
 	public static class OpenProjectFileDialog extends MenuDialog{
 		VisTextField field;
 		VisTextField directory;
@@ -649,17 +673,17 @@ public class DialogClasses{
 					}.show(getStage());
 				}
 			});
-			
+
 			ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
 				}
 			};
-			
+
 			field.addListener(oklistener);
 			directory.addListener(oklistener);
-			
+
 			field.fire(new ChangeListener.ChangeEvent());
 			directory.fire(new ChangeListener.ChangeEvent());
 
@@ -1043,53 +1067,54 @@ public class DialogClasses{
 
 			public CropController(final CropImagePreview preview){
 				this.preview = preview;
-				
-				for(int i = 0; i < 10; i ++) croppoints[i] = new CropPoint(i);
-				
+
+				for(int i = 0;i < 10;i ++)
+					croppoints[i] = new CropPoint(i);
+
 				int pwidth = preview.image.pixmap.getWidth(), pheight = preview.image.pixmap.getHeight();
-				
-				selx1 = pwidth / 2 - pwidth/3;
-				sely1 = pheight / 2 - pheight/3;
-				
-				selx2 = pwidth /2 + pwidth/3;
-				sely2 = pheight / 2 + pheight/3;
-				
+
+				selx1 = pwidth / 2 - pwidth / 3;
+				sely1 = pheight / 2 - pheight / 3;
+
+				selx2 = pwidth / 2 + pwidth / 3;
+				sely2 = pheight / 2 + pheight / 3;
+
 				addListener(new InputListener(){
-					
+
 					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-						
-						for(int i = 0; i < 8; i ++){
+
+						for(int i = 0;i < 8;i ++){
 							if(points[i].dst(x, y) < 30){
 								croppoints[pointer].point = i;
 								touch(x, y, pointer);
 								return true;
 							}
 						}
-						
+
 						return false;
 					}
-					
+
 					public void touchUp(InputEvent event, float x, float y, int pointer, int button){
 						croppoints[pointer].point = -1;
 					}
-					
-					public void touchDragged (InputEvent event, float x, float y, int pointer) {
+
+					public void touchDragged(InputEvent event, float x, float y, int pointer){
 						touch(x, y, pointer);
 					}
-					
+
 					void touch(float x, float y, int pointer){
 						CropPoint point = croppoints[pointer];
-						
-						points[point.point].set(x,y);
-						
+
+						points[point.point].set(x, y);
+
 						//0 is bottom left, 1 is bottom right, 2 is  top left, 3 is top right
 						// 4 is left, 5 is bottom, 6 is right, 7 is top
-						
+
 						Vector2 vector = points[point.point];
-						
+
 						vector.x = MiscUtils.clamp(vector.x, getX(), getX() + getWidth());
 						vector.y = MiscUtils.clamp(vector.y, getY(), getY() + getHeight());
-						
+
 						if(point.point == 4){
 							points[0].x = vector.x;
 							points[2].x = vector.x;
@@ -1103,7 +1128,7 @@ public class DialogClasses{
 							points[3].y = vector.y;
 							points[2].y = vector.y;
 						}
-							
+
 						if(point.point == 1){
 							points[0].y = vector.y;
 							points[3].x = vector.x;
@@ -1111,11 +1136,11 @@ public class DialogClasses{
 							points[0].x = vector.x;
 							points[3].y = vector.y;
 						}
-						
-						selx1 = (int)((points[0].x - getX())/xscale+0.5f);
-						sely1 = (int)((points[0].y - getY())/yscale+0.5f);
-						selx2 = (int)((points[3].x - getX())/xscale+0.5f);
-						sely2 = (int)((points[3].y - getY())/yscale+0.5f);
+
+						selx1 = (int)((points[0].x - getX()) / xscale + 0.5f);
+						sely1 = (int)((points[0].y - getY()) / yscale + 0.5f);
+						selx2 = (int)((points[3].x - getX()) / xscale + 0.5f);
+						sely2 = (int)((points[3].y - getY()) / yscale + 0.5f);
 					}
 				});
 			}
@@ -1148,14 +1173,14 @@ public class DialogClasses{
 
 				for(int i = 0;i < 8;i ++){
 					boolean selected = false;
-					
+
 					for(CropPoint point : croppoints){
 						if(point.point == i){
 							selected = true;
 							break;
 						}
 					}
-					
+
 					batch.setColor(selected ? select : color);
 					MiscUtils.setBatchAlpha(batch, alpha);
 					batch.draw(region, points[i].x - size / 2, points[i].y - size / 2, size, size);
@@ -1227,7 +1252,7 @@ public class DialogClasses{
 
 		}
 	}
-	
+
 	public static class NumberInputDialog extends MenuDialog{
 		protected VisTextField numberfield;
 
@@ -1241,12 +1266,11 @@ public class DialogClasses{
 		}
 
 		public final void result(){
-			if(!numberfield.getText().isEmpty())
-			result(Integer.parseInt(numberfield.getText()));
+			if( !numberfield.getText().isEmpty()) result(Integer.parseInt(numberfield.getText()));
 		}
 
 		public void result(int i){
-			
+
 		}
 	}
 
@@ -1306,7 +1330,7 @@ public class DialogClasses{
 
 		}
 	}
-	
+
 	public static void exportPixmap(Pixmap pixmap, FileHandle file){
 		try{
 			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
