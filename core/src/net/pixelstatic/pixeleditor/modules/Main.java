@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.modules;
 
 import java.lang.reflect.Field;
 
+import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.Palette;
@@ -16,19 +17,16 @@ import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
+import net.pixelstatic.utils.io.TextureUnpacker;
 import net.pixelstatic.utils.modules.Module;
-import net.pixelstatic.utils.scene2D.AndroidColorPicker;
-import net.pixelstatic.utils.scene2D.ColorBox;
-import net.pixelstatic.utils.scene2D.SmoothCollapsibleWidget;
+import net.pixelstatic.utils.scene2D.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -54,6 +52,7 @@ public class Main extends Module<PixelEditor>{
 	public static Main i;
 	public static float s = 1f; //density scale
 	public final int largeImageSize = 128*128;
+	public final Color clearcolor = Color.valueOf("171c23");
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
@@ -75,8 +74,7 @@ public class Main extends Module<PixelEditor>{
 
 	@Override
 	public void update(){
-		Gdx.gl.glClearColor(0.13f, 0.13f, 0.13f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Hue.clearScreen(clearcolor);
 
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
 		
@@ -283,6 +281,7 @@ public class Main extends Module<PixelEditor>{
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
+					apicker.addColorToPalette(boxes[paletteColor].getColor().cpy());
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
 					prefs.putInteger("palettecolor", paletteColor);
@@ -320,6 +319,13 @@ public class Main extends Module<PixelEditor>{
 		drawgrid.setCanvas(new PixelCanvas(getCurrentProject().getCachedPixmap()));
 
 		stage.addActor(drawgrid);
+	}
+	
+	void setupStyles(){
+		ColorBox.defaultStyle.box = Color.valueOf("29323d");
+		ColorBox.defaultStyle.disabled = Color.valueOf("0f1317");
+		
+		ColorBar.borderColor = Color.valueOf("29323d");
 	}
 	
 	public void setPalette(Palette palette){
@@ -454,7 +460,8 @@ public class Main extends Module<PixelEditor>{
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
 
 		projectmanager.loadProjects();
-
+		
+		setupStyles();
 		setupTools();
 		setupColorPicker();
 		setupCanvas();
@@ -478,10 +485,10 @@ public class Main extends Module<PixelEditor>{
 			}
 		}, 20, 20);
 		
-		//TextureUnpacker packer = new TextureUnpacker();
+		TextureUnpacker packer = new TextureUnpacker();
 		
-		//TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
-		//packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
+		TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
+		packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
 		
 		//for unpacking the atlas
 		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));

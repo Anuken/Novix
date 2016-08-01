@@ -106,6 +106,8 @@ public class PaletteWidget extends VisTable{
 				table.add().size(size);
 			}
 		}
+		table.row();
+		table.add().height(5);
 		return table;
 	}
 
