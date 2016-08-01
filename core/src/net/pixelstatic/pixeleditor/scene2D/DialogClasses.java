@@ -5,9 +5,9 @@ import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Filter;
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.tools.PixelCanvas;
+import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
@@ -281,9 +281,17 @@ public class DialogClasses{
 
 	public static class ColorAlphaDialog extends FilterDialog{
 		ColorBox selected;
+		
+		public ColorAlphaDialog(Filter filter, String name, String colorname){
+			super(filter, name);
+			setup(colorname);
+		}
 
 		public ColorAlphaDialog(){
-			super(Filter.colorToAlpha, "Color to Alpha");
+			this(Filter.colorToAlpha, "Color to Alpha", "Color:");
+		}
+		
+		private void setup(String colorname){
 
 			selected = new ColorBox(Main.i.selectedColor());
 
@@ -332,7 +340,7 @@ public class DialogClasses{
 
 			Table table = new VisTable();
 
-			getContentTable().add(new VisLabel("Color:")).padTop(15f * s).row();
+			getContentTable().add(new VisLabel(colorname)).padTop(15f * s).row();
 
 			getContentTable().add(table).expand().fill();
 
@@ -344,6 +352,12 @@ public class DialogClasses{
 		@Override
 		Object[] getArgs(){
 			return new Object[]{selected.getColor()};
+		}
+	}
+	
+	public static class OutlineDialog extends ColorAlphaDialog{
+		public OutlineDialog(){
+			super(Filter.outline, "Add Outline", "Outline Color:");
 		}
 	}
 

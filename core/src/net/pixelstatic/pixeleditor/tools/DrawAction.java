@@ -1,6 +1,5 @@
 package net.pixelstatic.pixeleditor.tools;
 
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.utils.Pos;
 

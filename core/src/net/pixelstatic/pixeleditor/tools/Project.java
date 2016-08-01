@@ -1,4 +1,4 @@
-package net.pixelstatic.pixeleditor.graphics;
+package net.pixelstatic.pixeleditor.tools;
 
 import net.pixelstatic.utils.MiscUtils;
 

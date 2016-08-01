@@ -2,11 +2,11 @@ package net.pixelstatic.pixeleditor.managers;
 
 import java.io.IOException;
 
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
+import net.pixelstatic.pixeleditor.tools.PixelCanvas;
+import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 

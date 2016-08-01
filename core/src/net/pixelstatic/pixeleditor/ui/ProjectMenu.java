@@ -3,10 +3,10 @@ package net.pixelstatic.pixeleditor.ui;
 import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.gdxutils.graphics.Textures;
-import net.pixelstatic.pixeleditor.graphics.Project;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
+import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.AnimatedImage;
 

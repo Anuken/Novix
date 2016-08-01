@@ -2,7 +2,6 @@ package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.Textures;
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
@@ -13,12 +12,14 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.CropDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ExportScaledDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.FlipDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.InvertDialog;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.OutlineDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.RotateDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ScaleDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ShiftDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
+import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.scene2D.AndroidFileChooser;
@@ -202,6 +203,11 @@ public class ToolMenu extends VisTable{
 		new MenuButton("Contrast", "Change image contrast."){
 			public void clicked(){
 				new ContrastDialog().show(stage);
+			}
+		},
+		new MenuButton("Outline", "Add an outline around\nthe image."){
+			public void clicked(){
+				new OutlineDialog().show(stage);
 			}
 		},
 		new MenuButton("Erase Color", "Remove a certain color\nfrom the image."){

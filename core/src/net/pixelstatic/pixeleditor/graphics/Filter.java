@@ -94,6 +94,27 @@ public enum Filter{
 			}
 		}
 	},
+	outline{
+		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){
+			Color from = (Color)args[0];
+
+			if(color.a < 0.001f){
+				if( !empty(input.getPixel(x + 1, y)) || !empty(input.getPixel(x - 1, y)) || !empty(input.getPixel(x, y + 1)) || !empty(input.getPixel(x, y - 1))){
+					color.set(from);
+					pixmap.setColor(color);
+					pixmap.drawPixel(x, y);
+				}
+			}
+		}
+		
+		public boolean empty(int value){
+			return alpha(value) == 0;
+		}
+		
+		public int alpha(int value){
+			return ((value & 0x000000ff));
+		}
+	},
 	contrast{
 		@Override
 		protected void applyPixel(Pixmap input, Pixmap pixmap, int x, int y, Color color, Object...args){

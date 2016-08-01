@@ -1,7 +1,5 @@
 package net.pixelstatic.pixeleditor.tools;
 
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
-
 import com.badlogic.gdx.utils.Array;
 
 public class ActionStack{

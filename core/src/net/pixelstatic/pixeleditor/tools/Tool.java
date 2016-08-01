@@ -2,7 +2,6 @@ package net.pixelstatic.pixeleditor.tools;
 
 import java.util.Stack;
 
-import net.pixelstatic.pixeleditor.graphics.PixelCanvas;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
