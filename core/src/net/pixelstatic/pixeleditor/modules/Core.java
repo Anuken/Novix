@@ -89,7 +89,7 @@ public class Core extends Module<PixelEditor>{
 
 		settingsmenu = new SettingsMenu(this);
 		
-		settingsmenu.addScrollSetting("Cursor Size", 1, 10, 5);
+		settingsmenu.addPercentScrollSetting("Cursor Size");
 		settingsmenu.addCheckSetting("Autosave", true);
 		
 		

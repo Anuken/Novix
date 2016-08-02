@@ -55,20 +55,42 @@ public class SettingsMenu extends VisDialog{
 		table.add(slider).width(200 * s).padBottom(40f);
 		table.row();
 	}
+	
+	public void addPercentScrollSetting(final String name){
+		final VisLabel label = new VisLabel();
+		final VisSlider slider = new VisSlider(0f, 2f, 0.01f, false);
+		slider.addListener(new ChangeListener(){
+			public void changed(ChangeEvent event, Actor actor){
+				label.setText(name + ": " + (int)(slider.getValue()*100) + "%");
+				main.prefs.putFloat(convert(name), slider.getValue());
+			}
+		});
+		slider.setValue(main.prefs.getFloat(convert(name), 1f));
+		slider.fire(new ChangeListener.ChangeEvent());
+		Table table = getContentTable();
+		table.top().left().add(label).align(Align.left);
+		table.row();
+		table.add(slider).width(200 * s).padBottom(40f);
+		table.row();
+	}
 
 	public void addCheckSetting(final String name, boolean value){
 		final VisLabel label = new VisLabel(name);
-		final VisCheckBox box = new VisCheckBox("", main.prefs.getBoolean(name, value));
+		final VisCheckBox box = new VisCheckBox("", main.prefs.getBoolean(convert(name), value));
 		box.getImageStackCell().size(40 * s);
 		box.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
-				main.prefs.putBoolean(name, box.isChecked());
+				main.prefs.putBoolean(convert(name), box.isChecked());
 			}
 		});
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
 		table.add(box);
 		table.row();
+	}
+	
+	private String convert(String name){
+		return name.replace(" ", "").toLowerCase();
 	}
 	
 	public void result(Object o){

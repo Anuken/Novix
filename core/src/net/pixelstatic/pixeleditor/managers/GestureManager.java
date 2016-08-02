@@ -1,16 +1,18 @@
 package net.pixelstatic.pixeleditor.managers;
 
+import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class GestureManager implements GestureListener{
 	private Core main;
 	private float touchy;
 	private Vector2 vector = new Vector2();
-	private final float flingvelocity = 400;
+	private final float flingvelocity = 400, swipevelocity = 400;
 	
 	public GestureManager(Core main){
 		this.main = main;
@@ -39,11 +41,16 @@ public class GestureManager implements GestureListener{
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0,0)).y + main.toolmenu.getHeight();
 		float colortop = main.pickertable.localToStageCoordinates(vector.set(0,0)).y;
 		
-		if(!main.toolMenuCollapsed() && touchy > tooltop - 60 && velocityY > flingvelocity){
+		if(Math.abs(velocityX) > swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight()/2, 250*s)){
+			if(!main.toolMenuCollapsed() && velocityX < swipevelocity) main.collapseToolMenu();
+			if(main.toolMenuCollapsed() && velocityX > swipevelocity) main.collapseToolMenu();
+		}else if(!main.toolMenuCollapsed() && touchy > tooltop - 60 && velocityY > flingvelocity){
 			main.collapseToolMenu();
 		}
 		
-		if(!main.colorMenuCollapsed() && touchy < colortop + 320 && velocityY < flingvelocity){
+		//if(velocityX < swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight()/2, 200*s)){
+		//	main.collapseColorMenu();
+		/*}else*/ if(!main.colorMenuCollapsed() && touchy < colortop + 320 && velocityY < flingvelocity){
 			main.collapseColorMenu();
 		}
 		
