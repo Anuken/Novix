@@ -1,5 +1,7 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+import net.pixelstatic.pixeleditor.modules.Core;
+
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisImageButton;
@@ -11,7 +13,7 @@ public class CollapseButton extends VisImageButton{
 	public CollapseButton(){
 		super("default");
 		setStyle(new VisImageButtonStyle(getStyle()));
-		this.getImageCell().size(getHeight());
+		this.getImageCell().size(50*Core.s);
 		getStyle().up = VisUI.getSkin().getDrawable("button");
 		set(up);
 	}

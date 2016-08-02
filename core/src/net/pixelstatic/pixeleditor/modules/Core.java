@@ -3,6 +3,7 @@ package net.pixelstatic.pixeleditor.modules;
 import java.lang.reflect.Field;
 
 import net.pixelstatic.gdxutils.graphics.Hue;
+import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.Palette;
@@ -137,7 +138,7 @@ public class Core extends Module<PixelEditor>{
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
 			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); //whatever icon is needed
 
-			button.getImageCell().size(50);
+			button.getImageCell().size(50*s);
 
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -221,7 +222,7 @@ public class Core extends Module<PixelEditor>{
 			}
 		});
 		
-		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f);
+		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f*s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		
@@ -464,7 +465,8 @@ public class Core extends Module<PixelEditor>{
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);
 		loadFonts();
-
+		
+		ShapeUtils.texture = VisUI.getSkin().getRegion("white");
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
 
 		projectmanager.loadProjects();

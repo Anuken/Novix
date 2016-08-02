@@ -1,10 +1,12 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
 import static net.pixelstatic.pixeleditor.modules.Core.s;
+import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.MiscUtils.GridChecker;
 import net.pixelstatic.utils.Pos;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -12,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -27,6 +30,7 @@ public class DrawingGrid extends Actor{
 	private GridImage gridimage;
 	private AlphaImage alphaimage;
 	private final boolean clip = true;
+	private Vector2[][] brushPolygons = new Vector2[10][];
 
 	public PixelCanvas canvas;
 	public boolean grid = true, cursormode = true;
@@ -37,6 +41,7 @@ public class DrawingGrid extends Actor{
 	public DrawingGrid(){
 		gridimage = new GridImage(1, 1);
 		alphaimage = new AlphaImage(1, 1);
+		generatePolygons();
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				if( !Core.i.tool.moveCursor()) return false;
@@ -163,6 +168,31 @@ public class DrawingGrid extends Actor{
 					Core.i.tool.clicked(Core.i.selectedColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
 				}
 			}
+		}
+	}
+	
+	private void generatePolygons(){
+		for(int i = 1; i < 11; i ++){
+			final int index = i;
+			
+			GridChecker checker = new GridChecker(){
+				@Override
+				public int getWidth(){
+					return index*2;
+				}
+
+				@Override
+				public int getHeight(){
+					return index*2;
+				}
+
+				@Override
+				public boolean exists(int x, int y){
+					return Vector2.dst(x - index, y - index, 0, 0) < index - 0.5f;
+				}
+			};
+			
+			brushPolygons[i-1] = MiscUtils.getOutline(checker);
 		}
 	}
 
@@ -336,7 +366,9 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
-		MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 4, 2);
+		ShapeUtils.thickness = 4;
+		ShapeUtils.drawPolygon(batch, brushPolygons[brushSize-1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
+		//MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 4, 2);
 	}
 
 	public void updateCursor(){
