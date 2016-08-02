@@ -280,18 +280,9 @@ public class DrawingGrid extends Actor{
 
 		batch.setColor(Color.WHITE);
 
-		//alphaimage.zoom = (int)((int)(zoom))+1;
-		//alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
-
-		//	float modx = ((getX()) % (getWidth() / canvas.texture.getWidth()));
-		//float mody = ((getY()) % (getHeight() / canvas.texture.getHeight()));
-
-		//int izoom = (int)zoom;
 		alphaimage.setImageSize(canvas.width(), canvas.height());
-		//System.out.println(alphaimage.zoom);
 		alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
 		alphaimage.draw(batch, parentAlpha);
-		//	batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
@@ -368,6 +359,7 @@ public class DrawingGrid extends Actor{
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
 		ShapeUtils.thickness = 4;
 		ShapeUtils.drawPolygon(batch, brushPolygons[brushSize-1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
+		
 		//MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 4, 2);
 	}
 

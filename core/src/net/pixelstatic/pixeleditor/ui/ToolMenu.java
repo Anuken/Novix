@@ -396,8 +396,12 @@ public class ToolMenu extends VisTable{
 		//TODO
 		
 		menutable.top().left();
-		menutable.add(modebutton).size(80*s).align(Align.topLeft).padTop(8*s).row();
-		menutable.add(gridbutton).size(80*s).align(Align.topLeft);
+		
+		menutable.add(new VisLabel("Draw:")).align(Align.topLeft).padTop(12*s).row();
+		menutable.add(modebutton).size(80*s).align(Align.topLeft).row();
+		
+		menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();
+		menutable.add(gridbutton).size(80*s).align(Align.topLeft).row();
 		
 		othertable.bottom().right();
 		

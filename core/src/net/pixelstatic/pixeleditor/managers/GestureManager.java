@@ -13,7 +13,7 @@ public class GestureManager implements GestureListener{
 	private float touchy;
 	private Vector2 vector = new Vector2();
 	private final float flingvelocity = 400, swipevelocity = 400;
-	
+
 	public GestureManager(Core main){
 		this.main = main;
 	}
@@ -37,24 +37,32 @@ public class GestureManager implements GestureListener{
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
 		if(Core.i.getCurrentDialog() != null) return false;
-		
-		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0,0)).y + main.toolmenu.getHeight();
-		float colortop = main.pickertable.localToStageCoordinates(vector.set(0,0)).y;
-		
+
+		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0, 0)).y + main.toolmenu.getHeight();
+		float colortop = main.pickertable.localToStageCoordinates(vector.set(0, 0)).y;
+
 		/*if(Math.abs(velocityX) > swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight()/2, 250*s)){
 			if(!main.toolMenuCollapsed() && velocityX < swipevelocity) main.collapseToolMenu();
 			if(main.toolMenuCollapsed() && velocityX > swipevelocity) main.collapseToolMenu();
-		}else*/ if(!main.toolMenuCollapsed() && touchy > tooltop - 60 && velocityY > flingvelocity){
+		}else*/
+
+		
+
+		if(Math.abs(velocityX) > swipevelocity && Math.abs(velocityY) < swipevelocity * 2.5f && MathUtils.isEqual(touchy, Gdx.graphics.getHeight() / 2, 250 * s)){
+			if( !main.colorMenuCollapsed() && velocityX < swipevelocity) main.collapseColorMenu();
+			if(main.colorMenuCollapsed() && velocityX > swipevelocity) main.collapseColorMenu();
+		}else if( !main.colorMenuCollapsed() && touchy < colortop + 320 * s && velocityY < flingvelocity){
+			main.collapseColorMenu();
+		}else if(main.toolMenuCollapsed() && touchy < Gdx.graphics.getHeight() / 3 && velocityY < flingvelocity){
 			main.collapseToolMenu();
 		}
 		
-		if(Math.abs(velocityX) > swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight()/2, 250*s)){
-			if(!main.colorMenuCollapsed() && velocityX < swipevelocity) main.collapseColorMenu();
-			if(main.colorMenuCollapsed() && velocityX > swipevelocity) main.collapseColorMenu();
-		}else if(!main.colorMenuCollapsed() && touchy < colortop + 320 && velocityY < flingvelocity){
+		if( !main.toolMenuCollapsed() && touchy > tooltop - 60 * s && velocityY > flingvelocity){
+			main.collapseToolMenu();
+		}else if(main.colorMenuCollapsed() && touchy > Gdx.graphics.getWidth() / 3f * 2 && velocityY > flingvelocity){
 			main.collapseColorMenu();
 		}
-		
+
 		return false;
 	}
 
