@@ -1,7 +1,6 @@
 package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Main.s;
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
@@ -92,7 +91,7 @@ public class ToolMenu extends VisTable{
 				currentMenu.hide();
 			}
 		});
-		MiscUtils.addIconToButton(backbutton, new Image(Textures.getDrawable("icon-arrow-left")), 40*s);
+		MiscUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
 		backbutton.getLabelCell().padRight(40);
 		
 		buttons.getContentTable().row();
@@ -359,8 +358,8 @@ public class ToolMenu extends VisTable{
 		VisImageButtonStyle modestyle = new VisImageButtonStyle(style);
 		VisImageButtonStyle gridstyle = new VisImageButtonStyle(style);
 		
-		modestyle.imageUp = Textures.getDrawable("icon-cursor");
-		gridstyle.imageUp = Textures.getDrawable("icon-grid");
+		modestyle.imageUp = VisUI.getSkin().getDrawable("icon-cursor");
+		gridstyle.imageUp = VisUI.getSkin().getDrawable("icon-grid");
 		
 		final VisImageButton modebutton = new VisImageButton(modestyle);
 		modebutton.setChecked(main.prefs.getBoolean("cursormode", true));

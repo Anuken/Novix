@@ -1,7 +1,6 @@
 package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Main.s;
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.modules.Main;
 
 import com.badlogic.gdx.Gdx;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
 public class SettingsMenu extends VisDialog{
@@ -30,7 +30,7 @@ public class SettingsMenu extends VisDialog{
 		table.add().height(20).row();
 
 		VisTextButton back = new VisTextButton("Back");
-		back.add(new Image(Textures.getDrawable("icon-arrow-left"))).size(40 * s).center();
+		back.add(new Image(VisUI.getSkin().getDrawable("icon-arrow-left"))).size(40 * s).center();
 
 		back.getCells().reverse();
 		back.getLabelCell().padRight(40f * s);

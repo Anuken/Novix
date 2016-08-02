@@ -17,7 +17,6 @@ import net.pixelstatic.utils.AndroidKeyboard;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
-import net.pixelstatic.utils.io.TextureUnpacker;
 import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 
@@ -25,8 +24,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -36,7 +35,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
@@ -137,7 +135,7 @@ public class Main extends Module<PixelEditor>{
 
 			final VisImageButton button = new VisImageButton((Drawable)null);
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
-			button.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(Textures.get("icon-" + ctool.name()))); //whatever icon is needed
+			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); //whatever icon is needed
 
 			button.getImageCell().size(50);
 
@@ -461,7 +459,6 @@ public class Main extends Module<PixelEditor>{
 		palettemanager.loadPalettes();
 
 		Textures.load("textures/");
-		Textures.repeatWrap("alpha", "grid_10", "grid_25");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);
@@ -495,13 +492,12 @@ public class Main extends Module<PixelEditor>{
 			}
 		}, 20, 20);
 		
-		TextureUnpacker packer = new TextureUnpacker();
+		//TextureUnpacker packer = new TextureUnpacker();
 		
-		TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
-		packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
+		//TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
+		//packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
 		
-		//for unpacking the atlas
-		//AtlasUnpacker.unpack(VisUI.getSkin().getAtlas(), MiscUtils.getHomeDirectory().child("unpacked"));
+		
 	}
 	
 	@Override

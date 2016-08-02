@@ -1,7 +1,6 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
 
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.utils.MiscUtils;
@@ -328,9 +327,9 @@ public class DrawingGrid extends Actor{
 		if(cursormode || (touches > 0 && Main.i.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
 			int csize = 30;
-			batch.draw(Textures.get("cursor"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
+			batch.draw(VisUI.getSkin().getRegion("cursor-normal"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 		}else{ //seriously, why is this necessary
-			batch.draw(Textures.get("cursor"), -999, -999, 30, 30);
+			batch.draw(VisUI.getSkin().getRegion("cursor-normal"), -999, -999, 30, 30);
 		}
 
 		if(clip){

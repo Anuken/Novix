@@ -4,7 +4,6 @@ import static net.pixelstatic.pixeleditor.modules.Main.s;
 
 import java.util.Arrays;
 
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
@@ -22,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
@@ -182,8 +182,8 @@ public class PaletteMenu extends VisDialog{
 			}
 		});
 
-		MiscUtils.addIconToButton(addpalettebutton, new Image(Textures.get("icon-plus")), 40);
-		MiscUtils.addIconToButton(backbutton, new Image(Textures.get("icon-arrow-left")), 40);
+		MiscUtils.addIconToButton(addpalettebutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40);
+		MiscUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40);
 
 		getButtonsTable().add(backbutton).size(150 * s, 50 * s);
 		getButtonsTable().add(addpalettebutton).size(200 * s, 50 * s);

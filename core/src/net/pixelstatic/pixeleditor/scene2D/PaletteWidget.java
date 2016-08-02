@@ -3,7 +3,6 @@ package net.pixelstatic.pixeleditor.scene2D;
 
 
 import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
@@ -52,12 +51,12 @@ public class PaletteWidget extends VisTable{
 
 		add(label).align(Align.left);
 		
-		extrabutton = new VisImageButton(Textures.getDrawable("icon-dots"));
+		extrabutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-dots"));
 		extrabutton.setStyle(new VisImageButtonStyle(extrabutton.getStyle()));
 		//if(selected)extrabutton.getStyle().up = extrabutton.getStyle().down;
 		extrabutton.getStyle().down = extrabutton.getStyle().up;
 		extrabutton.getStyle().over = extrabutton.getStyle().up;
-		extrabutton.getStyle().imageDown = Textures.getDrawable("icon-dots-down");
+		extrabutton.getStyle().imageDown = VisUI.getSkin().getDrawable("icon-dots-down");
 		extrabutton.setColor(getColor());
 		extrabutton.getImageCell().size(44);
 		

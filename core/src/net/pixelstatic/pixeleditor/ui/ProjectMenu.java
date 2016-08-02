@@ -2,7 +2,6 @@ package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Main.s;
 import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.modules.Main;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
@@ -20,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
 public class ProjectMenu extends VisDialog{
@@ -83,7 +83,7 @@ public class ProjectMenu extends VisDialog{
 			}
 		});
 
-		MiscUtils.addIconToButton(newbutton, new Image(Textures.get("icon-plus")), 40 * s);
+		MiscUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40 * s);
 		
 		VisTextButton settingsbutton = new VisTextButton("Settings");
 		settingsbutton.addListener(new ClickListener(){
@@ -102,7 +102,7 @@ public class ProjectMenu extends VisDialog{
 		getContentTable().top().left().add(pane).align(Align.topLeft).grow();
 
 		VisTextButton projectback = new VisTextButton("Back");
-		projectback.add(new Image(Textures.getDrawable("icon-arrow-left"))).size(40 * s).center();
+		projectback.add(new Image(VisUI.getSkin().getDrawable("icon-arrow-left"))).size(40 * s).center();
 
 		projectback.getCells().reverse();
 		projectback.getLabelCell().padRight(40f * s);
@@ -151,10 +151,10 @@ public class ProjectMenu extends VisDialog{
 
 			int imagesize = 40;
 
-			VisImageButton openbutton = new VisImageButton(Textures.getDrawable(project == main.getCurrentProject() ? "icon-open-gray" : "icon-open"));
-			VisImageButton copybutton = new VisImageButton(Textures.getDrawable("icon-copy"));
-			VisImageButton renamebutton = new VisImageButton(Textures.getDrawable("icon-rename"));
-			VisImageButton deletebutton = new VisImageButton(Textures.getDrawable("icon-trash"));
+			VisImageButton openbutton = new VisImageButton(VisUI.getSkin().getDrawable(project == main.getCurrentProject() ? "icon-open-gray" : "icon-open"));
+			VisImageButton copybutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-copy"));
+			VisImageButton renamebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-rename"));
+			VisImageButton deletebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-trash"));
 
 			if(project == main.getCurrentProject()){
 				openbutton.setDisabled(true);
@@ -205,7 +205,7 @@ public class ProjectMenu extends VisDialog{
 			background("button");
 			setColor(Hue.lightness(0.87f));
 
-			imagecell = stack(new AnimatedImage(Textures.getDrawable("icon-load-1"), Textures.getDrawable("icon-load-2"), Textures.getDrawable("icon-load-3")), new BorderImage());
+			imagecell = stack(new AnimatedImage(VisUI.getSkin().getDrawable("icon-load-1"), VisUI.getSkin().getDrawable("icon-load-2"), VisUI.getSkin().getDrawable("icon-load-3")), new BorderImage());
 			imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
 
 			MiscUtils.fitCell(imagecell, 128 * s, 1);
