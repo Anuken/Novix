@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.Disposable;
 public class PixelCanvas implements Disposable{
 	private Color color; // pixmap color
 	private Color temp = new Color();
-	//private Pixmap blank;
 	final public Pixmap pixmap;
 	final public Texture texture;
 	final public String name;

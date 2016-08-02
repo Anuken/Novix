@@ -34,6 +34,8 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
+		if(Main.i.getCurrentDialog() != null) return false;
+		
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0,0)).y + main.toolmenu.getHeight();
 		float colortop = main.pickertable.localToStageCoordinates(vector.set(0,0)).y;
 		

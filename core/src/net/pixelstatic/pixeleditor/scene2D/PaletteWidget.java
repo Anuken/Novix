@@ -11,9 +11,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
@@ -21,7 +23,7 @@ public class PaletteWidget extends VisTable{
 	public static final int defaultWidth = 300;
 	public static final int defaultHeight = 140;
 	public final Palette palette;
-	public final boolean selected;
+	private boolean selected;
 	public VisImageButton extrabutton;
 
 	public PaletteWidget(Palette palette, boolean selected){
@@ -41,7 +43,6 @@ public class PaletteWidget extends VisTable{
 
 	private void setup(){
 		float maxsize = 36;
-		background("button");
 		setColor(Hue.lightness(0.87f));
 
 		top().left();
@@ -60,6 +61,8 @@ public class PaletteWidget extends VisTable{
 		extrabutton.setColor(getColor());
 		extrabutton.getImageCell().size(44);
 		
+	//	extrabutton.getImage().setColor(Color.CLEAR);
+		
 		extrabutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				
@@ -68,10 +71,20 @@ public class PaletteWidget extends VisTable{
 		
 		add(extrabutton).size(46).align(Align.topRight).padRight(0);
 		
-		
 		row();
 
 		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2).padTop(5);
+		setSelected(selected);
+	}
+	
+	public void setSelected(boolean selected){
+		this.selected = selected;
+		background(selected ? "button-over" : "button");
+		extrabutton.getStyle().up = selected ? extrabutton.getStyle().checked : VisUI.getSkin().get(VisImageButtonStyle.class).up;
+		extrabutton.getStyle().over = extrabutton.getStyle().up;
+		extrabutton.getStyle().down = extrabutton.getStyle().up;
+		
+		setTouchable(selected ? Touchable.childrenOnly : Touchable.enabled);
 	}
 	
 	public void addExtraButtonListener(EventListener listener){

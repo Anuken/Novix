@@ -56,11 +56,9 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode){
-		if(Main.i.stage.getScrollFocus() != null) if(keycode == Keys.BACK){
-			Actor actor = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
-			if(actor instanceof VisDialog){
-				((VisDialog)actor).hide();
-			}
+		if(keycode == Keys.BACK){
+			VisDialog dialog = Main.i.getCurrentDialog();
+			if(dialog != null) dialog.hide();
 		}
 		return false;
 	}
@@ -212,6 +210,6 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	}
 
 	public DrawingGrid drawgrid(){
-		return input.<Main>getModule(Main.class).drawgrid;
+		return input.getModule(Main.class).drawgrid;
 	}
 }

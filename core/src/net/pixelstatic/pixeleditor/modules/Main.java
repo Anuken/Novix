@@ -291,7 +291,7 @@ public class Main extends Module<PixelEditor>{
 				}
 			});
 			
-			if(perow != 0 && i % perow == perow -1){
+			if(perow != 0 && i % perow == perow - 1){
 				colortable.add().growX();
 				colortable.row();
 				colortable.add().growX();
@@ -336,7 +336,7 @@ public class Main extends Module<PixelEditor>{
 		updateColorMenu();
 		setSelectedColor(palette.colors[0]);
 		setupBoxColors();
-		palettemenu.update();
+		//palettemenu.update();
 	}
 
 	public void openProjectMenu(){
@@ -398,6 +398,16 @@ public class Main extends Module<PixelEditor>{
 	
 	public boolean isImageLarge(){
 		return drawgrid.canvas.width() * drawgrid.canvas.height() > largeImageSize;
+	}
+	
+	public VisDialog getCurrentDialog(){
+		if(stage.getScrollFocus() != null){
+			Actor actor = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
+			if(actor instanceof VisDialog){
+				return (VisDialog)actor;
+			}
+		}
+		return null;
 	}
 	
 	public void loadFonts(){

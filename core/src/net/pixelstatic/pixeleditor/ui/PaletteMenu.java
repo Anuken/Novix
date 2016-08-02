@@ -27,6 +27,7 @@ import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 public class PaletteMenu extends VisDialog{
 	private Main main;
+	private PaletteWidget currentWidget = null;
 	
 	public PaletteMenu(Main main){
 		super("Palettes", "dialog");
@@ -116,19 +117,26 @@ public class PaletteMenu extends VisDialog{
 
 		for(final Palette palette : main.palettemanager.getPalettes()){
 			final PaletteWidget widget = new PaletteWidget(palette, palette == main.getCurrentPalette());
-
-			widget.setTouchable(palette == main.getCurrentPalette() ? Touchable.childrenOnly : Touchable.enabled);
+			if(main.getCurrentPalette() == palette) currentWidget = widget;
 
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
+					System.out.println("Widget clicked");
 					//delay action to make sure the isOver() check works properly
-					Actions.sequence(Actions.delay(0.001f), new Action(){
+					widget.addAction(Actions.sequence(Actions.delay(0.001f), new Action(){
 						@Override
 						public boolean act(float delta){
-							if( !widget.extrabutton.isOver()) main.setPalette(palette);
+							if( !widget.extrabutton.isOver()){
+								
+								currentWidget.setSelected(false);
+								currentWidget = widget;
+								
+								widget.setSelected(true);
+								main.setPalette(palette);
+							}
 							return true;
 						}
-					});
+					}));
 				}
 			});
 
