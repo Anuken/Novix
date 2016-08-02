@@ -1,6 +1,6 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,14 +17,14 @@ public class ImagePreview extends Group{
 		
 		image = new PixmapImage(pixmap);
 		
-		AlphaImage alpha = new AlphaImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
-		GridImage grid = new GridImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
+		AlphaImage alpha = new AlphaImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
+		GridImage grid = new GridImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
 		BorderImage border = new BorderImage();
 		border.setColor(Color.CORAL);
 		
 		stack.add(alpha);
 		stack.add(image);
-		if(Main.i.drawgrid.grid)stack.add(grid);
+		if(Core.i.drawgrid.grid)stack.add(grid);
 		stack.add(border);
 		
 		addActor(stack);

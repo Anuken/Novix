@@ -1,11 +1,11 @@
 package net.pixelstatic.pixeleditor.ui;
 
-import static net.pixelstatic.pixeleditor.modules.Main.s;
+import static net.pixelstatic.pixeleditor.modules.Core.s;
 
 import java.util.Arrays;
 
 import net.pixelstatic.pixeleditor.graphics.Palette;
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.scene2D.PaletteWidget;
 import net.pixelstatic.pixeleditor.scene2D.TallMenuItem;
@@ -26,10 +26,10 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 public class PaletteMenu extends VisDialog{
-	private Main main;
+	private Core main;
 	private PaletteWidget currentWidget = null;
 	
-	public PaletteMenu(Main main){
+	public PaletteMenu(Core main){
 		super("Palettes", "dialog");
 		this.main = main;
 		setMovable(false);

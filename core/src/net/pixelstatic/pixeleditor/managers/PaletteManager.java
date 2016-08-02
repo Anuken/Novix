@@ -1,19 +1,19 @@
 package net.pixelstatic.pixeleditor.managers;
 
 import net.pixelstatic.pixeleditor.graphics.Palette;
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class PaletteManager{
-	private Main main;
+	private Core main;
 	private Json json = new Json();
 	private Palette currentPalette;
 	private ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	
-	public PaletteManager(Main main){
+	public PaletteManager(Core main){
 		this.main = main;
 	}
 	

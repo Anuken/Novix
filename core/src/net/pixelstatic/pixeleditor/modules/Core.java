@@ -46,8 +46,8 @@ import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
-public class Main extends Module<PixelEditor>{
-	public static Main i;
+public class Core extends Module<PixelEditor>{
+	public static Core i;
 	public static float s = 1f; //density scale
 	public final int largeImageSize = 128*128;
 	public final Color clearcolor = Color.valueOf("171c23");
@@ -245,8 +245,8 @@ public class Main extends Module<PixelEditor>{
 	public void updateColorMenu(){
 		colortable.clear();
 
-		int maxcolorsize = 65;
-		int mincolorsize = 30;
+		int maxcolorsize = (int)(65*s);
+		int mincolorsize = (int)(30*s);
 
 		int colorsize = Gdx.graphics.getWidth() / getCurrentPalette().size() - MiscUtils.densityScale(3);
 		
@@ -400,7 +400,7 @@ public class Main extends Module<PixelEditor>{
 	
 	public VisDialog getCurrentDialog(){
 		if(stage.getScrollFocus() != null){
-			Actor actor = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
+			Actor actor = MiscUtils.getTopParent(Core.i.stage.getScrollFocus());
 			if(actor instanceof VisDialog){
 				return (VisDialog)actor;
 			}
@@ -442,7 +442,7 @@ public class Main extends Module<PixelEditor>{
 		generator.dispose();
 	}
 	
-	public Main(){
+	public Core(){
 		Gdx.graphics.setContinuousRendering(false);
 
 		i = this;
@@ -459,6 +459,7 @@ public class Main extends Module<PixelEditor>{
 		palettemanager.loadPalettes();
 
 		Textures.load("textures/");
+		Textures.repeatWrap("alpha");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);

@@ -1,8 +1,8 @@
 package net.pixelstatic.pixeleditor.ui;
 
-import static net.pixelstatic.pixeleditor.modules.Main.s;
+import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
 import net.pixelstatic.pixeleditor.tools.Project;
@@ -23,10 +23,10 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
 public class ProjectMenu extends VisDialog{
-	private Main main;
+	private Core main;
 	private VisScrollPane pane;
 	
-	public ProjectMenu(Main mainref){
+	public ProjectMenu(Core mainref){
 		super("Projects");
 		this.main = mainref;
 		
@@ -193,12 +193,12 @@ public class ProjectMenu extends VisDialog{
 			VisTable texttable = new VisTable();
 			VisTable buttontable = new VisTable();
 
-			float bheight = 50, space = 4;
+			float bheight = 50*s, space = 4*s, pad = 3*s;
 
-			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).height(bheight).growX().space(space);
-			buttontable.add(copybutton).height(bheight).growX().space(space);
-			buttontable.add(deletebutton).height(bheight).growX().space(space);
-			buttontable.add(renamebutton).height(bheight).growX().space(space);
+			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).height(bheight).growX().space(space).padBottom(pad);
+			buttontable.add(copybutton).height(bheight).growX().space(space).padBottom(pad);
+			buttontable.add(deletebutton).height(bheight).growX().space(space).padBottom(pad);
+			buttontable.add(renamebutton).height(bheight).growX().space(space).padBottom(pad);
 
 			top().left();
 

@@ -30,14 +30,14 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		//PC only
 		float speed = 10f;
 
-		if(Gdx.input.isKeyPressed(Keys.W)) this.getModule(Main.class).drawgrid.offsety += speed;
-		if(Gdx.input.isKeyPressed(Keys.A)) this.<Main>getModule(Main.class).drawgrid.offsetx -= speed;
-		if(Gdx.input.isKeyPressed(Keys.S)) this.<Main>getModule(Main.class).drawgrid.offsety -= speed;
-		if(Gdx.input.isKeyPressed(Keys.D)) this.<Main>getModule(Main.class).drawgrid.offsetx += speed;
+		if(Gdx.input.isKeyPressed(Keys.W)) this.getModule(Core.class).drawgrid.offsety += speed;
+		if(Gdx.input.isKeyPressed(Keys.A)) this.<Core>getModule(Core.class).drawgrid.offsetx -= speed;
+		if(Gdx.input.isKeyPressed(Keys.S)) this.<Core>getModule(Core.class).drawgrid.offsety -= speed;
+		if(Gdx.input.isKeyPressed(Keys.D)) this.<Core>getModule(Core.class).drawgrid.offsetx += speed;
 
-		getModule(Main.class).drawgrid.updateSize();
+		getModule(Core.class).drawgrid.updateSize();
 
-		getModule(Main.class).drawgrid.updateBounds();
+		getModule(Core.class).drawgrid.updateBounds();
 	}
 
 	public void init(){
@@ -46,9 +46,9 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		GestureDetector gesture = new GestureDetector(20, 0.5f, 2, 0.15f, new GestureDetectorListener());
 
 		InputMultiplexer plex = new InputMultiplexer();
-		plex.addProcessor(new GestureDetector(20, 0.5f, 2, 0.15f, new GestureManager(Main.i)));
+		plex.addProcessor(new GestureDetector(20, 0.5f, 2, 0.15f, new GestureManager(Core.i)));
 		plex.addProcessor(this);
-		plex.addProcessor(this.getModule(Main.class).stage);
+		plex.addProcessor(this.getModule(Core.class).stage);
 		plex.addProcessor(gesture);
 
 		Gdx.input.setInputProcessor(plex);
@@ -57,7 +57,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	@Override
 	public boolean keyDown(int keycode){
 		if(keycode == Keys.BACK){
-			VisDialog dialog = Main.i.getCurrentDialog();
+			VisDialog dialog = Core.i.getCurrentDialog();
 			if(dialog != null) dialog.hide();
 		}
 		return false;
@@ -81,8 +81,8 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button){
 		
-		if(Main.i.stage.getScrollFocus() != null){
-			Actor parent = MiscUtils.getTopParent(Main.i.stage.getScrollFocus());
+		if(Core.i.stage.getScrollFocus() != null){
+			Actor parent = MiscUtils.getTopParent(Core.i.stage.getScrollFocus());
 			
 			if( !(parent instanceof VisDialog)) return false;
 			
@@ -113,8 +113,8 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	@Override
 	public boolean scrolled(int amount){
 		//PC only
-		float newzoom = getModule(Main.class).drawgrid.zoom - (amount / 10f * getModule(Main.class).drawgrid.zoom);
-		getModule(Main.class).drawgrid.setZoom(newzoom);
+		float newzoom = getModule(Core.class).drawgrid.zoom - (amount / 10f * getModule(Core.class).drawgrid.zoom);
+		getModule(Core.class).drawgrid.setZoom(newzoom);
 		return false;
 	}
 
@@ -127,7 +127,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean touchDown(float x, float y, int pointer, int button){
-			initzoom = input.<Main>getModule(Main.class).drawgrid.zoom;
+			initzoom = input.<Core>getModule(Core.class).drawgrid.zoom;
 			return false;
 		}
 
@@ -155,7 +155,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 					DrawingGrid grid = drawgrid();
 					grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
 				}else*/
-			if(input.<Main>getModule(Main.class).tool == Tool.zoom){
+			if(input.<Core>getModule(Core.class).tool == Tool.zoom){
 				drawgrid().offsetx -= deltaX / drawgrid().zoom;
 				drawgrid().offsety += deltaY / drawgrid().zoom;
 				drawgrid().updateBounds();
@@ -165,7 +165,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean zoom(float initialDistance, float distance){
-			if(input.<Main>getModule(Main.class).tool != Tool.zoom) return false;
+			if(input.<Core>getModule(Core.class).tool != Tool.zoom) return false;
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
 			if(newzoom < drawgrid().maxZoom()) newzoom = drawgrid().maxZoom();
@@ -179,7 +179,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2){
-			if(input.<Main>getModule(Main.class).tool != Tool.zoom) return false;
+			if(input.<Core>getModule(Core.class).tool != Tool.zoom) return false;
 
 			Vector2 afirst = initialPointer1.cpy().add(initialPointer2).scl(0.5f);
 			Vector2 alast = pointer1.cpy().add(pointer2).scl(0.5f);
@@ -203,13 +203,13 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean panStop(float x, float y, int pointer, int button){
-			initzoom = input.<Main>getModule(Main.class).drawgrid.zoom;
+			initzoom = input.<Core>getModule(Core.class).drawgrid.zoom;
 			return false;
 		}
 
 	}
 
 	public DrawingGrid drawgrid(){
-		return input.getModule(Main.class).drawgrid;
+		return input.getModule(Core.class).drawgrid;
 	}
 }

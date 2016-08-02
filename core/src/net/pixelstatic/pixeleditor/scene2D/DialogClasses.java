@@ -1,10 +1,10 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
-import static net.pixelstatic.pixeleditor.modules.Main.s;
+import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Filter;
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
@@ -43,8 +43,8 @@ public class DialogClasses{
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 
-			widthfield.setText((Main.i.drawgrid.canvas.width()) + "");
-			heightfield.setText(Main.i.drawgrid.canvas.height() + "");
+			widthfield.setText((Core.i.drawgrid.canvas.width()) + "");
+			heightfield.setText(Core.i.drawgrid.canvas.height() + "");
 
 			float twidth = 160 * s, theight = 40 * s;
 
@@ -101,8 +101,8 @@ public class DialogClasses{
 			heightfield = new VisTextField();
 			namefield = new VisTextField();
 
-			widthfield.setText((Main.i.drawgrid.canvas.width()) + "");
-			heightfield.setText(Main.i.drawgrid.canvas.height() + "");
+			widthfield.setText((Core.i.drawgrid.canvas.width()) + "");
+			heightfield.setText(Core.i.drawgrid.canvas.height() + "");
 
 			float twidth = 160 * s, theight = 40 * s;
 
@@ -191,7 +191,7 @@ public class DialogClasses{
 		public ReplaceDialog(){
 			super(Filter.replace, "Replace Colors");
 
-			from = new ColorBox(Main.i.selectedColor());
+			from = new ColorBox(Core.i.selectedColor());
 			to = new ColorBox();
 
 			final AndroidColorPicker picker = new AndroidColorPicker(false){
@@ -199,7 +199,7 @@ public class DialogClasses{
 					selected.setColor(getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Main.i.apicker.getRecentColors());
+			picker.setRecentColors(Core.i.apicker.getRecentColors());
 
 			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
 			dialog.getContentTable().add(picker).expand().fill();
@@ -229,7 +229,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Main.i.stage);
+					dialog.show(Core.i.stage);
 				}
 			};
 
@@ -292,7 +292,7 @@ public class DialogClasses{
 
 		private void setup(String colorname){
 
-			selected = new ColorBox(Main.i.selectedColor());
+			selected = new ColorBox(Core.i.selectedColor());
 
 			selected.addSelectListener();
 
@@ -301,7 +301,7 @@ public class DialogClasses{
 					selected.setColor(getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Main.i.apicker.getRecentColors());
+			picker.setRecentColors(Core.i.apicker.getRecentColors());
 
 			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
 			dialog.getContentTable().add(picker).expand().fill();
@@ -331,7 +331,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Main.i.stage);
+					dialog.show(Core.i.stage);
 				}
 			};
 
@@ -518,12 +518,12 @@ public class DialogClasses{
 
 		public final void result(){
 			filter.apply(sourcePixmap(), pixmap(), getArgs());
-			Main.i.drawgrid.canvas.drawPixmap(pixmap());
+			Core.i.drawgrid.canvas.drawPixmap(pixmap());
 			pixmap().dispose();
 		}
 
 		public Pixmap sourcePixmap(){
-			return Main.i.drawgrid.canvas.pixmap;
+			return Core.i.drawgrid.canvas.pixmap;
 		}
 
 		public Pixmap pixmap(){
@@ -533,7 +533,7 @@ public class DialogClasses{
 		void addSliderChangeListener(VisSlider...sliders){
 			EventListener listener = null;
 
-			if(Main.i.isImageLarge()){
+			if(Core.i.isImageLarge()){
 				listener = new InputListener(){
 					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 						return true;
@@ -562,14 +562,14 @@ public class DialogClasses{
 		public SymmetryDialog(){
 			super("Edit Symmetry");
 
-			vbox = new VisCheckBox("Vertical Symmetry", Main.i.drawgrid.vSymmetry);
-			hbox = new VisCheckBox("Horizontal Symmetry", Main.i.drawgrid.hSymmetry);
+			vbox = new VisCheckBox("Vertical Symmetry", Core.i.drawgrid.vSymmetry);
+			hbox = new VisCheckBox("Horizontal Symmetry", Core.i.drawgrid.hSymmetry);
 
 			ChangeListener listener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					Main.i.drawgrid.hSymmetry = hbox.isChecked();
-					Main.i.drawgrid.vSymmetry = vbox.isChecked();
+					Core.i.drawgrid.hSymmetry = hbox.isChecked();
+					Core.i.drawgrid.vSymmetry = vbox.isChecked();
 				}
 			};
 
@@ -644,7 +644,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
+			exportPixmap(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
 
@@ -703,10 +703,10 @@ public class DialogClasses{
 
 		public void result(){
 			FileHandle file = Gdx.files.absolute(directory.getText());
-			FileHandle to = Main.i.projectDirectory.child(field.getText() + ".png");
+			FileHandle to = Core.i.projectDirectory.child(field.getText() + ".png");
 			file.copyTo(to);
-			Project project = Main.i.projectmanager.loadProject(to);
-			Main.i.projectmanager.openProject(project);
+			Project project = Core.i.projectmanager.loadProject(to);
+			Core.i.projectmanager.openProject(project);
 			//exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
@@ -717,10 +717,10 @@ public class DialogClasses{
 		public ScaleDialog(){
 			super("Scale Image");
 
-			final float aspectRatio = (float)Main.i.drawgrid.canvas.width() / Main.i.drawgrid.canvas.height();
+			final float aspectRatio = (float)Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
 
-			widthfield = new VisTextField(Main.i.drawgrid.canvas.width() + "");
-			heightfield = new VisTextField(Main.i.drawgrid.canvas.height() + "");
+			widthfield = new VisTextField(Core.i.drawgrid.canvas.width() + "");
+			heightfield = new VisTextField(Core.i.drawgrid.canvas.height() + "");
 
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
@@ -758,8 +758,8 @@ public class DialogClasses{
 						}
 					}
 
-					float xscl = (float)Integer.parseInt(widthfield.getText()) / Main.i.drawgrid.canvas.width();
-					float yscl = (float)Integer.parseInt(heightfield.getText()) / Main.i.drawgrid.canvas.height();
+					float xscl = (float)Integer.parseInt(widthfield.getText()) / Core.i.drawgrid.canvas.width();
+					float yscl = (float)Integer.parseInt(heightfield.getText()) / Core.i.drawgrid.canvas.height();
 
 					xscalefield.setText(MiscUtils.displayFloat(xscl));
 					yscalefield.setText(MiscUtils.displayFloat(yscl));
@@ -783,8 +783,8 @@ public class DialogClasses{
 						}
 					}
 
-					int width = (int)(Float.parseFloat(xscalefield.getText()) * Main.i.drawgrid.canvas.width());
-					int height = (int)(Float.parseFloat(yscalefield.getText()) * Main.i.drawgrid.canvas.height());
+					int width = (int)(Float.parseFloat(xscalefield.getText()) * Core.i.drawgrid.canvas.width());
+					int height = (int)(Float.parseFloat(yscalefield.getText()) * Core.i.drawgrid.canvas.height());
 
 					widthfield.setText(width + "");
 					heightfield.setText(height + "");
@@ -828,10 +828,10 @@ public class DialogClasses{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
 
-				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, xscale, yscale));
+				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, xscale, yscale));
 
-				Main.i.drawgrid.setCanvas(canvas);
-				Main.i.updateToolColor();
+				Core.i.drawgrid.setCanvas(canvas);
+				Core.i.updateToolColor();
 			}catch(Exception e){
 				e.printStackTrace();
 				AndroidDialogs.showError(getStage(), e);
@@ -954,9 +954,9 @@ public class DialogClasses{
 			public ShiftImagePreview(){
 				stack = new Stack();
 
-				AlphaImage alpha = new AlphaImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
-				GridImage grid = new GridImage(Main.i.drawgrid.canvas.width(), Main.i.drawgrid.canvas.height());
-				image = new ShiftedImage(Main.i.drawgrid.canvas.texture);
+				AlphaImage alpha = new AlphaImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
+				GridImage grid = new GridImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
+				image = new ShiftedImage(Core.i.drawgrid.canvas.texture);
 				controller = new ShiftController(){
 					public void shifted(int x, int y){
 						image.offsetx += x;
@@ -967,7 +967,7 @@ public class DialogClasses{
 				stack.add(alpha);
 				stack.add(image);
 
-				if(Main.i.drawgrid.grid) stack.add(grid);
+				if(Core.i.drawgrid.grid) stack.add(grid);
 
 				stack.add(controller);
 
@@ -987,7 +987,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Main.i.drawgrid.canvas;
+			PixelCanvas canvas = Core.i.drawgrid.canvas;
 			Pixmap temp = PixmapUtils.copy(canvas.pixmap);
 
 			int offsetx = preview.image.offsetx, offsety = preview.image.offsety;
@@ -1030,17 +1030,17 @@ public class DialogClasses{
 			y = Math.min(preview.controller.sely1, preview.controller.sely2);
 			y2 = Math.max(preview.controller.sely1, preview.controller.sely2);
 
-			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(Main.i.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
+			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(Core.i.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
 
-			Main.i.drawgrid.setCanvas(canvas);
-			Main.i.updateToolColor();
+			Core.i.drawgrid.setCanvas(canvas);
+			Core.i.updateToolColor();
 		}
 
 		static class CropImagePreview extends ImagePreview{
 			CropController controller;
 
 			public CropImagePreview(){
-				super(Main.i.drawgrid.canvas.pixmap);
+				super(Core.i.drawgrid.canvas.pixmap);
 				stack.add((controller = new CropController(this)));
 
 			}
@@ -1216,7 +1216,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Main.i.drawgrid.canvas;
+			PixelCanvas canvas = Core.i.drawgrid.canvas;
 			float alpha = canvas.getAlpha();
 
 			canvas.setAlpha(1f);
@@ -1334,16 +1334,16 @@ public class DialogClasses{
 	public static void exportPixmap(Pixmap pixmap, FileHandle file){
 		try{
 			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
-			PixmapIO.writePNG(file, Main.i.drawgrid.canvas.pixmap);
-			AndroidDialogs.showInfo(Main.i.stage, "Image exported to " + file + ".");
+			PixmapIO.writePNG(file, Core.i.drawgrid.canvas.pixmap);
+			AndroidDialogs.showInfo(Core.i.stage, "Image exported to " + file + ".");
 		}catch(Exception e){
 			e.printStackTrace();
-			AndroidDialogs.showError(Main.i.stage, e);
+			AndroidDialogs.showError(Core.i.stage, e);
 		}
 	}
 
 	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){
-		float ratio = Main.i.drawgrid.canvas.width() / Main.i.drawgrid.canvas.height();
+		float ratio = Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
 
 		float isize = 400;
 		float width = isize, height = isize / ratio;

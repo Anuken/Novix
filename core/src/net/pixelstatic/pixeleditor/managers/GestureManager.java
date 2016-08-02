@@ -1,18 +1,18 @@
 package net.pixelstatic.pixeleditor.managers;
 
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 
 public class GestureManager implements GestureListener{
-	private Main main;
+	private Core main;
 	private float touchy;
 	private Vector2 vector = new Vector2();
 	private final float flingvelocity = 400;
 	
-	public GestureManager(Main main){
+	public GestureManager(Core main){
 		this.main = main;
 	}
 
@@ -34,7 +34,7 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
-		if(Main.i.getCurrentDialog() != null) return false;
+		if(Core.i.getCurrentDialog() != null) return false;
 		
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0,0)).y + main.toolmenu.getHeight();
 		float colortop = main.pickertable.localToStageCoordinates(vector.set(0,0)).y;

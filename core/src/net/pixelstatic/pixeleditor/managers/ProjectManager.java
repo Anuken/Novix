@@ -2,7 +2,7 @@ package net.pixelstatic.pixeleditor.managers;
 
 import java.io.IOException;
 
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
@@ -19,11 +19,11 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class ProjectManager{
 	private ObjectMap<String, Project> projects = new ObjectMap<String, Project>();
-	private Main main;
+	private Core main;
 	private Project currentProject;
 	private boolean savingProject = false;
 	
-	public ProjectManager(Main main){
+	public ProjectManager(Core main){
 		this.main = main;
 	}
 	

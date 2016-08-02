@@ -1,7 +1,7 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
-
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.gdxutils.graphics.Textures;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.Pos;
@@ -26,7 +26,7 @@ public class DrawingGrid extends Actor{
 	private GridImage gridimage;
 	private AlphaImage alphaimage;
 	private final boolean clip = true;
-	
+
 	public PixelCanvas canvas;
 	public boolean grid = true, cursormode = true;
 	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
@@ -38,7 +38,7 @@ public class DrawingGrid extends Actor{
 		alphaimage = new AlphaImage(1, 1);
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				if( !Main.i.tool.moveCursor()) return false;
+				if( !Core.i.tool.moveCursor()) return false;
 				touches ++;
 				if(cursormode){
 					if(moving){
@@ -63,10 +63,10 @@ public class DrawingGrid extends Actor{
 					if(pointer == tpointer){
 						moving = false;
 					}else{
-						if(Main.i.tool.push) canvas.pushActions();
+						if(Core.i.tool.push) canvas.pushActions();
 					}
 				}else{
-					if(Main.i.tool.push) canvas.pushActions();
+					if(Core.i.tool.push) canvas.pushActions();
 				}
 				touches --;
 			}
@@ -74,7 +74,7 @@ public class DrawingGrid extends Actor{
 			//pc debugging
 			public boolean keyUp(InputEvent event, int keycode){
 				if(keycode == Keys.E){
-					if(Main.i.tool.push){
+					if(Core.i.tool.push){
 						canvas.pushActions();
 					}
 					return true;
@@ -93,16 +93,15 @@ public class DrawingGrid extends Actor{
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
 				if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop) return; //not the second pointer
-				
+
 				float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
 				float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
-				
+
 				float movex = deltax;
 				float movey = deltay;
-				
+
 				int move = (Math.round(Math.max(Math.abs(movex), Math.abs(movey))));
 
-				
 				if(Math.abs(movex) > Math.abs(movey)){
 					movey /= Math.abs(movex);
 					movex /= Math.abs(movex);
@@ -110,36 +109,33 @@ public class DrawingGrid extends Actor{
 					movex /= Math.abs(movey);
 					movey /= Math.abs(movey);
 				}
-				
-				float currentx=0, currenty=0;
-				
-				for(int i = 0; i < move; i ++){
+
+				float currentx = 0, currenty = 0;
+
+				for(int i = 0;i < move;i ++){
 					currentx += movex;
 					currenty += movey;
-				//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
+					//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
 					if(cursormode){
-						int newx = (int)((cursorx+currentx) / (canvasScale() * zoom)), newy = (int)((cursory+currenty) / (canvasScale() * zoom));
+						int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
 
-						if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Main.i.tool.drawOnMove) processToolTap(newx, newy);
-						
-						
+						if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
+
 						selected.set(newx, newy);
 					}else{
-						int newx = (int)((cursorx+currentx) / (canvasScale() * zoom)), newy = (int)((cursory+currenty) / (canvasScale() * zoom));
-					
-						if( !selected.equals(newx, newy) && Main.i.tool.drawOnMove) processToolTap(newx, newy);
+						int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
+
+						if( !selected.equals(newx, newy) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
 						selected.set(newx, newy);
 					}
 				}
-				
-				if(cursormode){
-					if(pointer != tpointer || !Main.i.tool.moveCursor()) return;
 
-					
+				if(cursormode){
+					if(pointer != tpointer || !Core.i.tool.moveCursor()) return;
 
 					cursorx += deltax;
 					cursory += deltay;
-					
+
 					cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
 					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
 
@@ -152,18 +148,18 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void processToolTap(int x, int y){
-		Main.i.tool.clicked(Main.i.selectedColor(), canvas, x, y);
+		Core.i.tool.clicked(Core.i.selectedColor(), canvas, x, y);
 
-		if(Main.i.tool.symmetric()){
+		if(Core.i.tool.symmetric()){
 			if(vSymmetry){
-				Main.i.tool.clicked(Main.i.selectedColor(), canvas, canvas.width() - 1 - x, y);
+				Core.i.tool.clicked(Core.i.selectedColor(), canvas, canvas.width() - 1 - x, y);
 			}
 
 			if(hSymmetry){
-				Main.i.tool.clicked(Main.i.selectedColor(), canvas, x, canvas.height() - 1 - y);
+				Core.i.tool.clicked(Core.i.selectedColor(), canvas, x, canvas.height() - 1 - y);
 
 				if(vSymmetry){
-					Main.i.tool.clicked(Main.i.selectedColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
+					Core.i.tool.clicked(Core.i.selectedColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
 				}
 			}
 		}
@@ -227,7 +223,7 @@ public class DrawingGrid extends Actor{
 		gridimage.setImageSize(canvas.width(), canvas.height());
 		alphaimage.setImageSize(canvas.width(), canvas.height());
 
-		Main.i.projectmanager.saveProject();
+		Core.i.projectmanager.saveProject();
 	}
 
 	public void updateCursorSelection(){
@@ -239,7 +235,7 @@ public class DrawingGrid extends Actor{
 		canvas.update();
 		setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
 		setZIndex(0);
-		
+
 		updateSize();
 		updateBounds();
 		updateCursor();
@@ -252,19 +248,19 @@ public class DrawingGrid extends Actor{
 		float cscl = canvasScale() * zoom;
 
 		batch.setColor(Color.WHITE);
-		
+
 		//alphaimage.zoom = (int)((int)(zoom))+1;
 		//alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
-		
-	//	float modx = ((getX()) % (getWidth() / canvas.texture.getWidth()));
+
+		//	float modx = ((getX()) % (getWidth() / canvas.texture.getWidth()));
 		//float mody = ((getY()) % (getHeight() / canvas.texture.getHeight()));
-		
+
 		//int izoom = (int)zoom;
 		alphaimage.setImageSize(canvas.width(), canvas.height());
 		//System.out.println(alphaimage.zoom);
 		alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
 		alphaimage.draw(batch, parentAlpha);
-	//	batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
+		//	batch.draw(Textures.get("alpha"), getX(), getY(), canvas.width() * cscl, canvas.height() * cscl, 0, 0, canvas.width(), canvas.height());
 
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
@@ -294,7 +290,7 @@ public class DrawingGrid extends Actor{
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
 		//draw selection
-		if((cursormode || (touches > 0 && Main.i.tool.moveCursor())) && Main.i.tool.drawCursor()){
+		if((cursormode || (touches > 0 && Core.i.tool.moveCursor())) && Core.i.tool.drawCursor()){
 			batch.setColor(Color.CORAL);
 
 			drawSelection(batch, selected.x, selected.y, cscl, xt);
@@ -324,13 +320,12 @@ public class DrawingGrid extends Actor{
 		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2, aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 		//draw cursor
-		if(cursormode || (touches > 0 && Main.i.tool.moveCursor())){
+		if(cursormode || (touches > 0 && Core.i.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
 			int csize = 30;
 			batch.draw(VisUI.getSkin().getRegion("cursor-normal"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
-		}else{ //seriously, why is this necessary
-			batch.draw(VisUI.getSkin().getRegion("cursor-normal"), -999, -999, 30, 30);
-		}
+		} //seriously, why is this necessary
+		batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
 
 		if(clip){
 			clipEnd();

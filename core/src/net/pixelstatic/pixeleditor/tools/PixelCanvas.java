@@ -2,7 +2,7 @@ package net.pixelstatic.pixeleditor.tools;
 
 
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
-import net.pixelstatic.pixeleditor.modules.Main;
+import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
@@ -25,7 +25,7 @@ public class PixelCanvas implements Disposable{
 
 	public PixelCanvas(Pixmap pixmap){
 		this.pixmap = pixmap;
-		name = Main.i.getCurrentProject().name;
+		name = Core.i.getCurrentProject().name;
 		texture = new Texture(pixmap);
 		updateTexture();
 	}
@@ -33,7 +33,7 @@ public class PixelCanvas implements Disposable{
 	public PixelCanvas(int width, int height){
 		pixmap = new Pixmap(width, height, Format.RGBA8888);
 		texture = new Texture(pixmap);
-		name = Main.i.getCurrentProject().name;
+		name = Core.i.getCurrentProject().name;
 		updateTexture();
 	}
 
@@ -165,7 +165,7 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public void updateTexture(){
-		if(!Main.i.projectmanager.isSavingProject()){
+		if(!Core.i.projectmanager.isSavingProject()){
 			texture.draw(pixmap, 0, 0);
 			drawn = true;
 		}else{

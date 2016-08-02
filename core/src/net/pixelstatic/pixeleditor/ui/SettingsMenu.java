@@ -1,7 +1,7 @@
 package net.pixelstatic.pixeleditor.ui;
 
-import static net.pixelstatic.pixeleditor.modules.Main.s;
-import net.pixelstatic.pixeleditor.modules.Main;
+import static net.pixelstatic.pixeleditor.modules.Core.s;
+import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,9 +14,9 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
 public class SettingsMenu extends VisDialog{
-	private Main main;
+	private Core main;
 	
-	public SettingsMenu(Main main){
+	public SettingsMenu(Core main){
 		super("Settings");
 		this.main = main;
 		

@@ -1,7 +1,7 @@
 package net.pixelstatic.pixeleditor.ui;
 
-import static net.pixelstatic.pixeleditor.modules.Main.s;
-import net.pixelstatic.pixeleditor.modules.Main;
+import static net.pixelstatic.pixeleditor.modules.Core.s;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
@@ -42,13 +42,13 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 public class ToolMenu extends VisTable{
-	private Main main;
+	private Core main;
 	private VisTable menutable, optionstable;
 	private VisSlider brushslider;
 	private ColorBar alphabar;
 	private static ButtonMenu currentMenu;
 	
-	public ToolMenu(Main main){
+	public ToolMenu(Core main){
 		this.main = main;
 		setBackground("button-window-bg");
 		
@@ -72,7 +72,7 @@ public class ToolMenu extends VisTable{
 	}
 	
 	private VisTextButton addMenuButton(String text){
-		float height = 70f;
+		float height = 70f*s;
 		VisTextButton button = new VisTextButton(text);
 		menutable.top().left().add(button).width(Gdx.graphics.getWidth() / 5 - 3).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
 		return button;
