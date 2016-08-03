@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 
 public class DrawingGrid extends Actor{
+	private Core core;
 	private float cursorx, cursory;
 	private int tpointer;
 	private int touches = 0;
@@ -33,20 +34,20 @@ public class DrawingGrid extends Actor{
 	private Vector2[][] brushPolygons = new Vector2[10][];
 
 	public PixelCanvas canvas;
-	public boolean grid = true, cursormode = true;
 	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
 	public int brushSize;
 
-	public DrawingGrid(){
+	public DrawingGrid(final Core core){
+		this.core = core;
 		gridimage = new GridImage(1, 1);
 		alphaimage = new AlphaImage(1, 1);
 		generatePolygons();
 		addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				if( !Core.i.tool.moveCursor()) return false;
+				if( !Core.i.tool.moveCursor() || !Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()) return false;
 				touches ++;
-				if(cursormode){
+				if(cursormode()){
 					if(moving){
 						processToolTap(selected.x, selected.y);
 						return true;
@@ -65,7 +66,7 @@ public class DrawingGrid extends Actor{
 			}
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button){
-				if(cursormode){
+				if(cursormode()){
 					if(pointer == tpointer){
 						moving = false;
 					}else{
@@ -122,7 +123,7 @@ public class DrawingGrid extends Actor{
 					currentx += movex;
 					currenty += movey;
 					//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
-					if(cursormode){
+					if(cursormode()){
 						int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
 
 						if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
@@ -136,7 +137,7 @@ public class DrawingGrid extends Actor{
 					}
 				}
 
-				if(cursormode){
+				if(cursormode()){
 					if(pointer != tpointer || !Core.i.tool.moveCursor()) return;
 
 					cursorx += deltax;
@@ -244,7 +245,9 @@ public class DrawingGrid extends Actor{
 
 		zoom = maxZoom();
 
-		if(canvas.width() > 100 || canvas.height() > 100) grid = false;
+		if(canvas.width() > 100 || canvas.height() > 100){
+			core.prefs.put("grid", false);
+		}
 
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
@@ -286,7 +289,7 @@ public class DrawingGrid extends Actor{
 
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
-		if(grid){
+		if(core.prefs.getBoolean("grid")){
 			gridimage.setBounds(getX(), getY(), getWidth(), getHeight());
 			gridimage.draw(batch, parentAlpha);
 		}
@@ -312,7 +315,7 @@ public class DrawingGrid extends Actor{
 		int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
 
 		//draw selection
-		if((cursormode || (touches > 0 && Core.i.tool.moveCursor())) && Core.i.tool.drawCursor()){
+		if((cursormode() || (touches > 0 && Core.i.tool.moveCursor())) && Core.i.tool.drawCursor()){
 			batch.setColor(Color.CORAL);
 
 			drawSelection(batch, selected.x, selected.y, cscl, xt);
@@ -342,10 +345,10 @@ public class DrawingGrid extends Actor{
 		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2, aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 		//draw cursor
-		if(cursormode || (touches > 0 && Core.i.tool.moveCursor())){
+		if(cursormode() || (touches > 0 && Core.i.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
-			float csize = 30 * Core.i.prefs.getFloat("cursorsize")*s;
-			batch.draw(VisUI.getSkin().getRegion("cursor-normal"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
+			float csize = 30 * core.prefs.getFloat("cursorsize")*s;
+			batch.draw(Textures.get("cursor"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 		} //seriously, why is this necessary
 		batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
 
@@ -417,5 +420,9 @@ public class DrawingGrid extends Actor{
 
 	public float min(){
 		return Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	}
+	
+	boolean cursormode(){
+		return core.prefs.getBoolean("cursormode");
 	}
 }

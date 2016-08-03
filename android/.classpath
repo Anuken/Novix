@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Utils"/>
 	<classpathentry exported="true" kind="lib" path="/PixelEditor-core/lib/vis-ui-1.1.1.jar" sourcepath="/PixelEditor-core/lib/vis-ui-1.1.1-sources.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/GdxUtils"/>
+	<classpathentry exported="true" kind="lib" path="/Utils/lib/gwt-geom.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

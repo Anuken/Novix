@@ -31,7 +31,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -268,7 +267,7 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		final VisLabel infolabel = new VisLabel();
+		//final VisLabel infolabel = new VisLabel();
 	
 		brushslider = new VisSlider(1, 10, 0.01f, true);
 		brushslider.setValue(main.prefs.getInteger("brushsize", 1));
@@ -278,7 +277,7 @@ public class ToolMenu extends VisTable{
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				brushlabel.setText("Brush Size: " + (int)brushslider.getValue());
-				main.prefs.putInteger("brushsize", (int)brushslider.getValue());
+				main.prefs.put("brushsize", (int)brushslider.getValue());
 				main.drawgrid.brushSize = (int)brushslider.getValue();
 			}
 		});
@@ -298,7 +297,7 @@ public class ToolMenu extends VisTable{
 			public void changed(ChangeEvent event, Actor actor){
 				opacity.setText("Opacity: " + (int)(alphabar.getSelection()*100) + "%");
 				main.drawgrid.canvas.setAlpha(alphabar.getSelection());
-				main.prefs.putFloat("opacity", alphabar.getSelection());
+				main.prefs.put("opacity", alphabar.getSelection());
 			}
 		});
 
@@ -311,8 +310,7 @@ public class ToolMenu extends VisTable{
 		grid.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				main.drawgrid.grid = grid.isChecked();
-				main.prefs.putBoolean("grid", main.drawgrid.cursormode);
+			//	main.prefs.putBoolean("grid", main.drawgrid.cursormode);
 				
 			}
 		});
@@ -332,26 +330,6 @@ public class ToolMenu extends VisTable{
 			}
 		});
 
-		final VisRadioButton cbox = new VisRadioButton("cursor mode");
-		final VisRadioButton tbox = new VisRadioButton("tap mode");
-
-		if(main.prefs.getBoolean("cursormode", true)){
-			cbox.setChecked(true);
-		}else{
-			tbox.setChecked(true);
-		}
-
-		cbox.getImageStackCell().size(40 * s);
-		tbox.getImageStackCell().size(40 * s);
-
-		new ButtonGroup<VisRadioButton>(cbox, tbox);
-		cbox.addListener(new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-				main.drawgrid.cursormode = cbox.isChecked();
-				main.prefs.putBoolean("cursormode", main.drawgrid.cursormode);
-			}
-		});
 		
 		VisImageButtonStyle style = VisUI.getSkin().get("toggle", VisImageButtonStyle.class);
 		
@@ -368,8 +346,7 @@ public class ToolMenu extends VisTable{
 		
 		modebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.prefs.putBoolean("cursormode", modebutton.isChecked());
-				main.drawgrid.cursormode = modebutton.isChecked();
+				main.prefs.put("cursormode", modebutton.isChecked());
 			}
 		});
 		
@@ -380,8 +357,7 @@ public class ToolMenu extends VisTable{
 		
 		gridbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.prefs.putBoolean("grid", gridbutton.isChecked());
-				main.drawgrid.grid = gridbutton.isChecked();
+				main.prefs.put("grid", gridbutton.isChecked());
 				
 			}
 		});
@@ -400,12 +376,10 @@ public class ToolMenu extends VisTable{
 		menutable.add(new VisLabel("Draw:")).align(Align.topLeft).padTop(12*s).row();
 		menutable.add(modebutton).size(80*s).align(Align.topLeft).row();
 		
-		menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();
-		menutable.add(gridbutton).size(80*s).align(Align.topLeft).row();
+	//	menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();
+	//	menutable.add(gridbutton).size(80*s).align(Align.topLeft).row();
 		
 		othertable.bottom().right();
-		
-		infolabel.setAlignment(Align.topLeft, Align.left);
 		
 		othertable.add(brushlabel).padRight(10).minWidth(150).align(Align.center);
 		othertable.add(opacity).minWidth(150).align(Align.center);

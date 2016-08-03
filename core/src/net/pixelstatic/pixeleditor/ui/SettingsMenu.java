@@ -45,7 +45,7 @@ public class SettingsMenu extends VisDialog{
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				label.setText(name + ": " + slider.getValue());
-				main.prefs.putInteger(name, (int)slider.getValue());
+				main.prefs.put(name, (int)slider.getValue());
 			}
 		});
 		slider.setValue(main.prefs.getInteger(name));
@@ -62,7 +62,7 @@ public class SettingsMenu extends VisDialog{
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				label.setText(name + ": " + (int)(slider.getValue()*100) + "%");
-				main.prefs.putFloat(convert(name), slider.getValue());
+				main.prefs.put(convert(name), slider.getValue());
 			}
 		});
 		slider.setValue(main.prefs.getFloat(convert(name), 1f));
@@ -80,7 +80,7 @@ public class SettingsMenu extends VisDialog{
 		box.getImageStackCell().size(40 * s);
 		box.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
-				main.prefs.putBoolean(convert(name), box.isChecked());
+				main.prefs.put(convert(name), box.isChecked());
 			}
 		});
 		Table table = getContentTable();
@@ -94,6 +94,6 @@ public class SettingsMenu extends VisDialog{
 	}
 	
 	public void result(Object o){
-		main.prefs.flush();
+		main.prefs.save();
 	}
 }	

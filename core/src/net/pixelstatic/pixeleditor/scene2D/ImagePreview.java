@@ -24,7 +24,7 @@ public class ImagePreview extends Group{
 		
 		stack.add(alpha);
 		stack.add(image);
-		if(Core.i.drawgrid.grid)stack.add(grid);
+		if(Core.i.prefs.getBoolean("grid")) stack.add(grid);
 		stack.add(border);
 		
 		addActor(stack);

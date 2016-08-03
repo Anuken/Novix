@@ -8,6 +8,7 @@ import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.managers.PaletteManager;
+import net.pixelstatic.pixeleditor.managers.PrefsManager;
 import net.pixelstatic.pixeleditor.managers.ProjectManager;
 import net.pixelstatic.pixeleditor.scene2D.CollapseButton;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
@@ -22,7 +23,6 @@ import net.pixelstatic.utils.modules.Module;
 import net.pixelstatic.utils.scene2D.*;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -50,21 +50,22 @@ import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 public class Core extends Module<PixelEditor>{
 	public static Core i;
 	public static float s = 1f; //density scale
-	public final int largeImageSize = 128*128;
+	public final int largeImageSize = 128 * 128;
 	public final Color clearcolor = Color.valueOf("171c23");
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
 	public final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
 	public int paletteColor;
-	public Preferences prefs;
 	public ProjectManager projectmanager;
 	public PaletteManager palettemanager;
+	public PrefsManager prefs;
 	public VisTable colortable, pickertable;
 	public SettingsMenu settingsmenu;
 	public ProjectMenu projectmenu;
 	public PaletteMenu palettemenu;
 	public ToolMenu toolmenu;
+	public VisImageButton gridbutton;
 	CollapseButton colorcollapsebutton, toolcollapsebutton;
 	SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	ColorBox[] boxes;
@@ -76,7 +77,7 @@ public class Core extends Module<PixelEditor>{
 		Hue.clearScreen(clearcolor);
 
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
-		
+
 		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
@@ -89,11 +90,10 @@ public class Core extends Module<PixelEditor>{
 	void setupExtraMenus(){
 
 		settingsmenu = new SettingsMenu(this);
-		
+
 		settingsmenu.addPercentScrollSetting("Cursor Size");
 		settingsmenu.addCheckSetting("Autosave", true);
-		
-		
+
 		projectmenu = new ProjectMenu(this);
 		projectmenu.update(true);
 	}
@@ -102,8 +102,8 @@ public class Core extends Module<PixelEditor>{
 		final VisTable tooltable = new VisTable();
 		tooltable.setFillParent(true);
 		stage.addActor(tooltable);
-		
-		final float size = Gdx.graphics.getWidth() / Tool.values().length;
+
+		final float size = Gdx.graphics.getWidth() / (Tool.values().length);
 
 		toolmenu = new ToolMenu(this);
 
@@ -124,39 +124,50 @@ public class Core extends Module<PixelEditor>{
 			}
 		});
 
-		tooltable.bottom().left().add(toolcollapser).height(20 * s).colspan(7).fillX().expandX();
+		tooltable.bottom().left().add(toolcollapser).height(20 * s).colspan(Tool.values().length).fillX().expandX();
 		tooltable.row();
-		tooltable.bottom().left().add(toolcollapsebutton).height(60 * s).colspan(7).fillX().expandX();
+		tooltable.bottom().left().add(toolcollapsebutton).height(60 * s).colspan(Tool.values().length).fillX().expandX();
 		tooltable.row();
-		
+
 		Tool[] tools = Tool.values();
 
-		for(int i = 0;i < tools.length; i ++){
+		for(int i = 0;i < tools.length;i ++){
 			final Tool ctool = tools[i];
 
 			final VisImageButton button = new VisImageButton((Drawable)null);
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
 			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); //whatever icon is needed
 
-			button.getImageCell().size(50*s);
+			button.getImageCell().size(50 * s);
 
-			button.addListener(new ClickListener(){
-				public void clicked(InputEvent event, float x, float y){
-					ctool.onSelected();
-					if( !ctool.selectable()){
-						button.setChecked(false);
-						return;
+			if(ctool == Tool.grid){
+				button.setChecked(prefs.getBoolean("grid", true));
+				button.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						prefs.put("grid", button.isChecked());
 					}
-					tool = ctool;
-					tool.onColorChange(selectedColor(), drawgrid.canvas);
-					if( !button.isChecked()) button.setChecked(true);
-					for(Actor actor : tooltable.getChildren()){
-						if( !(actor instanceof VisImageButton)) continue;
-						VisImageButton other = (VisImageButton)actor;
-						if(other != button) other.setChecked(false);
+				});
+				gridbutton = button;
+			}else{
+
+				button.addListener(new ClickListener(){
+					public void clicked(InputEvent event, float x, float y){
+						ctool.onSelected();
+						if( !ctool.selectable()){
+							button.setChecked(false);
+							return;
+						}
+						tool = ctool;
+						tool.onColorChange(selectedColor(), drawgrid.canvas);
+						if( !button.isChecked()) button.setChecked(true);
+						for(Actor actor : tooltable.getChildren()){
+							if( !(actor instanceof VisImageButton)) continue;
+							VisImageButton other = (VisImageButton)actor;
+							if(other != button) other.setChecked(false);
+						}
 					}
-				}
-			});
+				});
+			}
 
 			if(i == 0){
 				button.setChecked(true);
@@ -177,7 +188,7 @@ public class Core extends Module<PixelEditor>{
 				return Gdx.graphics.getWidth();
 			}
 		};
-		
+
 		pickertable.background("button-window-bg");
 
 		apicker = new AndroidColorPicker(){
@@ -213,7 +224,7 @@ public class Core extends Module<PixelEditor>{
 		updateColorMenu();
 
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
-		
+
 		palettemenu = new PaletteMenu(this);
 
 		palettebutton.addListener(new ClickListener(){
@@ -221,24 +232,24 @@ public class Core extends Module<PixelEditor>{
 				openPaletteMenu();
 			}
 		});
-		
-		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f*s);
+
+		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f * s).padBottom(20 * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		
+		System.out.println(colorcollapser.getTop());
 		//TODO COLOR TABLE
-		colorcollapser.setY(Gdx.graphics.getHeight() - pickertable.getPrefHeight());
+		colorcollapser.setY(0 + Gdx.graphics.getWidth() / Tool.values().length + toolcollapsebutton.getPrefHeight() + 20 * s);
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
 	}
-	
+
 	public void openPaletteMenu(){
 		palettemenu.update();
 		palettemenu.show(stage);
 	}
-	
+
 	public void openSettingsMenu(){
 		settingsmenu.show(stage);
 	}
@@ -246,20 +257,20 @@ public class Core extends Module<PixelEditor>{
 	public void updateColorMenu(){
 		colortable.clear();
 
-		int maxcolorsize = (int)(65*s);
-		int mincolorsize = (int)(30*s);
+		int maxcolorsize = (int)(65 * s);
+		int mincolorsize = (int)(30 * s);
 
 		int colorsize = Gdx.graphics.getWidth() / getCurrentPalette().size() - MiscUtils.densityScale(3);
-		
+
 		int perow = 0; //colors per row
 
 		colorsize = Math.min(maxcolorsize, colorsize);
-		
+
 		if(colorsize < mincolorsize){
 			colorsize = mincolorsize;
 			perow = Gdx.graphics.getWidth() / colorsize;
 		}
-		
+
 		colortable.add(colorcollapsebutton).expandX().fillX().colspan((perow == 0 ? getCurrentPalette().size() : perow) + 2).height(50f * s);
 		colorcollapsebutton.setZIndex(colorcollapser.getZIndex() + 10);
 
@@ -275,7 +286,7 @@ public class Core extends Module<PixelEditor>{
 
 			boxes[i] = box;
 			colortable.add(box).size(colorsize);
-			
+
 			box.setColor(getCurrentPalette().colors[i]);
 
 			box.addListener(new ClickListener(){
@@ -283,13 +294,13 @@ public class Core extends Module<PixelEditor>{
 					apicker.addColorToPalette(boxes[paletteColor].getColor().cpy());
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
-					prefs.putInteger("palettecolor", paletteColor);
+					prefs.put("palettecolor", paletteColor);
 					box.selected = true;
 					box.toFront();
-					setSelectedColor(box.getColor()); 
+					setSelectedColor(box.getColor());
 				}
 			});
-			
+
 			if(perow != 0 && i % perow == perow - 1){
 				colortable.add().growX();
 				colortable.row();
@@ -297,15 +308,14 @@ public class Core extends Module<PixelEditor>{
 			}
 		}
 
-		if(perow == 0)
-			colortable.add().growX();
+		if(perow == 0) colortable.add().growX();
 	}
 
 	void setupBoxColors(){
 		paletteColor = prefs.getInteger("palettecolor", 0);
-		
+
 		if(paletteColor > boxes.length) paletteColor = 0;
-		
+
 		apicker.setRecentColors(boxes);
 		boxes[paletteColor].selected = true;
 		boxes[paletteColor].toFront();
@@ -313,28 +323,26 @@ public class Core extends Module<PixelEditor>{
 	}
 
 	void setupCanvas(){
-		drawgrid = new DrawingGrid();
+		drawgrid = new DrawingGrid(this);
 
-		drawgrid.grid = prefs.getBoolean("grid", true);
-		drawgrid.cursormode = prefs.getBoolean("cursormode", true);
 		drawgrid.setCanvas(new PixelCanvas(getCurrentProject().getCachedPixmap()));
 
 		stage.addActor(drawgrid);
 	}
-	
+
 	void setupStyles(){
 		ColorBox.defaultStyle.box = Color.valueOf("29323d");
 		ColorBox.defaultStyle.disabled = Color.valueOf("0f1317");
-		
+
 		ColorBar.borderColor = Color.valueOf("29323d");
 	}
-	
+
 	public void setPalette(Palette palette){
 		paletteColor = 0;
 		palettemanager.setCurrentPalette(palette);
-		prefs.putInteger("palettecolor", 0);
-		prefs.putString("lastpalette", palette.name);
-		prefs.flush();
+		prefs.put("palettecolor", 0);
+		prefs.put("lastpalette", palette.name);
+		prefs.save();
 		updateColorMenu();
 		setSelectedColor(palette.colors[0]);
 		setupBoxColors();
@@ -342,7 +350,7 @@ public class Core extends Module<PixelEditor>{
 	}
 
 	public void openProjectMenu(){
-		final ProjectTable table = 	projectmenu.update(false);
+		final ProjectTable table = projectmenu.update(false);
 		projectmenu.show(stage);
 
 		new Thread(new Runnable(){
@@ -373,35 +381,38 @@ public class Core extends Module<PixelEditor>{
 	public void updateToolColor(){
 		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor().cpy(), drawgrid.canvas);
 	}
-	
+
 	public Project getCurrentProject(){
 		return projectmanager.getCurrentProject();
 	}
-	
+
 	public Palette getCurrentPalette(){
 		return palettemanager.getCurrentPalette();
 	}
-	
+
 	public boolean toolMenuCollapsed(){
 		return toolcollapser.isCollapsed();
 	}
-	
+
 	public boolean colorMenuCollapsed(){
 		return colorcollapser.isCollapsed();
 	}
-	
+
 	public void collapseToolMenu(){
+		if( !colorcollapser.isCollapsed() && toolcollapser.isCollapsed()) collapseColorMenu();
+
 		((ClickListener)toolcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
 	}
-	
+
 	public void collapseColorMenu(){
+		if(colorcollapser.isCollapsed() && !toolcollapser.isCollapsed()) collapseToolMenu();
 		((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
 	}
-	
+
 	public boolean isImageLarge(){
 		return drawgrid.canvas.width() * drawgrid.canvas.height() > largeImageSize;
 	}
-	
+
 	public VisDialog getCurrentDialog(){
 		if(stage.getScrollFocus() != null){
 			Actor actor = MiscUtils.getTopParent(Core.i.stage.getScrollFocus());
@@ -411,7 +422,7 @@ public class Core extends Module<PixelEditor>{
 		}
 		return null;
 	}
-	
+
 	public void loadFonts(){
 		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
 		Skin skin = new Skin();
@@ -432,7 +443,7 @@ public class Core extends Module<PixelEditor>{
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = (int)(22 * MiscUtils.densityScale());
-		parameter.shadowColor = new Color(0,0,0,0.4f);
+		parameter.shadowColor = new Color(0, 0, 0, 0.4f);
 		//parameter.shadowOffsetY = 2;
 		//parameter.shadowOffsetX = 2;
 		BitmapFont font = generator.generateFont(parameter);
@@ -445,7 +456,7 @@ public class Core extends Module<PixelEditor>{
 
 		generator.dispose();
 	}
-	
+
 	public Core(){
 		Gdx.graphics.setContinuousRendering(false);
 
@@ -457,7 +468,7 @@ public class Core extends Module<PixelEditor>{
 
 		projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("pixelprojects");
 		projectDirectory.mkdirs();
-		prefs = Gdx.app.getPreferences("pixeleditor");
+		prefs = new PrefsManager(this);
 
 		palettemanager = new PaletteManager(this);
 		palettemanager.loadPalettes();
@@ -468,12 +479,12 @@ public class Core extends Module<PixelEditor>{
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);
 		loadFonts();
-		
+
 		ShapeUtils.texture = VisUI.getSkin().getRegion("white");
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
 
 		projectmanager.loadProjects();
-		
+
 		setupStyles();
 		setupTools();
 		setupColorPicker();
@@ -481,7 +492,7 @@ public class Core extends Module<PixelEditor>{
 		setupExtraMenus();
 
 		updateToolColor();
-		
+
 		toolmenu.initialize();
 
 		//autosave
@@ -492,20 +503,19 @@ public class Core extends Module<PixelEditor>{
 					public void run(){
 						projectmanager.saveProject();
 						palettemanager.savePalettes();
-						prefs.flush();
+						prefs.save();
 					}
 				}).start();
 			}
 		}, 20, 20);
-		
+
 		//TextureUnpacker packer = new TextureUnpacker();
-		
+
 		//TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
 		//packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
-		
-		
+
 	}
-	
+
 	@Override
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, true);
@@ -516,13 +526,13 @@ public class Core extends Module<PixelEditor>{
 		Gdx.app.log("pedebugging", "Pausing and saving everything.");
 		projectmanager.saveProject();
 		palettemanager.savePalettes();
-		if(getCurrentProject() != null) prefs.putString("lastproject", getCurrentProject().name);
-		prefs.flush();
+		if(getCurrentProject() != null) prefs.put("lastproject", getCurrentProject().name);
+		prefs.save();
 	}
 
 	@Override
 	public void dispose(){
-		/*if(Gdx.app.getType() == ApplicationType.Android)*/ pause();
+		/*if(Gdx.app.getType() == ApplicationType.Android)*/pause();
 		VisUI.dispose();
 		Textures.dispose();
 	}

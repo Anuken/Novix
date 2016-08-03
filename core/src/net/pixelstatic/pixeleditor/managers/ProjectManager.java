@@ -65,8 +65,8 @@ public class ProjectManager{
 	}
 
 	public void openProject(Project project){
-		main.prefs.putString("lastproject", project.name);
-		main.prefs.flush();
+		main.prefs.put("lastproject", project.name);
+		main.prefs.save();
 		currentProject = project;
 
 		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");

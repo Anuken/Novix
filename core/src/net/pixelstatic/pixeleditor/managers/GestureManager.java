@@ -12,7 +12,7 @@ public class GestureManager implements GestureListener{
 	private Core main;
 	private float touchy;
 	private Vector2 vector = new Vector2();
-	private final float flingvelocity = 400, swipevelocity = 400;
+	private final float flingvelocity = 1300, swipevelocity = 1300;
 
 	public GestureManager(Core main){
 		this.main = main;
@@ -37,26 +37,31 @@ public class GestureManager implements GestureListener{
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
 		if(Core.i.getCurrentDialog() != null) return false;
-
+		
+		float swipevelocity = this.swipevelocity*s;
+		float flingvelocity = this.flingvelocity*s;
+		
+	//	Gdx.app.error("pedebugging", velocityX + ", " + velocityY);
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0, 0)).y + main.toolmenu.getHeight();
 		float colortop = main.pickertable.localToStageCoordinates(vector.set(0, 0)).y;
 
-		if(Math.abs(velocityX) > swipevelocity && Math.abs(velocityY) < swipevelocity * 2.5f && MathUtils.isEqual(touchy, Gdx.graphics.getHeight() / 2, 250 * s)){
-			if( !main.colorMenuCollapsed() && velocityX < swipevelocity) main.collapseColorMenu(); //swipe left, close color menu
+		if(Math.abs(velocityX) > swipevelocity && Math.abs(velocityY) < swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight() / 2, 250 * s)){
+			if( !main.colorMenuCollapsed() && velocityX < -swipevelocity) main.collapseColorMenu(); //swipe left, close color menu
 			if(main.colorMenuCollapsed() && velocityX > swipevelocity){ //swipe right, open color menu
 				if(!main.toolMenuCollapsed()) main.collapseToolMenu(); //close tool menu if open
 				main.collapseColorMenu();
 			}
 			
-		}else if( !main.colorMenuCollapsed() && touchy < colortop + 320 * s && velocityY < flingvelocity){ // swipe up from the top, collapse color menu
+		}else if( !main.colorMenuCollapsed() && touchy < colortop + 320 * s && velocityY < -flingvelocity){ // swipe up from the top, collapse color menu
 			main.collapseColorMenu();
-		}else if(main.toolMenuCollapsed() && touchy < Gdx.graphics.getHeight() / 3 && velocityY < flingvelocity){
+		}else if(main.toolMenuCollapsed() && touchy < Gdx.graphics.getHeight() / 3 && velocityY < -flingvelocity){
 			main.collapseToolMenu();
 		}
 		
 		if( !main.toolMenuCollapsed() && touchy > tooltop - 60 * s && velocityY > flingvelocity){
 			main.collapseToolMenu();
-		}else if(main.colorMenuCollapsed() && touchy > Gdx.graphics.getWidth() / 3f * 2 && velocityY > flingvelocity){
+		}else if(main.toolMenuCollapsed() && main.colorMenuCollapsed() && touchy > Gdx.graphics.getWidth() / 3f * 2 && velocityY > flingvelocity){
+			Gdx.app.error("pedebugging", "collapsing other menu");
 			main.collapseColorMenu();
 		}
 

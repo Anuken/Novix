@@ -83,8 +83,8 @@ public class PaletteMenu extends VisDialog{
 								palette.name = string;
 								main.palettemanager.addPalette(palette);
 								if(palette == main.getCurrentPalette()){
-									main.prefs.putString("currentpalette", palette.name);
-									main.prefs.flush();
+									main.prefs.put("currentpalette", palette.name);
+									main.prefs.save();
 								}
 								update();
 							}

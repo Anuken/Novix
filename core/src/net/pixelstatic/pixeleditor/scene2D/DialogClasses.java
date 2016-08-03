@@ -619,7 +619,7 @@ public class DialogClasses{
 			ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
+					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty() || field.getText().replace("0", "").replace(".", "").isEmpty());
 				}
 			};
 
@@ -747,6 +747,8 @@ public class DialogClasses{
 			ChangeListener sizeClickListener = new ChangeListener(){
 				public void changed(ChangeEvent event, Actor actor){
 					VisTextField field = (VisTextField)actor;
+					checkOkStatus(widthfield, heightfield, xscalefield, yscalefield);
+					if(field.getText().isEmpty() || field.getText().equals(".")) return;
 
 					int value = Integer.parseInt(field.getText());
 
@@ -763,14 +765,15 @@ public class DialogClasses{
 
 					xscalefield.setText(MiscUtils.displayFloat(xscl));
 					yscalefield.setText(MiscUtils.displayFloat(yscl));
-
+					
+					checkOkStatus(widthfield, heightfield, xscalefield, yscalefield);
 				}
 			};
 
 			ChangeListener scaleClickListener = new ChangeListener(){
 				public void changed(ChangeEvent event, Actor actor){
 					VisTextField field = (VisTextField)actor;
-
+					checkOkStatus(widthfield, heightfield, xscalefield, yscalefield);
 					if(field.getText().isEmpty() || field.getText().equals(".")) return;
 
 					float value = Float.parseFloat(field.getText());
@@ -788,6 +791,7 @@ public class DialogClasses{
 
 					widthfield.setText(width + "");
 					heightfield.setText(height + "");
+					checkOkStatus(widthfield, heightfield, xscalefield, yscalefield);
 				}
 			};
 
@@ -967,7 +971,7 @@ public class DialogClasses{
 				stack.add(alpha);
 				stack.add(image);
 
-				if(Core.i.drawgrid.grid) stack.add(grid);
+				if(Core.i.prefs.getBoolean("grid")) stack.add(grid);
 
 				stack.add(controller);
 
@@ -1313,7 +1317,6 @@ public class DialogClasses{
 
 		protected void result(Object object){
 			if((Boolean)object == true) result();
-
 		}
 
 		public void hide(){
@@ -1328,6 +1331,16 @@ public class DialogClasses{
 
 		public void result(){
 
+		}
+
+		public void checkOkStatus(VisTextField...fields){
+
+			for(VisTextField field : fields)
+				if(field.getText().replace("0", "").isEmpty()){
+					ok.setDisabled(true);
+					return;
+				}
+			ok.setDisabled(false);
 		}
 	}
 
