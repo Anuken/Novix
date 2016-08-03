@@ -41,17 +41,14 @@ public class GestureManager implements GestureListener{
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0, 0)).y + main.toolmenu.getHeight();
 		float colortop = main.pickertable.localToStageCoordinates(vector.set(0, 0)).y;
 
-		/*if(Math.abs(velocityX) > swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight()/2, 250*s)){
-			if(!main.toolMenuCollapsed() && velocityX < swipevelocity) main.collapseToolMenu();
-			if(main.toolMenuCollapsed() && velocityX > swipevelocity) main.collapseToolMenu();
-		}else*/
-
-		
-
 		if(Math.abs(velocityX) > swipevelocity && Math.abs(velocityY) < swipevelocity * 2.5f && MathUtils.isEqual(touchy, Gdx.graphics.getHeight() / 2, 250 * s)){
-			if( !main.colorMenuCollapsed() && velocityX < swipevelocity) main.collapseColorMenu();
-			if(main.colorMenuCollapsed() && velocityX > swipevelocity) main.collapseColorMenu();
-		}else if( !main.colorMenuCollapsed() && touchy < colortop + 320 * s && velocityY < flingvelocity){
+			if( !main.colorMenuCollapsed() && velocityX < swipevelocity) main.collapseColorMenu(); //swipe left, close color menu
+			if(main.colorMenuCollapsed() && velocityX > swipevelocity){ //swipe right, open color menu
+				if(!main.toolMenuCollapsed()) main.collapseToolMenu(); //close tool menu if open
+				main.collapseColorMenu();
+			}
+			
+		}else if( !main.colorMenuCollapsed() && touchy < colortop + 320 * s && velocityY < flingvelocity){ // swipe up from the top, collapse color menu
 			main.collapseColorMenu();
 		}else if(main.toolMenuCollapsed() && touchy < Gdx.graphics.getHeight() / 3 && velocityY < flingvelocity){
 			main.collapseToolMenu();

@@ -286,7 +286,7 @@ public class Core extends Module<PixelEditor>{
 					prefs.putInteger("palettecolor", paletteColor);
 					box.selected = true;
 					box.toFront();
-					updateSelectedColor(box.getColor()); 
+					setSelectedColor(box.getColor()); 
 				}
 			});
 			
@@ -303,6 +303,8 @@ public class Core extends Module<PixelEditor>{
 
 	void setupBoxColors(){
 		paletteColor = prefs.getInteger("palettecolor", 0);
+		
+		if(paletteColor > boxes.length) paletteColor = 0;
 		
 		apicker.setRecentColors(boxes);
 		boxes[paletteColor].selected = true;
@@ -330,6 +332,7 @@ public class Core extends Module<PixelEditor>{
 	public void setPalette(Palette palette){
 		paletteColor = 0;
 		palettemanager.setCurrentPalette(palette);
+		prefs.putInteger("palettecolor", 0);
 		prefs.putString("lastpalette", palette.name);
 		prefs.flush();
 		updateColorMenu();
