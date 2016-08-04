@@ -45,7 +45,9 @@ public class ToolMenu extends VisTable{
 	private VisTable menutable, optionstable;
 	private VisSlider brushslider;
 	private ColorBar alphabar;
+	private VisImageButton gridbutton;
 	private static ButtonMenu currentMenu;
+	
 	
 	public ToolMenu(Core main){
 		this.main = main;
@@ -301,19 +303,6 @@ public class ToolMenu extends VisTable{
 			}
 		});
 
-		final VisCheckBox grid = new VisCheckBox("Grid");
-
-		grid.getImageStackCell().size(40 * s);
-
-		grid.setChecked(main.prefs.getBoolean("grid", true));
-
-		grid.addListener(new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-			//	main.prefs.putBoolean("grid", main.drawgrid.cursormode);
-				
-			}
-		});
 
 		VisTextButton menubutton = new VisTextButton("Menu");
 		VisTextButton settingsbutton = new VisTextButton("Settings");
@@ -350,7 +339,7 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		final VisImageButton gridbutton = new VisImageButton(gridstyle);
+		gridbutton = new VisImageButton(gridstyle);
 		gridbutton.setChecked(main.prefs.getBoolean("grid", true));
 		
 		gridbutton.getImageCell().size(50*s);
@@ -358,7 +347,7 @@ public class ToolMenu extends VisTable{
 		gridbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				main.prefs.put("grid", gridbutton.isChecked());
-				
+				main.prefs.save();
 			}
 		});
 		
@@ -373,11 +362,11 @@ public class ToolMenu extends VisTable{
 		
 		menutable.top().left();
 		
-		menutable.add(new VisLabel("Draw:")).align(Align.topLeft).padTop(12*s).row();
-		menutable.add(modebutton).size(80*s).align(Align.topLeft).row();
+		//menutable.add(new VisLabel("Draw:")).align(Align.topLeft).padTop(12*s).row();
+		//menutable.add(modebutton).size(80*s).align(Align.topLeft).row();
 		
-	//	menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();
-	//	menutable.add(gridbutton).size(80*s).align(Align.topLeft).row();
+		menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();
+		menutable.add(gridbutton).size(80*s).align(Align.topLeft).row();
 		
 		othertable.bottom().right();
 		
@@ -387,6 +376,10 @@ public class ToolMenu extends VisTable{
 		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(15);
 		othertable.add(alphabar).padTop(20).padBottom(20);
 
+	}
+	
+	public VisImageButton getGridButton(){
+		return gridbutton;
 	}
 
 	public float getPrefWidth(){

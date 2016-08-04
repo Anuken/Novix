@@ -245,10 +245,6 @@ public class DrawingGrid extends Actor{
 
 		zoom = maxZoom();
 
-		if(canvas.width() > 100 || canvas.height() > 100){
-			core.prefs.put("grid", false);
-		}
-
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
 		selected.set(cursorx / canvasScale(), cursory / canvasScale());

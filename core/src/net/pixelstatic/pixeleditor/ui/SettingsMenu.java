@@ -85,7 +85,7 @@ public class SettingsMenu extends VisDialog{
 		});
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
-		table.add(box);
+		table.add(box).align(Align.left);
 		table.row();
 	}
 	

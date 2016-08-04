@@ -100,6 +100,7 @@ public enum Tool{
 			return false;
 		}
 	},
+	/*
 	grid(false, false){
 		public boolean selectable(){
 			return false;
@@ -108,7 +109,7 @@ public enum Tool{
 		public void onSelected(){
 			Core.i.drawgrid.canvas.actions.undo();
 		}
-	},
+	},*/
 	undo(false, false){
 		public void onSelected(){
 			Core.i.drawgrid.canvas.actions.undo();

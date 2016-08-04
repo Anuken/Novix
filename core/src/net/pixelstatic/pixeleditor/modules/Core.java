@@ -47,6 +47,7 @@ import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
+//TODO CALL BACK <> WHEN <> BACK
 public class Core extends Module<PixelEditor>{
 	public static Core i;
 	public static float s = 1f; //density scale
@@ -65,7 +66,7 @@ public class Core extends Module<PixelEditor>{
 	public ProjectMenu projectmenu;
 	public PaletteMenu palettemenu;
 	public ToolMenu toolmenu;
-	public VisImageButton gridbutton;
+	//public VisImageButton gridbutton;
 	CollapseButton colorcollapsebutton, toolcollapsebutton;
 	SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	ColorBox[] boxes;
@@ -92,7 +93,7 @@ public class Core extends Module<PixelEditor>{
 		settingsmenu = new SettingsMenu(this);
 
 		settingsmenu.addPercentScrollSetting("Cursor Size");
-		settingsmenu.addCheckSetting("Autosave", true);
+		settingsmenu.addCheckSetting("Cursor Mode", true);
 
 		projectmenu = new ProjectMenu(this);
 		projectmenu.update(true);
@@ -140,7 +141,7 @@ public class Core extends Module<PixelEditor>{
 
 			button.getImageCell().size(50 * s);
 
-			if(ctool == Tool.grid){
+			/*if(ctool == Tool.grid){
 				button.setChecked(prefs.getBoolean("grid", true));
 				button.addListener(new ClickListener(){
 					public void clicked(InputEvent event, float x, float y){
@@ -149,7 +150,7 @@ public class Core extends Module<PixelEditor>{
 				});
 				gridbutton = button;
 			}else{
-
+*/
 				button.addListener(new ClickListener(){
 					public void clicked(InputEvent event, float x, float y){
 						ctool.onSelected();
@@ -167,7 +168,7 @@ public class Core extends Module<PixelEditor>{
 						}
 					}
 				});
-			}
+			//}
 
 			if(i == 0){
 				button.setChecked(true);

@@ -66,13 +66,18 @@ public class ProjectManager{
 
 	public void openProject(Project project){
 		main.prefs.put("lastproject", project.name);
-		main.prefs.save();
 		currentProject = project;
 
 		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
 
 		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
-
+		
+		if(canvas.width() > 100 || canvas.height() > 100){
+			main.prefs.put("grid", false);
+		}
+		
+		main.prefs.save();
+		
 		main.drawgrid.setCanvas(canvas);
 		main.updateToolColor();
 		main.projectmenu.hide();

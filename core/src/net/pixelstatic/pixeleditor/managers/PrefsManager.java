@@ -7,6 +7,7 @@ import com.badlogic.gdx.Preferences;
 
 public class PrefsManager{
 	private Core core;
+	//private ObjectMap<String, Object> map = new ObjectMap<String, Object>();
 	private Preferences prefs;
 	
 	public PrefsManager(Core core){
@@ -14,27 +15,31 @@ public class PrefsManager{
 		prefs = Gdx.app.getPreferences("pixeleditor");
 	}
 	
-	public void put(String name, boolean bool){
-		prefs.putBoolean(name, bool);
+	public void put(String name, boolean value){
+		prefs.putBoolean(name, value);
+		//map.put(name, value);
 		
 		if(name.equals("grid"))
-		core.gridbutton.setChecked(bool);
+		core.toolmenu.getGridButton().setChecked(value);
 	}
 	
 	public void put(String name, String value){
 		prefs.putString(name, value);
+		//map.put(name, value);
 	}
 	
-	public void put(String name, float val){
-		prefs.putFloat(name, val);
+	public void put(String name, float value){
+		prefs.putFloat(name, value);
+		//map.put(name, value);
 	}
 	
-	public void put(String name, int i){
-		prefs.putInteger(name, i);
+	public void put(String name, int value){
+		prefs.putInteger(name, value);
+		//map.put(name, value);
 	}
 	
 	public boolean getBoolean(String name){
-		return prefs.getBoolean(name);
+		return getBoolean(name, false);
 	}
 	
 	public boolean getBoolean(String name, boolean val){
@@ -42,7 +47,7 @@ public class PrefsManager{
 	}
 	
 	public float getFloat(String name){
-		return prefs.getFloat(name);
+		return getFloat(name, 0);
 	}
 	
 	public float getFloat(String name, float def){
@@ -50,7 +55,7 @@ public class PrefsManager{
 	}
 	
 	public int getInteger(String name){
-		return prefs.getInteger(name);
+		return getInteger(name, 0);
 	}
 	
 	public int getInteger(String name, int i){
@@ -58,7 +63,7 @@ public class PrefsManager{
 	}
 	
 	public String getString(String name){
-		return prefs.getString(name);
+		return getString(name, null);
 	}
 	
 	public String getString(String name, String def){
