@@ -34,7 +34,8 @@ public class DrawingGrid extends Actor{
 	private final boolean clip = true;
 	private Vector2[][] brushPolygons = new Vector2[10][];
 	private ShaderProgram brushshader = new ShaderProgram(Gdx.files.internal("shaders/default.vertex"), Gdx.files.internal("shaders/default.fragment"));
-
+	private Color tempcolor = new Color();
+	
 	public PixelCanvas canvas;
 	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
@@ -314,7 +315,21 @@ public class DrawingGrid extends Actor{
 
 		//draw selection
 		if((cursormode() || (touches > 0 && Core.i.tool.moveCursor())) && Core.i.tool.drawCursor()){
-			batch.setColor(Color.WHITE);
+			//TODO
+			tempcolor.set(canvas.getIntColor(selected.x, selected.y));
+			//tempcolor.r = 1f - tempcolor.r;
+			//tempcolor.g = 1f - tempcolor.g;
+			//tempcolor.b = 1f - tempcolor.b;
+			float sum = tempcolor.r + tempcolor.g + tempcolor.b;
+			
+			if(sum >= 1.5f){
+				tempcolor = Color.BLACK.cpy();
+			}else{
+				tempcolor = Color.CORAL.cpy();
+			}
+			
+			batch.setColor(tempcolor);
+			//canvas.getIntColor(selected.x, selected.y);
 
 			drawSelection(batch, selected.x, selected.y, cscl, xt);
 
