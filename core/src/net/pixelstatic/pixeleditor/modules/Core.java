@@ -27,6 +27,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -475,13 +476,15 @@ public class Core extends Module<PixelEditor>{
 		palettemanager.loadPalettes();
 
 		Textures.load("textures/");
-		Textures.repeatWrap("alpha");
+		Textures.repeatWrap("alpha", "stripe");
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);
 		loadFonts();
-
-		ShapeUtils.texture = VisUI.getSkin().getRegion("white");
+		
+		
+		ShapeUtils.texture = (Textures.get("stripe"));
+		ShapeUtils.region = new TextureRegion(Textures.get("stripe"));
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
 
 		projectmanager.loadProjects();

@@ -57,20 +57,16 @@ public class DialogClasses{
 			getContentTable().add(heightfield).size(twidth, theight).padRight(50 * s).padTop(40 * s).padBottom(40f * s);
 
 			getContentTable().row();
-
-			widthfield.addListener(new ChangeListener(){
+			
+			ChangeListener listener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
+					ok.setDisabled(widthfield.getText().replace("0", "").isEmpty() || heightfield.getText().replace("0", "").isEmpty());
 				}
-			});
+			};
 
-			heightfield.addListener(new ChangeListener(){
-				@Override
-				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(widthfield.getText().isEmpty() || heightfield.getText().isEmpty());
-				}
-			});
+			widthfield.addListener(listener);
+			heightfield.addListener(listener);
 
 		}
 

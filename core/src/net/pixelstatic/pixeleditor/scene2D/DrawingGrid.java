@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -32,6 +33,7 @@ public class DrawingGrid extends Actor{
 	private AlphaImage alphaimage;
 	private final boolean clip = true;
 	private Vector2[][] brushPolygons = new Vector2[10][];
+	private ShaderProgram brushshader = new ShaderProgram(Gdx.files.internal("shaders/default.vertex"), Gdx.files.internal("shaders/default.fragment"));
 
 	public PixelCanvas canvas;
 	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
@@ -312,7 +314,7 @@ public class DrawingGrid extends Actor{
 
 		//draw selection
 		if((cursormode() || (touches > 0 && Core.i.tool.moveCursor())) && Core.i.tool.drawCursor()){
-			batch.setColor(Color.CORAL);
+			batch.setColor(Color.WHITE);
 
 			drawSelection(batch, selected.x, selected.y, cscl, xt);
 
@@ -356,9 +358,20 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
+		//Gdx.files.local("default.fragment").writeString(batch.getShader().getFragmentShaderSource(), false);
+		//Gdx.files.local("default.vertex").writeString(batch.getShader().getVertexShaderSource(), false);
+		
 		ShapeUtils.thickness = 4;
+		
+		//batch.end();
+		//batch.setShader(brushshader);
+		//batch.begin();
+		
 		ShapeUtils.drawPolygon(batch, brushPolygons[brushSize-1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
 		
+		//batch.end();
+		//batch.setShader(null);
+		//batch.begin();
 		//MiscUtils.drawBorder(batch, (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl, cscl, 4, 2);
 	}
 

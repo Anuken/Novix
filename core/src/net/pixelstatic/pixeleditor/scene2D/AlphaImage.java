@@ -18,7 +18,7 @@ public class AlphaImage extends Actor{
 	public void draw(Batch batch, float alpha){
 		batch.setColor(1, 1, 1, alpha);
 		
-		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), 0, 0, imageWidth/4, imageHeight/4);
+		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), 0, 0, imageWidth, imageHeight);
 	}
 	
 	public void setImageSize(int w, int h){
