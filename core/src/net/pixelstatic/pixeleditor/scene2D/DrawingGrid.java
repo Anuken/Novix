@@ -14,7 +14,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -33,7 +32,7 @@ public class DrawingGrid extends Actor{
 	private AlphaImage alphaimage;
 	private final boolean clip = true;
 	private Vector2[][] brushPolygons = new Vector2[10][];
-	private ShaderProgram brushshader = new ShaderProgram(Gdx.files.internal("shaders/default.vertex"), Gdx.files.internal("shaders/default.fragment"));
+	//private ShaderProgram brushshader = new ShaderProgram(Gdx.files.internal("shaders/default.vertex"), Gdx.files.internal("shaders/default.fragment"));
 	private Color tempcolor = new Color();
 	
 	public PixelCanvas canvas;
@@ -322,11 +321,12 @@ public class DrawingGrid extends Actor{
 			//tempcolor.b = 1f - tempcolor.b;
 			float sum = tempcolor.r + tempcolor.g + tempcolor.b;
 			
-			if(sum >= 1.5f){
-				tempcolor = Color.BLACK.cpy();
+			if(sum >= 1.5f && tempcolor.a >= 0.01f){
+				tempcolor.set(14/255f,15/255f,18/255f,1);
 			}else{
-				tempcolor = Color.CORAL.cpy();
+				tempcolor.set(Color.CORAL);
 			}
+			tempcolor.a = 1f;
 			
 			batch.setColor(tempcolor);
 			//canvas.getIntColor(selected.x, selected.y);
