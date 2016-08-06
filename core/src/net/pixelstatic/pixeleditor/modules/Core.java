@@ -47,7 +47,6 @@ import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 
-//TODO CALL BACK <> WHEN <> BACK
 public class Core extends Module<PixelEditor>{
 	public static Core i;
 	public static float s = 1f; //density scale
@@ -93,7 +92,7 @@ public class Core extends Module<PixelEditor>{
 		settingsmenu = new SettingsMenu(this);
 
 		settingsmenu.addPercentScrollSetting("Cursor Size");
-		settingsmenu.addCheckSetting("Cursor Mode", true);
+		//settingsmenu.addCheckSetting("Cursor Mode", true);
 
 		projectmenu = new ProjectMenu(this);
 		projectmenu.update(true);
@@ -237,13 +236,12 @@ public class Core extends Module<PixelEditor>{
 		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f * s).padBottom(20 * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		System.out.println(colorcollapser.getTop());
-		//TODO COLOR TABLE
 		colorcollapser.setY(0 + Gdx.graphics.getWidth() / Tool.values().length + toolcollapsebutton.getPrefHeight() + 20 * s);
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
+		
 	}
 
 	public void openPaletteMenu(){

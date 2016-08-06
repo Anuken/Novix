@@ -64,7 +64,6 @@ public class DialogClasses{
 					ok.setDisabled(widthfield.getText().replace("0", "").isEmpty() || heightfield.getText().replace("0", "").isEmpty());
 				}
 			};
-
 			widthfield.addListener(listener);
 			heightfield.addListener(listener);
 

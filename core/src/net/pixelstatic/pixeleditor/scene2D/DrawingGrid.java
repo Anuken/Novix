@@ -244,9 +244,10 @@ public class DrawingGrid extends Actor{
 		Gdx.app.log("pedebugging", "Drawgrid: new canvas \"" + canvas.name + "\" set.");
 
 		updateSize();
+		updateBounds();
 
 		zoom = maxZoom();
-
+		
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
 		selected.set(cursorx / canvasScale(), cursory / canvasScale());
@@ -254,7 +255,8 @@ public class DrawingGrid extends Actor{
 		offsety = getHeight() / 2;
 		gridimage.setImageSize(canvas.width(), canvas.height());
 		alphaimage.setImageSize(canvas.width(), canvas.height());
-
+		//updateSize();
+		//updateBounds();
 		Core.i.projectmanager.saveProject();
 	}
 
@@ -419,7 +421,7 @@ public class DrawingGrid extends Actor{
 		if(cursory > getHeight() - 1) cursory = getHeight() - 1;
 
 		if(cursorx < 0) cursorx = 0;
-		if(cursorx < 0) cursory = 0;
+		if(cursory < 0) cursory = 0;
 
 		updateCursorSelection();
 
