@@ -3,9 +3,11 @@ package net.pixelstatic.pixeleditor.ui;
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.pixeleditor.modules.Core;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -20,7 +22,7 @@ public class SettingsMenu extends VisDialog{
 		super("Settings");
 		this.main = main;
 		
-		setFillParent(true);
+		//setFillParent(true);
 		getTitleLabel().setColor(Color.CORAL);
 		getTitleTable().row();
 		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
@@ -87,6 +89,14 @@ public class SettingsMenu extends VisDialog{
 		table.top().left().add(label).align(Align.left);
 		table.add(box).align(Align.left);
 		table.row();
+	}
+	
+	public VisDialog show(Stage stage){
+		super.show(stage);
+		int i = Gdx.app.getType() == ApplicationType.Desktop ? 0 : 1;
+		setSize(stage.getWidth(), stage.getHeight()-i);
+		setY(i);
+		return this;
 	}
 	
 	private String convert(String name){

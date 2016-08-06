@@ -34,7 +34,7 @@ public class DrawingGrid extends Actor{
 	private Vector2[][] brushPolygons = new Vector2[10][];
 	//private ShaderProgram brushshader = new ShaderProgram(Gdx.files.internal("shaders/default.vertex"), Gdx.files.internal("shaders/default.fragment"));
 	private Color tempcolor = new Color();
-	
+
 	public PixelCanvas canvas;
 	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
@@ -173,20 +173,20 @@ public class DrawingGrid extends Actor{
 			}
 		}
 	}
-	
+
 	private void generatePolygons(){
-		for(int i = 1; i < 11; i ++){
+		for(int i = 1;i < 11;i ++){
 			final int index = i;
-			
+
 			GridChecker checker = new GridChecker(){
 				@Override
 				public int getWidth(){
-					return index*2;
+					return index * 2;
 				}
 
 				@Override
 				public int getHeight(){
-					return index*2;
+					return index * 2;
 				}
 
 				@Override
@@ -194,8 +194,8 @@ public class DrawingGrid extends Actor{
 					return Vector2.dst(x - index, y - index, 0, 0) < index - 0.5f;
 				}
 			};
-			
-			brushPolygons[i-1] = MiscUtils.getOutline(checker);
+
+			brushPolygons[i - 1] = MiscUtils.getOutline(checker);
 		}
 	}
 
@@ -281,9 +281,27 @@ public class DrawingGrid extends Actor{
 
 		batch.setColor(Color.WHITE);
 
+		int asize = 20;
+		int u = (int)((getWidth() / asize) / canvas.width()) * canvas.width();
+		int v = (int)((getHeight() / asize) / canvas.height()) * canvas.height();
+
+		if(u == 0){
+			u = (int)(getWidth() / asize);
+			u = canvas.width()/(canvas.width() / u);
+		}
+		if(v == 0){
+			v = (int)(getHeight() / asize);
+			v = canvas.height()/(canvas.height() / v);
+		}
+		
+		
+		//System.out.println(u + " " + v);
+		
+		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, v, 0, 0);
+
 		alphaimage.setImageSize(canvas.width(), canvas.height());
 		alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
-		alphaimage.draw(batch, parentAlpha);
+		//alphaimage.draw(batch, parentAlpha);
 
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
@@ -320,14 +338,14 @@ public class DrawingGrid extends Actor{
 			//tempcolor.g = 1f - tempcolor.g;
 			//tempcolor.b = 1f - tempcolor.b;
 			float sum = tempcolor.r + tempcolor.g + tempcolor.b;
-			
+			int a = 15;
 			if(sum >= 1.5f && tempcolor.a >= 0.01f){
-				tempcolor.set(14/255f,15/255f,18/255f,1);
+				tempcolor.set((14 + a) / 255f, (15 + a) / 255f, (26 + a) / 255f, 1);
 			}else{
 				tempcolor.set(Color.CORAL);
 			}
 			tempcolor.a = 1f;
-			
+
 			batch.setColor(tempcolor);
 			//canvas.getIntColor(selected.x, selected.y);
 
@@ -360,7 +378,7 @@ public class DrawingGrid extends Actor{
 		//draw cursor
 		if(cursormode() || (touches > 0 && Core.i.tool.moveCursor())){
 			batch.setColor(Color.PURPLE);
-			float csize = 30 * core.prefs.getFloat("cursorsize")*s;
+			float csize = 30 * core.prefs.getFloat("cursorsize") * s;
 			batch.draw(Textures.get("cursor"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 		} //seriously, why is this necessary
 		batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
@@ -375,15 +393,15 @@ public class DrawingGrid extends Actor{
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
 		//Gdx.files.local("default.fragment").writeString(batch.getShader().getFragmentShaderSource(), false);
 		//Gdx.files.local("default.vertex").writeString(batch.getShader().getVertexShaderSource(), false);
-		
+
 		ShapeUtils.thickness = 4;
-		
+
 		//batch.end();
 		//batch.setShader(brushshader);
 		//batch.begin();
-		
-		ShapeUtils.drawPolygon(batch, brushPolygons[brushSize-1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
-		
+
+		ShapeUtils.drawPolygon(batch, brushPolygons[brushSize - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
+
 		//batch.end();
 		//batch.setShader(null);
 		//batch.begin();
@@ -445,7 +463,7 @@ public class DrawingGrid extends Actor{
 	public float min(){
 		return Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
-	
+
 	boolean cursormode(){
 		return core.prefs.getBoolean("cursormode");
 	}

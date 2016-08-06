@@ -9,6 +9,7 @@ import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.AnimatedImage;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -30,7 +31,7 @@ public class ProjectMenu extends VisDialog{
 		super("Projects");
 		this.main = mainref;
 		
-		setFillParent(true);
+		//setFillParent(true);
 		getTitleLabel().setColor(Color.CORAL);
 		getTitleTable().row();
 		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
@@ -130,6 +131,9 @@ public class ProjectMenu extends VisDialog{
 	public VisDialog show(Stage stage){
 		super.show(stage);
 		stage.setScrollFocus(pane);
+		int i = Gdx.app.getType() == ApplicationType.Desktop ? 0 : 1;
+		setSize(stage.getWidth(), stage.getHeight()-i);
+		setY(i);
 		return this;
 	}
 	
