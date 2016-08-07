@@ -1289,7 +1289,6 @@ public class DialogClasses{
 
 		public MenuDialog(String title){
 			super(title, "dialog");
-			getTitleLabel().setColor(Color.CORAL);
 			setMovable(false);
 			addCloseButton();
 			//getTitleTable().row();

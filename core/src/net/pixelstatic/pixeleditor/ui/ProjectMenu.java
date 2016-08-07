@@ -32,7 +32,6 @@ public class ProjectMenu extends VisDialog{
 		this.main = mainref;
 		
 		//setFillParent(true);
-		getTitleLabel().setColor(Color.CORAL);
 		getTitleTable().row();
 		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
 		

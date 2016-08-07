@@ -140,7 +140,6 @@ public class ToolMenu extends VisTable{
 	private static class ButtonMenu extends VisDialog{
 		public ButtonMenu(String name){
 			super(name, "dialog");
-			getTitleLabel().setColor(Color.CORAL);
 			getTitleTable().row();
 			getTitleTable().add(new Separator()).growX().padTop(2*s);
 		}

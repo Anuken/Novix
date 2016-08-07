@@ -5,7 +5,6 @@ import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,7 +22,6 @@ public class SettingsMenu extends VisDialog{
 		this.main = main;
 		
 		//setFillParent(true);
-		getTitleLabel().setColor(Color.CORAL);
 		getTitleTable().row();
 		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
 		

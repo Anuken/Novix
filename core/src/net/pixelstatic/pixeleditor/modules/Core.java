@@ -34,6 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
@@ -438,20 +439,29 @@ public class Core extends Module<PixelEditor>{
 			}
 			skin.addRegions(atlas);
 		}
-
+		Color shadowcolor = new Color(0, 0, 0, 0.6f);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = (int)(22 * MiscUtils.densityScale());
-		parameter.shadowColor = new Color(0, 0, 0, 0.4f);
-		//parameter.shadowOffsetY = 2;
-		//parameter.shadowOffsetX = 2;
-		BitmapFont font = generator.generateFont(parameter);
+		
+		FreeTypeFontParameter normalparameter = new FreeTypeFontParameter();
+		normalparameter.size = (int)(22 * s);
+		
+		FreeTypeFontParameter largeparameter = new FreeTypeFontParameter();
+		largeparameter.size = (int)(26 * s);
+		
+		BitmapFont font = generator.generateFont(normalparameter);
+		BitmapFont largefont = generator.generateFont(largeparameter);
 
 		skin.add("default-font", font);
+		skin.add("large-font", largefont);
 
 		skin.load(skinFile);
 
 		VisUI.load(skin);
+		skin.get(Window.WindowStyle.class).titleFont = largefont;
+		skin.get(Window.WindowStyle.class).titleFontColor = Color.CORAL;
+		
+		skin.get("dialog", Window.WindowStyle.class).titleFont = largefont;
+		skin.get("dialog", Window.WindowStyle.class).titleFontColor = Color.CORAL;
 
 		generator.dispose();
 	}

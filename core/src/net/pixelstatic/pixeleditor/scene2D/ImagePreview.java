@@ -17,7 +17,9 @@ public class ImagePreview extends Group{
 		
 		image = new PixmapImage(pixmap);
 		
-		AlphaImage alpha = new AlphaImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
+		int scale = 16;
+		float ratio = 1f/((float)pixmap.getWidth() / pixmap.getHeight());
+		AlphaImage alpha = new AlphaImage(scale, (int)(scale*ratio));
 		GridImage grid = new GridImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
 		BorderImage border = new BorderImage();
 		border.setColor(Color.CORAL);

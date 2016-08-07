@@ -33,7 +33,6 @@ public class PaletteMenu extends VisDialog{
 		super("Palettes", "dialog");
 		this.main = main;
 		setMovable(false);
-		getTitleLabel().setColor(Color.CORAL);
 		MiscUtils.addHideButton(this);
 		setStage(main.stage);
 	}
