@@ -10,14 +10,12 @@ import net.pixelstatic.utils.MiscUtils.GridChecker;
 import net.pixelstatic.utils.Pos;
 
 import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 
@@ -39,123 +37,138 @@ public class DrawingGrid extends Actor{
 	public float zoom = 1f, offsetx = 0, offsety = 0, baseCursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
 	public int brushSize;
+	public InputAdapter input = new InputAdapter(){
+		@Override
+		public boolean touchDown(int x, int y, int pointer, int button){
+			if( !Core.i.tool.moveCursor() || !Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed() || checkRange(y)) return false;
+			touches ++;
+			if(cursormode()){
+				if(moving){
+					processToolTap(selected.x, selected.y);
+					return true;
+				}
+
+				tpointer = pointer;
+				moving = true;
+			}else{
+				cursorx = x;
+				cursory = y;
+				updateCursorSelection();
+				processToolTap(selected.x, selected.y);
+				return true;
+			}
+			return true;
+		}
+		
+		@Override
+		public boolean touchUp(int x, int y, int pointer, int button){
+			//if(checkRange(y)) return false;
+			if(touches == 0) return false;
+			
+			if(cursormode()){
+				if(pointer == tpointer){
+					moving = false;
+				}else{
+					if(Core.i.tool.push) canvas.pushActions();
+				}
+			}else{
+				if(Core.i.tool.push) canvas.pushActions();
+			}
+			
+			touches --;
+			
+			return true;
+		}
+
+		//pc debugging
+		@Override
+		public boolean keyUp(int keycode){
+			if(keycode == Keys.E){
+				if(Core.i.tool.push){
+					canvas.pushActions();
+				}
+				return true;
+			}
+			return false;
+		}
+
+		//pc debugging
+		@Override
+		public boolean keyDown(int keycode){
+			if(keycode == Keys.E){
+				processToolTap(selected.x, selected.y);
+				return true;
+			}
+			return false;
+		}
+		
+		@Override
+		public boolean touchDragged(int x, int y, int pointer){
+			if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop || checkRange(y) || touches == 0) return false; //not the second pointer
+			float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed");
+			
+			float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
+			float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
+
+			float movex = deltax;
+			float movey = deltay;
+
+			int move = (Math.round(Math.max(Math.abs(movex), Math.abs(movey))));
+
+			if(Math.abs(movex) > Math.abs(movey)){
+				movey /= Math.abs(movex);
+				movex /= Math.abs(movex);
+			}else{
+				movex /= Math.abs(movey);
+				movey /= Math.abs(movey);
+			}
+
+			float currentx = 0, currenty = 0;
+
+			for(int i = 0;i < move;i ++){
+				currentx += movex;
+				currenty += movey;
+				//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
+				if(cursormode()){
+					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
+
+					if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
+
+					selected.set(newx, newy);
+				}else{
+					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
+
+					if( !selected.equals(newx, newy) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
+					selected.set(newx, newy);
+				}
+			}
+
+			if(cursormode()){
+				if(pointer != tpointer || !Core.i.tool.moveCursor()) return false;
+
+				cursorx += deltax;
+				cursory += deltay;
+
+				cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
+				cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+
+			}else{
+				cursorx = x;
+				cursory = y;
+			}
+			return true;
+		}
+		
+		boolean checkRange(int y){
+			return !(y > Gdx.graphics.getHeight()/2 - min()/2 && y < Gdx.graphics.getHeight()/2 + min()/2);
+		}
+	};
 
 	public DrawingGrid(final Core core){
 		this.core = core;
 		gridimage = new GridImage(1, 1);
 		alphaimage = new AlphaImage(1, 1);
 		generatePolygons();
-		addListener(new InputListener(){
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				if( !Core.i.tool.moveCursor() || !Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()) return false;
-				touches ++;
-				if(cursormode()){
-					if(moving){
-						processToolTap(selected.x, selected.y);
-						return true;
-					}
-
-					tpointer = pointer;
-					moving = true;
-				}else{
-					cursorx = x;
-					cursory = y;
-					updateCursorSelection();
-					processToolTap(selected.x, selected.y);
-					return true;
-				}
-				return true;
-			}
-
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button){
-				if(cursormode()){
-					if(pointer == tpointer){
-						moving = false;
-					}else{
-						if(Core.i.tool.push) canvas.pushActions();
-					}
-				}else{
-					if(Core.i.tool.push) canvas.pushActions();
-				}
-				touches --;
-			}
-
-			//pc debugging
-			public boolean keyUp(InputEvent event, int keycode){
-				if(keycode == Keys.E){
-					if(Core.i.tool.push){
-						canvas.pushActions();
-					}
-					return true;
-				}
-				return false;
-			}
-
-			//pc debugging
-			public boolean keyDown(InputEvent event, int keycode){
-				if(keycode == Keys.E){
-					processToolTap(selected.x, selected.y);
-					return true;
-				}
-				return false;
-			}
-
-			public void touchDragged(InputEvent event, float x, float y, int pointer){
-				if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop) return; //not the second pointer
-				float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed");
-				
-				
-				float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
-				float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
-
-				float movex = deltax;
-				float movey = deltay;
-
-				int move = (Math.round(Math.max(Math.abs(movex), Math.abs(movey))));
-
-				if(Math.abs(movex) > Math.abs(movey)){
-					movey /= Math.abs(movex);
-					movex /= Math.abs(movex);
-				}else{
-					movex /= Math.abs(movey);
-					movey /= Math.abs(movey);
-				}
-
-				float currentx = 0, currenty = 0;
-
-				for(int i = 0;i < move;i ++){
-					currentx += movex;
-					currenty += movey;
-					//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
-					if(cursormode()){
-						int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
-
-						if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
-
-						selected.set(newx, newy);
-					}else{
-						int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
-
-						if( !selected.equals(newx, newy) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
-						selected.set(newx, newy);
-					}
-				}
-
-				if(cursormode()){
-					if(pointer != tpointer || !Core.i.tool.moveCursor()) return;
-
-					cursorx += deltax;
-					cursory += deltay;
-
-					cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
-					cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
-
-				}else{
-					cursorx = x;
-					cursory = y;
-				}
-			}
-		});
 	}
 
 	private void processToolTap(int x, int y){
@@ -287,21 +300,13 @@ public class DrawingGrid extends Actor{
 
 		int asize = 20;
 		int u = (int)((getWidth() / asize) / canvas.width()) * canvas.width();
-		int v = (int)((getHeight() / asize) / canvas.height()) * canvas.height();
 
 		if(u == 0){
 			u = (int)(getWidth() / asize);
 			u = canvas.width()/(canvas.width() / u);
 		}
-		if(v == 0){
-			v = (int)(getHeight() / asize);
-			v = canvas.height()/(canvas.height() / v);
-		}
 		
-		
-		//System.out.println(u + " " + v);
-		
-		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, v, 0, 0);
+		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, u / ((float)canvas.width() / canvas.height()), 0, 0);
 
 		alphaimage.setImageSize(canvas.width(), canvas.height());
 		alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
