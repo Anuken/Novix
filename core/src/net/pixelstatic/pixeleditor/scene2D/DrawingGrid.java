@@ -52,7 +52,7 @@ public class DrawingGrid extends Actor{
 				moving = true;
 			}else{
 				cursorx = x;
-				cursory = y;
+				cursory = Gdx.graphics.getHeight() - y - getY();
 				updateCursorSelection();
 				processToolTap(selected.x, selected.y);
 				return true;
@@ -154,7 +154,7 @@ public class DrawingGrid extends Actor{
 
 			}else{
 				cursorx = x;
-				cursory = y;
+				cursory = Gdx.graphics.getHeight() - y - getY();
 			}
 			return true;
 		}
