@@ -93,6 +93,7 @@ public class Core extends Module<PixelEditor>{
 		settingsmenu = new SettingsMenu(this);
 
 		settingsmenu.addPercentScrollSetting("Cursor Size");
+		settingsmenu.addPercentScrollSetting("Cursor Speed");
 		//settingsmenu.addCheckSetting("Cursor Mode", true);
 
 		projectmenu = new ProjectMenu(this);
@@ -439,7 +440,7 @@ public class Core extends Module<PixelEditor>{
 			}
 			skin.addRegions(atlas);
 		}
-		Color shadowcolor = new Color(0, 0, 0, 0.6f);
+		//Color shadowcolor = new Color(0, 0, 0, 0.6f);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
 		
 		FreeTypeFontParameter normalparameter = new FreeTypeFontParameter();
@@ -449,6 +450,7 @@ public class Core extends Module<PixelEditor>{
 		largeparameter.size = (int)(26 * s);
 		
 		BitmapFont font = generator.generateFont(normalparameter);
+		font.getData().markupEnabled = true;
 		BitmapFont largefont = generator.generateFont(largeparameter);
 
 		skin.add("default-font", font);

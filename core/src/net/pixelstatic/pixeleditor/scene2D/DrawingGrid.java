@@ -36,7 +36,7 @@ public class DrawingGrid extends Actor{
 	private Color tempcolor = new Color();
 
 	public PixelCanvas canvas;
-	public float zoom = 1f, offsetx = 0, offsety = 0, cursorSpeed = 1.03f;
+	public float zoom = 1f, offsetx = 0, offsety = 0, baseCursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
 	public int brushSize;
 
@@ -102,7 +102,9 @@ public class DrawingGrid extends Actor{
 
 			public void touchDragged(InputEvent event, float x, float y, int pointer){
 				if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop) return; //not the second pointer
-
+				float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed");
+				
+				
 				float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
 				float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
 

@@ -326,18 +326,21 @@ public class ToolMenu extends VisTable{
 		
 		modestyle.imageUp = VisUI.getSkin().getDrawable("icon-cursor");
 		gridstyle.imageUp = VisUI.getSkin().getDrawable("icon-grid");
+		final VisLabel cursorlabel = new VisLabel();
 		
 		final VisImageButton modebutton = new VisImageButton(modestyle);
 		modebutton.setChecked(main.prefs.getBoolean("cursormode", true));
 		
 		modebutton.getImageCell().size(50*s);
 		
-		modebutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
+		modebutton.addListener(new ChangeListener(){
+			public void changed(ChangeEvent event, Actor actor){
+				cursorlabel.setText("Mode: " + (modebutton.isChecked() ? "[CORAL]Cursor" : "[PURPLE]Touch"));
 				main.prefs.put("cursormode", modebutton.isChecked());
 				main.prefs.save();
 			}
 		});
+		modebutton.fire(new ChangeListener.ChangeEvent());
 		
 		gridbutton = new VisImageButton(gridstyle);
 		gridbutton.setChecked(main.prefs.getBoolean("grid", true));
@@ -362,10 +365,10 @@ public class ToolMenu extends VisTable{
 		
 		menutable.top().left();
 		
-		//menutable.add(new VisLabel("Draw:")).align(Align.topLeft).padTop(12*s).row();
+		menutable.add(cursorlabel).align(Align.topLeft).padTop(12*s).row();;
 		menutable.add(modebutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
 		
-		//menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();
+		menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();;
 		menutable.add(gridbutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
 		
 		othertable.bottom().right();
