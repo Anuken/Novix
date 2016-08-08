@@ -46,6 +46,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 		GestureDetector gesture = new GestureDetector(20, 0.5f, 2, 0.15f, new GestureDetectorListener());
 
 		InputMultiplexer plex = new InputMultiplexer();
+		plex.addProcessor(getModule(Tutorial.class));
 		plex.addProcessor(new GestureDetector(20, 0.5f, 2, 0.15f, new GestureManager(Core.i)));
 		plex.addProcessor(this);
 		plex.addProcessor(this.getModule(Core.class).stage);

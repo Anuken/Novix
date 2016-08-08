@@ -66,9 +66,9 @@ public class Core extends Module<PixelEditor>{
 	public ProjectMenu projectmenu;
 	public PaletteMenu palettemenu;
 	public ToolMenu toolmenu;
-	CollapseButton colorcollapsebutton, toolcollapsebutton;
-	SmoothCollapsibleWidget colorcollapser, toolcollapser;
-	ColorBox[] boxes;
+	public CollapseButton colorcollapsebutton, toolcollapsebutton;
+	public SmoothCollapsibleWidget colorcollapser, toolcollapser;
+	public ColorBox[] boxes;
 	public AndroidColorPicker apicker;
 	public Tool tool = Tool.pencil;
 
@@ -192,7 +192,6 @@ public class Core extends Module<PixelEditor>{
 		colorcollapsebutton.flip();
 
 		colorcollapser = new SmoothCollapsibleWidget(pickertable);
-
 		stage.addActor(colorcollapser);
 
 		colorcollapsebutton.addListener(new ClickListener(){
@@ -441,13 +440,23 @@ public class Core extends Module<PixelEditor>{
 
 		FreeTypeFontParameter largeparameter = new FreeTypeFontParameter();
 		largeparameter.size = (int)(26 * s);
+		
+		FreeTypeFontParameter borderparameter = new FreeTypeFontParameter();
+		borderparameter.size = (int)(26 * s);
+		borderparameter.borderWidth = 2;
+		borderparameter.borderColor = clearcolor;
+		borderparameter.spaceX = -2;
 
 		BitmapFont font = generator.generateFont(normalparameter);
 		font.getData().markupEnabled = true;
 		BitmapFont largefont = generator.generateFont(largeparameter);
+		BitmapFont borderfont = generator.generateFont(borderparameter);
+		borderfont.getData().markupEnabled = true;
 
 		skin.add("default-font", font);
 		skin.add("large-font", largefont);
+		skin.add("border-font", borderfont);
+		
 
 		skin.load(skinFile);
 

@@ -404,7 +404,7 @@ public class DrawingGrid extends Actor{
 
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
 		ShapeUtils.thickness = 4;
-		ShapeUtils.drawPolygon(batch, !Core.i.tool.scalable() ? brushPolygons[0] : brushPolygons[brushSize - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
+		ShapeUtils.polygon(batch, !Core.i.tool.scalable() ? brushPolygons[0] : brushPolygons[brushSize - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
 	}
 
 	public void updateCursor(){
