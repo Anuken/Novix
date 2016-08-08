@@ -37,7 +37,8 @@ public class DrawingGrid extends Actor{
 	public float zoom = 1f, offsetx = 0, offsety = 0, baseCursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
 	public int brushSize;
-	public InputAdapter input = new InputAdapter(){
+	public GridInput input = new GridInput();
+	public class GridInput extends InputAdapter{
 		@Override
 		public boolean touchDown(int x, int y, int pointer, int button){
 			if( !Core.i.tool.moveCursor() || !Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed() || checkRange(y)) return false;
@@ -51,7 +52,7 @@ public class DrawingGrid extends Actor{
 				tpointer = pointer;
 				moving = true;
 			}else{
-				cursorx = x;
+				cursorx = x - getX();
 				cursory = Gdx.graphics.getHeight() - y - getY();
 				updateCursorSelection();
 				processToolTap(selected.x, selected.y);
@@ -104,7 +105,7 @@ public class DrawingGrid extends Actor{
 		
 		@Override
 		public boolean touchDragged(int x, int y, int pointer){
-			if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop || checkRange(y) || touches == 0) return false; //not the second pointer
+			if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop || checkRange(y) || touches == 0 || !Core.i.tool.moveCursor()) return false; //not the second pointer
 			float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed");
 			
 			float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
@@ -128,7 +129,6 @@ public class DrawingGrid extends Actor{
 			for(int i = 0;i < move;i ++){
 				currentx += movex;
 				currenty += movey;
-				//	System.out.println("drawing: "+ vector.cpy().add(cursorx, cursory));
 				if(cursormode()){
 					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
 
@@ -153,13 +153,13 @@ public class DrawingGrid extends Actor{
 				cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
 
 			}else{
-				cursorx = x;
-				cursory = Gdx.graphics.getHeight() - y - getY();
+				cursorx = x - getX();
+				cursory = (Gdx.graphics.getHeight() - y - getY());
 			}
 			return true;
 		}
 		
-		boolean checkRange(int y){
+		public boolean checkRange(int y){
 			return !(y > Gdx.graphics.getHeight()/2 - min()/2 && y < Gdx.graphics.getHeight()/2 + min()/2);
 		}
 	};
@@ -225,7 +225,9 @@ public class DrawingGrid extends Actor{
 	}
 
 	public void setZoom(float newzoom){
+		float max = Math.max(canvas.width(), canvas.height())/5;
 		if(newzoom < maxZoom()) newzoom = maxZoom();
+		if(newzoom > max) newzoom = max;
 
 		cursorx *= (newzoom / zoom);
 		cursory *= (newzoom / zoom);
@@ -385,10 +387,10 @@ public class DrawingGrid extends Actor{
 		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2, aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 		//draw cursor
-		if(cursormode() || (touches > 0 && Core.i.tool.moveCursor())){
+		if(cursormode() || (touches > 0 && Core.i.tool.moveCursor()) || !Core.i.tool.moveCursor()){
 			batch.setColor(Color.PURPLE);
 			float csize = 30 * core.prefs.getFloat("cursorsize") * s;
-			batch.draw(Textures.get("cursor"), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
+			batch.draw(Textures.get(Core.i.tool.cursor), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 		} //seriously, why is this necessary
 		batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
 
@@ -423,13 +425,10 @@ public class DrawingGrid extends Actor{
 
 		if(cursorx < -getX()) cursorx = -getX();
 		if(cursory < Gdx.graphics.getHeight() / 2 - Gdx.graphics.getWidth() / 2 - getY()) cursory = Gdx.graphics.getHeight() / 2 - Gdx.graphics.getWidth() / 2 - getY();
-
-		if(cursorx > getWidth() - 1) cursorx = getWidth() - 1;
-		if(cursory > getHeight() - 1) cursory = getHeight() - 1;
-
-		if(cursorx < 0) cursorx = 0;
-		if(cursory < 0) cursory = 0;
-
+		
+		cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
+		cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+		
 		updateCursorSelection();
 
 	}

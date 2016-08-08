@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.managers;
 
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.pixeleditor.modules.Core;
+import net.pixelstatic.pixeleditor.tools.Tool;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -36,7 +37,8 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
-		if(Core.i.getCurrentDialog() != null) return false;
+		if(Core.i.getCurrentDialog() != null || 
+				(!Core.i.drawgrid.input.checkRange((int)touchy) && Core.i.tool == Tool.zoom && !(!Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()))) return false;
 		
 		float swipevelocity = this.swipevelocity*s;
 		float flingvelocity = this.flingvelocity*s;

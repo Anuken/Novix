@@ -78,11 +78,9 @@ public class Core extends Module<PixelEditor>{
 		Hue.clearScreen(clearcolor);
 
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
-
+		tool.update(drawgrid);
 		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
-
-		tool.update(drawgrid);
 
 		//pc debugging
 		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
@@ -408,6 +406,10 @@ public class Core extends Module<PixelEditor>{
 	public void collapseColorMenu(){
 		if(colorcollapser.isCollapsed() && !toolcollapser.isCollapsed()) collapseToolMenu();
 		((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
+	}
+	
+	public boolean menuOpen(){
+		return !colorMenuCollapsed() || ! toolMenuCollapsed();
 	}
 
 	public boolean isImageLarge(){

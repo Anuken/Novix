@@ -152,6 +152,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean pan(float x, float y, float deltaX, float deltaY){
+			if(Core.i.menuOpen()) return false;
 			/*	if(input.<GUI>getModule(GUI.class).tool == Tool.snap){
 					DrawingGrid grid = drawgrid();
 					grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
@@ -159,6 +160,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			if(input.<Core>getModule(Core.class).tool == Tool.zoom){
 				drawgrid().offsetx -= deltaX / drawgrid().zoom;
 				drawgrid().offsety += deltaY / drawgrid().zoom;
+				drawgrid().updateSize();
 				drawgrid().updateBounds();
 			}
 			return false;
@@ -166,7 +168,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean zoom(float initialDistance, float distance){
-			if(input.<Core>getModule(Core.class).tool != Tool.zoom) return false;
+			if(Core.i.tool != Tool.zoom || Core.i.menuOpen()) return false;
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
 			if(newzoom < drawgrid().maxZoom()) newzoom = drawgrid().maxZoom();
@@ -180,7 +182,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2){
-			if(input.<Core>getModule(Core.class).tool != Tool.zoom) return false;
+			if(Core.i.tool != Tool.zoom || Core.i.menuOpen()) return false;
 
 			Vector2 afirst = initialPointer1.cpy().add(initialPointer2).scl(0.5f);
 			Vector2 alast = pointer1.cpy().add(pointer2).scl(0.5f);
@@ -204,7 +206,7 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 
 		@Override
 		public boolean panStop(float x, float y, int pointer, int button){
-			initzoom = input.<Core>getModule(Core.class).drawgrid.zoom;
+			initzoom = Core.i.drawgrid.zoom;
 			return false;
 		}
 

@@ -6,6 +6,7 @@ import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.utils.Pos;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.IntSet;
 
@@ -79,13 +80,16 @@ public enum Tool{
 		}
 	},
 	zoom(false, false){
+		{
+			cursor = "cursor-zoom";
+		}
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 
 		}
 
 		public void update(DrawingGrid grid){
-
+			grid.setCursor(Gdx.graphics.getWidth()/2 - grid.getX(), Gdx.graphics.getHeight()/2 - grid.getY());
 		}
 
 		public boolean moveCursor(){
@@ -130,6 +134,7 @@ public enum Tool{
 	};
 	public final boolean push; //whether the undo stack is pushed when the mouse is up
 	public final boolean drawOnMove; //whether to draw when the mouse moves
+	public String cursor = "cursor";
 
 	private Tool(){
 		this(true);
