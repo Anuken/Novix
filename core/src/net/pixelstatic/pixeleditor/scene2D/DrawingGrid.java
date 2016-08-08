@@ -5,6 +5,7 @@ import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
+import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.MiscUtils.GridChecker;
 import net.pixelstatic.utils.Pos;
@@ -391,6 +392,8 @@ public class DrawingGrid extends Actor{
 			batch.setColor(Color.PURPLE);
 			float csize = 30 * core.prefs.getFloat("cursorsize") * s;
 			batch.draw(Textures.get(Core.i.tool.cursor), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
+			batch.setColor(Color.CORAL);
+			if(Core.i.tool != Tool.pencil && Core.i.tool != Tool.zoom) 	batch.draw(VisUI.getSkin().getRegion("icon-" + Core.i.tool.name()), getX() + cursorx, getY() + cursory, csize, csize);
 		} //seriously, why is this necessary
 		batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
 
