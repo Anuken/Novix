@@ -11,11 +11,13 @@ public class ActionStack{
 		this.canvas = canvas;
 		DrawAction action = new DrawAction();
 		stack.add(action);
+		update();
 	}
 	
 	public void clear(){
 		stack.clear();
 		index = 0;
+		update();
 	}
 	
 	public void add(DrawAction action){
@@ -23,34 +25,45 @@ public class ActionStack{
 		index = 0;
 		stack.add(action);
 		
+		update();
 		//print();
+	}
+	
+	public boolean canUndo(){
+		return !(stack.size - 1 + index < 1);
+	}
+	
+	public boolean canRedo(){
+		return !(index > -1 || stack.size - 1 + index < 0);
 	}
 
 	public void undo(){
 		//System.out.println("undo: index = " + index + ", size: " + stack.size);
-		if(stack.size - 1 + index < 1){
-			return;
-		}
+		if(!canUndo()) return;
 
 		//System.out.println("applying " + stack.get(stack.size - 1 + index));
 		stack.get(stack.size - 1 + index).apply(canvas, false);
 		index --;
 		
+		update();
 		//print();
 	}
 
 	public void redo(){
 		//System.out.println("redo: index = " + index + ", size: " + stack.size);
-		
-		if(index > -1 || stack.size - 1 + index < 0){
-			return;
-		}
+		if(!canRedo()) return;
 		
 		//System.out.println("applying " + stack.get(stack.size - 1 + index));
 		index ++;
 		stack.get(stack.size - 1 + index).apply(canvas, true);
 		
+		update();
 		//print();
+	}
+	
+	private void update(){
+		Tool.undo.button.setDisabled(!canUndo());
+		Tool.redo.button.setDisabled(!canRedo());
 	}
 	
 	void print(){

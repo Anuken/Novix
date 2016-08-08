@@ -137,8 +137,9 @@ public class Core extends Module<PixelEditor>{
 			final VisImageButton button = new VisImageButton((Drawable)null);
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
 			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); //whatever icon is needed
-
+			button.setGenerateDisabledImage(true);
 			button.getImageCell().size(50 * s);
+			ctool.button = button;
 
 			/*if(ctool == Tool.grid){
 				button.setChecked(prefs.getBoolean("grid", true));
@@ -149,7 +150,7 @@ public class Core extends Module<PixelEditor>{
 				});
 				gridbutton = button;
 			}else{
-*/
+*/	
 				button.addListener(new ClickListener(){
 					public void clicked(InputEvent event, float x, float y){
 						ctool.onSelected();
@@ -165,8 +166,11 @@ public class Core extends Module<PixelEditor>{
 							VisImageButton other = (VisImageButton)actor;
 							if(other != button) other.setChecked(false);
 						}
+						
 					}
 				});
+				//button.setGenerateDisabledImage(true);
+				//button.setDisabled(true);
 			//}
 
 			if(i == 0){

@@ -154,7 +154,8 @@ public class ProjectMenu extends VisDialog{
 
 			int imagesize = 40;
 
-			VisImageButton openbutton = new VisImageButton(VisUI.getSkin().getDrawable(project == main.getCurrentProject() ? "icon-open-gray" : "icon-open"));
+			VisImageButton openbutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-open"));
+			openbutton.setGenerateDisabledImage(true);
 			VisImageButton copybutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-copy"));
 			VisImageButton renamebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-rename"));
 			VisImageButton deletebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-trash"));

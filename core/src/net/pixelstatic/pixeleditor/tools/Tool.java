@@ -9,12 +9,17 @@ import net.pixelstatic.utils.Pos;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.IntSet;
+import com.kotcrab.vis.ui.widget.VisImageButton;
 
 public enum Tool{
 	pencil{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			canvas.drawRadius(x, y, Core.i.drawgrid.brushSize);
+		}
+		
+		public boolean scalable(){
+			return true;
 		}
 	},
 	eraser{
@@ -25,6 +30,10 @@ public enum Tool{
 		
 		public void onColorChange(Color color, PixelCanvas canvas){
 			canvas.setColor(Color.CLEAR.cpy(), true);
+		}
+		
+		public boolean scalable(){
+			return true;
 		}
 	},
 	fill(true, false){
@@ -135,6 +144,7 @@ public enum Tool{
 	public final boolean push; //whether the undo stack is pushed when the mouse is up
 	public final boolean drawOnMove; //whether to draw when the mouse moves
 	public String cursor = "cursor";
+	public VisImageButton button;
 
 	private Tool(){
 		this(true);
@@ -160,6 +170,10 @@ public enum Tool{
 
 	public boolean selectable(){
 		return true;
+	}
+	
+	public boolean scalable(){
+		return false;
 	}
 	
 	public boolean symmetric(){
