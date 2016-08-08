@@ -2,7 +2,6 @@ package net.pixelstatic.pixeleditor.scene2D;
 
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
-import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.pixeleditor.graphics.Filter;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
@@ -24,7 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
@@ -238,8 +236,8 @@ public class DialogClasses{
 
 			getContentTable().add(table).expand().fill();
 
-			VisImageButton pickfrom = new VisImageButton(new TextureRegionDrawable(new TextureRegion(Textures.get("icon-pick"))));
-			VisImageButton pickto = new VisImageButton(new TextureRegionDrawable(new TextureRegion(Textures.get("icon-pick"))));
+			VisImageButton pickfrom = new VisImageButton(VisUI.getSkin().getDrawable("icon-pick"));
+			VisImageButton pickto = new VisImageButton(VisUI.getSkin().getDrawable("icon-pick"));
 
 			pickfrom.getImageCell().size(60 * s);
 
@@ -247,7 +245,7 @@ public class DialogClasses{
 
 			table.add(from).size(70 * s).pad(10 * s);
 
-			Image image = new Image((Textures.get("icon-arrow-right")));
+			Image image = new Image(VisUI.getSkin().getDrawable("icon-arrow-right"));
 
 			table.add(image).size(60 * s).pad(5 * s);
 
@@ -560,17 +558,6 @@ public class DialogClasses{
 			vbox = new VisCheckBox("Vertical Symmetry", Core.i.drawgrid.vSymmetry);
 			hbox = new VisCheckBox("Horizontal Symmetry", Core.i.drawgrid.hSymmetry);
 
-			ChangeListener listener = new ChangeListener(){
-				@Override
-				public void changed(ChangeEvent event, Actor actor){
-					Core.i.drawgrid.hSymmetry = hbox.isChecked();
-					Core.i.drawgrid.vSymmetry = vbox.isChecked();
-				}
-			};
-
-			hbox.addListener(listener);
-			vbox.addListener(listener);
-
 			hbox.getImageStackCell().size(40 * s);
 			vbox.getImageStackCell().size(40 * s);
 
@@ -578,6 +565,11 @@ public class DialogClasses{
 
 			table.add(vbox).align(Align.left).row();
 			table.add(hbox).align(Align.left).padTop(10 * s).padBottom(10 * s);
+		}
+		
+		public void result(){
+			Core.i.drawgrid.hSymmetry = hbox.isChecked();
+			Core.i.drawgrid.vSymmetry = vbox.isChecked();
 		}
 
 		Object[] getArgs(){
@@ -861,10 +853,10 @@ public class DialogClasses{
 			VisImage left, right, up, down;
 
 			public ShiftController(){
-				left = new VisImage(Textures.getDrawable("icon-arrow-left"));
-				right = new VisImage(Textures.getDrawable("icon-arrow-right"));
-				up = new VisImage(Textures.getDrawable("icon-arrow-up"));
-				down = new VisImage(Textures.getDrawable("icon-arrow-down"));
+				left = new VisImage(VisUI.getSkin().getDrawable("icon-arrow-left"));
+				right = new VisImage(VisUI.getSkin().getDrawable("icon-arrow-right"));
+				up = new VisImage(VisUI.getSkin().getDrawable("icon-arrow-up"));
+				down = new VisImage(VisUI.getSkin().getDrawable("icon-arrow-down"));
 
 				final Color color = Color.PURPLE;
 

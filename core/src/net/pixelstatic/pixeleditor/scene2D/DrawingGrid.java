@@ -31,7 +31,6 @@ public class DrawingGrid extends Actor{
 	private AlphaImage alphaimage;
 	private final boolean clip = true;
 	private Vector2[][] brushPolygons = new Vector2[10][];
-	//private ShaderProgram brushshader = new ShaderProgram(Gdx.files.internal("shaders/default.vertex"), Gdx.files.internal("shaders/default.fragment"));
 	private Color tempcolor = new Color();
 
 	public PixelCanvas canvas;

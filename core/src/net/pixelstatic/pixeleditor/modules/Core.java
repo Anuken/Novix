@@ -66,7 +66,6 @@ public class Core extends Module<PixelEditor>{
 	public ProjectMenu projectmenu;
 	public PaletteMenu palettemenu;
 	public ToolMenu toolmenu;
-	//public VisImageButton gridbutton;
 	CollapseButton colorcollapsebutton, toolcollapsebutton;
 	SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	ColorBox[] boxes;
@@ -140,38 +139,24 @@ public class Core extends Module<PixelEditor>{
 			button.setGenerateDisabledImage(true);
 			button.getImageCell().size(50 * s);
 			ctool.button = button;
+			button.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					ctool.onSelected();
+					if( !ctool.selectable()){
+						button.setChecked(false);
+						return;
+					}
+					tool = ctool;
+					tool.onColorChange(selectedColor(), drawgrid.canvas);
+					if( !button.isChecked()) button.setChecked(true);
+					for(Actor actor : tooltable.getChildren()){
+						if( !(actor instanceof VisImageButton)) continue;
+						VisImageButton other = (VisImageButton)actor;
+						if(other != button) other.setChecked(false);
+					}
 
-			/*if(ctool == Tool.grid){
-				button.setChecked(prefs.getBoolean("grid", true));
-				button.addListener(new ClickListener(){
-					public void clicked(InputEvent event, float x, float y){
-						prefs.put("grid", button.isChecked());
-					}
-				});
-				gridbutton = button;
-			}else{
-*/	
-				button.addListener(new ClickListener(){
-					public void clicked(InputEvent event, float x, float y){
-						ctool.onSelected();
-						if( !ctool.selectable()){
-							button.setChecked(false);
-							return;
-						}
-						tool = ctool;
-						tool.onColorChange(selectedColor(), drawgrid.canvas);
-						if( !button.isChecked()) button.setChecked(true);
-						for(Actor actor : tooltable.getChildren()){
-							if( !(actor instanceof VisImageButton)) continue;
-							VisImageButton other = (VisImageButton)actor;
-							if(other != button) other.setChecked(false);
-						}
-						
-					}
-				});
-				//button.setGenerateDisabledImage(true);
-				//button.setDisabled(true);
-			//}
+				}
+			});
 
 			if(i == 0){
 				button.setChecked(true);
@@ -245,7 +230,7 @@ public class Core extends Module<PixelEditor>{
 		colorcollapser.resetY();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
-		
+
 	}
 
 	public void openPaletteMenu(){
@@ -316,6 +301,8 @@ public class Core extends Module<PixelEditor>{
 
 	void setupBoxColors(){
 		paletteColor = prefs.getInteger("palettecolor", 0);
+		for(ColorBox box : boxes)
+			box.getColor().a = 1f;
 
 		if(paletteColor > boxes.length) paletteColor = 0;
 
@@ -365,11 +352,11 @@ public class Core extends Module<PixelEditor>{
 	}
 
 	public Color selectedColor(){
-		return getCurrentPalette().colors[paletteColor];
+		return getCurrentPalette().colors[paletteColor].cpy();
 	}
 
 	public void updateSelectedColor(Color color){
-		boxes[paletteColor].setColor(color);
+		boxes[paletteColor].setColor(color.cpy());
 		getCurrentPalette().colors[paletteColor] = color.cpy();
 		toolmenu.updateColor(color.cpy());
 		updateToolColor();
@@ -382,7 +369,7 @@ public class Core extends Module<PixelEditor>{
 	}
 
 	public void updateToolColor(){
-		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor().cpy(), drawgrid.canvas);
+		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor(), drawgrid.canvas);
 	}
 
 	public Project getCurrentProject(){
@@ -411,9 +398,9 @@ public class Core extends Module<PixelEditor>{
 		if(colorcollapser.isCollapsed() && !toolcollapser.isCollapsed()) collapseToolMenu();
 		((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
 	}
-	
+
 	public boolean menuOpen(){
-		return !colorMenuCollapsed() || ! toolMenuCollapsed();
+		return !colorMenuCollapsed() || !toolMenuCollapsed();
 	}
 
 	public boolean isImageLarge(){
@@ -448,13 +435,13 @@ public class Core extends Module<PixelEditor>{
 		}
 		//Color shadowcolor = new Color(0, 0, 0, 0.6f);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
-		
+
 		FreeTypeFontParameter normalparameter = new FreeTypeFontParameter();
 		normalparameter.size = (int)(22 * s);
-		
+
 		FreeTypeFontParameter largeparameter = new FreeTypeFontParameter();
 		largeparameter.size = (int)(26 * s);
-		
+
 		BitmapFont font = generator.generateFont(normalparameter);
 		font.getData().markupEnabled = true;
 		BitmapFont largefont = generator.generateFont(largeparameter);
@@ -467,7 +454,7 @@ public class Core extends Module<PixelEditor>{
 		VisUI.load(skin);
 		skin.get(Window.WindowStyle.class).titleFont = largefont;
 		skin.get(Window.WindowStyle.class).titleFontColor = Color.CORAL;
-		
+
 		skin.get("dialog", Window.WindowStyle.class).titleFont = largefont;
 		skin.get("dialog", Window.WindowStyle.class).titleFontColor = Color.CORAL;
 
@@ -496,9 +483,8 @@ public class Core extends Module<PixelEditor>{
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);
 		loadFonts();
-		
-		
-		ShapeUtils.region = VisUI.getSkin().getRegion("white");//new TextureRegion(Textures.get("stripe"));
+
+		ShapeUtils.region = VisUI.getSkin().getRegion("white");
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
 
 		projectmanager.loadProjects();

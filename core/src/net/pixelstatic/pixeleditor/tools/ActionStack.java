@@ -38,10 +38,8 @@ public class ActionStack{
 	}
 
 	public void undo(){
-		//System.out.println("undo: index = " + index + ", size: " + stack.size);
 		if(!canUndo()) return;
 
-		//System.out.println("applying " + stack.get(stack.size - 1 + index));
 		stack.get(stack.size - 1 + index).apply(canvas, false);
 		index --;
 		
@@ -50,10 +48,8 @@ public class ActionStack{
 	}
 
 	public void redo(){
-		//System.out.println("redo: index = " + index + ", size: " + stack.size);
 		if(!canRedo()) return;
 		
-		//System.out.println("applying " + stack.get(stack.size - 1 + index));
 		index ++;
 		stack.get(stack.size - 1 + index).apply(canvas, true);
 		
