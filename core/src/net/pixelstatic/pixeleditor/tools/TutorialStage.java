@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisTextButton;
@@ -131,24 +132,38 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 			if(Core.i.toolMenuCollapsed()){
+				Tool.pencil.button.setChecked(false);
 				Core.i.collapseToolMenu();
 			}
 			
-			float f = width / Tool.values().length;
+			float f = (float)width / Tool.values().length;
 			shade(0, f+1, width, height - f);
 			
 			color(Color.WHITE);
-			text(width / 2, height/2, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
+			text(width / 2, height/2+20, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
 			
 			if(selected != null){
-				color(Color.PURPLE);
-				text(width / 2, height/2+100, "This is the " + selected.name() + " tool.");
+				color(select);
+				text(width / 2, height/2-80, "This is the " + selected.name() + " tool.");
+				rect(selected.ordinal()*(f+0.5f), 0, f+1, f+1);
 			}
+			
+			color(Color.PURPLE);
+			text(width / 2, height/2+180, "[tap to continue]");
 			
 		}
 		
 		public void tap(int x, int y){
+			if(selected != null)selected.button.setChecked(false);
+			if(y < width / Tool.values().length){
+				selected = Tool.values()[x / (width / Tool.values().length)];
+				selected.button.setChecked(false);
+			}
 			
+			if(y > height/2+40){
+				Core.i.tool.button.setChecked(true);
+				next();
+			}
 		}
 	}, 
 	tooloptions{
@@ -158,6 +173,45 @@ public enum TutorialStage{
 			float f= width / Tool.values().length + 61;
 			shade(0, 0, width, f);
 			shade(0, f + Core.i.toolcollapser.getDone()*Core.i.toolmenu.getPrefHeight() - 77, width, height - f);
+			
+			color(Color.WHITE);
+			text(110,310, "Use this button\nto toggle the grid.", Align.left);
+			text(110,450, "Use this button\nto change the draw\nmode.", Align.left);
+			
+			color(Color.PURPLE);
+			text(width/2, height/2+180, "[tap to continue]");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	}, 
+	toolmenu{
+		protected void draw(){
+			if(Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
+			VisTextButton button = (VisTextButton)((Table)Core.i.toolmenu.getChildren().first()).getChildren().first();
+			float f = width / Tool.values().length + 61;
+			
+			shade(0, 0, width, f+Core.i.toolmenu.getPrefHeight() - 77);
+			shade(0, f + Core.i.toolmenu.getPrefHeight(), width, height - f);
+			shade(button.getWidth() + 4, f + Core.i.toolmenu.getPrefHeight() - 77, width, button.getHeight()+7);
+			
+			
+			
+			color(select);
+			rect(button);
+			
+			color(Color.WHITE);
+			text(width/2, height/2+220, "You can use this toolbar to\nmanipulate the image. Press the\nmenu button to continue.");
+			
+			if(button.getClickListener().getTapCount() > 0){
+				next();
+			}
+		}
+	}, 
+	projectmenu{
+		protected void draw(){
+			
 		}
 	};
 	public static final Color select = Color.CORAL;
@@ -166,8 +220,7 @@ public enum TutorialStage{
 	public boolean next;
 	public float trans = 1f;
 	static int width, height;
-	public static Rectangle cliprect = new Rectangle();
-	public static Rectangle cliprect2 = new Rectangle();
+	public static Rectangle[] cliprects = new Rectangle[]{new Rectangle(), new Rectangle(), new Rectangle()};
 	protected Batch batch;
 
 	public final void draw(Batch batch){
@@ -193,14 +246,10 @@ public enum TutorialStage{
 	}
 
 	public void shade(float x, float y, float width, float height){
-		color(0, 0, 0, 0.5f * trans);
+		color(0, 0, 0, 0.6f * trans);
 		tex(x, y, width, height);
-
-		if(shades == 0){
-			cliprect.set(x, y, width, height);
-		}else{
-			cliprect2.set(x, y, width, height);
-		}
+		
+		cliprects[shades].set(x, y, width, height);
 		shades ++;
 	}
 

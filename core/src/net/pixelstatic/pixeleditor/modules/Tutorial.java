@@ -5,17 +5,18 @@ import net.pixelstatic.pixeleditor.tools.TutorialStage;
 import net.pixelstatic.utils.modules.Module;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Rectangle;
 
 
 public class Tutorial extends Module<PixelEditor>{
-	TutorialStage stage = TutorialStage.tools;
+	TutorialStage stage = TutorialStage.toolmenu;
 	TutorialStage laststage = null;
 	float shadespeed = 0.05f;
 	
 	@Override
 	public void update(){
-		TutorialStage.cliprect.set(0,0,0,0);
-		TutorialStage.cliprect2.set(0,0,0,0);
+		for(Rectangle rect : TutorialStage.cliprects)
+			rect.set(0,0,0,0);
 		
 		Core.i.stage.getBatch().begin();
 		
@@ -49,7 +50,7 @@ public class Tutorial extends Module<PixelEditor>{
 	
 	@Override
 	public boolean touchDown (int screenX, int screenY, int pointer, int button) {
-		stage.tap(screenX, screenY);
+		stage.tap(screenX, Gdx.graphics.getHeight() - screenY);
 		return inRect(screenX, screenY);
 	}
 	
@@ -59,6 +60,9 @@ public class Tutorial extends Module<PixelEditor>{
 	}	
 	
 	public boolean inRect(int screenX, int screenY){
-		return TutorialStage.cliprect.contains(screenX, Gdx.graphics.getHeight() - screenY) ||  TutorialStage.cliprect2.contains(screenX, Gdx.graphics.getHeight() - screenY);
+		for(Rectangle rect : TutorialStage.cliprects){
+			if(rect.contains(screenX, Gdx.graphics.getHeight() - screenY)) return true;
+		}
+		return false;
 	}
 }
