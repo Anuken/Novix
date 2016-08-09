@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx;
 
 
 public class Tutorial extends Module<PixelEditor>{
-	TutorialStage stage = TutorialStage.colors;
+	TutorialStage stage = TutorialStage.tools;
 	TutorialStage laststage = null;
 	float shadespeed = 0.05f;
 	
@@ -23,6 +23,7 @@ public class Tutorial extends Module<PixelEditor>{
 			laststage.trans -= shadespeed * Gdx.graphics.getDeltaTime()*60f;
 			if(laststage.trans < 0)laststage.trans = 0f;
 			stage.trans += shadespeed * Gdx.graphics.getDeltaTime()*60f;
+			if(stage.trans > 1f)stage.trans = 1f;
 			Gdx.graphics.requestRendering();
 			laststage.draw(Core.i.stage.getBatch());
 		}
@@ -48,6 +49,7 @@ public class Tutorial extends Module<PixelEditor>{
 	
 	@Override
 	public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+		stage.tap(screenX, screenY);
 		return inRect(screenX, screenY);
 	}
 	
