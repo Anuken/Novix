@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisImageButton;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
 public enum TutorialStage{
@@ -56,11 +58,11 @@ public enum TutorialStage{
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
-			
+
 			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
 
 		}
-		
+
 		public void tap(int x, int y){
 			next();
 		}
@@ -69,20 +71,20 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 			CollapseButton button = Core.i.colorcollapsebutton;
-			
+
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
 			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61 + 80);
-			
+
 			color(Color.WHITE);
-			
+
 			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
-			
+
 			text(width / 2, height - 70, "< Tap any color in this bar to edit it. >");
-			
+
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
 		}
-		
+
 		public void tap(int x, int y){
 			next();
 		}
@@ -92,22 +94,22 @@ public enum TutorialStage{
 		protected void draw(){
 			CollapseButton button = Core.i.colorcollapsebutton;
 			VisTextButton palettebutton = (VisTextButton)Core.i.colorcollapser.getTable().getChildren().peek();
-			
+
 			palettebutton.localToStageCoordinates(temp.set(0, 0));
-			
+
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
 			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61);
-			
+
 			color(Color.WHITE);
 			text(width / 2, temp.y + palettebutton.getHeight() * 1.5f, "Tap this button to access your palettes.");
-			
+
 			color(select);
 			rect(palettebutton);
-			
+
 			if(palettebutton.getClickListener().getTapCount() > 0){
 				next();
 			}
-			
+
 			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
 		}
 	},
@@ -115,103 +117,176 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 			color(Color.WHITE);
-			text(width / 2, height-90, "You can use this menu to resize,\ndelete and add new palettes.");
-			
+			text(width / 2, height - 90, "You can use this menu to resize,\ndelete and add new palettes.");
+
 			color(Color.PURPLE);
 			text(width / 2, 120, "<tap to continue>");
 			//rect(palettebutton);
 		}
-		
+
 		public void tap(int x, int y){
 			if(Core.i.getCurrentDialog() != null) Core.i.getCurrentDialog().hide();
 			next();
 		}
-	}, 
+	},
 	tools{
 		Tool selected = null;
+
 		@Override
 		protected void draw(){
 			if(Core.i.toolMenuCollapsed()){
 				Tool.pencil.button.setChecked(false);
 				Core.i.collapseToolMenu();
 			}
-			
+
 			float f = (float)width / Tool.values().length;
-			shade(0, f+1, width, height - f);
-			
+			shade(0, f + 1, width, height - f);
+
 			color(Color.WHITE);
-			text(width / 2, height/2+20, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
-			
+			text(width / 2, height / 2 + 20, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
+
 			if(selected != null){
 				color(select);
-				text(width / 2, height/2-80, "This is the " + selected.name() + " tool.");
-				rect(selected.ordinal()*(f+0.5f), 0, f+1, f+1);
+				text(width / 2, height / 2 - 80, "This is the " + selected.name() + " tool.");
+				rect(selected.ordinal() * (f + 0.5f), 0, f + 1, f + 1);
 			}
-			
+
 			color(Color.PURPLE);
-			text(width / 2, height/2+180, "[tap to continue]");
-			
+			text(width / 2, height / 2 + 180, "[tap to continue]");
+
 		}
-		
+
 		public void tap(int x, int y){
-			if(selected != null)selected.button.setChecked(false);
+			if(selected != null) selected.button.setChecked(false);
 			if(y < width / Tool.values().length){
 				selected = Tool.values()[x / (width / Tool.values().length)];
 				selected.button.setChecked(false);
 			}
-			
-			if(y > height/2+40){
+
+			if(y > height / 2 + 40){
 				Core.i.tool.button.setChecked(true);
 				next();
 			}
 		}
-	}, 
+	},
 	tooloptions{
 		@Override
 		protected void draw(){
-			
-			float f= width / Tool.values().length + 61;
+
+			float f = width / Tool.values().length + 61;
 			shade(0, 0, width, f);
-			shade(0, f + Core.i.toolcollapser.getDone()*Core.i.toolmenu.getPrefHeight() - 77, width, height - f);
-			
+			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 77, width, height - f);
+
 			color(Color.WHITE);
-			text(110,310, "Use this button\nto toggle the grid.", Align.left);
-			text(110,450, "Use this button\nto change the draw\nmode.", Align.left);
-			
+			text(110, 310, "Use this button\nto toggle the grid.", Align.left);
+			text(110, 450, "Use this button\nto change the draw\nmode.", Align.left);
+
 			color(Color.PURPLE);
-			text(width/2, height/2+180, "[tap to continue]");
+			text(width / 2, height / 2 + 180, "[tap to continue]");
 		}
-		
+
 		public void tap(int x, int y){
 			next();
 		}
-	}, 
+	},
 	toolmenu{
 		protected void draw(){
 			if(Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
 			VisTextButton button = (VisTextButton)((Table)Core.i.toolmenu.getChildren().first()).getChildren().first();
 			float f = width / Tool.values().length + 61;
-			
-			shade(0, 0, width, f+Core.i.toolmenu.getPrefHeight() - 77);
+
+			shade(0, 0, width, f + Core.i.toolmenu.getPrefHeight() - 77);
 			shade(0, f + Core.i.toolmenu.getPrefHeight(), width, height - f);
-			shade(button.getWidth() + 4, f + Core.i.toolmenu.getPrefHeight() - 77, width, button.getHeight()+7);
-			
-			
-			
+			shade(button.getWidth() + 4, f + Core.i.toolmenu.getPrefHeight() - 77, width, button.getHeight() + 7);
+
 			color(select);
 			rect(button);
-			
+
 			color(Color.WHITE);
-			text(width/2, height/2+220, "You can use this toolbar to\nmanipulate the image. Press the\nmenu button to continue.");
-			
+			text(width / 2, height / 2 + 220, "You can use this toolbar to\nmanipulate the image. Press the\nmenu button to continue.");
+
 			if(button.getClickListener().getTapCount() > 0){
 				next();
 			}
 		}
-	}, 
+	},
 	projectmenu{
 		protected void draw(){
+
+			shade(0, 0, width, height);
+			//shade(0, height-120, width,120);
+
+			color(Color.WHITE);
+			text(width / 2, height - 20, "This is the project menu.\nYou can use it to easily store\nand switch canvases.");
+
+			color(Color.PURPLE);
+			text(width / 2, height / 2, "<tap to continue>");
+
+		}
+
+		public void tap(int x, int y){
+			next();
+		}
+	},
+	projectsettings{
+		String[] names = {"open", "copy", "delete", "rename"};
+		int stage = 0;
+		protected void draw(){
+			VisScrollPane pane = ((VisScrollPane)Core.i.getCurrentDialog().getContentTable().findActor("projectpane"));
+			pane.setSmoothScrolling(false);
+			pane.setScrollPercentY(0);
+
+			shade(0, 0, width, height - 280);
+			clearshade(0, 0, width, height);
+			shade(0, height - 120, width, 120);
+
+			color(Color.WHITE);
 			
+			VisImageButton button = pane.findActor(Core.i.projectmanager.getProjects().iterator().next().name+names[stage]+"button");
+			
+			text(width / 2, height/2+50, "Use this button to " + names[stage]+ " the project.");
+			color(select);
+			rectarrow(button);
+			
+			color(Color.PURPLE);
+			text(width / 2, height / 2, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			stage ++;
+			if(stage >= names.length){
+				stage = names.length -1;
+				next();
+			}
+		}
+
+		public void end(){
+			(((VisScrollPane)Core.i.getCurrentDialog().getContentTable().findActor("projectpane"))).setSmoothScrolling(true);
+		}
+	},
+	settings{
+		protected void draw(){
+			VisTextButton button = Core.i.stage.getRoot().findActor("settings");
+			
+			button.localToStageCoordinates(temp.set(0,0));
+			temp.y -= 6;
+			
+			shade(0, 0, width, temp.y);
+			
+			clearshade(0, temp.y, width, height - temp.y);
+			
+			color(Color.WHITE);
+			text(width/2, height/2 + 180, "This button opens up the settings.\nIn the settings menu, you can\ncustomize cursor speed, size,\nand so on.");
+			
+			color(select);
+			rectarrow(button);
+			
+			color(Color.PURPLE);
+			text(width / 2, height / 2-40, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
 		}
 	};
 	public static final Color select = Color.CORAL;
@@ -248,7 +323,10 @@ public enum TutorialStage{
 	public void shade(float x, float y, float width, float height){
 		color(0, 0, 0, 0.6f * trans);
 		tex(x, y, width, height);
-		
+		clearshade(x, y, width, height);
+	}
+	
+	public void clearshade(float x, float y, float width, float height){
 		cliprects[shades].set(x, y, width, height);
 		shades ++;
 	}
@@ -260,6 +338,24 @@ public enum TutorialStage{
 	public void rect(Actor actor){
 		actor.localToStageCoordinates(temp.set(0, 0));
 		rect(temp.x, temp.y, actor.getWidth(), actor.getHeight());
+	}
+	
+	public void rectarrow(Actor actor){
+		rect(actor);
+		
+		arrow(temp.x + actor.getWidth()/2, temp.y - 80, 60, true);
+	}
+	
+	public void arrow(float x, float y, float length, boolean up){
+		float l = 20;
+		line(x,y, x, y + length);
+		if(up){
+			line(x,y + length, x + l, y - l + length);
+			line(x,y + length, x - l, y - l + length);
+		}else{
+			line(x,y, x + l, y + l);
+			line(x,y, x - l, y + l);
+		}
 	}
 
 	public void rect(float x, float y, float width, float height){
@@ -279,6 +375,10 @@ public enum TutorialStage{
 	}
 
 	public void tap(int x, int y){
+
+	}
+
+	public void end(){
 
 	}
 

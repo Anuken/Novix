@@ -42,6 +42,7 @@ public class ProjectMenu extends VisDialog{
 				return Gdx.graphics.getHeight();
 			}
 		};
+		pane.setName("projectpane");
 		pane.setFadeScrollBars(false);
 		pane.setOverscroll(false, false);
 		
@@ -91,7 +92,7 @@ public class ProjectMenu extends VisDialog{
 				main.openSettingsMenu();
 			}
 		});
-		
+		settingsbutton.setName("settings");
 
 		newtable.left().add(newbutton).padBottom(6 * s).size(newbuttonwidth, 60 * s);
 		newtable.left().add().grow();
@@ -159,6 +160,11 @@ public class ProjectMenu extends VisDialog{
 			VisImageButton copybutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-copy"));
 			VisImageButton renamebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-rename"));
 			VisImageButton deletebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-trash"));
+			
+			openbutton.setName(project.name + "openbutton");
+			copybutton.setName(project.name + "copybutton");
+			renamebutton.setName(project.name + "renamebutton");
+			deletebutton.setName(project.name + "deletebutton");
 
 			if(project == main.getCurrentProject()){
 				openbutton.setDisabled(true);

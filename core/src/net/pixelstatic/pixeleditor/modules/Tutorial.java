@@ -32,6 +32,7 @@ public class Tutorial extends Module<PixelEditor>{
 		stage.draw(Core.i.stage.getBatch());
 		
 		if(stage.next){
+			stage.end();
 			laststage = stage;
 			stage = TutorialStage.values()[stage.ordinal()+1];
 			stage.trans = 0f;
@@ -44,6 +45,7 @@ public class Tutorial extends Module<PixelEditor>{
 		for(TutorialStage stage : TutorialStage.values()){
 			stage.next = false;
 			stage.trans = 1f;
+			stage.end();
 		}
 		stage = TutorialStage.values()[0];
 	}
