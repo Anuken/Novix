@@ -63,7 +63,6 @@ public class DrawingGrid extends Actor{
 		
 		@Override
 		public boolean touchUp(int x, int y, int pointer, int button){
-			//if(checkRange(y)) return false;
 			if(touches == 0) return false;
 			
 			if(cursormode()){
@@ -106,7 +105,7 @@ public class DrawingGrid extends Actor{
 		@Override
 		public boolean touchDragged(int x, int y, int pointer){
 			if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop || checkRange(y) || touches == 0 || !Core.i.tool.moveCursor()) return false; //not the second pointer
-			float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed");
+			float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed", 1f);
 			
 			float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
 			float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
@@ -316,7 +315,7 @@ public class DrawingGrid extends Actor{
 
 		batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
 
-		if(core.prefs.getBoolean("grid")){
+		if(core.prefs.getBoolean("grid", true)){
 			gridimage.setBounds(getX(), getY(), getWidth(), getHeight());
 			gridimage.draw(batch, parentAlpha);
 		}
@@ -343,7 +342,6 @@ public class DrawingGrid extends Actor{
 
 		//draw selection
 		if((cursormode() || (touches > 0 && Core.i.tool.moveCursor())) && Core.i.tool.drawCursor()){
-			//TODO
 			tempcolor.set(canvas.getIntColor(selected.x, selected.y));
 			//tempcolor.r = 1f - tempcolor.r;
 			//tempcolor.g = 1f - tempcolor.g;
@@ -388,8 +386,10 @@ public class DrawingGrid extends Actor{
 		//draw cursor
 		if(cursormode() || (touches > 0 && Core.i.tool.moveCursor()) || !Core.i.tool.moveCursor()){
 			batch.setColor(Color.PURPLE);
-			float csize = 30 * core.prefs.getFloat("cursorsize") * s;
+			float csize = 30 * core.prefs.getFloat("cursorsize", 1f) * s;
+			
 			batch.draw(Textures.get(Core.i.tool.cursor), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
+			
 			batch.setColor(Color.CORAL);
 			if(Core.i.tool != Tool.pencil && Core.i.tool != Tool.zoom) 	batch.draw(VisUI.getSkin().getRegion("icon-" + Core.i.tool.name()), getX() + cursorx, getY() + cursory, csize, csize);
 		} //seriously, why is this necessary

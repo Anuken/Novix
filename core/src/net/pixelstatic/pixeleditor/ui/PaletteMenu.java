@@ -17,10 +17,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
@@ -28,7 +28,7 @@ import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 public class PaletteMenu extends VisDialog{
 	private Core main;
 	private PaletteWidget currentWidget = null;
-	
+
 	public PaletteMenu(Core main){
 		super("Palettes", "dialog");
 		this.main = main;
@@ -36,7 +36,7 @@ public class PaletteMenu extends VisDialog{
 		MiscUtils.addHideButton(this);
 		setStage(main.stage);
 	}
-	
+
 	public void update(){
 		float scrolly = getContentTable().getChildren().size == 0 ? 0 : ((ScrollPane)getContentTable().getChildren().first()).getScrollPercentY();
 
@@ -92,12 +92,16 @@ public class PaletteMenu extends VisDialog{
 				}));
 				menu.addItem(new TallMenuItem("delete", new ChangeListener(){
 					public void changed(ChangeEvent event, Actor actor){
-						new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
-							public void result(){
-								main.palettemanager.removePalette(palette);
-								update();
-							}
-						}.show(getStage());
+						if(widget != currentWidget){
+							new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
+								public void result(){
+									main.palettemanager.removePalette(palette);
+									update();
+								}
+							}.show(getStage());
+						}else{
+							DialogClasses.showInfo(getStage(), "You cannot delete the\npalette you are using!");
+						}
 					}
 				}));
 
@@ -126,10 +130,10 @@ public class PaletteMenu extends VisDialog{
 						@Override
 						public boolean act(float delta){
 							if( !widget.extrabutton.isOver()){
-								
+
 								currentWidget.setSelected(false);
 								currentWidget = widget;
-								
+
 								widget.setSelected(true);
 								main.setPalette(palette);
 							}
@@ -201,11 +205,38 @@ public class PaletteMenu extends VisDialog{
 				return true;
 			}
 		}));
+		
+		centerWindow();
 	}
-	
+
 	public VisDialog show(Stage stage){
 		super.show(stage);
 		stage.setScrollFocus(getContentTable().getChildren().first());
 		return this;
+	}
+
+	@Override
+	public void addCloseButton(){
+		Label titleLabel = getTitleLabel();
+		Table titleTable = getTitleTable();
+
+		VisImageButton closeButton = new VisImageButton("close-window");
+		closeButton.getImageCell().size(40 * s);
+		titleTable.add(closeButton).padRight( -getPadRight() + 0.7f).size(50 * s);
+		closeButton.addListener(new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				close();
+			}
+		});
+		closeButton.addListener(new ClickListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				event.cancel();
+				return true;
+			}
+		});
+
+		if(titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2) titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
 	}
 }

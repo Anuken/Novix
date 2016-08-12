@@ -10,8 +10,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Tutorial extends Module<PixelEditor>{
-	private boolean active = true;
-	private TutorialStage stage = TutorialStage.tools;//TutorialStage.values()[0];
+	private boolean active = false;
+	private TutorialStage stage = TutorialStage.values()[0];
 	private TutorialStage laststage = null;
 	private float shadespeed = 0.05f;
 	{
@@ -30,11 +30,11 @@ public class Tutorial extends Module<PixelEditor>{
 
 			if(stage.trans < 1f){
 				if(laststage != null){
-					laststage.trans -= shadespeed * Gdx.graphics.getDeltaTime() * 60f;
+					laststage.trans -= shadespeed;
 					if(laststage.trans < 0) laststage.trans = 0f;
 					laststage.draw(Core.i.stage.getBatch());
 				}
-				stage.trans += shadespeed * Gdx.graphics.getDeltaTime() * 60f;
+				stage.trans += shadespeed;
 				if(stage.trans > 1f) stage.trans = 1f;
 				Gdx.graphics.requestRendering();
 

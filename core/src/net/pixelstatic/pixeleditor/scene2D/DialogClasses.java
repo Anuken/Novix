@@ -1267,13 +1267,18 @@ public class DialogClasses{
 	public static class InfoDialog extends MenuDialog{
 		public InfoDialog(String title, String info){
 			super(title);
-			getButtonsTable().clear();
+			getButtonsTable().clearChildren();
 			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
 			
 			VisLabel label = new VisLabel(info);
 			label.setAlignment(Align.center);
 			label.setWrap(true);
 			getContentTable().add(label).width(400f).padTop(20*s).padBottom(20*s);
+		}
+		
+		@Override
+		public void result(){
+			hide();
 		}
 	}
 	
