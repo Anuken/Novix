@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.modules;
 
 import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.pixeleditor.PixelEditor;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.tools.TutorialStage;
 import net.pixelstatic.utils.modules.Module;
 
@@ -19,6 +20,7 @@ public class Tutorial extends Module<PixelEditor>{
 
 	@Override
 	public void update(){
+		
 		ShapeUtils.thickness = 4;
 		if(active){
 			for(Rectangle rect : TutorialStage.cliprects)
@@ -49,7 +51,6 @@ public class Tutorial extends Module<PixelEditor>{
 
 			Core.i.stage.getBatch().end();
 		}else{
-
 			if(stage.trans > 0){
 				Gdx.graphics.requestRendering();
 				Core.i.stage.getBatch().begin();
@@ -62,7 +63,6 @@ public class Tutorial extends Module<PixelEditor>{
 
 	public void end(){
 		active = false;
-		Core.i.prefs.put("tutorial", true);
 	}
 
 	private void reset(){
@@ -81,9 +81,39 @@ public class Tutorial extends Module<PixelEditor>{
 	}
 
 	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button){
-		if(active) stage.tap(screenX, Gdx.graphics.getHeight() - screenY);
-		return inRect(screenX, screenY);
+	public boolean touchDown(int x, int y, int pointer, int button){
+		if(active){
+			stage.tap(x, Gdx.graphics.getHeight() - y);
+			if(x > Gdx.graphics.getWidth() - 50*Core.s && (Gdx.graphics.getHeight() - y) < 30 * Core.s){
+				active = false;
+				new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want to\nexit the tutorial?"){
+					boolean confirming;
+					
+					public void result(){
+						confirming = true;
+						close();
+					}
+					
+					public void cancel(){
+						close();
+					}
+					
+					public void close(){
+						super.close();
+						if(confirming){
+							end();
+						}else{
+							active = true;
+						}
+					}
+					
+					public void hide(){}
+				}.show(Core.i.stage);
+				
+				
+			}
+		}
+		return inRect(x, y);
 	}
 
 	@Override

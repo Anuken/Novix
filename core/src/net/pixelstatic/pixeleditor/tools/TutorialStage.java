@@ -461,6 +461,9 @@ public enum TutorialStage{
 		height = Gdx.graphics.getHeight();
 		this.batch = batch;
 		draw();
+		
+		color(select);
+		text(width - 30, 30, "Exit");
 	}
 
 	public void color(Color color){

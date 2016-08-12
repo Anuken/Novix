@@ -1302,7 +1302,14 @@ public class DialogClasses{
 		}
 
 		protected void result(Object object){
-			if((Boolean)object == true) result();
+			if((Boolean)object == true) 
+				result();
+			else
+				cancel();
+		}
+		
+		public void cancel(){
+			
 		}
 
 		public void hide(){
