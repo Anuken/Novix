@@ -177,6 +177,10 @@ public class PaletteMenu extends VisDialog{
 					}
 
 					public void result(String string){
+						if(Integer.parseInt(numberfield.getText()) > 32){
+							DialogClasses.showInfo(getStage(), "A palette may not have\nmore than 32 colors.");
+							return;
+						}
 						main.palettemanager.addPalette(new Palette(string, Integer.parseInt(numberfield.getText())));
 						update();
 					}

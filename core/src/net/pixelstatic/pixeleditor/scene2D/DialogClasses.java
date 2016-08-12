@@ -1269,17 +1269,18 @@ public class DialogClasses{
 			super(title);
 			getButtonsTable().clearChildren();
 			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
+			ok.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					hide();
+				}
+			});
 			
 			VisLabel label = new VisLabel(info);
 			label.setAlignment(Align.center);
 			label.setWrap(true);
 			getContentTable().add(label).width(400f).padTop(20*s).padBottom(20*s);
 		}
-		
-		@Override
-		public void result(){
-			hide();
-		}
+
 	}
 	
 	public static class ErrorDialog extends MenuDialog{
@@ -1287,6 +1288,11 @@ public class DialogClasses{
 			super("Error");
 			getButtonsTable().clear();
 			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
+			ok.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					hide();
+				}
+			});
 			
 			VisLabel label = new VisLabel(info);
 			label.setAlignment(Align.center);
