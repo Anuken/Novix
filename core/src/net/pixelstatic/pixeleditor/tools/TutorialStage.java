@@ -209,9 +209,9 @@ public enum TutorialStage{
 			shade(0,height-118*s, width, 118*s);
 			
 			color(Color.WHITE);
-			text(width/2, height-50, "The [CORAL]cursor mode[] works like this:\n"
+			text(width/2, height-15, "The [CORAL]cursor mode[] works like this:\n"
 					+ "Use one finger to [PURPLE]move the cursor[]\n"
-					+ "and another finger to [PURPLE]draw[].\n"
+					+ "and hold another finger anywhere on\nthe screen to[PURPLE] draw[].\n"
 					+ "[GREEN]Try it out.");
 			
 			color(Color.PURPLE);

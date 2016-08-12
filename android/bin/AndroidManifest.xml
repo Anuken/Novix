@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.pixelstatic.pixeleditor"
-    android:versionCode="12"
+    android:versionCode="13"
     android:installLocation="auto"
-    android:versionName="0.7.1" >
+    android:versionName="0.8" >
 
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="22" />
     
