@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor.tools;
 
+import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.modules.Tutorial;
@@ -25,7 +26,7 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 public enum TutorialStage{
 
 	colormenu{
-		float arrowlength = 20;
+		float arrowlength = 20*s;
 
 		@Override
 		protected void draw(){
@@ -55,11 +56,11 @@ public enum TutorialStage{
 			CollapseButton button = Core.i.colorcollapsebutton;
 
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61 + 80);
+			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61*s + 80*s);
 
 			color(Color.WHITE);
 
-			text(width / 2, height - 120, "This is this color menu.\nHere you can edit the color palette.");
+			text(width / 2, height - 120*s, "This is this color menu.\nHere you can edit the color palette.");
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
@@ -78,13 +79,13 @@ public enum TutorialStage{
 			CollapseButton button = Core.i.colorcollapsebutton;
 
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61 + 80);
+			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61*s + 80*s);
 
 			color(Color.WHITE);
 
 			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
 
-			text(width / 2, height - 70, "< Tap any color in this bar to edit it. >");
+			text(width / 2, height - 70*s, "< Tap any color in this bar to edit it. >");
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
@@ -103,7 +104,7 @@ public enum TutorialStage{
 			palettebutton.localToStageCoordinates(temp.set(0, 0));
 
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61);
+			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61*s);
 
 			color(Color.WHITE);
 			text(width / 2, temp.y + palettebutton.getHeight() * 1.5f, "Tap this button to access your palettes.");
@@ -122,10 +123,10 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 			color(Color.WHITE);
-			text(width / 2, height - 90, "You can use this menu to resize,\ndelete and add new palettes.");
+			text(width / 2, height - 90*s, "You can use this menu to resize,\ndelete and add new palettes.");
 
 			color(Color.PURPLE);
-			text(width / 2, 120, "<tap to continue>");
+			text(width / 2, 120*s, "<tap to continue>");
 			//rect(palettebutton);
 		}
 
@@ -139,10 +140,10 @@ public enum TutorialStage{
 		protected void draw(){
 			shade(0,0,width,height);
 			color(Color.WHITE);
-			text(width / 2, height - 55, "< Tap any color in this bar to set>\nit as your current color.");
+			text(width / 2, height - 55*s, "< Tap any color in this bar to set>\nit as your current color.");
 			
 			color(Color.PURPLE);
-			text(width / 2, 120, "<tap to continue>");
+			text(width / 2, 120*s, "<tap to continue>");
 		}
 		
 		public void tap(int x, int y){
@@ -157,8 +158,8 @@ public enum TutorialStage{
 				bar.fire(new ChangeListener.ChangeEvent());
 			}
 			
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
+			shade(0,0, width, 132*s);
+			shade(0,height-118*s, width, 118*s);
 			
 			if(Core.i.getCurrentDialog() != null){
 				Core.i.getCurrentDialog().hide();
@@ -173,7 +174,7 @@ public enum TutorialStage{
 			text(width / 2, height/2, "This is the canvas.");
 			
 			color(Color.PURPLE);
-			text(width / 2, height / 2-80, "<tap to continue>");
+			text(width / 2, height / 2-80*s, "<tap to continue>");
 		}
 		
 		public void tap(int x, int y){
@@ -182,14 +183,14 @@ public enum TutorialStage{
 	},
 	canvasmodes{
 		protected void draw(){
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
+			shade(0,0, width, 132*s);
+			shade(0,height-118*s, width, 118*s);
 			
 			color(Color.WHITE);
-			text(width / 2, height/2+80, "There are two drawing modes:\n[CORAL]cursor[] and [PURPLE]touch.");
+			text(width / 2, height/2+80*s, "There are two drawing modes:\n[CORAL]cursor[] and [PURPLE]touch.");
 			
 			color(Color.PURPLE);
-			text(width / 2, height/2-80, "<tap to continue>");
+			text(width / 2, height/2-80*s, "<tap to continue>");
 		}
 		
 		public void tap(int x, int y){
@@ -204,8 +205,8 @@ public enum TutorialStage{
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
 			
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
+			shade(0,0, width, 132*s);
+			shade(0,height-118*s, width, 118*s);
 			
 			color(Color.WHITE);
 			text(width/2, height-50, "The [CORAL]cursor mode[] works like this:\n"
@@ -214,11 +215,11 @@ public enum TutorialStage{
 					+ "[GREEN]Try it out.");
 			
 			color(Color.PURPLE);
-			text(width / 2, 70, "<tap here to continue>");
+			text(width / 2, 70*s, "<tap here to continue>");
 		}
 		
 		public void tap(int x, int y){
-			if(y < 132) next();
+			if(y < 132*s) next();
 		}
 	},
 	canvastouchmode{
@@ -229,20 +230,20 @@ public enum TutorialStage{
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
 			
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
+			shade(0,0, width, 132*s);
+			shade(0,height-118*s, width, 118*s);
 			
 			color(Color.WHITE);
-			text(width/2, height-50, "The [PURPLE]touch mode[] is simple:\n"
+			text(width/2, height-50*s, "The [PURPLE]touch mode[] is simple:\n"
 					+ "just touch the place where you\nwant to draw.\n"
 					+ "[GREEN]Try it out.");
 			
 			color(Color.PURPLE);
-			text(width / 2, 70, "<tap here to continue>");
+			text(width / 2, 70*s, "<tap here to continue>");
 		}
 		
 		public void tap(int x, int y){
-			if(y < 132) next();
+			if(y < 132*s) next();
 		}
 	},
 	tools{
@@ -259,16 +260,16 @@ public enum TutorialStage{
 			shade(0, f + 1, width, height - f);
 
 			color(Color.WHITE);
-			text(width / 2, height / 2 + 20, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
+			text(width / 2, height / 2 + 20*s, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
 
 			if(selected != null){
 				color(select);
-				text(width / 2, height / 2 - 80, "This is the " + selected.name() + " tool.");
+				text(width / 2, height / 2 - 80*s, "This is the " + selected.name() + " tool.");
 				rect(selected.ordinal() * (f + 0.5f), 0, f + 1, f + 1);
 			}
 
 			color(Color.PURPLE);
-			text(width / 2, height / 2 + 180, "[tap to continue]");
+			text(width / 2, height / 2 + 180*s, "[tap to continue]");
 
 		}
 
@@ -279,7 +280,7 @@ public enum TutorialStage{
 				selected.button.setChecked(false);
 			}
 
-			if(y > height / 2 + 40){
+			if(y > height / 2 + 40*s){
 				Core.i.tool.button.setChecked(true);
 				next();
 			}
@@ -291,14 +292,14 @@ public enum TutorialStage{
 
 			float f = width / Tool.values().length + 61;
 			shade(0, 0, width, f);
-			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 77, width, height - f);
+			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 77*s, width, height - f);
 
 			color(Color.WHITE);
-			text(110, 310, "Use this button\nto toggle the [GREEN]grid[].", Align.left);
-			text(110, 450, "Use this button\nto change the [CORAL]draw\nmode.", Align.left);
+			text(110*s, 310*s, "Use this button\nto toggle the [GREEN]grid[].", Align.left);
+			text(110*s, 450*s, "Use this button\nto change the [CORAL]draw\nmode.", Align.left);
 
 			color(Color.PURPLE);
-			text(width / 2, height / 2 + 180, "[tap to continue]");
+			text(width / 2, height / 2 + 180*s, "[tap to continue]");
 		}
 
 		public void tap(int x, int y){
@@ -309,17 +310,17 @@ public enum TutorialStage{
 		protected void draw(){
 			if(Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
 			VisTextButton button = (VisTextButton)((Table)Core.i.toolmenu.getChildren().first()).getChildren().first();
-			float f = width / Tool.values().length + 61;
+			float f = width / Tool.values().length + 61*s;
 
-			shade(0, 0, width, f + Core.i.toolmenu.getPrefHeight() - 77);
+			shade(0, 0, width, f + Core.i.toolmenu.getPrefHeight() - 77*s);
 			shade(0, f + Core.i.toolmenu.getPrefHeight(), width, height - f);
-			shade(button.getWidth() + 4, f + Core.i.toolmenu.getPrefHeight() - 77, width, button.getHeight() + 7);
+			shade(button.getWidth() + 4*s, f + Core.i.toolmenu.getPrefHeight() - 77, width, button.getHeight() + 7*s);
 
 			color(select);
 			rect(button);
 
 			color(Color.WHITE);
-			text(width / 2, height / 2 + 220, "Press this button to\ncontinue to the menu.");
+			text(width / 2, height / 2 + 220*s, "Press this button to\ncontinue to the menu.");
 
 			if(button.getClickListener().getTapCount() > 0){
 				next();
@@ -333,7 +334,7 @@ public enum TutorialStage{
 			//shade(0, height-120, width,120);
 
 			color(Color.WHITE);
-			text(width / 2, height - 20, "This is the project menu.\nYou can use it to easily store\nand switch canvases.");
+			text(width / 2, height - 20*s, "This is the project menu.\nYou can use it to easily store\nand switch canvases.");
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
@@ -352,9 +353,9 @@ public enum TutorialStage{
 			pane.setSmoothScrolling(false);
 			pane.setScrollPercentY(0);
 
-			shade(0, 0, width, height - 280);
+			shade(0, 0, width, height - 280*s);
 			clearshade(0, 0, width, height);
-			shade(0, height - 120, width, 120);
+			shade(0, height - 120*s, width, 120*s);
 
 			color(Color.WHITE);
 			
@@ -392,13 +393,13 @@ public enum TutorialStage{
 			clearshade(0, temp.y, width, height - temp.y);
 			
 			color(Color.WHITE);
-			text(width/2, height/2 + 180, "This button allows you\nto create a new project.\nYou can either specify the project\nsize, or load an image file.");
+			text(width/2, height/2 + 180*s, "This button allows you\nto create a new project.\nYou can either specify the project\nsize, or load an image file.");
 			
 			color(select);
 			rectarrow(button);
 			
 			color(Color.PURPLE);
-			text(width / 2, height / 2-40, "<tap to continue>");
+			text(width / 2, height / 2-40*s, "<tap to continue>");
 		}
 		
 		public void tap(int x, int y){
@@ -417,13 +418,13 @@ public enum TutorialStage{
 			clearshade(0, temp.y, width, height - temp.y);
 			
 			color(Color.WHITE);
-			text(width/2, height/2 + 180, "This button opens up the settings.\nThere, you can customize\ncursor speed, size, and so on.");
+			text(width/2, height/2 + 180*s, "This button opens up the settings.\nThere, you can customize\ncursor speed, size, and so on.");
 			
 			color(select);
 			rectarrow(button);
 			
 			color(Color.PURPLE);
-			text(width / 2, height / 2-40, "<tap to continue>");
+			text(width / 2, height / 2-40*s, "<tap to continue>");
 		}
 		
 		public void tap(int x, int y){
