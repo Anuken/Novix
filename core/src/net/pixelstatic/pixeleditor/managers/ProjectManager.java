@@ -8,7 +8,6 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.dialogs.AndroidDialogs;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -96,7 +95,7 @@ public class ProjectManager{
 					projects.put(text, new Project(newhandle));
 					main.projectmenu.update(true);
 				}catch(IOException e){
-					AndroidDialogs.showError(main.stage, "Error copying file!", e);
+					DialogClasses.showError(main.stage, "Error copying file!", e);
 					e.printStackTrace();
 				}
 			}
@@ -117,7 +116,7 @@ public class ProjectManager{
 
 	public void deleteProject(final Project project){
 		if(project == currentProject){
-			AndroidDialogs.showInfo(main.stage, "You cannot delete the canvas you are currently using!");
+			DialogClasses.showInfo(main.stage, "You cannot delete the canvas you are currently using!");
 			return;
 		}
 
@@ -129,7 +128,7 @@ public class ProjectManager{
 					projects.remove(project.name);
 					main.projectmenu.update(true);
 				}catch(Exception e){
-					AndroidDialogs.showError(main.stage, "Error deleting file!", e);
+					DialogClasses.showError(main.stage, "Error deleting file!", e);
 					e.printStackTrace();
 				}
 			}
@@ -192,12 +191,12 @@ public class ProjectManager{
 		boolean exists = checkIfProjectExists(name, null);
 
 		if( !MiscUtils.isFileNameValid(name)){
-			AndroidDialogs.showError(main.stage, "Project name is invalid!");
+			DialogClasses.showError(main.stage, "Project name is invalid!");
 			return true;
 		}
 
 		if(exists){
-			AndroidDialogs.showError(main.stage, "A project with that name already exists!");
+			DialogClasses.showError(main.stage, "A project with that name already exists!");
 		}
 
 		return exists;
@@ -205,14 +204,14 @@ public class ProjectManager{
 
 	boolean validateProjectName(String name, Project project){
 		if( !MiscUtils.isFileNameValid(name)){
-			AndroidDialogs.showError(main.stage, "Project name is invalid!");
+			DialogClasses.showError(main.stage, "Project name is invalid!");
 			return true;
 		}
 
 		boolean exists = checkIfProjectExists(name, project);
 
 		if(exists){
-			AndroidDialogs.showError(main.stage, "A project with that name already exists!");
+			DialogClasses.showError(main.stage, "A project with that name already exists!");
 		}
 
 		return exists;

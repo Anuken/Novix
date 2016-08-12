@@ -20,7 +20,6 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBar;
 
@@ -261,7 +260,7 @@ public class ToolMenu extends VisTable{
 							main.tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();
-							AndroidDialogs.showError(stage, e);
+							DialogClasses.showError(stage, e);
 						}
 					}
 				}.show(stage);
@@ -305,6 +304,7 @@ public class ToolMenu extends VisTable{
 
 
 		VisTextButton menubutton = new VisTextButton("Menu");
+		menubutton.setName("menubutton");
 		VisTextButton settingsbutton = new VisTextButton("Settings");
 
 		menubutton.addListener(new ClickListener(){

@@ -290,13 +290,21 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 
-			float f = width / Tool.values().length + 61;
+			float f = width / Tool.values().length + 61*s;
 			shade(0, 0, width, f);
-			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 77*s, width, height - f);
+			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 78*s, width, height - f);
+			
+			Actor modebutton = Core.i.stage.getRoot().findActor("modebutton");
+			Actor gridbutton = Core.i.stage.getRoot().findActor("gridbutton");
+			modebutton.localToStageCoordinates(temp.set(0,0));
 
 			color(Color.WHITE);
-			text(110*s, 310*s, "Use this button\nto toggle the [GREEN]grid[].", Align.left);
-			text(110*s, 450*s, "Use this button\nto change the [CORAL]draw\nmode.", Align.left);
+			
+			text(temp.x + modebutton.getWidth() + 5*s, temp.y + modebutton.getHeight(), "Use this button\nto change the [CORAL]draw\nmode.", Align.left);
+			
+			gridbutton.localToStageCoordinates(temp.set(0,0));
+			
+			text(temp.x + modebutton.getWidth() + 5*s, temp.y + modebutton.getHeight(), "Use this button\nto toggle the [GREEN]grid[].", Align.left);
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2 + 180*s, "[tap to continue]");
@@ -311,10 +319,14 @@ public enum TutorialStage{
 			if(Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
 			VisTextButton button = (VisTextButton)((Table)Core.i.toolmenu.getChildren().first()).getChildren().first();
 			float f = width / Tool.values().length + 61*s;
+			
+			color(select);
+			rect(button);
 
 			shade(0, 0, width, f + Core.i.toolmenu.getPrefHeight() - 77*s);
 			shade(0, f + Core.i.toolmenu.getPrefHeight(), width, height - f);
-			shade(button.getWidth() + 4*s, f + Core.i.toolmenu.getPrefHeight() - 77, width, button.getHeight() + 7*s);
+			
+			shade(button.getWidth() + 4*s, f + Core.i.toolmenu.getPrefHeight() - 77*s, width, button.getHeight() + 7*s);
 
 			color(select);
 			rect(button);
@@ -322,7 +334,7 @@ public enum TutorialStage{
 			color(Color.WHITE);
 			text(width / 2, height / 2 + 220*s, "Press this button to\ncontinue to the menu.");
 
-			if(button.getClickListener().getTapCount() > 0){
+			if(Core.i.projectmenu.getStage() != null){
 				next();
 			}
 		}
@@ -346,10 +358,10 @@ public enum TutorialStage{
 		}
 	},
 	projectsettings{
-		String[] names = {"open", "copy", "delete", "rename"};
+		String[] names = {"open", "copy", "rename", "delete"};
 		int stage = 0;
 		protected void draw(){
-			VisScrollPane pane = ((VisScrollPane)Core.i.getCurrentDialog().getContentTable().findActor("projectpane"));
+			VisScrollPane pane = ((VisScrollPane)Core.i.stage.getRoot().findActor("projectpane"));
 			pane.setSmoothScrolling(false);
 			pane.setScrollPercentY(0);
 
@@ -361,7 +373,7 @@ public enum TutorialStage{
 			
 			VisImageButton button = pane.findActor(Core.i.projectmanager.getProjects().iterator().next().name+names[stage]+"button");
 			
-			text(width / 2, height/2+50, "Use this button to " + names[stage]+ " a project.");
+			text(width / 2, height/2+50*s, "Use this button to " + names[stage]+ " a project.");
 			color(select);
 			rectarrow(button);
 			
@@ -463,7 +475,7 @@ public enum TutorialStage{
 		draw();
 		
 		color(select);
-		text(width - 30, 30, "Exit");
+		text(width - 30*s, 30*s, "Exit");
 	}
 
 	public void color(Color color){

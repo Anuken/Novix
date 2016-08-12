@@ -33,7 +33,7 @@ public class ProjectMenu extends VisDialog{
 		
 		//setFillParent(true);
 		getTitleTable().row();
-		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
+		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s).padBottom(3*s);
 		
 		VisTable scrolltable = new VisTable();
 
@@ -155,7 +155,7 @@ public class ProjectMenu extends VisDialog{
 			sizelabel = new VisLabel("Loading...");
 			sizelabel.setColor(Color.GRAY);
 
-			int imagesize = 40;
+			float imagesize = 40*s;
 
 			VisImageButton openbutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-open"));
 			openbutton.setGenerateDisabledImage(true);
@@ -209,8 +209,9 @@ public class ProjectMenu extends VisDialog{
 
 			buttontable.bottom().left().add(openbutton).align(Align.bottomLeft).height(bheight).growX().space(space).padBottom(pad);
 			buttontable.add(copybutton).height(bheight).growX().space(space).padBottom(pad);
-			buttontable.add(deletebutton).height(bheight).growX().space(space).padBottom(pad);
 			buttontable.add(renamebutton).height(bheight).growX().space(space).padBottom(pad);
+			buttontable.add(deletebutton).height(bheight).growX().space(space).padBottom(pad);
+			
 
 			top().left();
 

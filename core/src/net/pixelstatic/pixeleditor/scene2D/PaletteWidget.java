@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.scene2D;
 
 
 
+import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.utils.scene2D.ColorBox;
@@ -19,8 +20,8 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 public class PaletteWidget extends VisTable{
-	public static final int defaultWidth = 300;
-	public static final int defaultHeight = 140;
+	public static final float defaultWidth = 300*s;
+	public static final float defaultHeight = 140*s;
 	public final Palette palette;
 	private boolean selected;
 	public VisImageButton extrabutton;
@@ -41,7 +42,7 @@ public class PaletteWidget extends VisTable{
 	}
 
 	private void setup(){
-		float maxsize = 36;
+		float maxsize = 36*s;
 		setColor(Hue.lightness(0.87f));
 
 		top().left();
@@ -58,7 +59,7 @@ public class PaletteWidget extends VisTable{
 		extrabutton.getStyle().over = extrabutton.getStyle().up;
 		extrabutton.getStyle().imageDown = VisUI.getSkin().getDrawable("icon-dots-down");
 		extrabutton.setColor(getColor());
-		extrabutton.getImageCell().size(44);
+		extrabutton.getImageCell().size(44*s);
 		
 	//	extrabutton.getImage().setColor(Color.CLEAR);
 		
@@ -68,7 +69,7 @@ public class PaletteWidget extends VisTable{
 			}
 		});
 		
-		add(extrabutton).size(46).align(Align.topRight).padRight(0);
+		add(extrabutton).size(46*s).align(Align.topRight).padRight(0);
 		
 		row();
 

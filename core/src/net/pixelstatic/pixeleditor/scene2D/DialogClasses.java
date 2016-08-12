@@ -7,7 +7,6 @@ import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.dialogs.AndroidDialogs;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
 import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBox;
@@ -74,7 +73,7 @@ public class DialogClasses{
 				result(width, height);
 			}catch(Exception e){
 				e.printStackTrace();
-				AndroidDialogs.showError(getStage(), "Image error!", e);
+				showError(getStage(), "Image error!", e);
 			}
 		}
 
@@ -135,7 +134,7 @@ public class DialogClasses{
 				result(namefield.getText(), width, height);
 			}catch(Exception e){
 				e.printStackTrace();
-				AndroidDialogs.showError(getStage(), "Image error!", e);
+				showError(getStage(), "Image error!", e);
 			}
 		}
 
@@ -825,7 +824,7 @@ public class DialogClasses{
 				Core.i.updateToolColor();
 			}catch(Exception e){
 				e.printStackTrace();
-				AndroidDialogs.showError(getStage(), e);
+				showError(getStage(), e);
 			}
 		}
 	}
@@ -1264,6 +1263,88 @@ public class DialogClasses{
 
 		}
 	}
+	
+	public static class InfoDialog extends MenuDialog{
+		public InfoDialog(String title, String info){
+			super(title);
+			getButtonsTable().clear();
+			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
+			
+			VisLabel label = new VisLabel(info);
+			label.setAlignment(Align.center);
+			label.setWrap(true);
+			getContentTable().add(label).width(400f).padTop(20*s).padBottom(20*s);
+		}
+	}
+	
+	public static class ErrorDialog extends MenuDialog{
+		public ErrorDialog(String info, String extra){
+			super("Error");
+			getButtonsTable().clear();
+			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
+			
+			VisLabel label = new VisLabel(info);
+			label.setAlignment(Align.center);
+			label.setWrap(true);
+			
+			VisLabel extralabel = new VisLabel(extra);
+			extralabel.setColor(Color.RED);
+			extralabel.setAlignment(Align.center);
+			extralabel.setWrap(true);
+			getContentTable().add(label).width(400f).padTop(20*s).padBottom(5*s).row();
+			getContentTable().add(extralabel).width(400f).padTop(5*s).padBottom(20*s);
+		}
+	}
+	
+	public static void showInfo(Stage stage, String info){
+		new InfoDialog("Info", info).show(stage);
+	}
+	
+	public static void showError(Stage stage, String info, String details){
+		new ErrorDialog(info, details).show(stage);
+		/*
+		VisDialog dialog = new VisDialog("Error", "dialog");
+		dialog.getTitleLabel().setColor(Color.RED);
+		dialog.addCloseButton();
+		dialog.getContentTable().add(new VisLabel(info)).padTop(20*s).padBottom(20*s);
+		
+		dialog.getContentTable().row();
+		
+		VisLabel error = new VisLabel(details);
+		error.setWrap(true);
+		error.setColor(Hue.blend(Color.GRAY, Color.RED, 0.5f));
+		error.setAlignment(Align.center);
+		dialog.getContentTable().center().add(error).align(Align.center).width(400f*s).padTop(10*s).padBottom(30*s);
+		
+		VisTextButton button = new VisTextButton("OK");
+		dialog.getButtonsTable().add(button).size(120*s, 60*s);
+		dialog.setObject(button, true);
+		dialog.show(stage);
+		*/
+	}
+	
+	public static void showError(Stage stage, String info){
+		new ErrorDialog(info, "").show(stage);
+		/*
+		VisDialog dialog = new VisDialog("Error", "dialog");
+		dialog.getTitleLabel().setColor(Color.RED);
+		dialog.addCloseButton();
+		dialog.getContentTable().add(new VisLabel(info)).padTop(20*MiscUtils.densityScale()).padBottom(20*MiscUtils.densityScale());
+			
+		VisTextButton button = new VisTextButton("OK");
+		dialog.getButtonsTable().add(button).size(120*MiscUtils.densityScale(), 60*MiscUtils.densityScale());
+		dialog.setObject(button, true);
+		dialog.show(stage);
+		*/
+	}
+	
+	public static void showError(Stage stage, Exception e){
+		showError(stage, "Failed to write image!", e);
+	}
+	
+	public static void showError(Stage stage, String title, Exception e){
+		showError(stage, title, convertToString(e));
+	}
 
 	public static class ConfirmDialog extends MenuDialog{
 
@@ -1277,7 +1358,7 @@ public class DialogClasses{
 
 	public static abstract class MenuDialog extends VisDialog{
 		protected VisTextButton ok;
-		VisTextButton cancel;
+		protected VisTextButton cancel;
 
 		public MenuDialog(String title){
 			super(title, "dialog");
@@ -1296,9 +1377,35 @@ public class DialogClasses{
 			setObject(ok, true);
 			setObject(cancel, false);
 
-			getButtonsTable().add(cancel).size(130 * s, 60 * s);
-			getButtonsTable().add(ok).size(130 * s, 60 * s);
+			getButtonsTable().add(cancel).size(130 * s, 60 * s).padBottom(3*s);
+			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
 
+		}
+		
+		@Override
+		public void addCloseButton () {
+			Label titleLabel = getTitleLabel();
+			Table titleTable = getTitleTable();
+
+			VisImageButton closeButton = new VisImageButton("close-window");
+			closeButton.getImageCell().size(40*s);
+			titleTable.add(closeButton).padRight(-getPadRight() + 0.7f).size(50*s);
+			closeButton.addListener(new ChangeListener() {
+				@Override
+				public void changed (ChangeEvent event, Actor actor) {
+					close();
+				}
+			});
+			closeButton.addListener(new ClickListener() {
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					event.cancel();
+					return true;
+				}
+			});
+
+			if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2)
+				titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
 		}
 
 		protected void result(Object object){
@@ -1336,15 +1443,38 @@ public class DialogClasses{
 			ok.setDisabled(false);
 		}
 	}
+	
+	
+	private static String convertToString(Exception e){
+		String extra = "";
+		
+		if(e.getCause() != null){
+			extra = convertToString(e.getCause());
+		}else{
+			extra = convertToString(e);
+		}
+		return extra;
+	}
+	
+	private static String convertToString(Throwable e){
+		String string = "";
+		if(e.getMessage().toLowerCase().contains("permission denied")){
+			string = "Error: Permission denied.";
+		}else{
+			string = e.getClass().getSimpleName() + ": " + e.getMessage();
+		}
+		
+		return string;
+	}
 
 	public static void exportPixmap(Pixmap pixmap, FileHandle file){
 		try{
 			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
 			PixmapIO.writePNG(file, Core.i.drawgrid.canvas.pixmap);
-			AndroidDialogs.showInfo(Core.i.stage, "Image exported to " + file + ".");
+			showInfo(Core.i.stage, "Image exported to " + file + ".");
 		}catch(Exception e){
 			e.printStackTrace();
-			AndroidDialogs.showError(Core.i.stage, e);
+			showError(Core.i.stage, e);
 		}
 	}
 

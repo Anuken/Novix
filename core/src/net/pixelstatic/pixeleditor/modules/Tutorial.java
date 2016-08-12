@@ -10,8 +10,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Tutorial extends Module<PixelEditor>{
-	private boolean active = false;
-	private TutorialStage stage = TutorialStage.values()[0];
+	private boolean active = true;
+	private TutorialStage stage = TutorialStage.tools;//TutorialStage.values()[0];
 	private TutorialStage laststage = null;
 	private float shadespeed = 0.05f;
 	{
@@ -76,7 +76,7 @@ public class Tutorial extends Module<PixelEditor>{
 	}
 
 	public void begin(){
-		if(active) reset();
+		reset();
 		active = true;
 	}
 
@@ -102,6 +102,11 @@ public class Tutorial extends Module<PixelEditor>{
 						super.close();
 						if(confirming){
 							end();
+							if(Core.i.projectmenu.getStage() != null){
+								if(!Core.i.colorMenuCollapsed()) Core.i.collapseColorMenu();
+								if(!Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
+								Core.i.projectmenu.hide();
+							}
 						}else{
 							active = true;
 						}
