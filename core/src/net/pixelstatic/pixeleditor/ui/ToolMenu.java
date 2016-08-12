@@ -284,6 +284,7 @@ public class ToolMenu extends VisTable{
 		});
 
 		alphabar = new ColorBar(true);
+		alphabar.setName("alphabar");
 
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
 		alphabar.setSize(50 * s, 300 * s);
@@ -330,6 +331,7 @@ public class ToolMenu extends VisTable{
 		
 		final VisImageButton modebutton = new VisImageButton(modestyle);
 		modebutton.setChecked(main.prefs.getBoolean("cursormode", true));
+		modebutton.setName("modebutton");
 		
 		modebutton.getImageCell().size(50*s);
 		
@@ -344,6 +346,7 @@ public class ToolMenu extends VisTable{
 		
 		gridbutton = new VisImageButton(gridstyle);
 		gridbutton.setChecked(main.prefs.getBoolean("grid", true));
+		gridbutton.setName("gridbutton");
 		
 		gridbutton.getImageCell().size(50*s);
 		

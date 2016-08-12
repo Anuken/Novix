@@ -2,15 +2,20 @@ package net.pixelstatic.pixeleditor.tools;
 
 import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.pixeleditor.modules.Core;
+import net.pixelstatic.pixeleditor.modules.Tutorial;
 import net.pixelstatic.pixeleditor.scene2D.CollapseButton;
+import net.pixelstatic.utils.scene2D.ColorBar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisImageButton;
@@ -264,6 +269,31 @@ public enum TutorialStage{
 			(((VisScrollPane)Core.i.getCurrentDialog().getContentTable().findActor("projectpane"))).setSmoothScrolling(true);
 		}
 	},
+	newproject{
+		protected void draw(){
+			VisTextButton button = Core.i.stage.getRoot().findActor("newproject");
+			
+			button.localToStageCoordinates(temp.set(0,0));
+			temp.y -= 6;
+			
+			shade(0, 0, width, temp.y);
+			
+			clearshade(0, temp.y, width, height - temp.y);
+			
+			color(Color.WHITE);
+			text(width/2, height/2 + 180, "This button allows you\nto create a new project.\nYou can either specify the project\nsize, or load an image file.");
+			
+			color(select);
+			rectarrow(button);
+			
+			color(Color.PURPLE);
+			text(width / 2, height / 2-40, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	},
 	settings{
 		protected void draw(){
 			VisTextButton button = Core.i.stage.getRoot().findActor("settings");
@@ -276,7 +306,7 @@ public enum TutorialStage{
 			clearshade(0, temp.y, width, height - temp.y);
 			
 			color(Color.WHITE);
-			text(width/2, height/2 + 180, "This button opens up the settings.\nIn the settings menu, you can\ncustomize cursor speed, size,\nand so on.");
+			text(width/2, height/2 + 180, "This button opens up the settings.\nThere, you can customize\ncursor speed, size, and so on.");
 			
 			color(select);
 			rectarrow(button);
@@ -287,6 +317,115 @@ public enum TutorialStage{
 		
 		public void tap(int x, int y){
 			next();
+		}
+	}, 
+	canvas{
+		protected void draw(){
+			ColorBar bar = Core.i.stage.getRoot().findActor("alphabar");
+			if(!MathUtils.isEqual(bar.getSelection(), 1f)){
+				bar.setSelection(1f);
+				bar.fire(new ChangeListener.ChangeEvent());
+			}
+			
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			if(Core.i.getCurrentDialog() != null){
+				Core.i.getCurrentDialog().hide();
+			}
+			
+			if(!Core.i.colorMenuCollapsed()) Core.i.collapseColorMenu();
+			if(!Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
+			
+			Core.i.drawgrid.zoom = 1f;
+			
+			color(Color.WHITE);
+			text(width / 2, height/2, "This is the canvas.");
+			
+			color(Color.PURPLE);
+			text(width / 2, height / 2-80, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	},
+	canvastouch{
+		protected void draw(){
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			color(Color.WHITE);
+			text(width / 2, height/2+80, "There are two drawing modes:\n[CORAL]cursor[] and [PURPLE]touch.");
+			
+			color(Color.PURPLE);
+			text(width / 2, height/2-80, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	},
+	canvascursormode{
+		
+		protected void draw(){
+			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
+			if(!button.isChecked()){
+				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
+			}
+			
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			color(Color.WHITE);
+			text(width/2, height-50, "The [CORAL]cursor mode[] works like this:\n"
+					+ "Use one finger to [PURPLE]move the cursor[]\n"
+					+ "and another finger to [PURPLE]draw[].\n"
+					+ "[GREEN]Try it out.");
+			
+			color(Color.PURPLE);
+			text(width / 2, 70, "<tap here when you're done>");
+		}
+		
+		public void tap(int x, int y){
+			if(y < 132) next();
+		}
+	},
+	canvastouchmode{
+		
+		protected void draw(){
+			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
+			if(button.isChecked()){
+				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
+			}
+			
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			color(Color.WHITE);
+			text(width/2, height-50, "The [PURPLE]touch mode[] is simple:\n"
+					+ "just touch the place where you\nwant to draw.\n"
+					+ "[GREEN]Try it out.");
+			
+			color(Color.PURPLE);
+			text(width / 2, 70, "<tap here when you're done>");
+		}
+		
+		public void tap(int x, int y){
+			if(y < 132) next();
+		}
+	},
+	tutorialend{
+		protected void draw(){
+			shade(0,0,width,height);
+			
+			color(Color.WHITE);
+			text(width/2, height/2, "And that concludes the tutorial!\nIf you'd like to re-take it,\nyou can do so in the\n[GREEN]setting menu.");
+		}
+		
+		public void tap(int x, int y){
+			((ClickListener)Core.i.stage.getRoot().findActor("modebutton").getListeners().get(0)).clicked(null,0,0);
+			Core.i.getModule(Tutorial.class).end();
 		}
 	};
 	public static final Color select = Color.CORAL;
@@ -307,13 +446,12 @@ public enum TutorialStage{
 	}
 
 	public void color(Color color){
-		batch.setColor(color.r, color.g, color.b, color.a * trans);
-		VisUI.getSkin().getFont("border-font").setColor(color.r, color.g, color.b, color.a * trans);
+		color(color.r, color.g, color.b, color.a);
 	}
 
 	public void color(float r, float g, float b, float a){
 		batch.setColor(r, g, b, a * trans);
-		VisUI.getSkin().getFont("border-font").setColor(r, g, b, a * trans);
+		VisUI.getSkin().getFont("border-font").setColor(r, g, b, a);
 	}
 
 	protected void next(){
@@ -321,7 +459,7 @@ public enum TutorialStage{
 	}
 
 	public void shade(float x, float y, float width, float height){
-		color(0, 0, 0, 0.6f * trans);
+		color(0, 0, 0, 0.7f * trans);
 		tex(x, y, width, height);
 		clearshade(x, y, width, height);
 	}
@@ -367,7 +505,10 @@ public enum TutorialStage{
 	}
 
 	public void text(float x, float y, String text, int align){
-		VisUI.getSkin().getFont("border-font").draw(batch, text, x, y, 0, align, false);
+		VisUI.getSkin().getFont("border-font").getCache().clear();
+		VisUI.getSkin().getFont("border-font").getCache().addText(text, x, y, 0, align, false);
+		VisUI.getSkin().getFont("border-font").getCache().setAlphas(Core.i.stage.getBatch().getColor().a);
+		VisUI.getSkin().getFont("border-font").getCache().draw(batch);
 	}
 
 	public void text(float x, float y, String text){
@@ -377,6 +518,7 @@ public enum TutorialStage{
 	public void tap(int x, int y){
 
 	}
+
 
 	public void end(){
 

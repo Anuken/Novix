@@ -83,6 +83,8 @@ public class ProjectMenu extends VisDialog{
 				popup.showMenu(main.stage, newbutton);
 			}
 		});
+		
+		newbutton.setName("newproject");
 
 		MiscUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40 * s);
 		
