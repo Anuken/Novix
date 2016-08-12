@@ -11,6 +11,7 @@ import net.pixelstatic.pixeleditor.managers.PaletteManager;
 import net.pixelstatic.pixeleditor.managers.PrefsManager;
 import net.pixelstatic.pixeleditor.managers.ProjectManager;
 import net.pixelstatic.pixeleditor.scene2D.CollapseButton;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.MenuDialog;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.*;
 import net.pixelstatic.pixeleditor.ui.*;
@@ -35,6 +36,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
@@ -91,6 +93,15 @@ public class Core extends Module<PixelEditor>{
 
 		settingsmenu.addPercentScrollSetting("Cursor Size");
 		settingsmenu.addPercentScrollSetting("Cursor Speed");
+		settingsmenu.addButton("Re-take Tutorial", new ChangeListener(){
+			@Override
+			public void changed(ChangeEvent event, Actor actor){
+				settingsmenu.hide();
+				projectmenu.hide();
+				collapseToolMenu();
+				getModule(Tutorial.class).begin();
+			}
+		});
 		//settingsmenu.addCheckSetting("Cursor Mode", true);
 
 		projectmenu = new ProjectMenu(this);
@@ -326,6 +337,21 @@ public class Core extends Module<PixelEditor>{
 		ColorBar.borderColor = Color.valueOf("29323d");
 	}
 
+	void checkTutorial(){
+		if(!prefs.getBoolean("tutorial")){
+			new MenuDialog("Tutorial"){
+				{
+					getContentTable().add("Would you like to take the tutorial?").pad(20 * s);
+				}
+
+				public void result(){
+					getModule(Tutorial.class).begin();
+				}
+			}.show(stage);
+		}
+		prefs.put("tutorial", true);
+	}
+
 	public void setPalette(Palette palette){
 		paletteColor = 0;
 		palettemanager.setCurrentPalette(palette);
@@ -440,7 +466,7 @@ public class Core extends Module<PixelEditor>{
 
 		FreeTypeFontParameter largeparameter = new FreeTypeFontParameter();
 		largeparameter.size = (int)(26 * s);
-		
+
 		FreeTypeFontParameter borderparameter = new FreeTypeFontParameter();
 		borderparameter.size = (int)(26 * s);
 		borderparameter.borderWidth = 2;
@@ -456,7 +482,6 @@ public class Core extends Module<PixelEditor>{
 		skin.add("default-font", font);
 		skin.add("large-font", largefont);
 		skin.add("border-font", borderfont);
-		
 
 		skin.load(skinFile);
 
@@ -521,6 +546,13 @@ public class Core extends Module<PixelEditor>{
 				}).start();
 			}
 		}, 20, 20);
+
+		Timer.schedule(new Task(){
+			@Override
+			public void run(){
+				checkTutorial();
+			}
+		}, 0.1f);
 
 		//TextureUnpacker packer = new TextureUnpacker();
 

@@ -89,6 +89,14 @@ public class SettingsMenu extends VisDialog{
 		table.row();
 	}
 	
+	public void addButton(String name, ChangeListener listener){
+		VisTextButton button = new VisTextButton(name);
+		button.addListener(listener);
+		Table table = getContentTable();
+		table.top().left().add(button).size(200*s, 60*s).align(Align.left);
+		table.add().align(Align.left);
+	}
+	
 	public VisDialog show(Stage stage){
 		super.show(stage);
 		int i = Gdx.app.getType() == ApplicationType.Desktop ? 0 : 1;

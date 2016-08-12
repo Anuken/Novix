@@ -131,7 +131,118 @@ public enum TutorialStage{
 
 		public void tap(int x, int y){
 			if(Core.i.getCurrentDialog() != null) Core.i.getCurrentDialog().hide();
+			Core.i.collapseColorMenu();
 			next();
+		}
+	},
+	selectcolors{
+		protected void draw(){
+			shade(0,0,width,height);
+			color(Color.WHITE);
+			text(width / 2, height - 55, "< Tap any color in this bar to set>\nit as your current color.");
+			
+			color(Color.PURPLE);
+			text(width / 2, 120, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	},
+	canvas{
+		protected void draw(){
+			ColorBar bar = Core.i.stage.getRoot().findActor("alphabar");
+			if(!MathUtils.isEqual(bar.getSelection(), 1f)){
+				bar.setSelection(1f);
+				bar.fire(new ChangeListener.ChangeEvent());
+			}
+			
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			if(Core.i.getCurrentDialog() != null){
+				Core.i.getCurrentDialog().hide();
+			}
+			
+			if(!Core.i.colorMenuCollapsed()) Core.i.collapseColorMenu();
+			if(!Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
+			
+			Core.i.drawgrid.zoom = 1f;
+			
+			color(Color.WHITE);
+			text(width / 2, height/2, "This is the canvas.");
+			
+			color(Color.PURPLE);
+			text(width / 2, height / 2-80, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	},
+	canvasmodes{
+		protected void draw(){
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			color(Color.WHITE);
+			text(width / 2, height/2+80, "There are two drawing modes:\n[CORAL]cursor[] and [PURPLE]touch.");
+			
+			color(Color.PURPLE);
+			text(width / 2, height/2-80, "<tap to continue>");
+		}
+		
+		public void tap(int x, int y){
+			next();
+		}
+	},
+	canvascursormode{
+		
+		protected void draw(){
+			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
+			if(!button.isChecked()){
+				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
+			}
+			
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			color(Color.WHITE);
+			text(width/2, height-50, "The [CORAL]cursor mode[] works like this:\n"
+					+ "Use one finger to [PURPLE]move the cursor[]\n"
+					+ "and another finger to [PURPLE]draw[].\n"
+					+ "[GREEN]Try it out.");
+			
+			color(Color.PURPLE);
+			text(width / 2, 70, "<tap here to continue>");
+		}
+		
+		public void tap(int x, int y){
+			if(y < 132) next();
+		}
+	},
+	canvastouchmode{
+		
+		protected void draw(){
+			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
+			if(button.isChecked()){
+				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
+			}
+			
+			shade(0,0, width, 132);
+			shade(0,height-118, width, 118);
+			
+			color(Color.WHITE);
+			text(width/2, height-50, "The [PURPLE]touch mode[] is simple:\n"
+					+ "just touch the place where you\nwant to draw.\n"
+					+ "[GREEN]Try it out.");
+			
+			color(Color.PURPLE);
+			text(width / 2, 70, "<tap here to continue>");
+		}
+		
+		public void tap(int x, int y){
+			if(y < 132) next();
 		}
 	},
 	tools{
@@ -183,8 +294,8 @@ public enum TutorialStage{
 			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 77, width, height - f);
 
 			color(Color.WHITE);
-			text(110, 310, "Use this button\nto toggle the grid.", Align.left);
-			text(110, 450, "Use this button\nto change the draw\nmode.", Align.left);
+			text(110, 310, "Use this button\nto toggle the [GREEN]grid[].", Align.left);
+			text(110, 450, "Use this button\nto change the [CORAL]draw\nmode.", Align.left);
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2 + 180, "[tap to continue]");
@@ -208,7 +319,7 @@ public enum TutorialStage{
 			rect(button);
 
 			color(Color.WHITE);
-			text(width / 2, height / 2 + 220, "You can use this toolbar to\nmanipulate the image. Press the\nmenu button to continue.");
+			text(width / 2, height / 2 + 220, "Press this button to\ncontinue to the menu.");
 
 			if(button.getClickListener().getTapCount() > 0){
 				next();
@@ -249,7 +360,7 @@ public enum TutorialStage{
 			
 			VisImageButton button = pane.findActor(Core.i.projectmanager.getProjects().iterator().next().name+names[stage]+"button");
 			
-			text(width / 2, height/2+50, "Use this button to " + names[stage]+ " the project.");
+			text(width / 2, height/2+50, "Use this button to " + names[stage]+ " a project.");
 			color(select);
 			rectarrow(button);
 			
@@ -319,102 +430,6 @@ public enum TutorialStage{
 			next();
 		}
 	}, 
-	canvas{
-		protected void draw(){
-			ColorBar bar = Core.i.stage.getRoot().findActor("alphabar");
-			if(!MathUtils.isEqual(bar.getSelection(), 1f)){
-				bar.setSelection(1f);
-				bar.fire(new ChangeListener.ChangeEvent());
-			}
-			
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
-			
-			if(Core.i.getCurrentDialog() != null){
-				Core.i.getCurrentDialog().hide();
-			}
-			
-			if(!Core.i.colorMenuCollapsed()) Core.i.collapseColorMenu();
-			if(!Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
-			
-			Core.i.drawgrid.zoom = 1f;
-			
-			color(Color.WHITE);
-			text(width / 2, height/2, "This is the canvas.");
-			
-			color(Color.PURPLE);
-			text(width / 2, height / 2-80, "<tap to continue>");
-		}
-		
-		public void tap(int x, int y){
-			next();
-		}
-	},
-	canvastouch{
-		protected void draw(){
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
-			
-			color(Color.WHITE);
-			text(width / 2, height/2+80, "There are two drawing modes:\n[CORAL]cursor[] and [PURPLE]touch.");
-			
-			color(Color.PURPLE);
-			text(width / 2, height/2-80, "<tap to continue>");
-		}
-		
-		public void tap(int x, int y){
-			next();
-		}
-	},
-	canvascursormode{
-		
-		protected void draw(){
-			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
-			if(!button.isChecked()){
-				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
-			}
-			
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
-			
-			color(Color.WHITE);
-			text(width/2, height-50, "The [CORAL]cursor mode[] works like this:\n"
-					+ "Use one finger to [PURPLE]move the cursor[]\n"
-					+ "and another finger to [PURPLE]draw[].\n"
-					+ "[GREEN]Try it out.");
-			
-			color(Color.PURPLE);
-			text(width / 2, 70, "<tap here when you're done>");
-		}
-		
-		public void tap(int x, int y){
-			if(y < 132) next();
-		}
-	},
-	canvastouchmode{
-		
-		protected void draw(){
-			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
-			if(button.isChecked()){
-				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
-			}
-			
-			shade(0,0, width, 132);
-			shade(0,height-118, width, 118);
-			
-			color(Color.WHITE);
-			text(width/2, height-50, "The [PURPLE]touch mode[] is simple:\n"
-					+ "just touch the place where you\nwant to draw.\n"
-					+ "[GREEN]Try it out.");
-			
-			color(Color.PURPLE);
-			text(width / 2, 70, "<tap here when you're done>");
-		}
-		
-		public void tap(int x, int y){
-			if(y < 132) next();
-		}
-	},
 	tutorialend{
 		protected void draw(){
 			shade(0,0,width,height);
@@ -425,6 +440,8 @@ public enum TutorialStage{
 		
 		public void tap(int x, int y){
 			((ClickListener)Core.i.stage.getRoot().findActor("modebutton").getListeners().get(0)).clicked(null,0,0);
+			if(Core.i.getCurrentDialog() != null) Core.i.getCurrentDialog().hide();
+			Core.i.collapseToolMenu();
 			Core.i.getModule(Tutorial.class).end();
 		}
 	};
