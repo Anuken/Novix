@@ -77,7 +77,7 @@ public class Core extends Module<PixelEditor>{
 	@Override
 	public void update(){
 		Hue.clearScreen(clearcolor);
-
+		
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
 		tool.update(drawgrid);
 		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
@@ -176,6 +176,8 @@ public class Core extends Module<PixelEditor>{
 
 			tooltable.bottom().left().add(button).size(size + 1f);
 		}
+		
+		tooltable.pack();
 	}
 
 	void setupColorPicker(){
@@ -186,6 +188,10 @@ public class Core extends Module<PixelEditor>{
 		pickertable = new VisTable(){
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
+			}
+			
+			public float getPrefHeight(){
+				return Gdx.graphics.getHeight() - toolcollapsebutton.getTop() - colorcollapsebutton.getHeight();
 			}
 		};
 
@@ -231,13 +237,16 @@ public class Core extends Module<PixelEditor>{
 				openPaletteMenu();
 			}
 		});
-
-		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(120f * s).padBottom(20 * s);
+		pickertable.add().grow().row();;
+		
+		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(0).padBottom(20 * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		colorcollapser.setY(0 + Gdx.graphics.getWidth() / Tool.values().length + toolcollapsebutton.getPrefHeight() + 20 * s);
+		colorcollapser.setY(toolcollapsebutton.getTop()); 
 		colorcollapser.toBack();
 		colorcollapser.resetY();
+		//cell.padTop(Gdx.graphics.getHeight()-(pickertable.getPrefHeight() + colorcollapser.getY()));
+		pickertable.pack();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
 

@@ -54,18 +54,20 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 			CollapseButton button = Core.i.colorcollapsebutton;
-
+			
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61*s + 80*s);
-
+			shade(0, 0, Gdx.graphics.getWidth(), Core.i.toolcollapsebutton.getTop());
+			
+			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
+			
 			color(Color.WHITE);
 
-			text(width / 2, height - 120*s, "This is this color menu.\nHere you can edit the color palette.");
+			text(width / 2, height - 120*s, "This is this the color menu.\nHere you can edit the color palette.");
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
 
-			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
+			
 
 		}
 
@@ -77,9 +79,9 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 			CollapseButton button = Core.i.colorcollapsebutton;
-
+			
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61*s + 80*s);
+			shade(0, 0, Gdx.graphics.getWidth(), Core.i.toolcollapsebutton.getTop());
 
 			color(Color.WHITE);
 
@@ -104,7 +106,7 @@ public enum TutorialStage{
 			palettebutton.localToStageCoordinates(temp.set(0, 0));
 
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), width / Tool.values().length + 61*s);
+			shade(0, 0, Gdx.graphics.getWidth(), Core.i.toolcollapsebutton.getTop());
 
 			color(Color.WHITE);
 			text(width / 2, temp.y + palettebutton.getHeight() * 1.5f, "Tap this button to access your palettes.");
@@ -158,8 +160,9 @@ public enum TutorialStage{
 				bar.fire(new ChangeListener.ChangeEvent());
 			}
 			
-			shade(0,0, width, 132*s);
-			shade(0,height-118*s, width, 118*s);
+			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
+			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,height-h, width, h);
 			
 			if(Core.i.getCurrentDialog() != null){
 				Core.i.getCurrentDialog().hide();
@@ -183,8 +186,9 @@ public enum TutorialStage{
 	},
 	canvasmodes{
 		protected void draw(){
-			shade(0,0, width, 132*s);
-			shade(0,height-118*s, width, 118*s);
+			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
+			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,height-h, width, h);
 			
 			color(Color.WHITE);
 			text(width / 2, height/2+80*s, "There are two drawing modes:\n[CORAL]cursor[] and [PURPLE]touch.");
@@ -205,8 +209,9 @@ public enum TutorialStage{
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
 			
-			shade(0,0, width, 132*s);
-			shade(0,height-118*s, width, 118*s);
+			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
+			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,height-h, width, h);
 			
 			color(Color.WHITE);
 			text(width/2, height-15, "The [CORAL]cursor mode[] works like this:\n"
@@ -230,8 +235,9 @@ public enum TutorialStage{
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
 			
-			shade(0,0, width, 132*s);
-			shade(0,height-118*s, width, 118*s);
+			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
+			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,height-h, width, h);
 			
 			color(Color.WHITE);
 			text(width/2, height-50*s, "The [PURPLE]touch mode[] is simple:\n"
@@ -257,7 +263,7 @@ public enum TutorialStage{
 			}
 
 			float f = (float)width / Tool.values().length;
-			shade(0, f + 1, width, height - f);
+			shade(0, f, width, height-f);
 
 			color(Color.WHITE);
 			text(width / 2, height / 2 + 20*s, "These are the drawing tools you can use.\nTap one of the icons to see what it does.");
@@ -290,7 +296,7 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 
-			float f = width / Tool.values().length + 61*s;
+			float f = Core.i.toolcollapsebutton.getTop();
 			shade(0, 0, width, f);
 			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 78*s, width, height - f);
 			
@@ -340,6 +346,7 @@ public enum TutorialStage{
 		}
 	},
 	projectmenu{
+		//TODO MISALIGNED
 		protected void draw(){
 
 			shade(0, 0, width, height);
@@ -500,6 +507,10 @@ public enum TutorialStage{
 	public void clearshade(float x, float y, float width, float height){
 		cliprects[shades].set(x, y, width, height);
 		shades ++;
+	}
+	
+	public void project(Actor actor){
+		actor.localToStageCoordinates(temp.set(0,0));
 	}
 
 	public void tex(float x, float y, float width, float height){

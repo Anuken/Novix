@@ -431,7 +431,6 @@ public class DrawingGrid extends Actor{
 			if(getHeight() > Gdx.graphics.getWidth()){
 				if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight() / 2 - getHeight() - colorheight) / zoom;
 				if(getY() > toolheight) offsety = (Gdx.graphics.getHeight() / 2 - toolheight) / zoom;
-			
 			}else{
 				offsety = getHeight()/2/zoom;
 			}
