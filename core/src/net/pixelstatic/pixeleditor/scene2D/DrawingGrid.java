@@ -347,9 +347,9 @@ public class DrawingGrid extends Actor{
 			//tempcolor.g = 1f - tempcolor.g;
 			//tempcolor.b = 1f - tempcolor.b;
 			float sum = tempcolor.r + tempcolor.g + tempcolor.b;
-			int a = 15;
+			int a = 18;
 			if(sum >= 1.5f && tempcolor.a >= 0.01f && !(core.tool.scalable() && core.prefs.getInteger("brushsize") > 1)){
-				tempcolor.set((14 + a) / 255f, (15 + a) / 255f, (26 + a) / 255f, 1);
+				tempcolor.set((14 + a) / 255f, (15 + a) / 255f, (36 + a) / 255f, 1);
 			}else{
 				tempcolor.set(Color.CORAL);
 			}
@@ -427,12 +427,26 @@ public class DrawingGrid extends Actor{
 		if(aspectRatio() >= 1f){
 			if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth() / 2 - getWidth()) / zoom;
 			if(getX() > 0) offsetx = Gdx.graphics.getWidth() / 2 / zoom;
-
+			
+			if(getHeight() > Gdx.graphics.getWidth()){
+				if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight() / 2 - getHeight() - colorheight) / zoom;
+				if(getY() > toolheight) offsety = (Gdx.graphics.getHeight() / 2 - toolheight) / zoom;
+			
+			}else{
+				offsety = getHeight()/2/zoom;
+			}
 		}
 
 		if(aspectRatio() <= 1f){
 			if(getY() + getHeight() < Gdx.graphics.getHeight() - colorheight) offsety = -(Gdx.graphics.getHeight() / 2 - getHeight() - colorheight) / zoom;
 			if(getY() > toolheight) offsety = (Gdx.graphics.getHeight() / 2 - toolheight) / zoom;
+			
+			if(getWidth() > Gdx.graphics.getWidth()){
+				if(getX() + getWidth() < Gdx.graphics.getWidth()) offsetx = -(Gdx.graphics.getWidth() / 2 - getWidth()) / zoom;
+				if(getX() > 0) offsetx = Gdx.graphics.getWidth() / 2 / zoom;
+			}else{
+				offsetx = getWidth()/2/zoom;
+			}
 		}
 	}
 
