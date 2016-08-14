@@ -32,7 +32,7 @@ public class ProjectMenu extends BaseDialog{
 		super("Projects");
 		this.main = mainref;
 		
-		addTitleSeperator();
+		addTitleSeperator();//.padTop(10*s).padBottom(10*s);
 		
 		VisTable scrolltable = new VisTable();
 
@@ -122,7 +122,7 @@ public class ProjectMenu extends BaseDialog{
 
 		for(Project project : main.projectmanager.getProjects()){
 			ProjectTable table = new ProjectTable(project, project == main.getCurrentProject() ? loaded : true);
-			scrolltable.top().left().add(table).padTop(8).growX().padRight(10 * s).row();
+			scrolltable.top().left().add(table).padTop(8*s).growX().padRight(10 * s).row();
 			if(project == main.getCurrentProject()) current = table;
 		}
 

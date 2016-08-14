@@ -1420,13 +1420,20 @@ public class DialogClasses{
 		public BaseDialog(String title){
 			super(title, "dialog");
 			setMovable(false);
-			pad((s-1f)*10f);
+			float v =(s-1f)*20f;
+			padTop(getPadTop()+v);
+			padBottom(getPadBottom()+v);
+			padLeft(getPadLeft()+v);
+			padRight(getPadRight()+v);
+			
+			//pad(this.getPadBottom()+(s-1f)*15f);
 		}
 
 		
-		public void addTitleSeperator(){
+		public Cell<Separator> addTitleSeperator(){
 			getTitleTable().row();
-			getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s).padBottom(3*s);
+			getTitleTable().getCells().first().padBottom(3*s);
+			return getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s).padBottom(3*s);
 		}
 		
 		@Override
