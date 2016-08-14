@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.pixeleditor.modules.Core;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.BaseDialog;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
@@ -14,16 +15,14 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
-public class SettingsMenu extends VisDialog{
+public class SettingsMenu extends BaseDialog{
 	private Core main;
 	
 	public SettingsMenu(Core main){
 		super("Settings");
 		this.main = main;
 		
-		//setFillParent(true);
-		getTitleTable().row();
-		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s);
+		addTitleSeperator();
 		
 		Table table = getContentTable();
 

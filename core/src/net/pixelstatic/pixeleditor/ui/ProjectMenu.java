@@ -4,6 +4,7 @@ import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.BaseDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
 import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
@@ -23,7 +24,7 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
-public class ProjectMenu extends VisDialog{
+public class ProjectMenu extends BaseDialog{
 	private Core main;
 	private VisScrollPane pane;
 	
@@ -31,9 +32,7 @@ public class ProjectMenu extends VisDialog{
 		super("Projects");
 		this.main = mainref;
 		
-		//setFillParent(true);
-		getTitleTable().row();
-		getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s).padBottom(3*s);
+		addTitleSeperator();
 		
 		VisTable scrolltable = new VisTable();
 

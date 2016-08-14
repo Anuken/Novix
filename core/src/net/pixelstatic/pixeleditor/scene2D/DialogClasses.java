@@ -1367,17 +1367,13 @@ public class DialogClasses{
 		}
 	}
 
-	public static abstract class MenuDialog extends VisDialog{
+	public static abstract class MenuDialog extends BaseDialog{
 		protected VisTextButton ok;
 		protected VisTextButton cancel;
 
 		public MenuDialog(String title){
-			super(title, "dialog");
-			setMovable(false);
+			super(title);
 			addCloseButton();
-			//getTitleTable().row();
-			//getTitleTable().add(new Separator()).expandX().fillX().padTop(3*s);
-
 			addButtons();
 		}
 
@@ -1388,9 +1384,49 @@ public class DialogClasses{
 			setObject(ok, true);
 			setObject(cancel, false);
 
-			getButtonsTable().add(cancel).size(130 * s, 60 * s).padBottom(3*s);
-			getButtonsTable().add(ok).size(130 * s, 60 * s).padBottom(3*s);
+			getButtonsTable().add(cancel).size(130 * s, 60 * s);
+			getButtonsTable().add(ok).size(130 * s, 60 * s);
 
+		}
+
+		protected void result(Object object){
+			if((Boolean)object == true) 
+				result();
+			else
+				cancel();
+		}
+		
+		public void cancel(){
+			
+		}
+
+		public void result(){
+
+		}
+
+		public void checkOkStatus(VisTextField...fields){
+
+			for(VisTextField field : fields)
+				if(field.getText().replace("0", "").isEmpty()){
+					ok.setDisabled(true);
+					return;
+				}
+			ok.setDisabled(false);
+		}
+	}
+	
+	public static abstract class BaseDialog extends VisDialog{
+
+		public BaseDialog(String title){
+			super(title, "dialog");
+			setMovable(false);
+			pad((s-1f)*10f);
+		}
+
+		
+		public void addTitleSeperator(){
+			getTitleTable().row();
+			getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s).padBottom(3*s);
 		}
 		
 		@Override
@@ -1419,17 +1455,6 @@ public class DialogClasses{
 				titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
 		}
 
-		protected void result(Object object){
-			if((Boolean)object == true) 
-				result();
-			else
-				cancel();
-		}
-		
-		public void cancel(){
-			
-		}
-
 		public void hide(){
 			super.hide();
 			Gdx.input.setOnscreenKeyboardVisible(false);
@@ -1438,20 +1463,6 @@ public class DialogClasses{
 		public void close(){
 			super.close();
 			Gdx.input.setOnscreenKeyboardVisible(false);
-		}
-
-		public void result(){
-
-		}
-
-		public void checkOkStatus(VisTextField...fields){
-
-			for(VisTextField field : fields)
-				if(field.getText().replace("0", "").isEmpty()){
-					ok.setDisabled(true);
-					return;
-				}
-			ok.setDisabled(false);
 		}
 	}
 	

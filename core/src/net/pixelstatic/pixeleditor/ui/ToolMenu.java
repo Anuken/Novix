@@ -3,6 +3,7 @@ package net.pixelstatic.pixeleditor.ui;
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.BaseDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ClearDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
@@ -136,11 +137,10 @@ public class ToolMenu extends VisTable{
 		}
 	}
 	
-	private static class ButtonMenu extends VisDialog{
+	private static class ButtonMenu extends BaseDialog{
 		public ButtonMenu(String name){
-			super(name, "dialog");
-			getTitleTable().row();
-			getTitleTable().add(new Separator()).growX().padTop(2*s);
+			super(name);
+			addTitleSeperator();
 		}
 	}
 	

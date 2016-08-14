@@ -54,7 +54,7 @@ public class Core extends Module<PixelEditor>{
 	public static Core i;
 	public static float s = 1f; //density scale
 	public final int largeImageSize = 128 * 128;
-	public final Color clearcolor = Color.valueOf("171c23");
+	public final Color clearcolor = Color.valueOf("12161b");
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
