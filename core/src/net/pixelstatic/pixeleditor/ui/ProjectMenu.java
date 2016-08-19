@@ -129,6 +129,11 @@ public class ProjectMenu extends BaseDialog{
 		return current;
 	}
 	
+	public ProjectTable getFirstTable(){
+		VisTable scrolltable = ((VisTable)((VisScrollPane)getContentTable().getCells().get(1).getActor()).getChildren().first());
+		return (ProjectTable)scrolltable.getCells().first().getActor();
+	}
+	
 	public VisDialog show(Stage stage){
 		super.show(stage);
 		stage.setScrollFocus(pane);
@@ -228,7 +233,9 @@ public class ProjectMenu extends BaseDialog{
 			texttable.add(sizelabel).padLeft(8).padTop(10 * s).align(Align.topLeft);
 			texttable.row();
 			texttable.add(buttontable).grow().padLeft(8);
-
+			
+			
+			setName("projecttable" + project.name);
 			addAction(new Action(){
 
 				public boolean act(float delta){

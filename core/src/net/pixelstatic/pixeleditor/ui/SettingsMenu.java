@@ -51,7 +51,7 @@ public class SettingsMenu extends BaseDialog{
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
 		table.row();
-		table.add(slider).width(200 * s).padBottom(40f);
+		table.add(slider).width(200 * s).padBottom(40f*s);
 		table.row();
 	}
 	
@@ -69,7 +69,7 @@ public class SettingsMenu extends BaseDialog{
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
 		table.row();
-		table.add(slider).width(200 * s).padBottom(40f);
+		table.add(slider).width(200 * s).padBottom(40f*s);
 		table.row();
 	}
 

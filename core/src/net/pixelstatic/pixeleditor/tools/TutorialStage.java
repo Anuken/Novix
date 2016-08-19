@@ -5,6 +5,7 @@ import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.modules.Tutorial;
 import net.pixelstatic.pixeleditor.scene2D.CollapseButton;
+import net.pixelstatic.pixeleditor.ui.ProjectMenu.ProjectTable;
 import net.pixelstatic.utils.scene2D.ColorBar;
 
 import com.badlogic.gdx.Gdx;
@@ -371,10 +372,13 @@ public enum TutorialStage{
 			VisScrollPane pane = ((VisScrollPane)Core.i.stage.getRoot().findActor("projectpane"));
 			pane.setSmoothScrolling(false);
 			pane.setScrollPercentY(0);
+			
+			ProjectTable table = Core.i.projectmenu.getFirstTable();
+			project(table);
 
-			shade(0, 0, width, height - 280*s);
+			shade(0, 0, width, temp.y);
 			clearshade(0, 0, width, height);
-			shade(0, height - 120*s, width, 120*s);
+			shade(0, (temp.y + table.getHeight()), width, height -(temp.y + table.getHeight()));
 
 			color(Color.WHITE);
 			

@@ -30,7 +30,6 @@ public class PaletteWidget extends VisTable{
 	public PaletteWidget(Palette palette, boolean selected){
 		this.palette = palette;
 		this.selected = selected;
-		BaseDialog.addPadding(this);
 		setup();
 	}
 	
@@ -76,6 +75,8 @@ public class PaletteWidget extends VisTable{
 
 		top().left().add(generatePaletteTable(maxsize, getPrefWidth(), palette.colors)).grow().colspan(2).padTop(5);
 		setSelected(selected);
+		
+		BaseDialog.addPadding(this);
 	}
 	
 	public void setSelected(boolean selected){

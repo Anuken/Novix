@@ -190,9 +190,9 @@ public class Core extends Module<PixelEditor>{
 				return Gdx.graphics.getWidth();
 			}
 			
-			public float getPrefHeight(){
-				return Gdx.graphics.getHeight() - toolcollapsebutton.getTop() - colorcollapsebutton.getHeight();
-			}
+			//public float getPrefHeight(){
+			//	return Gdx.graphics.getHeight() - toolcollapsebutton.getTop() - colorcollapsebutton.getHeight();
+			//}
 		};
 
 		pickertable.background("button-window-bg");
@@ -238,8 +238,8 @@ public class Core extends Module<PixelEditor>{
 			}
 		});
 		pickertable.add().grow().row();;
-		
-		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(0).padBottom(20 * s);
+		apicker.pack();
+		pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(Gdx.graphics.getHeight() - toolcollapsebutton.getTop() - colorcollapsebutton.getHeight() - apicker.getPrefHeight()).padBottom(20 * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		colorcollapser.setY(toolcollapsebutton.getTop()); 
