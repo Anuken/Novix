@@ -5,6 +5,7 @@ package net.pixelstatic.pixeleditor.scene2D;
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.gdxutils.graphics.Hue;
 import net.pixelstatic.pixeleditor.graphics.Palette;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.BaseDialog;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.graphics.Color;
@@ -27,9 +28,9 @@ public class PaletteWidget extends VisTable{
 	public VisImageButton extrabutton;
 
 	public PaletteWidget(Palette palette, boolean selected){
-		//super(VisUI.getSkin());
 		this.palette = palette;
 		this.selected = selected;
+		BaseDialog.addPadding(this);
 		setup();
 	}
 	

@@ -6,9 +6,8 @@ import java.util.Arrays;
 
 import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.modules.Core;
-import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
-import net.pixelstatic.pixeleditor.scene2D.PaletteWidget;
-import net.pixelstatic.pixeleditor.scene2D.TallMenuItem;
+import net.pixelstatic.pixeleditor.scene2D.*;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses.BaseDialog;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.MiscUtils.TextFieldEmptyListener;
 
@@ -17,20 +16,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
-public class PaletteMenu extends VisDialog{
+public class PaletteMenu extends BaseDialog{
 	private Core main;
 	private PaletteWidget currentWidget = null;
 
 	public PaletteMenu(Core main){
-		super("Palettes", "dialog");
+		super("Palettes");
 		this.main = main;
 		setMovable(false);
 		MiscUtils.addHideButton(this);
@@ -124,12 +123,9 @@ public class PaletteMenu extends VisDialog{
 
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					System.out.println("Widget clicked");
 					//delay action to make sure the isOver() check works properly
-					widget.addAction(Actions.sequence(Actions.delay(0.001f), new Action(){
-						@Override
-						public boolean act(float delta){
-							if( !widget.extrabutton.isOver()){
+					
+							if( !widget.extrabutton.isPressed()){
 
 								currentWidget.setSelected(false);
 								currentWidget = widget;
@@ -137,15 +133,13 @@ public class PaletteMenu extends VisDialog{
 								widget.setSelected(true);
 								main.setPalette(palette);
 							}
-							return true;
-						}
-					}));
+							
 				}
 			});
 
 			widget.addExtraButtonListener(new PaletteListener(widget));
 
-			palettetable.add(widget).padBottom(6);
+			palettetable.add(widget).padBottom(6*s);
 			palettetable.row();
 		}
 
@@ -217,30 +211,5 @@ public class PaletteMenu extends VisDialog{
 		super.show(stage);
 		stage.setScrollFocus(getContentTable().getChildren().first());
 		return this;
-	}
-
-	@Override
-	public void addCloseButton(){
-		Label titleLabel = getTitleLabel();
-		Table titleTable = getTitleTable();
-
-		VisImageButton closeButton = new VisImageButton("close-window");
-		closeButton.getImageCell().size(40 * s);
-		titleTable.add(closeButton).padRight( -getPadRight() + 0.7f).size(50 * s);
-		closeButton.addListener(new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-				close();
-			}
-		});
-		closeButton.addListener(new ClickListener(){
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				event.cancel();
-				return true;
-			}
-		});
-
-		if(titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2) titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
 	}
 }

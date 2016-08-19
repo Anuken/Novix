@@ -1420,13 +1420,17 @@ public class DialogClasses{
 		public BaseDialog(String title){
 			super(title, "dialog");
 			setMovable(false);
-			float v =(s-1f)*20f;
-			padTop(getPadTop()+v);
-			padBottom(getPadBottom()+v);
-			padLeft(getPadLeft()+v);
-			padRight(getPadRight()+v);
+			addPadding(this);
 			
 			//pad(this.getPadBottom()+(s-1f)*15f);
+		}
+		
+		public static void addPadding(Table table){
+			float v =(s-1f)*20f;
+			table.padTop(table.getPadTop()+v);
+			table.padBottom(table.getPadBottom()+v);
+			table.padLeft(table.getPadLeft()+v);
+			table.padRight(table.getPadRight()+v);
 		}
 
 		

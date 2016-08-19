@@ -32,7 +32,7 @@ public class ProjectMenu extends BaseDialog{
 		super("Projects");
 		this.main = mainref;
 		
-		addTitleSeperator();//.padTop(10*s).padBottom(10*s);
+		addTitleSeperator().padBottom(10*s);
 		
 		VisTable scrolltable = new VisTable();
 
@@ -109,7 +109,7 @@ public class ProjectMenu extends BaseDialog{
 		projectback.getCells().reverse();
 		projectback.getLabelCell().padRight(40f * s);
 
-		getButtonsTable().add(projectback).width(Gdx.graphics.getWidth()).height(60 * s);
+		getButtonsTable().add(projectback).width(Gdx.graphics.getWidth() - getPadLeft() - getPadRight()).height(60 * s);
 		setObject(projectback, false);
 	}
 	
