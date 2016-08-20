@@ -33,8 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
@@ -268,8 +267,26 @@ public class ToolMenu extends VisTable{
 		});
 		
 		//final VisLabel infolabel = new VisLabel();
-	
+		
+		class ScaledDrawable extends TextureRegionDrawable{
+			public ScaledDrawable(Drawable drawable){
+				super(((TextureRegionDrawable)drawable).getRegion());
+			}
+			
+			public float getMinWidth(){
+				return super.getMinWidth()*s;
+			}
+			
+			public float getMinHeight(){
+				return super.getMinHeight()*s;
+			}
+		}
+		
 		brushslider = new VisSlider(1, 10, 0.01f, true);
+		brushslider.getStyle().knob = new ScaledDrawable(brushslider.getStyle().knob);
+		brushslider.getStyle().knobOver = new ScaledDrawable(brushslider.getStyle().knobOver);
+		brushslider.getStyle().knobDown = new ScaledDrawable(brushslider.getStyle().knobDown);
+		
 		brushslider.setValue(main.prefs.getInteger("brushsize", 1));
 		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());
 
