@@ -6,9 +6,7 @@ import net.pixelstatic.utils.scene2D.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -91,6 +89,8 @@ public class ColorPicker extends VisTable{
 
 		lastBox.addListener(new BoxListener(lastBox));
 		
+		final Table colors = new VisTable();
+		
 		VisImageButtonStyle style = new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class));
 		style.imageChecked = VisUI.getSkin().getDrawable("icon-lock");
 		style.imageUp = VisUI.getSkin().getDrawable("icon-lock-open");
@@ -102,7 +102,11 @@ public class ColorPicker extends VisTable{
 		lock = new VisImageButton(style);
 		lock.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
-				//lock.setColor(lock.isChecked() ? Color.RED : Color.LIGHT_GRAY);
+				hbar.setDisabled(lock.isChecked());
+				sbar.setDisabled(lock.isChecked());
+				vbar.setDisabled(lock.isChecked());
+				colors.setTouchable(lock.isChecked() ? Touchable.disabled : Touchable.childrenOnly);
+				colors.setColor(lock.isChecked() ? new Color(1,1,1,0.5f) : Color.WHITE);
 			}
 		});
 		
@@ -124,7 +128,7 @@ public class ColorPicker extends VisTable{
 
 		recentColors = new ColorBox[palettewidth];
 
-		Table colors = new VisTable();
+		
 		table.add(colors).expand().fill().padTop(10 * s);
 
 		float size = Gdx.graphics.getWidth() / (palettewidth / 2) - 4;
