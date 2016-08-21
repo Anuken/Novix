@@ -71,7 +71,7 @@ public class Core extends Module<PixelEditor>{
 	public CollapseButton colorcollapsebutton, toolcollapsebutton;
 	public SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	public ColorBox[] boxes;
-	public ColorPicker apicker;
+	public ColorWidget apicker;
 	public Tool tool = Tool.pencil;
 
 	@Override
@@ -197,7 +197,7 @@ public class Core extends Module<PixelEditor>{
 
 		pickertable.background("button-window-bg");
 
-		apicker = new ColorPicker(){
+		apicker = new ColorWidget(){
 			public void onColorChanged(){
 				updateSelectedColor(apicker.getSelectedColor());
 			}

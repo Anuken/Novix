@@ -1,6 +1,7 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
 import net.pixelstatic.gdxutils.graphics.Hue;
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.*;
 
@@ -15,7 +16,7 @@ import com.kotcrab.vis.ui.util.ColorUtils;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
-public class ColorPicker extends VisTable{
+public class ColorWidget extends VisTable{
 	public static final int palettewidth = 16;
 	HueBar hbar;
 	ColorBar sbar;
@@ -28,11 +29,11 @@ public class ColorPicker extends VisTable{
 	ObjectSet<Color> usedColors = new ObjectSet<Color>();
 	boolean expandPalette;
 
-	public ColorPicker(){
+	public ColorWidget(){
 		this(true);
 	}
 
-	public ColorPicker(boolean expandPalette){
+	public ColorWidget(boolean expandPalette){
 		this.expandPalette = expandPalette;
 		setupUI();
 	}
@@ -100,6 +101,7 @@ public class ColorPicker extends VisTable{
 		style.checked = null;
 		
 		lock = new VisImageButton(style);
+		lock.setChecked(Core.i.prefs.getBoolean("lock"));
 		lock.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				hbar.setDisabled(lock.isChecked());
@@ -107,6 +109,7 @@ public class ColorPicker extends VisTable{
 				vbar.setDisabled(lock.isChecked());
 				colors.setTouchable(lock.isChecked() ? Touchable.disabled : Touchable.childrenOnly);
 				colors.setColor(lock.isChecked() ? new Color(1,1,1,0.5f) : Color.WHITE);
+				Core.i.prefs.put("lock", lock.isChecked());
 			}
 		});
 		
