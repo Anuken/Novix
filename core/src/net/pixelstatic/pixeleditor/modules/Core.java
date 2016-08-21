@@ -10,9 +10,8 @@ import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.managers.PaletteManager;
 import net.pixelstatic.pixeleditor.managers.PrefsManager;
 import net.pixelstatic.pixeleditor.managers.ProjectManager;
-import net.pixelstatic.pixeleditor.scene2D.CollapseButton;
+import net.pixelstatic.pixeleditor.scene2D.*;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.MenuDialog;
-import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.*;
 import net.pixelstatic.pixeleditor.ui.*;
 import net.pixelstatic.pixeleditor.ui.ProjectMenu.ProjectTable;
@@ -21,7 +20,9 @@ import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
 import net.pixelstatic.utils.modules.Module;
-import net.pixelstatic.utils.scene2D.*;
+import net.pixelstatic.utils.scene2D.ColorBar;
+import net.pixelstatic.utils.scene2D.ColorBox;
+import net.pixelstatic.utils.scene2D.SmoothCollapsibleWidget;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -70,7 +71,7 @@ public class Core extends Module<PixelEditor>{
 	public CollapseButton colorcollapsebutton, toolcollapsebutton;
 	public SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	public ColorBox[] boxes;
-	public AndroidColorPicker apicker;
+	public ColorPicker apicker;
 	public Tool tool = Tool.pencil;
 
 	@Override
@@ -196,7 +197,7 @@ public class Core extends Module<PixelEditor>{
 
 		pickertable.background("button-window-bg");
 
-		apicker = new AndroidColorPicker(){
+		apicker = new ColorPicker(){
 			public void onColorChanged(){
 				updateSelectedColor(apicker.getSelectedColor());
 			}

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Project implements Disposable{
+	public long lastloadtime;
 	public String name;
 	public Texture cachedTexture;
 	private Pixmap cachedPixmap;

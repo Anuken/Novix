@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 border
   rotate: false
-  xy: 413, 39
+  xy: 437, 39
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -121,18 +121,18 @@ check-off
   orig: 28, 28
   offset: 0, 0
   index: -1
+vis-check
+  rotate: false
+  xy: 398, 56
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
 textfield
   rotate: false
   xy: 398, 56
   size: 28, 28
   split: 2, 2, 2, 2
-  orig: 28, 28
-  offset: 0, 0
-  index: -1
-vis-check
-  rotate: false
-  xy: 398, 56
-  size: 28, 28
   orig: 28, 28
   offset: 0, 0
   index: -1
@@ -448,51 +448,65 @@ icon-load-3
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-minus
+icon-lock
   rotate: false
   xy: 438, 44
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-open
+icon-lock-open
   rotate: false
   xy: 263, 13
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-open-gray
+icon-minus
   rotate: false
   xy: 275, 13
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-pencil
+icon-open
   rotate: false
   xy: 287, 13
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-pick
+icon-open-gray
   rotate: false
   xy: 299, 13
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-plus
+icon-pencil
   rotate: false
   xy: 311, 16
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
-icon-redo
+icon-pick
   rotate: false
   xy: 323, 16
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+icon-plus
+  rotate: false
+  xy: 335, 16
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+icon-redo
+  rotate: false
+  xy: 341, 28
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
@@ -506,7 +520,7 @@ icon-refresh
   index: -1
 icon-rename
   rotate: false
-  xy: 335, 16
+  xy: 353, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
@@ -527,35 +541,35 @@ icon-star-outline
   index: -1
 icon-tap
   rotate: false
-  xy: 341, 28
+  xy: 365, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 icon-trash
   rotate: false
-  xy: 353, 32
+  xy: 377, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 icon-undo
   rotate: false
-  xy: 365, 32
+  xy: 389, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 icon-up
   rotate: false
-  xy: 377, 32
+  xy: 401, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 icon-zoom
   rotate: false
-  xy: 389, 32
+  xy: 413, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
@@ -830,7 +844,7 @@ touchpad-knob
   index: -1
 tree-minus
   rotate: false
-  xy: 401, 32
+  xy: 425, 32
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
@@ -923,7 +937,7 @@ window
   index: -1
 window-border-bg
   rotate: false
-  xy: 413, 34
+  xy: 437, 34
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3

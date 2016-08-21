@@ -266,8 +266,6 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		//final VisLabel infolabel = new VisLabel();
-		
 		class ScaledDrawable extends TextureRegionDrawable{
 			public ScaledDrawable(Drawable drawable){
 				super(((TextureRegionDrawable)drawable).getRegion());
@@ -380,8 +378,6 @@ public class ToolMenu extends VisTable{
 		optionstable.top().left();
 		optionstable.add(menutable).growY();
 		optionstable.add(othertable).grow();
-		
-		//TODO
 		
 		menutable.top().left();
 		
