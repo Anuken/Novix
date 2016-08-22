@@ -58,7 +58,8 @@ public class Core extends Module<PixelEditor>{
 	public DrawingGrid drawgrid;
 	public Stage stage;
 	public FileHandle projectDirectory;
-	public final FileHandle paletteDirectory = Gdx.files.local("palettes.json");
+	public final FileHandle paletteFile = Gdx.files.local("palettes.json");
+	public final FileHandle projectFile = Gdx.files.local("projects.json");
 	public int paletteColor;
 	public ProjectManager projectmanager;
 	public PaletteManager palettemanager;

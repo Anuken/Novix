@@ -2,23 +2,20 @@ package net.pixelstatic.pixeleditor.tools;
 
 import net.pixelstatic.utils.MiscUtils;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Project implements Disposable{
-	public long lastloadtime;
-	public String name;
-	public Texture cachedTexture;
-	private Pixmap cachedPixmap;
+	public ProjectData data;
+	public transient Texture cachedTexture;
+	private transient Pixmap cachedPixmap;
 	public final FileHandle file;
 	
 	public Project(FileHandle file){
 		this.file = file;
-		name = file.nameWithoutExtension();
-		Gdx.app.log("pedebugging", "Creating new project: \"" + name + "\"");
+		//Gdx.app.log("pedebugging", "Creating new project: \"" + name + "\"");
 		reloadTexture();
 	}
 	
@@ -31,7 +28,7 @@ public class Project implements Disposable{
 	}
 	
 	public void reloadTexture(){
-		Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. ");
+		//Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. ");
 		
 		if(cachedTexture != null) cachedTexture.dispose();
 		cachedTexture = new Texture(file);

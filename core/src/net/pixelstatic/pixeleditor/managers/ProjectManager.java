@@ -14,10 +14,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class ProjectManager{
 	private ObjectMap<String, Project> projects = new ObjectMap<String, Project>();
+	private Json json = new Json();
 	private Core main;
 	private Project currentProject;
 	private boolean savingProject = false;

@@ -44,13 +44,13 @@ public class PaletteManager{
 	
 	public void savePalettes(){
 		String string = json.toJson(palettes);
-		main.paletteDirectory.writeString(string, false);
+		main.paletteFile.writeString(string, false);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void loadPalettes(){
 		try{
-			palettes = json.fromJson(ObjectMap.class, main.paletteDirectory);
+			palettes = json.fromJson(ObjectMap.class, main.paletteFile);
 
 			String name = main.prefs.getString("lastpalette");
 			if(name != null){
