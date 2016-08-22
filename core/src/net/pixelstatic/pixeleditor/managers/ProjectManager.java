@@ -59,7 +59,7 @@ public class ProjectManager{
 		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
 		PixmapIO.writePNG(main.projectDirectory.child(name + ".png"), pixmap);
 
-		Project project = loadProject(main.projectDirectory.child(name + ".png"));
+		Project project = loadProject(name, main.projectDirectory.child(name + ".png"));
 		Gdx.app.log("pedebugging", "Created new project with name " + name);
 
 		return project;
@@ -94,7 +94,7 @@ public class ProjectManager{
 					FileHandle newhandle = project.file.parent().child(text + ".png");
 					MiscUtils.copyFile(project.file.file(), newhandle.file());
 
-					projects.put(text, new Project(newhandle));
+					projects.put(text, new Project(project.name, generateProjectID()));
 					main.projectmenu.update(true);
 				}catch(IOException e){
 					DialogClasses.showError(main.stage, "Error copying file!", e);
@@ -138,23 +138,36 @@ public class ProjectManager{
 	}
 
 	public void saveProject(){
+		saveProjectsFile();
 		savingProject = true;
 		Gdx.app.log("pedebugging", "Starting save..");
 		PixmapIO.writePNG(currentProject.file, main.drawgrid.canvas.pixmap);
 		Gdx.app.log("pedebugging", "Saving project.");
 		savingProject = false;
 	}
+	
+	private void loadProjectFile(){
+		Core.i.projectFile.writeString(json.toJson(projects), false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void saveProjectsFile(){
+		projects = json.fromJson(ObjectMap.class, Core.i.projectFile);
+	}
 
 	public void loadProjects(){
+		loadProjectFile();
 		FileHandle[] files = main.projectDirectory.list();
 
 		for(FileHandle file : files){
-			if(file.extension().equals("png")){
+			if(file.extension().equals("png") && file.nameWithoutExtension().matches("[0-9]+")){
+				Project project = null;
 				try{
-					loadProject(file);
+					//TODO
+					project = loadProject("testsetest", file);
 				}catch(Exception e){
 					Gdx.app.error("pedebugging", "Error loading project \"" + file.nameWithoutExtension() + " \", corrupt file?", e);
-					//projects.remove(file.nameWithoutExtension());
+					projects.remove(project.name);
 				}
 			}
 		}
@@ -174,9 +187,9 @@ public class ProjectManager{
 		}
 	}
 
-	public Project loadProject(FileHandle file){
+	public Project loadProject(String name, FileHandle file){
 		if(!file.parent().equals(main.projectDirectory)) throw new IllegalArgumentException("File " + file + " is not in the project directory!");
-		Project project = new Project(file);
+		Project project = new Project(name, generateProjectID());
 		projects.put(project.name, project);
 		return project;
 	}
@@ -217,5 +230,10 @@ public class ProjectManager{
 		}
 
 		return exists;
+	}
+	
+	//TODO
+	long generateProjectID(){
+		return 0;
 	}
 }
