@@ -368,13 +368,11 @@ public class Core extends Module<PixelEditor>{
 		paletteColor = 0;
 		palettemanager.setCurrentPalette(palette);
 		prefs.put("palettecolor", 0);
-		System.out.println(palette.id);
 		prefs.put("lastpalette", palette.id);
 		prefs.save();
 		updateColorMenu();
 		setSelectedColor(palette.colors[0]);
 		setupBoxColors();
-		//palettemenu.update();
 	}
 
 	public void openProjectMenu(){
