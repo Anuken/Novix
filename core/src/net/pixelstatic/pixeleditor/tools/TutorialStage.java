@@ -352,9 +352,8 @@ public enum TutorialStage{
 
 			shade(0, 0, width, height);
 			//shade(0, height-120, width,120);
-
 			color(Color.WHITE);
-			text(width / 2, height - 20*s, "This is the project menu.\nYou can use it to easily store\nand switch canvases.");
+			text(width / 2, height - 20*s, "This is the project menu.\nYou can use it to easily store\nand switch canvases.\n\n[GOLD]Projects are saved [GREEN]automatically[ROYAL], so\nyou don't have to worry\nabout losing your work.");
 
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");

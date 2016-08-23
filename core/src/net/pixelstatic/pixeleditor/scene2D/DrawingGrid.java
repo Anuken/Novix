@@ -104,7 +104,7 @@ public class DrawingGrid extends Actor{
 		
 		@Override
 		public boolean touchDragged(int x, int y, int pointer){
-			if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop || checkRange(y) || touches == 0 || !Core.i.tool.moveCursor()) return false; //not the second pointer
+			if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop /*|| checkRange(y)*/ || touches == 0 || !Core.i.tool.moveCursor()) return false; //not the second pointer
 			float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed", 1f);
 			
 			float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
