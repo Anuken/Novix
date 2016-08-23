@@ -688,10 +688,11 @@ public class DialogClasses{
 		}
 
 		public void result(){
+			long id = Core.i.projectmanager.generateProjectID();
 			FileHandle file = Gdx.files.absolute(directory.getText());
-			FileHandle to = Core.i.projectDirectory.child(field.getText() + ".png");
+			FileHandle to = Core.i.projectmanager.getFile(id);
 			file.copyTo(to);
-			Project project = Core.i.projectmanager.loadProject(to);
+			Project project = Core.i.projectmanager.loadProject(file.nameWithoutExtension(), id);
 			Core.i.projectmanager.openProject(project);
 			//exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}

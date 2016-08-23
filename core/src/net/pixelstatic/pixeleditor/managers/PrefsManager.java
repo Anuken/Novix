@@ -38,6 +38,11 @@ public class PrefsManager{
 		//map.put(name, value);
 	}
 	
+	public void put(String name, long value){
+		prefs.putLong(name, value);
+		//map.put(name, value);
+	}
+	
 	public boolean getBoolean(String name){
 		return getBoolean(name, false);
 	}
@@ -68,6 +73,10 @@ public class PrefsManager{
 	
 	public String getString(String name, String def){
 		return prefs.getString(name, def);
+	}
+	
+	public long getLong(String name){
+		return prefs.getLong(name);
 	}
 	
 	public void save(){

@@ -1,24 +1,22 @@
 package net.pixelstatic.pixeleditor.managers;
 
-import java.io.IOException;
-
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.pixeleditor.tools.Project;
-import net.pixelstatic.utils.MiscUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class ProjectManager{
-	private ObjectMap<String, Project> projects = new ObjectMap<String, Project>();
+	private ObjectMap<Long, Project> projects = new ObjectMap<Long, Project>();
 	private Json json = new Json();
 	private Core main;
 	private Project currentProject;
@@ -45,7 +43,7 @@ public class ProjectManager{
 		new NamedSizeDialog("New Project"){
 
 			public void result(String name, int width, int height){
-				if(validateProjectName(name)) return;
+				//if(validateProjectName(name)) return;
 
 				Project project = createNewProject(name, width, height);
 
@@ -56,17 +54,20 @@ public class ProjectManager{
 	}
 	
 	public Project createNewProject(String name, int width, int height){
+		long id = generateProjectID();
+		
 		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
-		PixmapIO.writePNG(main.projectDirectory.child(name + ".png"), pixmap);
-
-		Project project = loadProject(name, main.projectDirectory.child(name + ".png"));
+		PixmapIO.writePNG(getFile(id), pixmap);
+		
+		Project project = loadProject(name, id);
+		
 		Gdx.app.log("pedebugging", "Created new project with name " + name);
 
 		return project;
 	}
 
 	public void openProject(Project project){
-		main.prefs.put("lastproject", project.name);
+		main.prefs.put("lastproject", project.id);
 		currentProject = project;
 
 		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
@@ -88,15 +89,19 @@ public class ProjectManager{
 
 		new DialogClasses.InputDialog("Rename Copied Dialog", project.name, "New Copy Name: "){
 			public void result(String text){
-				if(validateProjectName(text)) return;
+				//if(validateProjectName(text)) return;
 
 				try{
-					FileHandle newhandle = project.file.parent().child(text + ".png");
-					MiscUtils.copyFile(project.file.file(), newhandle.file());
-
-					projects.put(text, new Project(project.name, generateProjectID()));
+					//TODO
+					long id = generateProjectID();
+					
+					getFile(project.id).copyTo(getFile(id));
+					
+					Project newproject = new Project(text, id);
+					
+					projects.put(newproject.id, newproject);
 					main.projectmenu.update(true);
-				}catch(IOException e){
+				}catch(Exception e){
 					DialogClasses.showError(main.stage, "Error copying file!", e);
 					e.printStackTrace();
 				}
@@ -107,10 +112,8 @@ public class ProjectManager{
 	public void renameProject(final Project project){
 		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
-				if(validateProjectName(text, project)) return;
-				projects.remove(project.name);
+				//if(validateProjectName(text, project)) return;
 				project.name = text;
-				projects.put(text, project);
 				main.projectmenu.update(true);
 			}
 		}.show(main.stage);
@@ -125,9 +128,9 @@ public class ProjectManager{
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
 				try{
-					project.file.file().delete();
+					project.getFile().file().delete();
 					project.dispose();
-					projects.remove(project.name);
+					projects.remove(project.id);
 					main.projectmenu.update(true);
 				}catch(Exception e){
 					DialogClasses.showError(main.stage, "Error deleting file!", e);
@@ -139,44 +142,53 @@ public class ProjectManager{
 
 	public void saveProject(){
 		saveProjectsFile();
+		Core.i.prefs.put("lastproject", getCurrentProject().id);
 		savingProject = true;
 		Gdx.app.log("pedebugging", "Starting save..");
-		PixmapIO.writePNG(currentProject.file, main.drawgrid.canvas.pixmap);
+		PixmapIO.writePNG(currentProject.getFile(), main.drawgrid.canvas.pixmap);
 		Gdx.app.log("pedebugging", "Saving project.");
 		savingProject = false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void loadProjectFile(){
-		Core.i.projectFile.writeString(json.toJson(projects), false);
+		try{
+			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, Core.i.projectFile);
+			projects = new ObjectMap<Long, Project>();
+			for(String key : map.keys()){
+				projects.put(Long.parseLong(key), map.get(key));
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			Gdx.app.error("pedebugging", "Project file nonexistant or corrupt.");
+		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void saveProjectsFile(){
-		projects = json.fromJson(ObjectMap.class, Core.i.projectFile);
+		Core.i.projectFile.writeString(json.toJson(projects), false);
 	}
 
 	public void loadProjects(){
 		loadProjectFile();
-		FileHandle[] files = main.projectDirectory.list();
-
-		for(FileHandle file : files){
-			if(file.extension().equals("png") && file.nameWithoutExtension().matches("[0-9]+")){
-				Project project = null;
-				try{
-					//TODO
-					project = loadProject("testsetest", file);
-				}catch(Exception e){
-					Gdx.app.error("pedebugging", "Error loading project \"" + file.nameWithoutExtension() + " \", corrupt file?", e);
-					projects.remove(project.name);
-				}
+		
+		for(Project project : projects.values()){
+			try{
+				project.reloadTexture();
+			}catch (Exception e){
+				e.printStackTrace();
+				Gdx.app.error("pedebugging", "Error loading project \"" + project.name + "\": corrupt file?");
+				projects.remove(project.id);
 			}
 		}
-
+		
+		saveProjectsFile();
+		
 		if(projects.size == 0){
 			currentProject = createNewProject("Untitled", 16, 16);
 		}else{
-			String last = main.prefs.getString("lastproject", "Untitled");
+			long last = main.prefs.getLong("lastproject");
 			
+			System.out.println(last);
 			try{
 				currentProject = projects.get(last);
 				currentProject.reloadTexture();
@@ -187,13 +199,12 @@ public class ProjectManager{
 		}
 	}
 
-	public Project loadProject(String name, FileHandle file){
-		if(!file.parent().equals(main.projectDirectory)) throw new IllegalArgumentException("File " + file + " is not in the project directory!");
-		Project project = new Project(name, generateProjectID());
-		projects.put(project.name, project);
+	public Project loadProject(String name, long id){
+		Project project = new Project(name, id);
+		projects.put(project.id, project);
 		return project;
 	}
-
+/*
 	boolean checkIfProjectExists(String name, Project ignored){
 		for(Project project : projects.values()){
 			if(project == ignored) continue;
@@ -231,9 +242,15 @@ public class ProjectManager{
 
 		return exists;
 	}
+	*/
+	
+	public FileHandle getFile(long id){
+		return Core.i.projectDirectory.child(id + ".png");
+	}
 	
 	//TODO
-	long generateProjectID(){
-		return 0;
+	public long generateProjectID(){
+		long id = MathUtils.random(Long.MAX_VALUE-1);
+		return id;
 	}
 }

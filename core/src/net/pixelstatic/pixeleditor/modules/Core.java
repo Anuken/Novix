@@ -583,7 +583,6 @@ public class Core extends Module<PixelEditor>{
 		Gdx.app.log("pedebugging", "Pausing and saving everything.");
 		projectmanager.saveProject();
 		palettemanager.savePalettes();
-		if(getCurrentProject() != null) prefs.put("lastproject", getCurrentProject().name);
 		prefs.save();
 	}
 

@@ -13,13 +13,12 @@ public class Project implements Disposable{
 	public long lastloadtime;
 	public long id;
 	public transient Texture cachedTexture;
-	public transient FileHandle file;
 	private transient Pixmap cachedPixmap;
 	
 	
 	public Project(String name, long id){
-		file = Core.i.projectDirectory.child("" + id);
 		this.name = name;
+		this.id = id;
 		reloadTexture();
 	}
 	
@@ -37,9 +36,13 @@ public class Project implements Disposable{
 		//Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. ");
 		
 		if(cachedTexture != null) cachedTexture.dispose();
-		cachedTexture = new Texture(file);
+		cachedTexture = new Texture(getFile());
 		cachedTexture.getTextureData().prepare();
 		cachedPixmap = cachedTexture.getTextureData().consumePixmap();
+	}
+	
+	public FileHandle getFile(){
+		return Core.i.projectmanager.getFile(id);
 	}
 	
 	public void dispose(){
