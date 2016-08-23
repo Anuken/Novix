@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
@@ -21,13 +22,18 @@ public class ProjectManager{
 	private Core main;
 	private Project currentProject;
 	private boolean savingProject = false;
+	private Array<Project> projectsort = new Array<Project>();
 	
 	public ProjectManager(Core main){
 		this.main = main;
 	}
 	
 	public Iterable<Project> getProjects(){
-		return projects.values();
+		projectsort.clear();
+		for(Project project : projects.values())
+			projectsort.add(project);
+		projectsort.sort();
+		return projectsort;
 	}
 	
 	public boolean isSavingProject(){
@@ -68,6 +74,7 @@ public class ProjectManager{
 
 	public void openProject(Project project){
 		main.prefs.put("lastproject", project.id);
+		project.lastloadtime = System.currentTimeMillis();
 		currentProject = project;
 
 		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");

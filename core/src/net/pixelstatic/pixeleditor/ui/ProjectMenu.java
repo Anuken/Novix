@@ -120,7 +120,6 @@ public class ProjectMenu extends BaseDialog{
 
 		ProjectTable current = null;
 		for(Project project : main.projectmanager.getProjects()){
-			
 			ProjectTable table = new ProjectTable(project, project == main.getCurrentProject() ? loaded : true);
 			scrolltable.top().left().add(table).padTop(8*s).growX().padRight(10 * s).row();
 			

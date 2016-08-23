@@ -7,10 +7,11 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class Palette implements Comparable<Palette>{
 	public long time;
 	public Color[] colors;
-	public String name;
+	public String name, id;
 	
-	public Palette(String name, int size){
+	public Palette(String name, String id, int size){
 		this.name = name;
+		this.id = id;
 		colors = new Color[size];
 		time = TimeUtils.millis();
 		genColors();
@@ -18,10 +19,7 @@ public class Palette implements Comparable<Palette>{
 		//	colors[i] = Color.WHITE.cpy();
 	}
 	
-	public Palette(){
-		colors = null;
-		name = null;
-	}
+	public Palette(){}
 	
 	public int size(){
 		return colors.length;

@@ -77,13 +77,7 @@ public class PaletteMenu extends BaseDialog{
 					public void changed(ChangeEvent event, Actor actor){
 						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
 							public void result(String string){
-								main.palettemanager.removePalette(palette);
 								palette.name = string;
-								main.palettemanager.addPalette(palette);
-								if(palette == main.getCurrentPalette()){
-									main.prefs.put("currentpalette", palette.name);
-									main.prefs.save();
-								}
 								update();
 							}
 						}.show(getStage());
@@ -124,22 +118,22 @@ public class PaletteMenu extends BaseDialog{
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					//delay action to make sure the isOver() check works properly
-					
-							if( !widget.extrabutton.isPressed()){
 
-								currentWidget.setSelected(false);
-								currentWidget = widget;
+					if( !widget.extrabutton.isPressed()){
 
-								widget.setSelected(true);
-								main.setPalette(palette);
-							}
-							
+						currentWidget.setSelected(false);
+						currentWidget = widget;
+
+						widget.setSelected(true);
+						main.setPalette(palette);
+					}
+
 				}
 			});
 
 			widget.addExtraButtonListener(new PaletteListener(widget));
 
-			palettetable.add(widget).padBottom(6*s);
+			palettetable.add(widget).padBottom(6 * s);
 			palettetable.row();
 		}
 
@@ -175,7 +169,7 @@ public class PaletteMenu extends BaseDialog{
 							DialogClasses.showInfo(getStage(), "A palette may not have\nmore than 32 colors.");
 							return;
 						}
-						main.palettemanager.addPalette(new Palette(string, Integer.parseInt(numberfield.getText())));
+						main.palettemanager.addPalette(new Palette(string, main.palettemanager.generatePaletteID(), Integer.parseInt(numberfield.getText())));
 						update();
 					}
 
@@ -203,7 +197,7 @@ public class PaletteMenu extends BaseDialog{
 				return true;
 			}
 		}));
-		
+
 		centerWindow();
 	}
 

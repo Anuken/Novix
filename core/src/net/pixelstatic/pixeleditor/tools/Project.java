@@ -8,13 +8,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 
-public class Project implements Disposable{
+public class Project implements Disposable, Comparable<Project>{
 	public String name;
 	public long lastloadtime;
 	public long id;
 	public transient Texture cachedTexture;
 	private transient Pixmap cachedPixmap;
-	
 	
 	public Project(String name, long id){
 		this.name = name;
@@ -48,5 +47,11 @@ public class Project implements Disposable{
 	public void dispose(){
 		cachedTexture.dispose();
 		cachedPixmap.dispose();
+	}
+	
+	
+	public int compareTo(Project other){
+		if(other.lastloadtime == lastloadtime) return 0;
+		return other.lastloadtime > lastloadtime ? 1 : -1;
 	}
 }

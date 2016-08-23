@@ -301,7 +301,7 @@ public class Core extends Module<PixelEditor>{
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					apicker.addColorToPalette(boxes[paletteColor].getColor().cpy());
+					apicker.addRecentColor(boxes[paletteColor].getColor().cpy());
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
 					prefs.put("palettecolor", paletteColor);
@@ -368,7 +368,8 @@ public class Core extends Module<PixelEditor>{
 		paletteColor = 0;
 		palettemanager.setCurrentPalette(palette);
 		prefs.put("palettecolor", 0);
-		prefs.put("lastpalette", palette.name);
+		System.out.println(palette.id);
+		prefs.put("lastpalette", palette.id);
 		prefs.save();
 		updateColorMenu();
 		setSelectedColor(palette.colors[0]);

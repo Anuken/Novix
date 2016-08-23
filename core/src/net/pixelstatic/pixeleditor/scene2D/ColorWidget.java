@@ -206,15 +206,12 @@ public class ColorWidget extends VisTable{
 	}
 
 	public void pushPalette(){
-		addColorToPalette(selectedColor);
+		addRecentColor(selectedColor);
 	}
 
-	public void addColorToPalette(Color color){
+	public void addRecentColor(Color color){
 		//prevents duped colors
 		if(usedColors.contains(color)) return;
-		///for(int i = 0;i < palettewidth;i ++){
-		//	if(Hue.approximate(recentColors[i].getColor(), color, 0.001f) && !recentColors[i].isDisabled()) return;
-		//}
 
 		for(int i = palettewidth - 2;i >= 0;i --){
 			recentColors[i + 1].setColor(recentColors[i].getColor());

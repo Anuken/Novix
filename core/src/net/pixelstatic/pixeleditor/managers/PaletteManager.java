@@ -4,6 +4,7 @@ import net.pixelstatic.pixeleditor.graphics.Palette;
 import net.pixelstatic.pixeleditor.modules.Core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -14,34 +15,35 @@ public class PaletteManager{
 	private Palette currentPalette;
 	private ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	private Array<Palette> palettesort = new Array<Palette>();
-	
+
 	public PaletteManager(Core main){
 		this.main = main;
 	}
-	
+
 	public Palette getCurrentPalette(){
 		return currentPalette;
 	}
-	
+
 	public void setCurrentPalette(Palette palette){
 		currentPalette = palette;
 	}
-	
+
 	public Iterable<Palette> getPalettes(){
 		palettesort.clear();
-		for(Palette palette : palettes.values()) palettesort.add(palette);
+		for(Palette palette : palettes.values())
+			palettesort.add(palette);
 		palettesort.sort();
 		return palettesort;
 	}
-	
+
 	public void removePalette(Palette palette){
-		palettes.remove(palette.name);
+		palettes.remove(palette.id);
 	}
-	
+
 	public void addPalette(Palette palette){
-		palettes.put(palette.name, palette);
+		palettes.put(palette.id, palette);
 	}
-	
+
 	public void savePalettes(){
 		String string = json.toJson(palettes);
 		main.paletteFile.writeString(string, false);
@@ -52,9 +54,9 @@ public class PaletteManager{
 		try{
 			palettes = json.fromJson(ObjectMap.class, main.paletteFile);
 
-			String name = main.prefs.getString("lastpalette");
-			if(name != null){
-				currentPalette = palettes.get(name);
+			String id = main.prefs.getString("lastpalette");
+			if(id != null){
+				currentPalette = palettes.get(id);
 			}
 
 			Gdx.app.log("pedebugging", "Palettes loaded.");
@@ -64,12 +66,13 @@ public class PaletteManager{
 		}
 
 		if(currentPalette == null){
-			if( !palettes.containsKey("Untitled")){
-				currentPalette = new Palette("Untitled", 8);
-				palettes.put("Untitled", currentPalette);
-			}else{
-				currentPalette = palettes.get("Untitled");
-			}
+			currentPalette = new Palette("Untitled", generatePaletteID(), 8);
+			palettes.put("Untitled", currentPalette);
 		}
+	}
+
+	public String generatePaletteID(){
+		long id = MathUtils.random(Long.MAX_VALUE - 1);
+		return id + "";
 	}
 }
