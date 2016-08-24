@@ -33,6 +33,7 @@ public class ProjectMenu extends BaseDialog{
 		this.main = mainref;
 		
 		addTitleSeperator().padBottom(10*s);
+		padTop(getPadTop()+2*s);
 		
 		VisTable scrolltable = new VisTable();
 

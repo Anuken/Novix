@@ -138,7 +138,8 @@ public class ProjectManager{
 		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
 			public void result(){
 				try{
-					project.getFile().file().delete();
+					project.getFile().delete();
+					if(getBackupFile(project.id).exists()) getBackupFile(project.id).delete();
 					project.dispose();
 					projects.remove(project.id);
 					main.projectmenu.update(true);

@@ -21,7 +21,6 @@ import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SizeDialog;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBar;
 
 import com.badlogic.gdx.Gdx;
@@ -238,7 +237,7 @@ public class ToolMenu extends VisTable{
 		addMenu("File",
 		new MenuButton("Export", "Export the image as a PNG."){
 			public void clicked(){
-				new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
+				new FileChooser(FileChooser.pngFilter, false){
 					public void fileSelected(FileHandle file){
 						DialogClasses.exportPixmap(main.drawgrid.canvas.pixmap, file);
 					}
@@ -252,7 +251,7 @@ public class ToolMenu extends VisTable{
 		},
 		new MenuButton("Open", "Open an image file."){
 			public void clicked(){
-				new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
+				new FileChooser(FileChooser.jpegFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
 							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
@@ -284,6 +283,7 @@ public class ToolMenu extends VisTable{
 		brushslider.getStyle().knob = new ScaledDrawable(brushslider.getStyle().knob);
 		brushslider.getStyle().knobOver = new ScaledDrawable(brushslider.getStyle().knobOver);
 		brushslider.getStyle().knobDown = new ScaledDrawable(brushslider.getStyle().knobDown);
+		brushslider.getStyle().background = new ScaledDrawable(brushslider.getStyle().background);
 		
 		brushslider.setValue(main.prefs.getInteger("brushsize", 1));
 		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());

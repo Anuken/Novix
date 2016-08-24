@@ -72,7 +72,7 @@ public class Core extends Module<PixelEditor>{
 	public CollapseButton colorcollapsebutton, toolcollapsebutton;
 	public SmoothCollapsibleWidget colorcollapser, toolcollapser;
 	public ColorBox[] boxes;
-	public ColorWidget apicker;
+	public ColorWidget picker;
 	public Tool tool = Tool.pencil;
 
 	@Override
@@ -103,7 +103,6 @@ public class Core extends Module<PixelEditor>{
 				getModule(Tutorial.class).begin();
 			}
 		});
-		//settingsmenu.addCheckSetting("Cursor Mode", true);
 
 		projectmenu = new ProjectMenu(this);
 		projectmenu.update(true);
@@ -198,9 +197,9 @@ public class Core extends Module<PixelEditor>{
 
 		pickertable.background("button-window-bg");
 
-		apicker = new ColorWidget(){
+		picker = new ColorWidget(){
 			public void onColorChanged(){
-				updateSelectedColor(apicker.getSelectedColor());
+				updateSelectedColor(picker.getSelectedColor());
 			}
 		};
 
@@ -215,7 +214,7 @@ public class Core extends Module<PixelEditor>{
 		colorcollapsebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				if( !colorcollapser.isCollapsed()){
-					apicker.setSelectedColor(apicker.getSelectedColor());
+					picker.setSelectedColor(picker.getSelectedColor());
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 				}
 				colorcollapser.setCollapsed( !colorcollapser.isCollapsed());
@@ -239,16 +238,16 @@ public class Core extends Module<PixelEditor>{
 			}
 		});
 		pickertable.add().grow().row();;
-		apicker.pack();
-		Cell<?> cell = pickertable.add(apicker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
+		picker.pack();
+		Cell<?> cell = pickertable.add(picker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
 		colorcollapser.setY(toolcollapsebutton.getTop()); 
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		
-		Vector2 pos = apicker.localToStageCoordinates(new Vector2());
-		cell.padTop(Gdx.graphics.getHeight() - (pos.y + apicker.getPrefHeight()) - colorcollapsebutton.getPrefHeight());
+		Vector2 pos = picker.localToStageCoordinates(new Vector2());
+		cell.padTop(Gdx.graphics.getHeight() - (pos.y + picker.getPrefHeight()) - colorcollapsebutton.getPrefHeight());
 		pickertable.pack();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
@@ -301,7 +300,7 @@ public class Core extends Module<PixelEditor>{
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					apicker.addRecentColor(boxes[paletteColor].getColor().cpy());
+					picker.addRecentColor(boxes[paletteColor].getColor().cpy());
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
 					prefs.put("palettecolor", paletteColor);
@@ -328,10 +327,10 @@ public class Core extends Module<PixelEditor>{
 
 		if(paletteColor > boxes.length) paletteColor = 0;
 
-		apicker.setRecentColors(boxes);
+		picker.setRecentColors(boxes);
 		boxes[paletteColor].selected = true;
 		boxes[paletteColor].toFront();
-		apicker.setSelectedColor(getCurrentPalette().colors[paletteColor]);
+		picker.setSelectedColor(getCurrentPalette().colors[paletteColor]);
 	}
 
 	void setupCanvas(){
@@ -400,7 +399,7 @@ public class Core extends Module<PixelEditor>{
 
 	public void setSelectedColor(Color color){
 		updateSelectedColor(color);
-		apicker.setSelectedColor(color);
+		picker.setSelectedColor(color);
 		updateToolColor();
 	}
 

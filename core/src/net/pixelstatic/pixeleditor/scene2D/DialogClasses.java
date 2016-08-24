@@ -8,7 +8,6 @@ import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.pixeleditor.tools.Project;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
-import net.pixelstatic.utils.scene2D.AndroidFileChooser;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
 import com.badlogic.gdx.Gdx;
@@ -17,6 +16,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -191,7 +191,7 @@ public class DialogClasses{
 					selected.setColor(getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Core.i.apicker.getRecentColors());
+			picker.setRecentColors(Core.i.picker.getRecentColors());
 
 			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
 			dialog.getContentTable().add(picker).expand().fill();
@@ -293,7 +293,7 @@ public class DialogClasses{
 					selected.setColor(getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Core.i.apicker.getRecentColors());
+			picker.setRecentColors(Core.i.picker.getRecentColors());
 
 			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
 			dialog.getContentTable().add(picker).expand().fill();
@@ -593,7 +593,7 @@ public class DialogClasses{
 
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					new AndroidFileChooser(AndroidFileChooser.imageFilter, false){
+					new FileChooser(FileChooser.pngFilter, false){
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
 							MiscUtils.moveTextToSide(directory);
@@ -650,7 +650,7 @@ public class DialogClasses{
 
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					new AndroidFileChooser(AndroidFileChooser.imageFilter, true){
+					new FileChooser(FileChooser.jpegFilter, true){
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
 							MiscUtils.moveTextToSide(directory);
@@ -1465,6 +1465,11 @@ public class DialogClasses{
 
 			if (titleLabel.getLabelAlign() == Align.center && titleTable.getChildren().size == 2)
 				titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
+			
+			padTop(52*s);
+			if(!MathUtils.isEqual(s, 1f))padRight(getPadRight()+1);
+			pack();
+			
 		}
 
 		public void hide(){

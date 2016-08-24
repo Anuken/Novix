@@ -32,7 +32,7 @@ public class PaletteMenu extends BaseDialog{
 		super("Palettes");
 		this.main = main;
 		setMovable(false);
-		MiscUtils.addHideButton(this);
+		addCloseButton();
 		setStage(main.stage);
 	}
 
@@ -177,10 +177,10 @@ public class PaletteMenu extends BaseDialog{
 			}
 		});
 
-		MiscUtils.addIconToButton(addpalettebutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40);
-		MiscUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40);
+		MiscUtils.addIconToButton(addpalettebutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40*s);
+		MiscUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
 
-		getButtonsTable().add(backbutton).size(150 * s, 50 * s);
+		getButtonsTable().add(backbutton).size(150 * s, 50 * s).padRight(s);
 		getButtonsTable().add(addpalettebutton).size(200 * s, 50 * s);
 
 		pack();

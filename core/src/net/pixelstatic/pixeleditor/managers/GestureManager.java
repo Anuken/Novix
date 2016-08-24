@@ -43,7 +43,6 @@ public class GestureManager implements GestureListener{
 		float swipevelocity = this.swipevelocity*s;
 		float flingvelocity = this.flingvelocity*s;
 		
-	//	Gdx.app.error("pedebugging", velocityX + ", " + velocityY);
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0, 0)).y + main.toolmenu.getHeight();
 		float colortop = main.pickertable.localToStageCoordinates(vector.set(0, 0)).y;
 

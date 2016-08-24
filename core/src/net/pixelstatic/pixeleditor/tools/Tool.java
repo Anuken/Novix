@@ -82,7 +82,7 @@ public enum Tool{
 			Color selected = canvas.getColor(x, y);
 			selected.a = 1f;
 			Core.i.setSelectedColor(selected);
-			Core.i.apicker.addRecentColor(selected);
+			Core.i.picker.addRecentColor(selected);
 		}
 		
 		public boolean symmetric(){

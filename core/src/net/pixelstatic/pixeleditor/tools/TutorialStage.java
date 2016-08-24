@@ -347,7 +347,6 @@ public enum TutorialStage{
 		}
 	},
 	projectmenu{
-		//TODO MISALIGNED
 		protected void draw(){
 
 			shade(0, 0, width, height);
