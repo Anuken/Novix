@@ -32,7 +32,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
@@ -94,7 +95,7 @@ public class ToolMenu extends VisTable{
 		backbutton.getLabelCell().padRight(40);
 		
 		buttons.getContentTable().row();
-		buttons.getContentTable().add(new Separator()).padTop(10*s).growX().row();
+		buttons.getContentTable().add(new Separator()).padTop(10*s).padBottom(5*s).growX().row();
 		buttons.getButtonsTable().add(backbutton).height(60*s).width(350*s);
 		//buttons.addItem("this is a test", "some description...");
 		
@@ -265,25 +266,11 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		class ScaledDrawable extends TextureRegionDrawable{
-			public ScaledDrawable(Drawable drawable){
-				super(((TextureRegionDrawable)drawable).getRegion());
-			}
-			
-			public float getMinWidth(){
-				return super.getMinWidth()*s;
-			}
-			
-			public float getMinHeight(){
-				return super.getMinHeight()*s;
-			}
-		}
+		
 		
 		brushslider = new VisSlider(1, 10, 0.01f, true);
-		brushslider.getStyle().knob = new ScaledDrawable(brushslider.getStyle().knob);
-		brushslider.getStyle().knobOver = new ScaledDrawable(brushslider.getStyle().knobOver);
-		brushslider.getStyle().knobDown = new ScaledDrawable(brushslider.getStyle().knobDown);
-		brushslider.getStyle().background = new ScaledDrawable(brushslider.getStyle().background);
+		
+		DialogClasses.scaleSlider(brushslider);
 		
 		brushslider.setValue(main.prefs.getInteger("brushsize", 1));
 		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());
@@ -291,7 +278,7 @@ public class ToolMenu extends VisTable{
 		brushslider.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				brushlabel.setText("Brush Size: " + (int)brushslider.getValue());
+				brushlabel.setText("Brush Size: [#"+Core.i.selectcolor +"]" + (int)brushslider.getValue());
 				main.prefs.put("brushsize", (int)brushslider.getValue());
 				main.drawgrid.brushSize = (int)brushslider.getValue();
 			}
@@ -299,7 +286,7 @@ public class ToolMenu extends VisTable{
 
 		alphabar = new ColorBar(true);
 		alphabar.setName("alphabar");
-
+		
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
 		alphabar.setSize(50 * s, 300 * s);
 		alphabar.setSelection(main.prefs.getFloat("opacity", 1f));
@@ -311,7 +298,7 @@ public class ToolMenu extends VisTable{
 		alphabar.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				opacity.setText("Opacity: " + (int)(alphabar.getSelection()*100) + "%");
+				opacity.setText("Opacity: [#"+Core.i.selectcolor +"]" + (int)(alphabar.getSelection()*100) + "%");
 				main.drawgrid.canvas.setAlpha(alphabar.getSelection());
 				main.prefs.put("opacity", alphabar.getSelection());
 			}
@@ -389,11 +376,11 @@ public class ToolMenu extends VisTable{
 		
 		othertable.bottom().right();
 		
-		othertable.add(brushlabel).padRight(10).minWidth(150).align(Align.center);
-		othertable.add(opacity).minWidth(150).align(Align.center);
+		othertable.add(brushlabel).padRight(10*s).minWidth(150*s).align(Align.center);
+		othertable.add(opacity).minWidth(150*s).align(Align.center);
 		othertable.row();
-		othertable.add(brushslider).growY().padTop(20).padBottom(20).padRight(15);
-		othertable.add(alphabar).padTop(20).padBottom(20);
+		othertable.add(brushslider).growY().padTop(20*s).padBottom(20*s).padRight(15*s);
+		othertable.add(alphabar).padTop(20*s).padBottom(20*s);
 
 	}
 	

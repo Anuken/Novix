@@ -2,6 +2,7 @@ package net.pixelstatic.pixeleditor.ui;
 
 import static net.pixelstatic.pixeleditor.modules.Core.s;
 import net.pixelstatic.pixeleditor.modules.Core;
+import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses.BaseDialog;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -47,6 +48,7 @@ public class SettingsMenu extends BaseDialog{
 				main.prefs.put(name, (int)slider.getValue());
 			}
 		});
+		DialogClasses.scaleSlider(slider);
 		slider.setValue(main.prefs.getInteger(name));
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
@@ -58,6 +60,7 @@ public class SettingsMenu extends BaseDialog{
 	public void addPercentScrollSetting(final String name){
 		final VisLabel label = new VisLabel();
 		final VisSlider slider = new VisSlider(0f, 2f, 0.01f, false);
+		DialogClasses.scaleSlider(slider);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				label.setText(name + ": " + (int)(slider.getValue()*100) + "%");

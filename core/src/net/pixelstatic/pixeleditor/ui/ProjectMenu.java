@@ -33,7 +33,7 @@ public class ProjectMenu extends BaseDialog{
 		this.main = mainref;
 		
 		addTitleSeperator().padBottom(10*s);
-		padTop(getPadTop()+2*s);
+		padTop(getPadTop()+10*s);
 		
 		VisTable scrolltable = new VisTable();
 
@@ -261,7 +261,7 @@ public class ProjectMenu extends BaseDialog{
 					return true;
 				}
 			});
-
+			BaseDialog.addPadding(this);
 		}
 
 	}

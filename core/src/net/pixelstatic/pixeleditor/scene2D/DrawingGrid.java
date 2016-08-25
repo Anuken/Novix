@@ -300,7 +300,7 @@ public class DrawingGrid extends Actor{
 		batch.setColor(Color.WHITE);
 
 		int asize = 20;
-		int u = (int)((getWidth() / asize) / canvas.width()) * canvas.width();
+		int u = (int)(((getWidth()/s) / asize) / canvas.width()) * canvas.width();
 
 		if(u == 0){
 			u = (int)(getWidth() / asize);
@@ -381,7 +381,7 @@ public class DrawingGrid extends Actor{
 		batch.setColor(Color.CORAL);
 
 		//draw pic edges
-		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), 2, aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
+		MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), (int)(2*s), aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 		//draw cursor
 		if(cursormode() || (touches > 0 && Core.i.tool.moveCursor()) || !Core.i.tool.moveCursor()){
@@ -403,7 +403,7 @@ public class DrawingGrid extends Actor{
 	}
 
 	private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
-		ShapeUtils.thickness = 4;
+		ShapeUtils.thickness = (int)(4*s);
 		ShapeUtils.polygon(batch, !Core.i.tool.scalable() ? brushPolygons[0] : brushPolygons[brushSize - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
 	}
 

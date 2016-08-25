@@ -128,14 +128,14 @@ public class FileChooser extends BaseDialog{
 		table.top().left();
 		table.add(icontable).expandX().fillX();
 
-		icontable.add(up).expandX().fillX().height(60).padBottom(10f).uniform();
-		icontable.add(back).expandX().fillX().height(60).padBottom(10f).uniform();
-		icontable.add(forward).expandX().fillX().height(60).padBottom(10f).uniform();
-		icontable.add(home).expandX().fillX().height(60).padBottom(10f).uniform();
+		icontable.add(up).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
+		icontable.add(back).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
+		icontable.add(forward).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
+		icontable.add(home).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
 		//icontable.add(newfolder).expandX().fillX().height(60).padBottom(10f).uniform();
 
 		table.row();
-		table.add(navigation).colspan(3).left().padBottom(10f).expandX().fillX().height(40f);
+		table.add(navigation).colspan(3).left().padBottom(10f*s).expandX().fillX().height(40f*s);
 		table.row();
 
 		table.center().add(pane).colspan(3).expand().fill();
@@ -145,11 +145,11 @@ public class FileChooser extends BaseDialog{
 		table.bottom().left().add(fieldtable).colspan(3).expand().fill();
 
 		fieldtable.bottom().left().add(new VisLabel("File Name:")).padTop(20);
-		fieldtable.add(filefield).padTop(20).height(50f).fillX().expandX().padLeft(10f).padRight(10f);
+		fieldtable.add(filefield).padTop(20*s).height(50f*s).fillX().expandX().padLeft(10f*s).padRight(10f*s);
 		table.row();
 
-		getButtonsTable().add(cancel).size(Gdx.graphics.getWidth() / 2f, 50f).expandX().fillX().padBottom(10).padTop(10f);
-		getButtonsTable().add(ok).expandX().fillX().size(Gdx.graphics.getWidth() / 2f, 50f).padBottom(10).padTop(10f);
+		getButtonsTable().add(cancel).size(Gdx.graphics.getWidth() / 2f, 50f*s).expandX().fillX().padBottom(10*s).padTop(10f*s);
+		getButtonsTable().add(ok).expandX().fillX().size(Gdx.graphics.getWidth() / 2f, 50f*s).padBottom(10*s).padTop(10f*s);
 
 	}
 	
@@ -215,10 +215,10 @@ public class FileChooser extends BaseDialog{
 		VisTextButton upbutton = new VisTextButton("...");
 		upbutton.addListener(new UpListener());
 		
-		upbutton.left().add(upimage).padRight(4f).size(40*s);
+		upbutton.left().add(upimage).padRight(4f*s).size(40*s);
 		upbutton.getCells().reverse();
 		
-		files.top().left().add(upbutton).align(Align.topLeft).fillX().expandX().height(50).pad(2).colspan(2);
+		files.top().left().add(upbutton).align(Align.topLeft).fillX().expandX().height(50*s).pad(2).colspan(2);
 		upbutton.getLabel().setAlignment(Align.left);
 
 		files.row();
@@ -255,9 +255,9 @@ public class FileChooser extends BaseDialog{
 			
 			final Image image = new Image(VisUI.getSkin().getDrawable(file.isDirectory() ? "icon-folder" : "icon-file-text"));
 			
-			button.add(image).padRight(4f).size(40*s);
+			button.add(image).padRight(4f*s).size(40*s);
 			button.getCells().reverse();
-			files.top().left().add(button).align(Align.topLeft).fillX().expandX().height(50).pad(2).colspan(2);
+			files.top().left().add(button).align(Align.topLeft).fillX().expandX().height(50*s).pad(2*s).colspan(2);
 			button.getLabel().setAlignment(Align.left);
 			files.row();
 		}

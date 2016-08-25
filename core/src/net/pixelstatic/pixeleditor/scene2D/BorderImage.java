@@ -17,7 +17,7 @@ public class BorderImage extends Actor{
 		
 		MiscUtils.setBatchAlpha(batch, alpha);
 		
-		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 2, 2);
+		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 4, 4);
 	}
 	
 }
