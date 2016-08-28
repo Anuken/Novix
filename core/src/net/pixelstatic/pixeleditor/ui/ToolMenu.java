@@ -97,7 +97,7 @@ public class ToolMenu extends VisTable{
 		buttons.getContentTable().row();
 		buttons.getContentTable().add(new Separator()).padTop(10*s).padBottom(5*s).growX().row();
 		buttons.getButtonsTable().add(backbutton).height(60*s).width(350*s);
-		//buttons.addItem("this is a test", "some description...");
+		
 		
 		addMenuButton(name+ "...").addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -268,7 +268,11 @@ public class ToolMenu extends VisTable{
 		
 		
 		
-		brushslider = new VisSlider(1, 10, 0.01f, true);
+		brushslider = new VisSlider(1, 10, 0.01f, true){
+			public float getPrefWidth(){
+				return 30*s;
+			}
+		};
 		
 		DialogClasses.scaleSlider(brushslider);
 		

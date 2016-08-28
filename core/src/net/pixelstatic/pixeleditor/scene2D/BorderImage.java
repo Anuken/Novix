@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor.scene2D;
 
+import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.utils.MiscUtils;
 
 import com.badlogic.gdx.graphics.Color;
@@ -17,7 +18,7 @@ public class BorderImage extends Actor{
 		
 		MiscUtils.setBatchAlpha(batch, alpha);
 		
-		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), 4, 4);
+		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), (int)(2*Core.s), (int)(2*Core.s));
 	}
 	
 }
