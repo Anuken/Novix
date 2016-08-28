@@ -480,7 +480,7 @@ public class Core extends Module<PixelEditor>{
 
 		FreeTypeFontParameter borderparameter = new FreeTypeFontParameter();
 		borderparameter.size = (int)(26 * s);
-		borderparameter.borderWidth = 2;
+		borderparameter.borderWidth = 2*s;
 		borderparameter.borderColor = clearcolor;
 		borderparameter.spaceX = -2;
 
