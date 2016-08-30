@@ -249,6 +249,7 @@ public class Core extends Module<PixelEditor>{
 		
 		Vector2 pos = picker.localToStageCoordinates(new Vector2());
 		cell.padTop(Gdx.graphics.getHeight() - (pos.y + picker.getPrefHeight()) - colorcollapsebutton.getPrefHeight());
+		cell.padBottom((Gdx.graphics.getHeight() - (pos.y +picker.getPrefHeight() + 90*s) - colorcollapsebutton.getPrefHeight() -  65*s)/2);
 		pickertable.pack();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();
