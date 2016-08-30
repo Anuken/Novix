@@ -8,6 +8,7 @@ import net.pixelstatic.utils.scene2D.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -27,6 +28,7 @@ public class ColorWidget extends VisTable{
 	Color lastColor;
 	VisImageButton lock;
 	ObjectSet<Color> usedColors = new ObjectSet<Color>();
+	Cell<?> padCell;
 	boolean expandPalette;
 
 	public ColorWidget(){
@@ -126,7 +128,10 @@ public class ColorWidget extends VisTable{
 		colordisplay.add(lock).size(70*s);
 
 		table.row();
-
+		padCell = table.add();
+		//padCell.padTop(70);
+		table.row();
+		
 		table.add(new VisLabel("Recent Colors:")).padTop(15f * s).row();
 
 		recentColors = new ColorBox[palettewidth];
@@ -145,6 +150,10 @@ public class ColorWidget extends VisTable{
 			if(x % 8 == 0) colors.row();
 			colors.add(box).size(size);
 		}
+	}
+	
+	public Cell<?> getPadCell(){
+		return padCell;
 	}
 	
 	public boolean isLocked(){
