@@ -254,7 +254,6 @@ public class Core extends Module<PixelEditor>{
 		cell.padBottom(tpad/2);
 		picker.getPadCell().padTop(tpad/2);
 		picker.invalidateHierarchy();
-		//picker.pack();
 		pickertable.pack();
 		colorcollapser.setCollapsed(true, false);
 		setupBoxColors();

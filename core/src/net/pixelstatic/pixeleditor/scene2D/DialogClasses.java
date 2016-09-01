@@ -1422,11 +1422,10 @@ public class DialogClasses{
 			setMovable(false);
 			addPadding(this);
 			
-			//pad(this.getPadBottom()+(s-1f)*15f);
 		}
 		
 		public static void addPadding(Table table){
-			float v =(s-1f)*20f;
+			float v =(s-1f)*10f;
 			table.padTop(table.getPadTop()+v);
 			table.padBottom(table.getPadBottom()+v);
 			table.padLeft(table.getPadLeft()+v);
