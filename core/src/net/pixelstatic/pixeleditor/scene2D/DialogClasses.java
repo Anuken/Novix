@@ -1231,7 +1231,7 @@ public class DialogClasses{
 
 			textfield = new VisTextField(fieldtext);
 			getContentTable().center().add(new VisLabel(text));
-			getContentTable().center().add(textfield).pad(20 * s).padLeft(0f);
+			getContentTable().center().add(textfield).pad(20 * s).padLeft(0f).size(160*s, 40*s);
 		}
 
 		public final void result(){

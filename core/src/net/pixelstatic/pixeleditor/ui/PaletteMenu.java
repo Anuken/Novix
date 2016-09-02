@@ -159,7 +159,7 @@ public class PaletteMenu extends BaseDialog{
 						getContentTable().row();
 
 						getContentTable().center().add(new VisLabel("Size:")).padTop(0f).padBottom(20f * s);
-						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0);
+						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0).size(160*s, 40*s);
 
 						new TextFieldEmptyListener(ok, textfield, numberfield);
 					}

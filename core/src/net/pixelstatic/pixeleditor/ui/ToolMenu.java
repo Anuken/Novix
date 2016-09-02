@@ -129,6 +129,8 @@ public class ToolMenu extends VisTable{
 					currentMenu.hide();
 				}
 			});
+			
+			BaseDialog.addPadding(this);
 		}
 		
 		public void clicked(){
@@ -140,6 +142,7 @@ public class ToolMenu extends VisTable{
 		public ButtonMenu(String name){
 			super(name);
 			addTitleSeperator();
+			padTop(getPadTop()+7*s);
 		}
 	}
 	

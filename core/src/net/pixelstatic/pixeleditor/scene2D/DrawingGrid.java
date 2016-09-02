@@ -301,10 +301,12 @@ public class DrawingGrid extends Actor{
 
 		int asize = 20;
 		int u = (int)(((getWidth()/s) / asize) / canvas.width()) * canvas.width();
-
+		
 		if(u == 0){
 			u = (int)(getWidth() / asize);
-			u = canvas.width()/(canvas.width() / u);
+			if(u == 0) u = 1;
+			
+			u = u > canvas.width() ? canvas.width() : canvas.width()/(canvas.width() / u);
 		}
 		
 		batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, u / ((float)canvas.width() / canvas.height()), 0, 0);

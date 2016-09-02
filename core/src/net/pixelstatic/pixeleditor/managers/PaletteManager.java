@@ -67,7 +67,8 @@ public class PaletteManager{
 
 		if(currentPalette == null){
 			currentPalette = new Palette("Untitled", generatePaletteID(), 8);
-			palettes.put("Untitled", currentPalette);
+			palettes.put(currentPalette.id, currentPalette);
+			main.prefs.put("lastpalette", currentPalette.id);
 		}
 	}
 

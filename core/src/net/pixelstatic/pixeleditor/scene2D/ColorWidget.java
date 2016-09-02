@@ -43,7 +43,7 @@ public class ColorWidget extends VisTable{
 	public void setupUI(){
 		float s = MiscUtils.densityScale();
 
-		float width = Gdx.graphics.getWidth() - BarActor.selectionWidth * 2 - 70*s, height = 60 * s, spacing = 10 * s;
+		float width = Gdx.graphics.getWidth() - BarActor.selectionWidth * 2 - 70*s, height = 60 * s, spacing = 14 * s;
 
 		Table table = this;
 
@@ -124,7 +124,7 @@ public class ColorWidget extends VisTable{
 		//colordisplay.add(lastBox).size(60*s);
 		//colordisplay.add(arrow);
 		colordisplay.add().size(70 * s);
-		colordisplay.add(currentBox).size(70 * s);
+		colordisplay.add(currentBox).size((70 * s));
 		colordisplay.add(lock).size(70*s);
 
 		table.row();

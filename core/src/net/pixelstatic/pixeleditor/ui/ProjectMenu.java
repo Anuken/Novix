@@ -228,9 +228,9 @@ public class ProjectMenu extends BaseDialog{
 			MiscUtils.fitCell(imagecell, 128 * s, 1);
 
 			add(texttable).grow();
-			texttable.top().left().add(namelabel).padLeft(8).align(Align.topLeft);
+			texttable.top().left().add(namelabel).padLeft(8*s).align(Align.topLeft);
 			texttable.row();
-			texttable.add(sizelabel).padLeft(8).padTop(10 * s).align(Align.topLeft);
+			texttable.add(sizelabel).padLeft(8*s).padTop(10 * s).align(Align.topLeft);
 			texttable.row();
 			texttable.add(buttontable).grow().padLeft(8);
 			
