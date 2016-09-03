@@ -27,7 +27,6 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 public enum TutorialStage{
 
 	colormenu{
-		float arrowlength = 20*s;
 
 		@Override
 		protected void draw(){
@@ -37,13 +36,13 @@ public enum TutorialStage{
 			shade(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - button.getHeight());
 
 			color(Color.WHITE);
-			text(width / 2, height / 2 - 10, "To start,tap or\nswipe down on the top menu.", Align.center);
+			text(width / 2, height / 2 - 10, "To start, tap\non the top menu.", Align.center);
 
 			color(select);
 			rect(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			line(width / 2, height - button.getHeight(), width / 2, height / 2);
-			line(width / 2, height / 2, width / 2 - arrowlength, height / 2 + arrowlength);
-			line(width / 2, height / 2, width / 2 + arrowlength, height / 2 + arrowlength);
+			arrow(width / 2, height/2, height/2 - button.getHeight()*1.5f, true);
+			//line(width / 2, height / 2, width / 2 - arrowlength, height / 2 + arrowlength);
+			//line(width / 2, height / 2, width / 2 + arrowlength, height / 2 + arrowlength);
 
 			if( !Core.i.colorMenuCollapsed()){
 				next();

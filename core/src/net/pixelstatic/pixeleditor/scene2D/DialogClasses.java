@@ -821,6 +821,7 @@ public class DialogClasses{
 				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, xscale, yscale));
 
 				Core.i.drawgrid.setCanvas(canvas);
+				Core.i.checkGridResize();
 				Core.i.updateToolColor();
 			}catch(Exception e){
 				e.printStackTrace();

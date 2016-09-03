@@ -162,7 +162,11 @@ public class ToolMenu extends VisTable{
 				new SizeDialog("Resize Canvas"){
 					@Override
 					public void result(int width, int height){
+						
 						main.drawgrid.setCanvas(main.drawgrid.canvas.asResized(width, height));
+						
+						main.checkGridResize();
+						
 						main.updateToolColor();
 					}
 				}.show(stage);
@@ -359,8 +363,8 @@ public class ToolMenu extends VisTable{
 		
 		gridbutton.getImageCell().size(50*s);
 		
-		gridbutton.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
+		gridbutton.addListener(new ChangeListener(){
+			public void changed(ChangeEvent event, Actor actor){
 				main.prefs.put("grid", gridbutton.isChecked());
 				main.prefs.save();
 			}
@@ -388,8 +392,8 @@ public class ToolMenu extends VisTable{
 		othertable.row();
 		othertable.add(brushslider).growY().padTop(20*s).padBottom(20*s).padRight(15*s);
 		othertable.add(alphabar).padTop(20*s).padBottom(20*s);
-
 	}
+
 	
 	public VisImageButton getGridButton(){
 		return gridbutton;

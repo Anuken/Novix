@@ -59,7 +59,11 @@ public class SettingsMenu extends BaseDialog{
 	
 	public void addPercentScrollSetting(final String name){
 		final VisLabel label = new VisLabel();
-		final VisSlider slider = new VisSlider(0f, 2f, 0.01f, false);
+		final VisSlider slider = new VisSlider(0f, 2f, 0.01f, false){
+			public float getPrefHeight(){
+				return 50*s;
+			}
+		};
 		DialogClasses.scaleSlider(slider);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
@@ -72,7 +76,7 @@ public class SettingsMenu extends BaseDialog{
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
 		table.row();
-		table.add(slider).width(200 * s).padBottom(40f*s);
+		table.add(slider).width(300 * s).padBottom(40f*s);
 		table.row();
 	}
 

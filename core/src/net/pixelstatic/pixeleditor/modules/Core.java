@@ -457,6 +457,12 @@ public class Core extends Module<PixelEditor>{
 		}
 		return null;
 	}
+	
+	
+	public void checkGridResize(){
+		((VisImageButton)stage.getRoot().findActor("gridbutton")).setProgrammaticChangeEvents(true);
+		if(drawgrid.canvas.width()*drawgrid.canvas.height() >= 100*100) ((VisImageButton)stage.getRoot().findActor("gridbutton")).setChecked(false);
+	}
 
 	public void loadFonts(){
 		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
