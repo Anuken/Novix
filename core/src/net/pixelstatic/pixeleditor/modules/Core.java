@@ -53,7 +53,7 @@ import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 public class Core extends Module<PixelEditor>{
 	public static Core i;
 	public static float s = 1f; //density scale
-	public final int largeImageSize = 128 * 128;
+	public final int largeImageSize = 100 * 100;
 	public final Color clearcolor = Color.valueOf("12161b");
 	public final String selectcolor = "7aaceaff";
 	public DrawingGrid drawgrid;

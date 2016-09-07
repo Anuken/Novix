@@ -469,9 +469,10 @@ public class DialogClasses{
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
 					label.setText("Rotation: " + MiscUtils.limit(slider.getValue() + "", 5));
-					updatePreview();
 				}
 			});
+			
+			addSliderChangeListener(slider);
 
 			getContentTable().add(label).align(Align.left).padTop(20 * s).row();
 			getContentTable().add(slider).expand().fill().padBottom(30 * s).padTop(5 * s);
@@ -1539,7 +1540,7 @@ public class DialogClasses{
 	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){
 		float ratio = Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
 
-		float isize = 400;
+		float isize = 400*s;
 		float width = isize, height = isize / ratio;
 		if(height > width){
 			height = isize;
