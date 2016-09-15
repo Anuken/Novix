@@ -211,6 +211,12 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 			return false;
 		}
 
+		@Override
+		public void pinchStop(){
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	public DrawingGrid drawgrid(){

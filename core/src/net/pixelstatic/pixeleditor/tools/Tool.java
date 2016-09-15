@@ -62,21 +62,15 @@ public enum Tool{
 
 					canvas.drawPixel(pos.x, pos.y, false);
 
-					if(pos.x > 0 && !set.contains(MiscUtils.asInt(pos.x - 1, pos.y, width))) points.add(add(new GridPoint2(pos), -1, 0));
-					if(pos.y > 0 && !set.contains(MiscUtils.asInt(pos.x, pos.y - 1, width))) points.add(add(new GridPoint2(pos),0, -1));
-					if(pos.x < canvas.width() - 1 && !set.contains(MiscUtils.asInt(pos.x + 1, pos.y, width))) points.add(add(new GridPoint2(pos), 1, 0));
-					if(pos.y < canvas.height() - 1 && !set.contains(MiscUtils.asInt(pos.x, pos.y + 1, width))) points.add(add(new GridPoint2(pos), 0, 1));
+					if(pos.x > 0 && !set.contains(MiscUtils.asInt(pos.x - 1, pos.y, width))) points.add(new GridPoint2(pos).cpy().add( -1, 0));
+					if(pos.y > 0 && !set.contains(MiscUtils.asInt(pos.x, pos.y - 1, width))) points.add(new GridPoint2(pos).cpy().add(0, -1));
+					if(pos.x < canvas.width() - 1 && !set.contains(MiscUtils.asInt(pos.x + 1, pos.y, width))) points.add(new GridPoint2(pos).cpy().add(1, 0));
+					if(pos.y < canvas.height() - 1 && !set.contains(MiscUtils.asInt(pos.x, pos.y + 1, width))) points.add(new GridPoint2(pos).cpy().add(0, 1));
 				}
 			}
 
 			canvas.updateTexture();
 
-		}
-		
-		GridPoint2 add(GridPoint2 point, int x, int y){
-			point.x += x;
-			point.y += y;
-			return point;
 		}
 
 		boolean colorEquals(int a, int b){
