@@ -1,5 +1,6 @@
 package net.pixelstatic.pixeleditor;
 
+import io.anuke.pixeleditor.PixelEditor;
 import net.pixelstatic.utils.scene2D.AndroidKeyboard;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
