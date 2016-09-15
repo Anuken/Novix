@@ -3,10 +3,9 @@ package io.anuke.pixeleditor.scene2D;
 
 
 import static io.anuke.pixeleditor.modules.Core.s;
+import io.anuke.gdxutils.graphics.Hue;
 import io.anuke.pixeleditor.graphics.Palette;
-import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
-import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.utils.scene2D.ColorBox;
+import io.anuke.pixeleditor.ui.DialogClasses.BaseDialog;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;

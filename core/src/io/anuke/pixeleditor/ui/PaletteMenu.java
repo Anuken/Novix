@@ -4,12 +4,11 @@ import static io.anuke.pixeleditor.modules.Core.s;
 import io.anuke.pixeleditor.graphics.Palette;
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.scene2D.*;
-import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
+import io.anuke.pixeleditor.ui.DialogClasses.BaseDialog;
+import io.anuke.utils.SceneUtils;
+import io.anuke.utils.SceneUtils.TextFieldEmptyListener;
 
 import java.util.Arrays;
-
-import net.pixelstatic.utils.SceneUtils;
-import net.pixelstatic.utils.SceneUtils.TextFieldEmptyListener;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

@@ -1,7 +1,7 @@
 package io.anuke.pixeleditor.tools;
 
 import io.anuke.pixeleditor.modules.Core;
-import net.pixelstatic.utils.MiscUtils;
+import io.anuke.utils.MiscUtils;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;

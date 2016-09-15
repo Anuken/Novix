@@ -1,7 +1,7 @@
 package net.pixelstatic.pixeleditor;
 
 import io.anuke.pixeleditor.PixelEditor;
-import net.pixelstatic.utils.scene2D.AndroidKeyboard;
+import io.anuke.utils.android.AndroidKeyboard;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Rect;

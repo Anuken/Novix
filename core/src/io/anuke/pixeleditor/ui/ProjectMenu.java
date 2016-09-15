@@ -1,14 +1,13 @@
 package io.anuke.pixeleditor.ui;
 
 import static io.anuke.pixeleditor.modules.Core.s;
+import io.anuke.gdxutils.graphics.Hue;
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.scene2D.*;
-import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
-import io.anuke.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
 import io.anuke.pixeleditor.tools.Project;
-import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.utils.SceneUtils;
-import net.pixelstatic.utils.scene2D.AnimatedImage;
+import io.anuke.pixeleditor.ui.DialogClasses.BaseDialog;
+import io.anuke.pixeleditor.ui.DialogClasses.OpenProjectFileDialog;
+import io.anuke.utils.SceneUtils;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;

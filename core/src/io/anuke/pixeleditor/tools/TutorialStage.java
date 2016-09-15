@@ -1,12 +1,12 @@
 package io.anuke.pixeleditor.tools;
 
 import static io.anuke.pixeleditor.modules.Core.s;
+import io.anuke.gdxutils.graphics.ShapeUtils;
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.modules.Tutorial;
 import io.anuke.pixeleditor.scene2D.CollapseButton;
+import io.anuke.pixeleditor.scene2D.ColorBar;
 import io.anuke.pixeleditor.ui.ProjectMenu.ProjectTable;
-import net.pixelstatic.gdxutils.graphics.ShapeUtils;
-import net.pixelstatic.utils.scene2D.ColorBar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

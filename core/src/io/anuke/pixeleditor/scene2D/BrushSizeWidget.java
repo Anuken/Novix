@@ -1,8 +1,8 @@
 package io.anuke.pixeleditor.scene2D;
 
 
-import net.pixelstatic.gdxutils.graphics.Textures;
-import net.pixelstatic.utils.MiscUtils;
+import io.anuke.gdxutils.graphics.Textures;
+import io.anuke.utils.MiscUtils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;

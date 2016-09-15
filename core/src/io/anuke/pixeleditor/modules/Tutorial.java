@@ -1,10 +1,10 @@
 package io.anuke.pixeleditor.modules;
 
+import io.anuke.gdxutils.graphics.ShapeUtils;
+import io.anuke.gdxutils.modules.Module;
 import io.anuke.pixeleditor.PixelEditor;
-import io.anuke.pixeleditor.scene2D.DialogClasses;
 import io.anuke.pixeleditor.tools.TutorialStage;
-import net.pixelstatic.gdxutils.graphics.ShapeUtils;
-import net.pixelstatic.gdxutils.modules.Module;
+import io.anuke.pixeleditor.ui.DialogClasses;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;

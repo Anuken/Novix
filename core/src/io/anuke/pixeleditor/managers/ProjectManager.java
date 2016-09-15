@@ -1,11 +1,11 @@
 package io.anuke.pixeleditor.managers;
 
 import io.anuke.pixeleditor.modules.Core;
-import io.anuke.pixeleditor.scene2D.DialogClasses;
-import io.anuke.pixeleditor.scene2D.DialogClasses.InfoDialog;
-import io.anuke.pixeleditor.scene2D.DialogClasses.NamedSizeDialog;
 import io.anuke.pixeleditor.tools.PixelCanvas;
 import io.anuke.pixeleditor.tools.Project;
+import io.anuke.pixeleditor.ui.DialogClasses;
+import io.anuke.pixeleditor.ui.DialogClasses.InfoDialog;
+import io.anuke.pixeleditor.ui.DialogClasses.NamedSizeDialog;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

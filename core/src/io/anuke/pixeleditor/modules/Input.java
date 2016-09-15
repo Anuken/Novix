@@ -1,11 +1,11 @@
 package io.anuke.pixeleditor.modules;
 
+import io.anuke.gdxutils.modules.Module;
 import io.anuke.pixeleditor.PixelEditor;
 import io.anuke.pixeleditor.managers.GestureManager;
 import io.anuke.pixeleditor.scene2D.DrawingGrid;
 import io.anuke.pixeleditor.tools.Tool;
-import net.pixelstatic.gdxutils.modules.Module;
-import net.pixelstatic.utils.SceneUtils;
+import io.anuke.utils.SceneUtils;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;

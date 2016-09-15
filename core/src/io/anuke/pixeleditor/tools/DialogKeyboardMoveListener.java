@@ -1,11 +1,11 @@
 package io.anuke.pixeleditor.tools;
 
-import java.util.HashMap;
+import io.anuke.utils.SceneUtils;
+import io.anuke.utils.android.AndroidKeyboard;
+import io.anuke.utils.android.TextFieldDialogListener;
+import io.anuke.utils.android.AndroidKeyboard.AndroidKeyboardListener;
 
-import net.pixelstatic.utils.SceneUtils;
-import net.pixelstatic.utils.scene2D.AndroidKeyboard;
-import net.pixelstatic.utils.scene2D.AndroidKeyboard.AndroidKeyboardListener;
-import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;

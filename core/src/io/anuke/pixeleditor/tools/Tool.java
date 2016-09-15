@@ -2,10 +2,9 @@ package io.anuke.pixeleditor.tools;
 
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.scene2D.DrawingGrid;
+import io.anuke.utils.MiscUtils;
 
 import java.util.Stack;
-
-import net.pixelstatic.utils.MiscUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

@@ -1,9 +1,8 @@
 package io.anuke.pixeleditor.scene2D;
 
+import io.anuke.gdxutils.graphics.Hue;
 import io.anuke.pixeleditor.modules.Core;
-import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.scene2D.*;
+import io.anuke.utils.MiscUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

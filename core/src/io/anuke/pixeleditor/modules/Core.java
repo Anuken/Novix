@@ -1,27 +1,26 @@
 package io.anuke.pixeleditor.modules;
 
+import io.anuke.gdxutils.graphics.Hue;
+import io.anuke.gdxutils.graphics.ShapeUtils;
+import io.anuke.gdxutils.graphics.Textures;
+import io.anuke.gdxutils.modules.Module;
 import io.anuke.pixeleditor.PixelEditor;
 import io.anuke.pixeleditor.graphics.Palette;
 import io.anuke.pixeleditor.managers.PaletteManager;
 import io.anuke.pixeleditor.managers.PrefsManager;
 import io.anuke.pixeleditor.managers.ProjectManager;
 import io.anuke.pixeleditor.scene2D.*;
-import io.anuke.pixeleditor.scene2D.DialogClasses.MenuDialog;
 import io.anuke.pixeleditor.tools.*;
+import io.anuke.pixeleditor.ui.DialogClasses.MenuDialog;
 import io.anuke.pixeleditor.ui.*;
 import io.anuke.pixeleditor.ui.ProjectMenu.ProjectTable;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.SceneUtils;
+import io.anuke.utils.android.AndroidKeyboard;
+import io.anuke.utils.android.AndroidTextFieldDialog;
+import io.anuke.utils.android.TextFieldDialog;
 
 import java.lang.reflect.Field;
-
-import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.gdxutils.graphics.ShapeUtils;
-import net.pixelstatic.gdxutils.graphics.Textures;
-import net.pixelstatic.gdxutils.modules.Module;
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.SceneUtils;
-import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
-import net.pixelstatic.utils.dialogs.TextFieldDialog;
-import net.pixelstatic.utils.scene2D.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

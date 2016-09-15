@@ -2,8 +2,7 @@ package io.anuke.pixeleditor.ui;
 
 import static io.anuke.pixeleditor.modules.Core.s;
 import io.anuke.pixeleditor.modules.Core;
-import io.anuke.pixeleditor.scene2D.DialogClasses;
-import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
+import io.anuke.pixeleditor.ui.DialogClasses.BaseDialog;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;

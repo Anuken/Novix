@@ -1,7 +1,7 @@
 package io.anuke.pixeleditor.scene2D;
 
 import io.anuke.pixeleditor.modules.Core;
-import net.pixelstatic.utils.MiscUtils;
+import io.anuke.utils.MiscUtils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;

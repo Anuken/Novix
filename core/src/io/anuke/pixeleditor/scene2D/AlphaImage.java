@@ -2,7 +2,7 @@ package io.anuke.pixeleditor.scene2D;
 
 
 
-import net.pixelstatic.gdxutils.graphics.Textures;
+import io.anuke.gdxutils.graphics.Textures;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;

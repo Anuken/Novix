@@ -1,9 +1,9 @@
 package io.anuke.pixeleditor;
 
+import io.anuke.gdxutils.modules.ModuleController;
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.modules.Input;
 import io.anuke.pixeleditor.modules.Tutorial;
-import net.pixelstatic.gdxutils.modules.ModuleController;
 
 public class PixelEditor extends ModuleController<PixelEditor>{
 	

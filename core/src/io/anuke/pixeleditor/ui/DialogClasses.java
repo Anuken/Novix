@@ -1,15 +1,14 @@
-package io.anuke.pixeleditor.scene2D;
+package io.anuke.pixeleditor.ui;
 
 import static io.anuke.pixeleditor.modules.Core.s;
+import io.anuke.gdxutils.graphics.PixmapUtils;
 import io.anuke.pixeleditor.graphics.Filter;
 import io.anuke.pixeleditor.modules.Core;
+import io.anuke.pixeleditor.scene2D.*;
 import io.anuke.pixeleditor.tools.PixelCanvas;
 import io.anuke.pixeleditor.tools.Project;
-import net.pixelstatic.gdxutils.graphics.PixmapUtils;
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.SceneUtils;
-import net.pixelstatic.utils.scene2D.AndroidColorPicker;
-import net.pixelstatic.utils.scene2D.ColorBox;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.SceneUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -186,7 +185,7 @@ public class DialogClasses{
 			from = new ColorBox(Core.i.selectedColor());
 			to = new ColorBox();
 
-			final AndroidColorPicker picker = new AndroidColorPicker(false){
+			final ColorWidget picker = new ColorWidget(false){
 				public void onColorChanged(){
 					selected.setColor(getSelectedColor());
 				}
@@ -288,7 +287,7 @@ public class DialogClasses{
 
 			selected.addSelectListener();
 
-			final AndroidColorPicker picker = new AndroidColorPicker(false){
+			final ColorWidget picker = new ColorWidget(false){
 				public void onColorChanged(){
 					selected.setColor(getSelectedColor());
 				}

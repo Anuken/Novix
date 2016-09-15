@@ -1,14 +1,13 @@
 package io.anuke.pixeleditor.scene2D;
 
-import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
+import io.anuke.pixeleditor.ui.DialogClasses.BaseDialog;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.android.TextFieldDialogListener;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Comparator;
-
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

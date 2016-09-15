@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class ShiftedImage extends Image{
-	int offsetx, offsety;
+	public int offsetx, offsety;
 	private Texture texture;
 	
 	public ShiftedImage(Texture tex){

@@ -1,13 +1,13 @@
 package io.anuke.pixeleditor.scene2D;
 
 import static io.anuke.pixeleditor.modules.Core.s;
+import io.anuke.gdxutils.graphics.ShapeUtils;
+import io.anuke.gdxutils.graphics.Textures;
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.tools.PixelCanvas;
 import io.anuke.pixeleditor.tools.Tool;
-import net.pixelstatic.gdxutils.graphics.ShapeUtils;
-import net.pixelstatic.gdxutils.graphics.Textures;
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.MiscUtils.GridChecker;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.MiscUtils.GridChecker;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.*;
