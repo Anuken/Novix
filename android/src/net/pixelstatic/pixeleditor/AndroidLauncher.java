@@ -1,6 +1,6 @@
 package net.pixelstatic.pixeleditor;
 
-import net.pixelstatic.utils.AndroidKeyboard;
+import net.pixelstatic.utils.scene2D.AndroidKeyboard;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Rect;

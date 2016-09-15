@@ -4,10 +4,11 @@ import java.util.Stack;
 
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
-import net.pixelstatic.utils.Pos;
+import net.pixelstatic.utils.MiscUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
@@ -47,29 +48,35 @@ public enum Tool{
 			int width = canvas.width();
 
 			IntSet set = new IntSet();
-			Stack<Pos> points = new Stack<Pos>();
-			points.add(new Pos(x, y));
+			Stack<GridPoint2> points = new Stack<GridPoint2>();
+			points.add(new GridPoint2(x, y));
 			
 			canvas.setColor(color.cpy());
 
 			while( !points.isEmpty()){
-				Pos pos = points.pop();
-				set.add(pos.asInt(width));
+				GridPoint2 pos = points.pop();
+				set.add(MiscUtils.asInt(pos.x, pos.y, width));
 
 				int pcolor = canvas.getIntColor(pos.x, pos.y);
 				if(colorEquals(pcolor, dest)){
 
 					canvas.drawPixel(pos.x, pos.y, false);
 
-					if(pos.x > 0 && !set.contains(Pos.asInt(pos.x - 1, pos.y, width))) points.add(pos.relative( -1, 0));
-					if(pos.y > 0 && !set.contains(Pos.asInt(pos.x, pos.y - 1, width))) points.add(pos.relative(0, -1));
-					if(pos.x < canvas.width() - 1 && !set.contains(Pos.asInt(pos.x + 1, pos.y, width))) points.add(pos.relative(1, 0));
-					if(pos.y < canvas.height() - 1 && !set.contains(Pos.asInt(pos.x, pos.y + 1, width))) points.add(pos.relative(0, 1));
+					if(pos.x > 0 && !set.contains(MiscUtils.asInt(pos.x - 1, pos.y, width))) points.add(add(new GridPoint2(pos), -1, 0));
+					if(pos.y > 0 && !set.contains(MiscUtils.asInt(pos.x, pos.y - 1, width))) points.add(add(new GridPoint2(pos),0, -1));
+					if(pos.x < canvas.width() - 1 && !set.contains(MiscUtils.asInt(pos.x + 1, pos.y, width))) points.add(add(new GridPoint2(pos), 1, 0));
+					if(pos.y < canvas.height() - 1 && !set.contains(MiscUtils.asInt(pos.x, pos.y + 1, width))) points.add(add(new GridPoint2(pos), 0, 1));
 				}
 			}
 
 			canvas.updateTexture();
 
+		}
+		
+		GridPoint2 add(GridPoint2 point, int x, int y){
+			point.x += x;
+			point.y += y;
+			return point;
 		}
 
 		boolean colorEquals(int a, int b){

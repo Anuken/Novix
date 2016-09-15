@@ -2,10 +2,10 @@ package net.pixelstatic.pixeleditor.tools;
 
 import java.util.HashMap;
 
-import net.pixelstatic.utils.AndroidKeyboard;
-import net.pixelstatic.utils.AndroidKeyboard.AndroidKeyboardListener;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.scene2D.AndroidKeyboard;
 import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
+import net.pixelstatic.utils.scene2D.AndroidKeyboard.AndroidKeyboardListener;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;

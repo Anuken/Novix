@@ -1,9 +1,9 @@
 package net.pixelstatic.pixeleditor;
 
+import net.pixelstatic.gdxutils.modules.ModuleController;
 import net.pixelstatic.pixeleditor.modules.Core;
 import net.pixelstatic.pixeleditor.modules.Input;
 import net.pixelstatic.pixeleditor.modules.Tutorial;
-import net.pixelstatic.utils.modules.ModuleController;
 
 public class PixelEditor extends ModuleController<PixelEditor>{
 	

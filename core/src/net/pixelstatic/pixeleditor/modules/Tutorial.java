@@ -1,10 +1,10 @@
 package net.pixelstatic.pixeleditor.modules;
 
 import net.pixelstatic.gdxutils.graphics.ShapeUtils;
+import net.pixelstatic.gdxutils.modules.Module;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.scene2D.DialogClasses;
 import net.pixelstatic.pixeleditor.tools.TutorialStage;
-import net.pixelstatic.utils.modules.Module;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;

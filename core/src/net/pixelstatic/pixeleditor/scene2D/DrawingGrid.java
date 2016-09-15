@@ -8,13 +8,13 @@ import net.pixelstatic.pixeleditor.tools.PixelCanvas;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.MiscUtils;
 import net.pixelstatic.utils.MiscUtils.GridChecker;
-import net.pixelstatic.utils.Pos;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
@@ -26,7 +26,7 @@ public class DrawingGrid extends Actor{
 	private int tpointer;
 	private int touches = 0;
 	private boolean moving;
-	private Pos selected = new Pos();
+	private GridPoint2 selected = new GridPoint2();
 	private GridImage gridimage;
 	private AlphaImage alphaimage;
 	private final boolean clip = true;
@@ -131,13 +131,13 @@ public class DrawingGrid extends Actor{
 				if(cursormode()){
 					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
 
-					if( !selected.equals(newx, newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
+					if( !(selected.x == newx && selected.y == newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
 
 					selected.set(newx, newy);
 				}else{
 					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
 
-					if( !selected.equals(newx, newy) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
+					if( !(selected.x == newx && selected.y == newy) && Core.i.tool.drawOnMove) processToolTap(newx, newy);
 					selected.set(newx, newy);
 				}
 			}
@@ -266,7 +266,7 @@ public class DrawingGrid extends Actor{
 		
 		cursorx = getWidth() / 2;
 		cursory = getHeight() / 2;
-		selected.set(cursorx / canvasScale(), cursory / canvasScale());
+		selected.set((int)(cursorx / canvasScale()), (int)(cursory / canvasScale()));
 		offsetx = getWidth() / 2;
 		offsety = getHeight() / 2;
 		gridimage.setImageSize(canvas.width(), canvas.height());

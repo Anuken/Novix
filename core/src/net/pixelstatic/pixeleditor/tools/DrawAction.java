@@ -1,7 +1,7 @@
 package net.pixelstatic.pixeleditor.tools;
 
 import net.pixelstatic.pixeleditor.modules.Core;
-import net.pixelstatic.utils.Pos;
+import net.pixelstatic.utils.MiscUtils;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -13,7 +13,7 @@ public class DrawAction{
 
 	public void push(int x, int y, int from, int to){
 		if(from == to) return; //ignore action that doesn't do anything
-		int key = Pos.asInt(x, y, Core.i.drawgrid.canvas.width());
+		int key = MiscUtils.asInt(x, y, Core.i.drawgrid.canvas.width());
 		if(positions.containsKey(key)){
 			ColorPair pos = positions.get(key);
 			pos.tocolor = to;

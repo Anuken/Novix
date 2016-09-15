@@ -1,11 +1,11 @@
 package net.pixelstatic.pixeleditor.modules;
 
+import net.pixelstatic.gdxutils.modules.Module;
 import net.pixelstatic.pixeleditor.PixelEditor;
 import net.pixelstatic.pixeleditor.managers.GestureManager;
 import net.pixelstatic.pixeleditor.scene2D.DrawingGrid;
 import net.pixelstatic.pixeleditor.tools.Tool;
 import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.modules.Module;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
