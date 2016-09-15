@@ -3,9 +3,24 @@ package io.anuke.pixeleditor.ui;
 import static io.anuke.pixeleditor.modules.Core.s;
 import io.anuke.pixeleditor.modules.Core;
 import io.anuke.pixeleditor.scene2D.*;
-import io.anuke.pixeleditor.scene2D.DialogClasses.*;
+import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ClearDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ColorAlphaDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ColorizeDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ContrastDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.CropDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ExportScaledDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.FlipDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.InvertDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.OutlineDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ReplaceDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.RotateDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ScaleDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.ShiftDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.SizeDialog;
+import io.anuke.pixeleditor.scene2D.DialogClasses.SymmetryDialog;
 import io.anuke.pixeleditor.tools.PixelCanvas;
-import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.SceneUtils;
 import net.pixelstatic.utils.scene2D.ColorBar;
 
 import com.badlogic.gdx.Gdx;
@@ -76,7 +91,7 @@ public class ToolMenu extends VisTable{
 				currentMenu.hide();
 			}
 		});
-		MiscUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
+		SceneUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
 		backbutton.getLabelCell().padRight(40);
 		
 		buttons.getContentTable().row();

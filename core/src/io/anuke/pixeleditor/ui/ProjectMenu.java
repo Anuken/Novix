@@ -7,7 +7,7 @@ import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
 import io.anuke.pixeleditor.scene2D.DialogClasses.OpenProjectFileDialog;
 import io.anuke.pixeleditor.tools.Project;
 import net.pixelstatic.gdxutils.graphics.Hue;
-import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.SceneUtils;
 import net.pixelstatic.utils.scene2D.AnimatedImage;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -86,7 +86,7 @@ public class ProjectMenu extends BaseDialog{
 		
 		newbutton.setName("newproject");
 
-		MiscUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40 * s);
+		SceneUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40 * s);
 		
 		VisTextButton settingsbutton = new VisTextButton("Settings");
 		settingsbutton.addListener(new ClickListener(){
@@ -225,7 +225,7 @@ public class ProjectMenu extends BaseDialog{
 			imagecell = stack(new AnimatedImage(VisUI.getSkin().getDrawable("icon-load-1"), VisUI.getSkin().getDrawable("icon-load-2"), VisUI.getSkin().getDrawable("icon-load-3")), new BorderImage());
 			imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
 
-			MiscUtils.fitCell(imagecell, 128 * s, 1);
+			SceneUtils.fitCell(imagecell, 128 * s, 1);
 
 			add(texttable).grow();
 			texttable.top().left().add(namelabel).padLeft(8*s).align(Align.topLeft);
@@ -251,7 +251,7 @@ public class ProjectMenu extends BaseDialog{
 					StaticPreviewImage image = new StaticPreviewImage(texture);
 					imagecell.setActor(image);
 
-					MiscUtils.fitCell(imagecell, 128 * s, (float)texture.getWidth() / texture.getHeight());
+					SceneUtils.fitCell(imagecell, 128 * s, (float)texture.getWidth() / texture.getHeight());
 
 					imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
 

@@ -8,8 +8,8 @@ import io.anuke.pixeleditor.scene2D.DialogClasses.BaseDialog;
 
 import java.util.Arrays;
 
-import net.pixelstatic.utils.MiscUtils;
-import net.pixelstatic.utils.MiscUtils.TextFieldEmptyListener;
+import net.pixelstatic.utils.SceneUtils;
+import net.pixelstatic.utils.SceneUtils.TextFieldEmptyListener;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -177,8 +177,8 @@ public class PaletteMenu extends BaseDialog{
 			}
 		});
 
-		MiscUtils.addIconToButton(addpalettebutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40*s);
-		MiscUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
+		SceneUtils.addIconToButton(addpalettebutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40*s);
+		SceneUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
 
 		getButtonsTable().add(backbutton).size(150 * s, 50 * s).padRight(s);
 		getButtonsTable().add(addpalettebutton).size(200 * s, 50 * s);

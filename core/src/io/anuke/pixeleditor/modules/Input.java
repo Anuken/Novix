@@ -5,7 +5,7 @@ import io.anuke.pixeleditor.managers.GestureManager;
 import io.anuke.pixeleditor.scene2D.DrawingGrid;
 import io.anuke.pixeleditor.tools.Tool;
 import net.pixelstatic.gdxutils.modules.Module;
-import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.SceneUtils;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
@@ -84,13 +84,13 @@ public class Input extends Module<PixelEditor> implements InputProcessor{
 	public boolean touchDown(int screenX, int screenY, int pointer, int button){
 		
 		if(Core.i.stage.getScrollFocus() != null){
-			Actor parent = MiscUtils.getTopParent(Core.i.stage.getScrollFocus());
+			Actor parent = SceneUtils.getTopParent(Core.i.stage.getScrollFocus());
 			
 			if( !(parent instanceof VisDialog)) return false;
 			
 			VisDialog dialog = (VisDialog)parent;
 			
-			if(!MiscUtils.mouseOnActor(dialog, vector)){
+			if(!SceneUtils.mouseOnActor(dialog, vector)){
 				dialog.hide();
 			}
 		}

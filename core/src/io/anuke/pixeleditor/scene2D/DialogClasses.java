@@ -7,6 +7,7 @@ import io.anuke.pixeleditor.tools.PixelCanvas;
 import io.anuke.pixeleditor.tools.Project;
 import net.pixelstatic.gdxutils.graphics.PixmapUtils;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.SceneUtils;
 import net.pixelstatic.utils.scene2D.AndroidColorPicker;
 import net.pixelstatic.utils.scene2D.ColorBox;
 
@@ -596,7 +597,7 @@ public class DialogClasses{
 					new FileChooser(FileChooser.pngFilter, false){
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
-							MiscUtils.moveTextToSide(directory);
+							SceneUtils.moveTextToSide(directory);
 						}
 					}.show(getStage());
 				}
@@ -653,7 +654,7 @@ public class DialogClasses{
 					new FileChooser(FileChooser.jpegFilter, true){
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
-							MiscUtils.moveTextToSide(directory);
+							SceneUtils.moveTextToSide(directory);
 							directory.fire(new ChangeListener.ChangeEvent());
 						}
 					}.show(getStage());

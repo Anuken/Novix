@@ -18,6 +18,7 @@ import net.pixelstatic.gdxutils.graphics.ShapeUtils;
 import net.pixelstatic.gdxutils.graphics.Textures;
 import net.pixelstatic.gdxutils.modules.Module;
 import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.SceneUtils;
 import net.pixelstatic.utils.dialogs.AndroidTextFieldDialog;
 import net.pixelstatic.utils.dialogs.TextFieldDialog;
 import net.pixelstatic.utils.scene2D.*;
@@ -448,7 +449,7 @@ public class Core extends Module<PixelEditor>{
 
 	public VisDialog getCurrentDialog(){
 		if(stage.getScrollFocus() != null){
-			Actor actor = MiscUtils.getTopParent(Core.i.stage.getScrollFocus());
+			Actor actor = SceneUtils.getTopParent(Core.i.stage.getScrollFocus());
 			if(actor instanceof VisDialog){
 				return (VisDialog)actor;
 			}

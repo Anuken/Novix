@@ -2,10 +2,10 @@ package io.anuke.pixeleditor.tools;
 
 import java.util.HashMap;
 
-import net.pixelstatic.utils.MiscUtils;
+import net.pixelstatic.utils.SceneUtils;
 import net.pixelstatic.utils.scene2D.AndroidKeyboard;
-import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 import net.pixelstatic.utils.scene2D.AndroidKeyboard.AndroidKeyboardListener;
+import net.pixelstatic.utils.scene2D.TextFieldDialogListener;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -43,7 +43,7 @@ public class DialogKeyboardMoveListener implements AndroidKeyboardListener{
 			if(listener instanceof TextFieldDialogListener) return;
 		}
 
-		Actor parent = MiscUtils.getTopParent(field);
+		Actor parent = SceneUtils.getTopParent(field);
 
 		float keypadding = 30;
 
