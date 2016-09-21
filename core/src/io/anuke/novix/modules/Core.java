@@ -52,7 +52,7 @@ public class Core extends Module<Novix>{
 	public final String selectcolor = "7aaceaff";
 	public DrawingGrid drawgrid;
 	public Stage stage;
-	public FileHandle projectDirectory;
+	public FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
 	public final FileHandle paletteFile = Gdx.files.local("palettes.json");
 	public final FileHandle projectFile = Gdx.files.local("projects.json");
 	public int paletteColor;
@@ -517,7 +517,6 @@ public class Core extends Module<Novix>{
 		i = this;
 		s = MiscUtils.densityScale();
 		
-		projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("pixelprojects");
 		projectDirectory.mkdirs();
 		prefs = new PrefsManager(this);
 

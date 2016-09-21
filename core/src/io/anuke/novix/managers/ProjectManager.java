@@ -201,7 +201,8 @@ public class ProjectManager{
 		}
 
 		saveProjectsFile();
-
+		
+		
 		if(projects.get(last) == null){ // no project selected
 			tryLoadAnotherProject();
 		}else{
@@ -219,7 +220,7 @@ public class ProjectManager{
 			}catch(Exception e){ //corruption!
 				e.printStackTrace();
 				Gdx.app.error("pedebugging", "Project file corrupted?");
-				
+				projects.remove(currentProject.id); //remove project since it's corrupted
 				//try to fix this mess
 				if(getBackupFile(currentProject.id).exists()){
 					try{
@@ -231,6 +232,9 @@ public class ProjectManager{
 						Gdx.app.error("pedebugging", "Backup attempt failed.");
 						tryLoadAnotherProject();
 					}
+				//there is no backup, nowhere else to turn
+				}else{
+					tryLoadAnotherProject();
 				}
 				
 				//show the result

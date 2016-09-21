@@ -491,14 +491,22 @@ public class DialogClasses{
 
 		public FilterDialog(Filter filter, String title){
 			super(title);
+			setFillParent(true);
 			this.filter = filter;
 			preview = new ImagePreview(PixmapUtils.copy(sourcePixmap()));
 
 			Cell<?> cell = getContentTable().add(preview);
 
 			resizeImageCell(cell);
+			
+			getContentTable().row();
+			
+			VisLabel label = new VisLabel("Preview");
+			label.setColor(Color.GRAY);
+			getContentTable().add(label);
 
 			getContentTable().row();
+			
 		}
 
 		abstract Object[] getArgs();
