@@ -15,7 +15,7 @@ android {
         instrumentTest.setRoot('tests')
     }
     defaultConfig {
-        applicationId "net.pixelstatic.pixeleditor"
+        applicationId "io.anuke.novix"
         minSdkVersion 8
         targetSdkVersion 22
     }
@@ -68,7 +68,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'net.pixelstatic.pixeleditor/net.pixelstatic.pixeleditor.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'io.anuke.novix/io.anuke.novix.AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.
