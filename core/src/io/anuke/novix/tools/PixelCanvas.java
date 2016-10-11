@@ -1,16 +1,18 @@
 package io.anuke.novix.tools;
 
 
-import io.anuke.gdxutils.graphics.PixmapUtils;
-import io.anuke.novix.modules.Core;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.ucore.graphics.PixmapUtils;
 
 public class PixelCanvas implements Disposable{
 	private Color color; // pixmap color

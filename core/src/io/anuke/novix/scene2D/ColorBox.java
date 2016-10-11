@@ -1,9 +1,5 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.gdxutils.graphics.Textures;
-import io.anuke.utils.MiscUtils;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
@@ -13,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
 import com.kotcrab.vis.ui.VisUI;
+
+import io.anuke.ucore.graphics.Hue;
+import io.anuke.ucore.graphics.Textures;
+import io.anuke.utils.MiscUtils;
 
 public class ColorBox extends Widget implements Disableable{
 	public static final Style defaultStyle = new Style();

@@ -1,8 +1,5 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.utils.MiscUtils;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
 import com.kotcrab.vis.ui.VisUI;
+
+import io.anuke.ucore.UCore;
+import io.anuke.ucore.graphics.Hue;
+import io.anuke.utils.MiscUtils;
 
 public abstract class BarActor extends Actor implements Disableable{
 	public static final float s = MiscUtils.densityScale();
@@ -69,7 +70,7 @@ public abstract class BarActor extends Actor implements Disableable{
 
 	private void updateSelection(float x, float y){
 		selection = !vertical ? ((x-selectionWidth/2) / (getWidth()-selectionWidth)) : ((y-selectionWidth/2) / (getHeight()-selectionWidth));
-		selection = MiscUtils.clamp(selection, 0f, 1f);
+		selection = UCore.clamp(selection, 0f, 1f);
 		fire(new ChangeListener.ChangeEvent());
 		onSelectionUpdated();
 	}

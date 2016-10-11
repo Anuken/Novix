@@ -1,13 +1,13 @@
 package io.anuke.novix.modules;
 
-import io.anuke.gdxutils.graphics.ShapeUtils;
-import io.anuke.gdxutils.modules.Module;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Rectangle;
+
 import io.anuke.novix.Novix;
 import io.anuke.novix.tools.TutorialStage;
 import io.anuke.novix.ui.DialogClasses;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Rectangle;
+import io.anuke.ucore.graphics.ShapeUtils;
+import io.anuke.ucore.modules.Module;
 
 public class Tutorial extends Module<Novix>{
 	private boolean active = false;

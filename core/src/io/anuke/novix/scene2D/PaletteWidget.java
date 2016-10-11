@@ -3,9 +3,6 @@ package io.anuke.novix.scene2D;
 
 
 import static io.anuke.novix.modules.Core.s;
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.ui.DialogClasses.BaseDialog;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -16,8 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTable;
+
+import io.anuke.novix.graphics.Palette;
+import io.anuke.novix.ui.DialogClasses.BaseDialog;
+import io.anuke.ucore.graphics.Hue;
 
 public class PaletteWidget extends VisTable{
 	public static final float defaultWidth = 300*s;

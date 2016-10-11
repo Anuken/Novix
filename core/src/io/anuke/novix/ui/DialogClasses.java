@@ -1,30 +1,64 @@
 package io.anuke.novix.ui;
 
 import static io.anuke.novix.modules.Core.s;
-import io.anuke.gdxutils.graphics.PixmapUtils;
-import io.anuke.novix.graphics.Filter;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
-import io.anuke.novix.tools.PixelCanvas;
-import io.anuke.novix.tools.Project;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.SceneUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.Separator;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
+import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisImage;
+import com.kotcrab.vis.ui.widget.VisImageButton;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisSlider;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.VisTextField;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
+
+import io.anuke.novix.graphics.Filter;
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.scene2D.AlphaImage;
+import io.anuke.novix.scene2D.ColorBox;
+import io.anuke.novix.scene2D.ColorWidget;
+import io.anuke.novix.scene2D.FileChooser;
+import io.anuke.novix.scene2D.GridImage;
+import io.anuke.novix.scene2D.ImagePreview;
+import io.anuke.novix.scene2D.ShiftedImage;
+import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Project;
+import io.anuke.ucore.UCore;
+import io.anuke.ucore.graphics.PixmapUtils;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.SceneUtils;
 
 public class DialogClasses{
 
@@ -1112,8 +1146,8 @@ public class DialogClasses{
 
 						Vector2 vector = points[point.point];
 
-						vector.x = MiscUtils.clamp(vector.x, getX(), getX() + getWidth());
-						vector.y = MiscUtils.clamp(vector.y, getY(), getY() + getHeight());
+						vector.x = UCore.clamp(vector.x, getX(), getX() + getWidth());
+						vector.y = UCore.clamp(vector.y, getY(), getY() + getHeight());
 
 						if(point.point == 4){
 							points[0].x = vector.x;

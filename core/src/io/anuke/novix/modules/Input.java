@@ -1,14 +1,9 @@
 package io.anuke.novix.modules;
 
-import io.anuke.gdxutils.modules.Module;
-import io.anuke.novix.Novix;
-import io.anuke.novix.managers.GestureManager;
-import io.anuke.novix.scene2D.DrawingGrid;
-import io.anuke.novix.tools.Tool;
-import io.anuke.utils.SceneUtils;
-
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisTextField;
+
+import io.anuke.novix.Novix;
+import io.anuke.novix.managers.GestureManager;
+import io.anuke.novix.scene2D.DrawingGrid;
+import io.anuke.novix.tools.Tool;
+import io.anuke.ucore.modules.Module;
+import io.anuke.utils.SceneUtils;
 
 public class Input extends Module<Novix> implements InputProcessor{
 	private Input input;

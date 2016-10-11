@@ -1,12 +1,6 @@
 package io.anuke.novix.tools;
 
 import static io.anuke.novix.modules.Core.s;
-import io.anuke.gdxutils.graphics.ShapeUtils;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.modules.Tutorial;
-import io.anuke.novix.scene2D.CollapseButton;
-import io.anuke.novix.scene2D.ColorBar;
-import io.anuke.novix.ui.ProjectMenu.ProjectTable;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -23,6 +17,13 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisScrollPane;
 import com.kotcrab.vis.ui.widget.VisTextButton;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.modules.Tutorial;
+import io.anuke.novix.scene2D.CollapseButton;
+import io.anuke.novix.scene2D.ColorBar;
+import io.anuke.novix.ui.ProjectMenu.ProjectTable;
+import io.anuke.ucore.graphics.ShapeUtils;
 
 public enum TutorialStage{
 

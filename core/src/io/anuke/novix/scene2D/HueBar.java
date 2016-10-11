@@ -1,11 +1,12 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.gdxutils.graphics.PixmapUtils;
-import io.anuke.gdxutils.graphics.Textures;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
+import io.anuke.ucore.graphics.Hue;
+import io.anuke.ucore.graphics.PixmapUtils;
+import io.anuke.ucore.graphics.Textures;
 
 public class HueBar extends BarActor {
 	

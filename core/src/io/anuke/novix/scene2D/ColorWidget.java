@@ -1,20 +1,25 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.novix.modules.Core;
-import io.anuke.utils.MiscUtils;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.ColorUtils;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTable;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.ucore.graphics.Hue;
+import io.anuke.utils.MiscUtils;
 
 public class ColorWidget extends VisTable{
 	public static final int palettewidth = 16;

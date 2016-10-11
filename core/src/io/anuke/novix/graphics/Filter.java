@@ -2,13 +2,14 @@ package io.anuke.novix.graphics;
 
 
 
-import io.anuke.gdxutils.graphics.Hue;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.math.Vector2;
 import com.kotcrab.vis.ui.util.ColorUtils;
+
+import io.anuke.ucore.graphics.Hue;
 
 public enum Filter{
 	flip{

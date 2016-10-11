@@ -1,9 +1,9 @@
 package io.anuke.novix;
 
-import io.anuke.gdxutils.modules.ModuleController;
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.modules.Input;
 import io.anuke.novix.modules.Tutorial;
+import io.anuke.ucore.modules.ModuleController;
 
 public class Novix extends ModuleController<Novix>{
 	

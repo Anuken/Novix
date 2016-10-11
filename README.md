@@ -1,4 +1,2 @@
-# PixelEditor
-Simplistic pixel art editor for Android.
-
-Note: name not final.
+#Novix
+A simple yet powerful pixel editor for Android.

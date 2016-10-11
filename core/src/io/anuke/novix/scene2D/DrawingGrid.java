@@ -1,17 +1,11 @@
 package io.anuke.novix.scene2D;
 
 import static io.anuke.novix.modules.Core.s;
-import io.anuke.gdxutils.graphics.ShapeUtils;
-import io.anuke.gdxutils.graphics.Textures;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.tools.PixelCanvas;
-import io.anuke.novix.tools.Tool;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.MiscUtils.GridChecker;
 
 import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
@@ -19,6 +13,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Tool;
+import io.anuke.ucore.UCore;
+import io.anuke.ucore.graphics.ShapeUtils;
+import io.anuke.ucore.graphics.Textures;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.MiscUtils.GridChecker;
 
 public class DrawingGrid extends Actor{
 	private Core core;
@@ -148,8 +151,8 @@ public class DrawingGrid extends Actor{
 				cursorx += deltax;
 				cursory += deltay;
 
-				cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
-				cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+				cursorx = UCore.clamp(cursorx, 0, getWidth() - 1);
+				cursory = UCore.clamp(cursory, 0, getHeight() - 1);
 
 			}else{
 				cursorx = x - getX();
@@ -241,8 +244,8 @@ public class DrawingGrid extends Actor{
 	public void setCursor(float x, float y){
 		cursorx = x;
 		cursory = y;
-		cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
-		cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+		cursorx = UCore.clamp(cursorx, 0, getWidth() - 1);
+		cursory = UCore.clamp(cursory, 0, getHeight() - 1);
 		int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
 		selected.set(newx, newy);
@@ -416,8 +419,8 @@ public class DrawingGrid extends Actor{
 		if(cursorx < -getX()) cursorx = -getX();
 		if(cursory < Gdx.graphics.getHeight() / 2 - Gdx.graphics.getWidth() / 2 - getY()) cursory = Gdx.graphics.getHeight() / 2 - Gdx.graphics.getWidth() / 2 - getY();
 		
-		cursorx = MiscUtils.clamp(cursorx, 0, getWidth() - 1);
-		cursory = MiscUtils.clamp(cursory, 0, getHeight() - 1);
+		cursorx = UCore.clamp(cursorx, 0, getWidth() - 1);
+		cursory = UCore.clamp(cursory, 0, getHeight() - 1);
 		
 		updateCursorSelection();
 

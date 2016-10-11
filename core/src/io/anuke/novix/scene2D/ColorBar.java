@@ -1,15 +1,15 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.gdxutils.graphics.Textures;
-import io.anuke.utils.MiscUtils;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.kotcrab.vis.ui.VisUI;
+
+import io.anuke.ucore.graphics.Hue;
+import io.anuke.ucore.graphics.Textures;
+import io.anuke.utils.MiscUtils;
 
 public class ColorBar extends BarActor{
 	protected Sprite sprite;

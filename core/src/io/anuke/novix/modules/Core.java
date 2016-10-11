@@ -1,23 +1,5 @@
 package io.anuke.novix.modules;
 
-import io.anuke.gdxutils.graphics.Hue;
-import io.anuke.gdxutils.graphics.ShapeUtils;
-import io.anuke.gdxutils.graphics.Textures;
-import io.anuke.gdxutils.modules.Module;
-import io.anuke.novix.Novix;
-import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.managers.PaletteManager;
-import io.anuke.novix.managers.PrefsManager;
-import io.anuke.novix.managers.ProjectManager;
-import io.anuke.novix.scene2D.*;
-import io.anuke.novix.tools.*;
-import io.anuke.novix.ui.DialogClasses.MenuDialog;
-import io.anuke.novix.ui.*;
-import io.anuke.novix.ui.ProjectMenu.ProjectTable;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.SceneUtils;
-import io.anuke.utils.android.AndroidKeyboard;
-
 import java.lang.reflect.Field;
 
 import com.badlogic.gdx.Gdx;
@@ -31,7 +13,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -41,8 +26,41 @@ import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.VisTextField;
+
+import io.anuke.novix.Novix;
+import io.anuke.novix.graphics.Palette;
+import io.anuke.novix.managers.PaletteManager;
+import io.anuke.novix.managers.PrefsManager;
+import io.anuke.novix.managers.ProjectManager;
+import io.anuke.novix.scene2D.CollapseButton;
+import io.anuke.novix.scene2D.ColorBar;
+import io.anuke.novix.scene2D.ColorBox;
+import io.anuke.novix.scene2D.ColorWidget;
+import io.anuke.novix.scene2D.DrawingGrid;
+import io.anuke.novix.scene2D.SmoothCollapsibleWidget;
+import io.anuke.novix.tools.DialogKeyboardMoveListener;
+import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Project;
+import io.anuke.novix.tools.Tool;
+import io.anuke.novix.ui.DialogClasses.MenuDialog;
+import io.anuke.novix.ui.PaletteMenu;
+import io.anuke.novix.ui.ProjectMenu;
+import io.anuke.novix.ui.ProjectMenu.ProjectTable;
+import io.anuke.novix.ui.SettingsMenu;
+import io.anuke.novix.ui.ToolMenu;
+import io.anuke.ucore.UCore;
+import io.anuke.ucore.graphics.ShapeUtils;
+import io.anuke.ucore.graphics.Textures;
+import io.anuke.ucore.modules.Module;
+import io.anuke.utils.MiscUtils;
+import io.anuke.utils.SceneUtils;
+import io.anuke.utils.android.AndroidKeyboard;
 
 public class Core extends Module<Novix>{
 	public static Core i;
@@ -72,7 +90,7 @@ public class Core extends Module<Novix>{
 
 	@Override
 	public void update(){
-		Hue.clearScreen(clearcolor);
+		UCore.clearScreen(clearcolor);
 		
 		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
 		tool.update(drawgrid);

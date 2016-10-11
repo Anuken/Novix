@@ -2,10 +2,11 @@ package io.anuke.novix.scene2D;
 
 
 
-import io.anuke.gdxutils.graphics.Textures;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import io.anuke.ucore.graphics.Textures;
 
 public class AlphaImage extends Actor{
 	private int imageWidth, imageHeight;
