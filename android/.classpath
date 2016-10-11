@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="FROM_GRADLE_MODEL" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="gen">
 		<attributes>
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/uCore"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/uCore-Tools"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/uCore"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/uCore-Tools"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="/uCore-Tools/lib/gwt-geom.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
