@@ -1,11 +1,6 @@
 package io.anuke.novix.ui;
 
 import static io.anuke.novix.modules.Core.s;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
-import io.anuke.novix.tools.PixelCanvas;
-import io.anuke.novix.ui.DialogClasses.*;
-import io.anuke.utils.SceneUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -20,8 +15,35 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.Separator;
+import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisSlider;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.scene2D.ColorBar;
+import io.anuke.novix.scene2D.FileChooser;
+import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.ui.DialogClasses.BaseDialog;
+import io.anuke.novix.ui.DialogClasses.ClearDialog;
+import io.anuke.novix.ui.DialogClasses.ColorAlphaDialog;
+import io.anuke.novix.ui.DialogClasses.ColorizeDialog;
+import io.anuke.novix.ui.DialogClasses.ContrastDialog;
+import io.anuke.novix.ui.DialogClasses.CropDialog;
+import io.anuke.novix.ui.DialogClasses.ExportScaledDialog;
+import io.anuke.novix.ui.DialogClasses.FlipDialog;
+import io.anuke.novix.ui.DialogClasses.InvertDialog;
+import io.anuke.novix.ui.DialogClasses.OutlineDialog;
+import io.anuke.novix.ui.DialogClasses.ReplaceDialog;
+import io.anuke.novix.ui.DialogClasses.RotateDialog;
+import io.anuke.novix.ui.DialogClasses.ScaleDialog;
+import io.anuke.novix.ui.DialogClasses.ShiftDialog;
+import io.anuke.novix.ui.DialogClasses.SizeDialog;
+import io.anuke.novix.ui.DialogClasses.SymmetryDialog;
+import io.anuke.utils.SceneUtils;
 
 public class ToolMenu extends VisTable{
 	private Core main;
@@ -34,7 +56,7 @@ public class ToolMenu extends VisTable{
 	
 	public ToolMenu(Core main){
 		this.main = main;
-		setBackground("button-window-bg");
+		setBackground("window-border");
 		
 		menutable = new VisTable();
 		optionstable = new VisTable();
@@ -125,8 +147,6 @@ public class ToolMenu extends VisTable{
 	private static class ButtonMenu extends BaseDialog{
 		public ButtonMenu(String name){
 			super(name);
-			addTitleSeperator();
-			padTop(getPadTop()+7*s);
 		}
 	}
 	

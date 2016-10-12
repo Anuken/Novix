@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -27,8 +28,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisImage;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisTextField;
@@ -64,7 +67,7 @@ import io.anuke.utils.android.AndroidKeyboard;
 
 public class Core extends Module<Novix>{
 	public static Core i;
-	public static float s = 1f; //density scale
+	public static float s = 1f; // density scale
 	public final int largeImageSize = 100 * 100;
 	public final Color clearcolor = Color.valueOf("12161b");
 	public final String selectcolor = "7aaceaff";
@@ -91,14 +94,17 @@ public class Core extends Module<Novix>{
 	@Override
 	public void update(){
 		UCore.clearScreen(clearcolor);
-		
-		if(FocusManager.getFocusedWidget() != null && ( !(FocusManager.getFocusedWidget() instanceof VisTextField))) FocusManager.resetFocus(stage);
+
+		if(FocusManager.getFocusedWidget() != null && (!(FocusManager.getFocusedWidget() instanceof VisTextField)))
+			FocusManager.resetFocus(stage);
 		tool.update(drawgrid);
 		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
-		//pc debugging
-		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null || stage.getKeyboardFocus() instanceof VisDialog) stage.setKeyboardFocus(drawgrid);
+		// pc debugging
+		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null
+				|| stage.getKeyboardFocus() instanceof VisDialog)
+			stage.setKeyboardFocus(drawgrid);
 	}
 
 	void setupExtraMenus(){
@@ -138,45 +144,52 @@ public class Core extends Module<Novix>{
 
 		toolcollapsebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				toolcollapser.setCollapsed( !toolcollapser.isCollapsed());
+				toolcollapser.setCollapsed(!toolcollapser.isCollapsed());
 				toolcollapsebutton.flip();
 
-				if( !colorcollapser.isCollapsed() && event != null){
-					((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, x, y);
+				if(!colorcollapser.isCollapsed() && event != null){
+					((ClickListener) colorcollapsebutton.getListeners().get(2)).clicked(null, x, y);
 				}
 			}
 		});
 
 		tooltable.bottom().left().add(toolcollapser).height(20 * s).colspan(Tool.values().length).fillX().expandX();
 		tooltable.row();
-		tooltable.bottom().left().add(toolcollapsebutton).height(60 * s).colspan(Tool.values().length).fillX().expandX();
+		tooltable.bottom().left().add(toolcollapsebutton).height(60 * s).colspan(Tool.values().length).fillX()
+				.expandX();
 		tooltable.row();
 
 		Tool[] tools = Tool.values();
 
-		for(int i = 0;i < tools.length;i ++){
+		for(int i = 0; i < tools.length; i++){
 			final Tool ctool = tools[i];
 
-			final VisImageButton button = new VisImageButton((Drawable)null);
+			final VisImageButton button = new VisImageButton((Drawable) null);
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
-			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); //whatever icon is needed
+			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); // whatever
+																								// icon
+																								// is
+																								// needed
 			button.setGenerateDisabledImage(true);
 			button.getImageCell().size(50 * s);
 			ctool.button = button;
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					ctool.onSelected();
-					if( !ctool.selectable()){
+					if(!ctool.selectable()){
 						button.setChecked(false);
 						return;
 					}
 					tool = ctool;
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
-					if( !button.isChecked()) button.setChecked(true);
+					if(!button.isChecked())
+						button.setChecked(true);
 					for(Actor actor : tooltable.getChildren()){
-						if( !(actor instanceof VisImageButton)) continue;
-						VisImageButton other = (VisImageButton)actor;
-						if(other != button) other.setChecked(false);
+						if(!(actor instanceof VisImageButton))
+							continue;
+						VisImageButton other = (VisImageButton) actor;
+						if(other != button)
+							other.setChecked(false);
 					}
 
 				}
@@ -189,7 +202,7 @@ public class Core extends Module<Novix>{
 
 			tooltable.bottom().left().add(button).size(size + 1f);
 		}
-		
+
 		tooltable.pack();
 	}
 
@@ -202,13 +215,14 @@ public class Core extends Module<Novix>{
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
-			
-			//public float getPrefHeight(){
-			//	return Gdx.graphics.getHeight() - toolcollapsebutton.getTop() - colorcollapsebutton.getHeight();
-			//}
+
+			// public float getPrefHeight(){
+			// return Gdx.graphics.getHeight() - toolcollapsebutton.getTop() -
+			// colorcollapsebutton.getHeight();
+			// }
 		};
 
-		pickertable.background("button-window-bg");
+		pickertable.background("window-border");
 
 		picker = new ColorWidget(){
 			public void onColorChanged(){
@@ -226,15 +240,15 @@ public class Core extends Module<Novix>{
 
 		colorcollapsebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				if( !colorcollapser.isCollapsed()){
+				if(!colorcollapser.isCollapsed()){
 					picker.setSelectedColor(picker.getSelectedColor());
 					tool.onColorChange(selectedColor(), drawgrid.canvas);
 				}
-				colorcollapser.setCollapsed( !colorcollapser.isCollapsed());
+				colorcollapser.setCollapsed(!colorcollapser.isCollapsed());
 				colorcollapsebutton.flip();
 
-				if( !toolcollapser.isCollapsed() && event != null){
-					((ClickListener)toolcollapsebutton.getListeners().get(2)).clicked(null, x, y);
+				if(!toolcollapser.isCollapsed() && event != null){
+					((ClickListener) toolcollapsebutton.getListeners().get(2)).clicked(null, x, y);
 				}
 			}
 		});
@@ -250,21 +264,22 @@ public class Core extends Module<Novix>{
 				openPaletteMenu();
 			}
 		});
-		pickertable.add().grow().row();;
+		pickertable.add().grow().row();
+		;
 		picker.pack();
 		Cell<?> cell = pickertable.add(picker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
 		pickertable.row();
 		pickertable.center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		colorcollapser.setY(toolcollapsebutton.getTop()); 
+		colorcollapser.setY(toolcollapsebutton.getTop());
 		colorcollapser.toBack();
 		colorcollapser.resetY();
 		Vector2 pos = picker.localToStageCoordinates(new Vector2());
-		float tpad = (Gdx.graphics.getHeight() - (pos.y +picker.getPrefHeight() + 90*s) - colorcollapsebutton.getPrefHeight() -  65*s)/2;
-		
-		
+		float tpad = (Gdx.graphics.getHeight() - (pos.y + picker.getPrefHeight() + 90 * s)
+				- colorcollapsebutton.getPrefHeight() - 65 * s) / 2;
+
 		cell.padTop(Gdx.graphics.getHeight() - (pos.y + picker.getPrefHeight()) - colorcollapsebutton.getPrefHeight());
-		cell.padBottom(tpad/2);
-		picker.getPadCell().padTop(tpad/2);
+		cell.padBottom(tpad / 2);
+		picker.getPadCell().padTop(tpad / 2);
 		picker.invalidateHierarchy();
 		pickertable.pack();
 		colorcollapser.setCollapsed(true, false);
@@ -284,12 +299,12 @@ public class Core extends Module<Novix>{
 	public void updateColorMenu(){
 		colortable.clear();
 
-		int maxcolorsize = (int)(65 * s);
-		int mincolorsize = (int)(30 * s);
+		int maxcolorsize = (int) (65 * s);
+		int mincolorsize = (int) (30 * s);
 
 		int colorsize = Gdx.graphics.getWidth() / getCurrentPalette().size() - MiscUtils.densityScale(3);
 
-		int perow = 0; //colors per row
+		int perow = 0; // colors per row
 
 		colorsize = Math.min(maxcolorsize, colorsize);
 
@@ -298,7 +313,8 @@ public class Core extends Module<Novix>{
 			perow = Gdx.graphics.getWidth() / colorsize;
 		}
 
-		colortable.add(colorcollapsebutton).expandX().fillX().colspan((perow == 0 ? getCurrentPalette().size() : perow) + 2).height(50f * s);
+		colortable.add(colorcollapsebutton).expandX().fillX()
+				.colspan((perow == 0 ? getCurrentPalette().size() : perow) + 2).height(50f * s);
 		colorcollapsebutton.setZIndex(colorcollapser.getZIndex() + 10);
 
 		colortable.row();
@@ -307,7 +323,7 @@ public class Core extends Module<Novix>{
 
 		boxes = new ColorBox[getCurrentPalette().size()];
 
-		for(int i = 0;i < getCurrentPalette().size();i ++){
+		for(int i = 0; i < getCurrentPalette().size(); i++){
 			final int index = i;
 			final ColorBox box = new ColorBox();
 
@@ -335,7 +351,8 @@ public class Core extends Module<Novix>{
 			}
 		}
 
-		if(perow == 0) colortable.add().growX();
+		if(perow == 0)
+			colortable.add().growX();
 	}
 
 	void setupBoxColors(){
@@ -343,7 +360,8 @@ public class Core extends Module<Novix>{
 		for(ColorBox box : boxes)
 			box.getColor().a = 1f;
 
-		if(paletteColor > boxes.length) paletteColor = 0;
+		if(paletteColor > boxes.length)
+			paletteColor = 0;
 
 		picker.setRecentColors(boxes);
 		boxes[paletteColor].selected = true;
@@ -367,17 +385,30 @@ public class Core extends Module<Novix>{
 	}
 
 	void checkTutorial(){
-		if(!prefs.getBoolean("tutorial")){
-			new MenuDialog("Tutorial"){
-				{
-					getContentTable().add("Would you like to take the tutorial?").pad(20 * s);
-				}
+		// if(!prefs.getBoolean("tutorial")){
+		new MenuDialog("Tutorial"){
+			{
+				VisLabel header = new VisLabel("Welcome to Novix!");
+				LabelStyle style = new LabelStyle(header.getStyle());
+				style.font = VisUI.getSkin().getFont("large-font");
+				style.fontColor = Color.CORAL;
+				header.setStyle(style);
 
-				public void result(){
-					getModule(Tutorial.class).begin();
-				}
-			}.show(stage);
-		}
+				getContentTable().add(header).pad(20 * s).row();
+				
+				VisImage image = new VisImage("icon");
+
+				getContentTable().add(image).size(image.getPrefWidth()*s, image.getPrefHeight()*s).row();
+
+				getContentTable().add("Would you like to take the tutorial?").pad(20 * s);
+				//setFillParent(true);
+			}
+
+			public void result(){
+				getModule(Tutorial.class).begin();
+			}
+		}.show(stage);
+		// }
 		prefs.put("tutorial", true);
 	}
 
@@ -422,7 +453,8 @@ public class Core extends Module<Novix>{
 	}
 
 	public void updateToolColor(){
-		if(tool != null && drawgrid != null) tool.onColorChange(selectedColor(), drawgrid.canvas);
+		if(tool != null && drawgrid != null)
+			tool.onColorChange(selectedColor(), drawgrid.canvas);
 	}
 
 	public Project getCurrentProject(){
@@ -442,14 +474,16 @@ public class Core extends Module<Novix>{
 	}
 
 	public void collapseToolMenu(){
-		if( !colorcollapser.isCollapsed() && toolcollapser.isCollapsed()) collapseColorMenu();
+		if(!colorcollapser.isCollapsed() && toolcollapser.isCollapsed())
+			collapseColorMenu();
 
-		((ClickListener)toolcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
+		((ClickListener) toolcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
 	}
 
 	public void collapseColorMenu(){
-		if(colorcollapser.isCollapsed() && !toolcollapser.isCollapsed()) collapseToolMenu();
-		((ClickListener)colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
+		if(colorcollapser.isCollapsed() && !toolcollapser.isCollapsed())
+			collapseToolMenu();
+		((ClickListener) colorcollapsebutton.getListeners().get(2)).clicked(null, 0, 0);
 	}
 
 	public boolean menuOpen(){
@@ -464,16 +498,16 @@ public class Core extends Module<Novix>{
 		if(stage.getScrollFocus() != null){
 			Actor actor = SceneUtils.getTopParent(Core.i.stage.getScrollFocus());
 			if(actor instanceof VisDialog){
-				return (VisDialog)actor;
+				return (VisDialog) actor;
 			}
 		}
 		return null;
 	}
-	
-	
+
 	public void checkGridResize(){
-		((VisImageButton)stage.getRoot().findActor("gridbutton")).setProgrammaticChangeEvents(true);
-		if(drawgrid.canvas.width()*drawgrid.canvas.height() >= 100*100) ((VisImageButton)stage.getRoot().findActor("gridbutton")).setChecked(false);
+		((VisImageButton) stage.getRoot().findActor("gridbutton")).setProgrammaticChangeEvents(true);
+		if(drawgrid.canvas.width() * drawgrid.canvas.height() >= 100 * 100)
+			((VisImageButton) stage.getRoot().findActor("gridbutton")).setChecked(false);
 	}
 
 	public void loadFonts(){
@@ -492,18 +526,18 @@ public class Core extends Module<Novix>{
 			}
 			skin.addRegions(atlas);
 		}
-		//Color shadowcolor = new Color(0, 0, 0, 0.6f);
+		// Color shadowcolor = new Color(0, 0, 0, 0.6f);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
 
 		FreeTypeFontParameter normalparameter = new FreeTypeFontParameter();
-		normalparameter.size = (int)(22 * s);
+		normalparameter.size = (int) (22 * s);
 
 		FreeTypeFontParameter largeparameter = new FreeTypeFontParameter();
-		largeparameter.size = (int)(26 * s);
+		largeparameter.size = (int) (26 * s);
 
 		FreeTypeFontParameter borderparameter = new FreeTypeFontParameter();
-		borderparameter.size = (int)(26 * s);
-		borderparameter.borderWidth = 2*s;
+		borderparameter.size = (int) (26 * s);
+		borderparameter.borderWidth = 2 * s;
 		borderparameter.borderColor = clearcolor;
 		borderparameter.spaceX = -2;
 
@@ -529,12 +563,12 @@ public class Core extends Module<Novix>{
 		generator.dispose();
 	}
 
-	public Core(){
+	public Core() {
 		Gdx.graphics.setContinuousRendering(false);
 
 		i = this;
 		s = MiscUtils.densityScale();
-		
+
 		projectDirectory.mkdirs();
 		prefs = new PrefsManager(this);
 
@@ -563,7 +597,7 @@ public class Core extends Module<Novix>{
 
 		toolmenu.initialize();
 
-		//autosave
+		// autosave
 		Timer.schedule(new Task(){
 			@Override
 			public void run(){
@@ -584,10 +618,14 @@ public class Core extends Module<Novix>{
 			}
 		}, 0.1f);
 
-		//TextureUnpacker packer = new TextureUnpacker();
+		// TextureUnpacker packer = new TextureUnpacker();
 
-		//TextureAtlasData data = new TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"), Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"), false);
-		//packer.splitAtlas(data, Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
+		// TextureAtlasData data = new
+		// TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"),
+		// Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"),
+		// false);
+		// packer.splitAtlas(data,
+		// Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
 
 	}
 
@@ -606,7 +644,7 @@ public class Core extends Module<Novix>{
 
 	@Override
 	public void dispose(){
-		/*if(Gdx.app.getType() == ApplicationType.Android)*/pause();
+		/* if(Gdx.app.getType() == ApplicationType.Android) */pause();
 		VisUI.dispose();
 		Textures.dispose();
 	}
