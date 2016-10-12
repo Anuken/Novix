@@ -1480,7 +1480,9 @@ public class DialogClasses{
 		public Cell<Separator> addTitleSeperator(){
 			getTitleTable().row();
 			getTitleTable().getCells().first().padBottom(3*s);
-			return getTitleTable().add(new Separator()).expandX().fillX().padTop(3 * s).padBottom(3*s);
+			Cell<Separator> cell = getTitleTable().add(new Separator()).expandX().fillX().height(s*4).padTop(3 * s).colspan(2).padBottom(3*s);
+			cell.padBottom(10*s);
+			return cell;
 		}
 		
 		@Override
@@ -1510,7 +1512,10 @@ public class DialogClasses{
 			
 			padTop(52*s);
 			if(!MathUtils.isEqual(s, 1f)) padRight(getPadRight()+1);
+			
+			
 			pack();
+			//addTitleSeperator();
 			
 		}
 

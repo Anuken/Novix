@@ -1,13 +1,13 @@
 package io.anuke.novix.managers;
 
-import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.modules.Core;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
+
+import io.anuke.novix.graphics.Palette;
+import io.anuke.novix.modules.Core;
 
 public class PaletteManager{
 	private Core main;
@@ -66,7 +66,7 @@ public class PaletteManager{
 		}
 
 		if(currentPalette == null){
-			currentPalette = new Palette("Untitled", generatePaletteID(), 8);
+			currentPalette = new Palette("Untitled", generatePaletteID(), 8, true);
 			palettes.put(currentPalette.id, currentPalette);
 			main.prefs.put("lastpalette", currentPalette.id);
 		}

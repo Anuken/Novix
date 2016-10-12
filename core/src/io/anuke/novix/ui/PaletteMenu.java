@@ -1,27 +1,39 @@
 package io.anuke.novix.ui;
 
 import static io.anuke.novix.modules.Core.s;
-import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
-import io.anuke.novix.ui.DialogClasses.BaseDialog;
-import io.anuke.utils.SceneUtils;
-import io.anuke.utils.SceneUtils.TextFieldEmptyListener;
 
 import java.util.Arrays;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.PopupMenu;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
+import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.VisTextField;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
+
+import io.anuke.novix.graphics.Palette;
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.scene2D.PaletteWidget;
+import io.anuke.novix.scene2D.TallMenuItem;
+import io.anuke.novix.ui.DialogClasses.BaseDialog;
+import io.anuke.utils.SceneUtils;
+import io.anuke.utils.SceneUtils.TextFieldEmptyListener;
 
 public class PaletteMenu extends BaseDialog{
 	private Core main;
@@ -33,6 +45,7 @@ public class PaletteMenu extends BaseDialog{
 		setMovable(false);
 		addCloseButton();
 		setStage(main.stage);
+		
 	}
 
 	public void update(){
@@ -117,8 +130,9 @@ public class PaletteMenu extends BaseDialog{
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					//delay action to make sure the isOver() check works properly
-
-					if( !widget.extrabutton.isPressed()){
+					
+					
+					if( !widget.extrabutton.isPressed() && currentWidget != widget){
 
 						currentWidget.setSelected(false);
 						currentWidget = widget;
@@ -150,15 +164,21 @@ public class PaletteMenu extends BaseDialog{
 			public void clicked(InputEvent event, float x, float y){
 				new DialogClasses.InputDialog("New Palette", "", "Name:"){
 					protected VisTextField numberfield;
+					protected VisCheckBox box;
 
 					{
 						numberfield = new VisTextField("8");
 						numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-
+						box = new VisCheckBox("Auto-Generate", main.prefs.getBoolean("genpalettes", true));
+						box.getImageStackCell().size(40*s);
+						
+						getContentTable().center();
 						getContentTable().row();
 
-						getContentTable().center().add(new VisLabel("Size:")).padTop(0f).padBottom(20f * s);
-						getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).padTop(0).size(160*s, 40*s);
+						getContentTable().add(new VisLabel("Size:")).padTop(0f).padBottom(20f * s);
+						getContentTable().add(numberfield).pad(20 * s).padBottom(20*s).padLeft(0f).padTop(0).size(160*s, 40*s).row();
+						
+						getContentTable().add(box).colspan(2).padBottom(25*s);
 
 						new TextFieldEmptyListener(ok, textfield, numberfield);
 					}
@@ -168,8 +188,9 @@ public class PaletteMenu extends BaseDialog{
 							DialogClasses.showInfo(getStage(), "A palette may not have\nmore than 32 colors.");
 							return;
 						}
-						main.palettemanager.addPalette(new Palette(string, main.palettemanager.generatePaletteID(), Integer.parseInt(numberfield.getText())));
+						main.palettemanager.addPalette(new Palette(string, main.palettemanager.generatePaletteID(), Integer.parseInt(numberfield.getText()), box.isChecked()));
 						update();
+						main.prefs.put("genpalettes", box.isChecked());
 					}
 
 				}.show(getStage());

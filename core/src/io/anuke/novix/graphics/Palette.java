@@ -9,14 +9,18 @@ public class Palette implements Comparable<Palette>{
 	public Color[] colors;
 	public String name, id;
 	
-	public Palette(String name, String id, int size){
+	public Palette(String name, String id, int size, boolean auto){
 		this.name = name;
 		this.id = id;
 		colors = new Color[size];
 		time = TimeUtils.millis();
-		genColors();
-		//for(int i = 0; i < size; i ++)
-		//	colors[i] = Color.WHITE.cpy();
+		if(auto){
+			genColors();
+		}else{
+			for(int i = 0; i < size; i ++)
+				colors[i] = Color.BLACK.cpy();
+		}
+		//
 	}
 	
 	public Palette(){}

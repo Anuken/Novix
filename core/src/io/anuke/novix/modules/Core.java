@@ -385,30 +385,33 @@ public class Core extends Module<Novix>{
 	}
 
 	void checkTutorial(){
-		// if(!prefs.getBoolean("tutorial")){
-		new MenuDialog("Tutorial"){
-			{
-				VisLabel header = new VisLabel("Welcome to Novix!");
-				LabelStyle style = new LabelStyle(header.getStyle());
-				style.font = VisUI.getSkin().getFont("large-font");
-				style.fontColor = Color.CORAL;
-				header.setStyle(style);
+		if(!prefs.getBoolean("tutorial")){
+			MenuDialog dialog = new MenuDialog("Tutorial"){
+				{
+					VisLabel header = new VisLabel("Welcome to Novix!");
+					LabelStyle style = new LabelStyle(header.getStyle());
+					style.font = VisUI.getSkin().getFont("large-font");
+					style.fontColor = Color.CORAL;
+					header.setStyle(style);
 
-				getContentTable().add(header).pad(20 * s).row();
-				
-				VisImage image = new VisImage("icon");
+					getContentTable().add(header).pad(20 * s).row();
 
-				getContentTable().add(image).size(image.getPrefWidth()*s, image.getPrefHeight()*s).row();
+					VisImage image = new VisImage("icon");
 
-				getContentTable().add("Would you like to take the tutorial?").pad(20 * s);
-				//setFillParent(true);
-			}
+					getContentTable().add(image).size(image.getPrefWidth() * s, image.getPrefHeight() * s).row();
 
-			public void result(){
-				getModule(Tutorial.class).begin();
-			}
-		}.show(stage);
-		// }
+					getContentTable().add("Would you like to take the tutorial?").pad(20 * s);
+					// setFillParent(true);
+				}
+
+				public void result(){
+					getModule(Tutorial.class).begin();
+				}
+			};
+			dialog.addTitleSeperator();
+			dialog.padTop(dialog.getPadTop() + 17 * s);
+			dialog.show(stage);
+		}
 		prefs.put("tutorial", true);
 	}
 
@@ -453,8 +456,10 @@ public class Core extends Module<Novix>{
 	}
 
 	public void updateToolColor(){
-		if(tool != null && drawgrid != null)
+		if(tool != null && drawgrid != null){
 			tool.onColorChange(selectedColor(), drawgrid.canvas);
+			drawgrid.canvas.setAlpha(toolmenu.getBarAlphaValue());
+		}
 	}
 
 	public Project getCurrentProject(){

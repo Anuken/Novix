@@ -147,6 +147,7 @@ public class ToolMenu extends VisTable{
 	private static class ButtonMenu extends BaseDialog{
 		public ButtonMenu(String name){
 			super(name);
+			addTitleSeperator();
 		}
 	}
 	
@@ -396,6 +397,10 @@ public class ToolMenu extends VisTable{
 		othertable.row();
 		othertable.add(brushslider).growY().padTop(20*s).padBottom(20*s).padRight(15*s);
 		othertable.add(alphabar).padTop(20*s).padBottom(20*s);
+	}
+	
+	public float getBarAlphaValue(){
+		return alphabar.selection;
 	}
 
 	
