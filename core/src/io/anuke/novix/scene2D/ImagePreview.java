@@ -1,12 +1,12 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.novix.modules.Core;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+
+import io.anuke.novix.modules.Core;
 
 public class ImagePreview extends Group{
 	protected Stack stack;
@@ -17,7 +17,7 @@ public class ImagePreview extends Group{
 		
 		image = new PixmapImage(pixmap);
 		
-		int scale = 16;
+		int scale = pixmap.getWidth();
 		float ratio = 1f/((float)pixmap.getWidth() / pixmap.getHeight());
 		AlphaImage alpha = new AlphaImage(scale, (int)(scale*ratio));
 		GridImage grid = new GridImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());

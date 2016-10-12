@@ -677,13 +677,13 @@ public class DialogClasses{
 	}
 
 	public static class OpenProjectFileDialog extends MenuDialog{
-		VisTextField field;
+		VisTextField namefield;
 		VisTextField directory;
 
 		public OpenProjectFileDialog(){
 			super("Open Project File");
 
-			field = new VisTextField("");
+			namefield = new VisTextField("");
 
 			VisTextButton button = new VisTextButton("...");
 
@@ -705,14 +705,14 @@ public class DialogClasses{
 			ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty());
+					ok.setDisabled(directory.getText().isEmpty() || namefield.getText().isEmpty());
 				}
 			};
 
-			field.addListener(oklistener);
+			namefield.addListener(oklistener);
 			directory.addListener(oklistener);
 
-			field.fire(new ChangeListener.ChangeEvent());
+			namefield.fire(new ChangeListener.ChangeEvent());
 			directory.fire(new ChangeListener.ChangeEvent());
 
 			float sidepad = 20 * s;
@@ -726,7 +726,7 @@ public class DialogClasses{
 			getContentTable().row();
 
 			getContentTable().add(new VisLabel("Name:")).padTop(15 * s).padBottom(30 * s).padLeft(sidepad);
-			getContentTable().add(field).grow().height(height).padTop(15 * s).padBottom(30 * s).colspan(2).padRight(sidepad);
+			getContentTable().add(namefield).grow().height(height).padTop(15 * s).padBottom(30 * s).colspan(2).padRight(sidepad);
 		}
 
 		public void result(){
@@ -734,7 +734,7 @@ public class DialogClasses{
 			FileHandle file = Gdx.files.absolute(directory.getText());
 			FileHandle to = Core.i.projectmanager.getFile(id);
 			file.copyTo(to);
-			Project project = Core.i.projectmanager.loadProject(file.nameWithoutExtension(), id);
+			Project project = Core.i.projectmanager.loadProject(namefield.getText(), id);
 			Core.i.projectmanager.openProject(project);
 			//exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}

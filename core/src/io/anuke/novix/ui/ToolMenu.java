@@ -262,7 +262,7 @@ public class ToolMenu extends VisTable{
 				new ExportScaledDialog().show(stage);
 			}
 		},
-		new MenuButton("Open", "Open an image file."){
+		new MenuButton("Open", "Load an image file\ninto this project."){
 			public void clicked(){
 				new FileChooser(FileChooser.jpegFilter, true){
 					public void fileSelected(FileHandle file){

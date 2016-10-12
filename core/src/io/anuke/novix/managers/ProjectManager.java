@@ -1,12 +1,5 @@
 package io.anuke.novix.managers;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.tools.PixelCanvas;
-import io.anuke.novix.tools.Project;
-import io.anuke.novix.ui.DialogClasses;
-import io.anuke.novix.ui.DialogClasses.InfoDialog;
-import io.anuke.novix.ui.DialogClasses.NamedSizeDialog;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -18,6 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Project;
+import io.anuke.novix.ui.DialogClasses;
+import io.anuke.novix.ui.DialogClasses.InfoDialog;
+import io.anuke.novix.ui.DialogClasses.NamedSizeDialog;
 
 public class ProjectManager{
 	private ObjectMap<Long, Project> projects = new ObjectMap<Long, Project>();
@@ -98,7 +98,7 @@ public class ProjectManager{
 
 	public void copyProject(final Project project){
 
-		new DialogClasses.InputDialog("Rename Copied Dialog", project.name, "New Copy Name: "){
+		new DialogClasses.InputDialog("Copy Project", project.name, "Copy Name: "){
 			public void result(String text){
 				//if(validateProjectName(text)) return;
 
