@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -198,15 +197,51 @@ public class DialogClasses{
 
 			addSliderChangeListener(slider);
 
-			getContentTable().add(label).align(Align.left).padTop(15f * s).row();
-			getContentTable().add(slider).expand().fill().padBottom(30 * s);
-
+			getContentTable().add(label).expand().align(Align.bottomLeft).row();
+			getContentTable().add(slider).expand().growX().align(Align.top).padTop(15*s).padBottom(30 * s);
+			
+			//setDebug(true, true);
 			updatePreview();
 		}
 
 		@Override
 		Object[] getArgs(){
 			return new Object[]{slider.getValue() / 50f};
+		}
+	}
+	
+	public static class ColorChooseDialog extends BaseDialog{
+		final ColorWidget picker = new ColorWidget(false){
+			public void onColorChanged(){
+				colorChanged();
+			}
+		};
+		
+		public ColorChooseDialog(final FilterDialog filter){
+			super("Choose Color");
+			picker.setRecentColors(Core.i.picker.getRecentColors());
+			addCloseButton();
+			getContentTable().add(picker).expand().fill();
+
+			VisTextButton button = new VisTextButton("OK");
+
+			button.addListener(new ClickListener(){
+				@Override
+				public void clicked(InputEvent event, float x, float y){
+					filter.updatePreview();
+				}
+			});
+
+			getButtonsTable().add(button).size(320 * s, 70 * s).pad(5f * s);
+			setObject(button, true);
+		}
+		
+		public float getPrefWidth(){
+			return Math.min(Gdx.graphics.getWidth(), super.getPrefWidth());
+		}
+		
+		public void colorChanged(){
+			
 		}
 	}
 
@@ -219,41 +254,16 @@ public class DialogClasses{
 			from = new ColorBox(Core.i.selectedColor());
 			to = new ColorBox();
 
-			final ColorWidget picker = new ColorWidget(false){
-				public void onColorChanged(){
-					selected.setColor(getSelectedColor());
+			final ColorChooseDialog dialog = new ColorChooseDialog(this){
+				public void colorChanged(){
+					selected.setColor(picker.getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Core.i.picker.getRecentColors());
-
-			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
-			dialog.getContentTable().add(picker).expand().fill();
-
-			VisTextButton button = new VisTextButton("OK");
-
-			button.addListener(new ClickListener(){
-				@Override
-				public void clicked(InputEvent event, float x, float y){
-					updatePreview();
-				}
-			});
-
-			dialog.getButtonsTable().add(button).size(320 * s, 70 * s).pad(5f * s);
-			dialog.setObject(button, true);
-
-			VisImageButton closeButton = new VisImageButton("close-window");
-			dialog.getTitleTable().add(closeButton).padRight( -getPadRight() + 0.7f);
-			closeButton.addListener(new ChangeListener(){
-				@Override
-				public void changed(ChangeEvent event, Actor actor){
-					dialog.hide();
-				}
-			});
 
 			ClickListener listener = new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
-					picker.setSelectedColor(event.getTarget().getColor());
+					dialog.picker.setSelectedColor(event.getTarget().getColor());
 					dialog.show(Core.i.stage);
 				}
 			};
@@ -316,46 +326,20 @@ public class DialogClasses{
 		}
 
 		private void setup(String colorname){
-
 			selected = new ColorBox(Core.i.selectedColor());
 
 			selected.addSelectListener();
 
-			final ColorWidget picker = new ColorWidget(false){
-				public void onColorChanged(){
-					selected.setColor(getSelectedColor());
+			final ColorChooseDialog dialog = new ColorChooseDialog(this){
+				public void colorChanged(){
+					selected.setColor(picker.getSelectedColor());
 				}
 			};
-			picker.setRecentColors(Core.i.picker.getRecentColors());
-
-			final VisDialog dialog = new VisDialog("Choose Color", "dialog");
-			dialog.getContentTable().add(picker).expand().fill();
-
-			VisTextButton button = new VisTextButton("OK");
-
-			button.addListener(new ClickListener(){
-				@Override
-				public void clicked(InputEvent event, float x, float y){
-					updatePreview();
-				}
-			});
-
-			dialog.getButtonsTable().add(button).size(320 * s, 70 * s).pad(5f * s);
-			dialog.setObject(button, true);
-
-			VisImageButton closeButton = new VisImageButton("close-window");
-			dialog.getTitleTable().add(closeButton).padRight( -getPadRight() + 0.7f);
-			closeButton.addListener(new ChangeListener(){
-				@Override
-				public void changed(ChangeEvent event, Actor actor){
-					dialog.hide();
-				}
-			});
-
+			
 			ClickListener listener = new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
-					picker.setSelectedColor(event.getTarget().getColor());
+					dialog.picker.setSelectedColor(event.getTarget().getColor());
 					dialog.show(Core.i.stage);
 				}
 			};
@@ -364,11 +348,11 @@ public class DialogClasses{
 
 			Table table = new VisTable();
 
-			getContentTable().add(new VisLabel(colorname)).padTop(15f * s).row();
+			getContentTable().add(colorname).padTop(15f * s).row();
 
 			getContentTable().add(table).expand().fill();
 
-			table.add(selected).size(70 * s).pad(5 * s);
+			table.top().add(selected).size(70 * s).pad(5 * s);
 
 			updatePreview();
 		}
@@ -1482,6 +1466,7 @@ public class DialogClasses{
 			getTitleTable().getCells().first().padBottom(3*s);
 			Cell<Separator> cell = getTitleTable().add(new Separator()).expandX().fillX().height(s*4).padTop(3 * s).colspan(2).padBottom(3*s);
 			cell.padBottom(10*s);
+			padTop(getPadTop() + 17 * s);
 			return cell;
 		}
 		
@@ -1492,7 +1477,7 @@ public class DialogClasses{
 
 			VisImageButton closeButton = new VisImageButton("close-window");
 			closeButton.getImageCell().size(40*s);
-			titleTable.add(closeButton).padRight(-getPadRight() + 0.7f).size(50*s);
+			titleTable.add(closeButton).padRight(-getPadRight()).size(50*s);
 			closeButton.addListener(new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
@@ -1511,7 +1496,7 @@ public class DialogClasses{
 				titleTable.getCell(titleLabel).padLeft(closeButton.getWidth() * 2);
 			
 			padTop(52*s);
-			if(!MathUtils.isEqual(s, 1f)) padRight(getPadRight()+1);
+			padRight(getPadRight()+1);
 			
 			
 			pack();

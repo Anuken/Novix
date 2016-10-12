@@ -409,7 +409,7 @@ public class Core extends Module<Novix>{
 				}
 			};
 			dialog.addTitleSeperator();
-			dialog.padTop(dialog.getPadTop() + 17 * s);
+		
 			dialog.show(stage);
 		}
 		prefs.put("tutorial", true);
