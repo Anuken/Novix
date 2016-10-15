@@ -847,7 +847,7 @@ public class DialogClasses{
 
 				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, xscale, yscale));
 
-				Core.i.drawgrid.setCanvas(canvas);
+				Core.i.drawgrid.setCanvas(canvas, true);
 				Core.i.checkGridResize();
 				Core.i.updateToolColor();
 			}catch(Exception e){
@@ -1050,7 +1050,7 @@ public class DialogClasses{
 
 			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(Core.i.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
 
-			Core.i.drawgrid.setCanvas(canvas);
+			Core.i.drawgrid.setCanvas(canvas, true);
 			Core.i.updateToolColor();
 		}
 
@@ -1570,7 +1570,7 @@ public class DialogClasses{
 	}
 
 	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){
-		float ratio = Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
+		float ratio = (float)Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
 
 		float isize = 400*s;
 		float width = isize, height = isize / ratio;

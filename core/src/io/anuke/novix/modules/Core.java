@@ -47,6 +47,7 @@ import io.anuke.novix.scene2D.ColorBox;
 import io.anuke.novix.scene2D.ColorWidget;
 import io.anuke.novix.scene2D.DrawingGrid;
 import io.anuke.novix.scene2D.SmoothCollapsibleWidget;
+import io.anuke.novix.tools.ActionStack;
 import io.anuke.novix.tools.DialogKeyboardMoveListener;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
@@ -372,7 +373,7 @@ public class Core extends Module<Novix>{
 	void setupCanvas(){
 		drawgrid = new DrawingGrid(this);
 
-		drawgrid.setCanvas(new PixelCanvas(getCurrentProject().getCachedPixmap()));
+		drawgrid.setCanvas(new PixelCanvas(getCurrentProject().getCachedPixmap()), false);
 
 		stage.addActor(drawgrid);
 	}
@@ -514,8 +515,16 @@ public class Core extends Module<Novix>{
 		if(drawgrid.canvas.width() * drawgrid.canvas.height() >= 100 * 100)
 			((VisImageButton) stage.getRoot().findActor("gridbutton")).setChecked(false);
 	}
+	
+	public PixelCanvas canvas(){
+		return drawgrid.canvas;
+	}
+	
+	public ActionStack actionStack(){
+		return drawgrid.actions;
+	}
 
-	public void loadFonts(){
+	public void loadSkin(){
 		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
 		Skin skin = new Skin();
 
@@ -585,7 +594,7 @@ public class Core extends Module<Novix>{
 		stage = new Stage();
 		stage.setViewport(new ScreenViewport());
 		projectmanager = new ProjectManager(this);
-		loadFonts();
+		loadSkin();
 
 		ShapeUtils.region = VisUI.getSkin().getRegion("white");
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());

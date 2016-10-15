@@ -90,8 +90,9 @@ public class ProjectManager{
 		}
 
 		main.prefs.save();
-
-		main.drawgrid.setCanvas(canvas);
+		
+		main.drawgrid.clearActionStack();
+		main.drawgrid.setCanvas(canvas, false);
 		main.updateToolColor();
 		main.projectmenu.hide();
 	}

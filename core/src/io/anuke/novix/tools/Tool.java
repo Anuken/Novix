@@ -1,9 +1,5 @@
 package io.anuke.novix.tools;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.DrawingGrid;
-import io.anuke.utils.MiscUtils;
-
 import java.util.Stack;
 
 import com.badlogic.gdx.Gdx;
@@ -11,6 +7,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.scene2D.DrawingGrid;
+import io.anuke.utils.MiscUtils;
 
 public enum Tool{
 	pencil{
@@ -127,7 +127,7 @@ public enum Tool{
 	},*/
 	undo(false, false){
 		public void onSelected(){
-			Core.i.drawgrid.canvas.actions.undo();
+			Core.i.drawgrid.actions.undo(Core.i.canvas());
 		}
 
 		public boolean selectable(){
@@ -136,7 +136,7 @@ public enum Tool{
 	},
 	redo(false, false){
 		public void onSelected(){
-			Core.i.drawgrid.canvas.actions.redo();
+			Core.i.drawgrid.actions.redo(Core.i.canvas());
 		}
 
 		public boolean selectable(){

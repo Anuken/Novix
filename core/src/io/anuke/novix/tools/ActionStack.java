@@ -1,14 +1,13 @@
 package io.anuke.novix.tools;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 
-public class ActionStack{
+public class ActionStack implements Disposable{
 	private Array<DrawAction> stack = new Array<DrawAction>();
-	private PixelCanvas canvas;
 	private int index = 0;
 	
-	public ActionStack(PixelCanvas canvas){
-		this.canvas = canvas;
+	public ActionStack(){
 		DrawAction action = new DrawAction();
 		stack.add(action);
 		update();
@@ -37,7 +36,7 @@ public class ActionStack{
 		return !(index > -1 || stack.size - 1 + index < 0);
 	}
 
-	public void undo(){
+	public void undo(PixelCanvas canvas){
 		if(!canUndo()) return;
 
 		stack.get(stack.size - 1 + index).apply(canvas, false);
@@ -47,7 +46,7 @@ public class ActionStack{
 		//print();
 	}
 
-	public void redo(){
+	public void redo(PixelCanvas canvas){
 		if(!canRedo()) return;
 		
 		index ++;
@@ -73,6 +72,14 @@ public class ActionStack{
 			System.out.println("<"+i+"> " + (sel ? "[" : "") + action.positions.size + "S" + (sel ? "]" : "" ));
 			
 			i++;
+		}
+	}
+
+	@Override
+	public void dispose(){
+		for(DrawAction action : stack){
+			if(action.toCanvas != null) action.toCanvas.dispose();
+			if(action.fromCanvas != null) action.fromCanvas.dispose();
 		}
 	}
 }

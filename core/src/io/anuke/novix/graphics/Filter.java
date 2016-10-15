@@ -40,7 +40,7 @@ public enum Filter{
 				for(int y = 0;y < input.getHeight();y ++){
 					vector.set(x - input.getWidth() / 2f + 0.5f, y - input.getHeight() / 2f + 0.5f);
 					vector.rotate(angle);
-					pixmap.drawPixel(x, y, input.getPixel((int)(vector.x + input.getHeight() / 2f), (int)(vector.y + input.getHeight() / 2f)));
+					pixmap.drawPixel(x, y, input.getPixel((int)(vector.x + input.getWidth() / 2f), (int)(vector.y + input.getHeight() / 2f)));
 				}
 			}
 		}

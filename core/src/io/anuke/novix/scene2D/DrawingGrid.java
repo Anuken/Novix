@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 
 import io.anuke.novix.modules.Core;
+import io.anuke.novix.tools.ActionStack;
+import io.anuke.novix.tools.DrawAction;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Tool;
 import io.anuke.ucore.UCore;
@@ -37,6 +39,7 @@ public class DrawingGrid extends Actor{
 	private Color tempcolor = new Color();
 
 	public PixelCanvas canvas;
+	public ActionStack actions = new ActionStack();
 	public float zoom = 1f, offsetx = 0, offsety = 0, baseCursorSpeed = 1.03f;
 	public boolean vSymmetry = false, hSymmetry = false;
 	public int brushSize;
@@ -250,14 +253,38 @@ public class DrawingGrid extends Actor{
 
 		selected.set(newx, newy);
 	}
+	
+	public void clearActionStack(){
+		actions.dispose();
+		actions = new ActionStack();
+	}
 
-	public void setCanvas(PixelCanvas canvas){
+	public void setCanvas(PixelCanvas canvas, boolean saveOp){
 		Gdx.app.log("pedebugging", "Drawgrid: setting new canvas.");
 		if(this.canvas != null){
-			Gdx.app.log("pedebugging", "Drawgrid: disposing old canvas: " + this.canvas.name);
-			this.canvas.dispose();
+			if(saveOp){
+				Gdx.app.log("pedebugging", "Drawgrid: performing switch operation: " + this.canvas.name);
+				DrawAction action = new DrawAction();
+				action.fromCanvas = this.canvas;
+				action.toCanvas = canvas;
+				actions.add(action);
+			}else{
+				Gdx.app.log("pedebugging", "Drawgrid: disposing old canvas: " + this.canvas.name);
+				this.canvas.dispose();
+			}
 		}
 
+		resetCanvas(canvas);
+	}
+	
+	/**Used for undo operations only.*/
+	public void actionSetCanvas(PixelCanvas canvas){
+		Gdx.app.log("pedebugging", "Drawgrid: undoing operation.");
+		resetCanvas(canvas);
+	}
+	
+	/**Called internally. This simply sets the current canvas and performs no other operations.*/
+	private void resetCanvas(PixelCanvas canvas){
 		this.canvas = canvas;
 
 		Gdx.app.log("pedebugging", "Drawgrid: new canvas \"" + canvas.name + "\" set.");
@@ -274,8 +301,6 @@ public class DrawingGrid extends Actor{
 		offsety = getHeight() / 2;
 		gridimage.setImageSize(canvas.width(), canvas.height());
 		alphaimage.setImageSize(canvas.width(), canvas.height());
-		//updateSize();
-		//updateBounds();
 		Core.i.projectmanager.saveProject();
 	}
 

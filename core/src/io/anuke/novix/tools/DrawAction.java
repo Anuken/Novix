@@ -1,15 +1,18 @@
 package io.anuke.novix.tools;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.utils.MiscUtils;
-
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Keys;
 
+import io.anuke.novix.modules.Core;
+import io.anuke.utils.MiscUtils;
+
 public class DrawAction{
 	public ObjectMap<Integer, ColorPair> positions = new ObjectMap<Integer, ColorPair>();
+	public PixelCanvas fromCanvas; //used only for undoing image operations that change the canvas
+	public PixelCanvas toCanvas;
+	
 
 	public void push(int x, int y, int from, int to){
 		if(from == to) return; //ignore action that doesn't do anything
@@ -27,7 +30,10 @@ public class DrawAction{
 	}
 
 	public void apply(PixelCanvas canvas, boolean reapply){
-		
+		if(fromCanvas != null){
+			Core.i.drawgrid.actionSetCanvas(reapply ? toCanvas : fromCanvas);
+			return;
+		}
 		Keys<Integer> keys = positions.keys();
 		
 		for(Integer i : keys){

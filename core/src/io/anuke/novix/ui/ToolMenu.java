@@ -43,6 +43,7 @@ import io.anuke.novix.ui.DialogClasses.ScaleDialog;
 import io.anuke.novix.ui.DialogClasses.ShiftDialog;
 import io.anuke.novix.ui.DialogClasses.SizeDialog;
 import io.anuke.novix.ui.DialogClasses.SymmetryDialog;
+import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.utils.SceneUtils;
 
 public class ToolMenu extends VisTable{
@@ -168,7 +169,9 @@ public class ToolMenu extends VisTable{
 					@Override
 					public void result(int width, int height){
 						
-						main.drawgrid.setCanvas(main.drawgrid.canvas.asResized(width, height));
+						PixelCanvas canvas = main.canvas();
+						PixelCanvas ncanvas = new PixelCanvas(PixmapUtils.resize(canvas.pixmap, width, height));
+						main.drawgrid.setCanvas(ncanvas, true);
 						
 						main.checkGridResize();
 						
@@ -267,7 +270,7 @@ public class ToolMenu extends VisTable{
 				new FileChooser(FileChooser.jpegFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
-							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)));
+							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)), true);
 							main.tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();

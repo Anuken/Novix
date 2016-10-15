@@ -22,7 +22,6 @@ public class PixelCanvas implements Disposable{
 	final public String name;
 	private float alpha = 1.0f;
 	private DrawAction action = new DrawAction();
-	public ActionStack actions = new ActionStack(this);
 	public boolean drawn;
 
 	public PixelCanvas(Pixmap pixmap){
@@ -124,7 +123,6 @@ public class PixelCanvas implements Disposable{
 		if(drawn){
 			drawn = false;
 			updateTexture();
-			
 		}
 	}
 
@@ -183,7 +181,7 @@ public class PixelCanvas implements Disposable{
 
 	public void pushActions(){
 		if(action.positions.size == 0) return;
-		actions.add(action);
+		Core.i.actionStack().add(action);
 		action = new DrawAction();
 	}
 
@@ -193,10 +191,6 @@ public class PixelCanvas implements Disposable{
 
 	public int height(){
 		return pixmap.getHeight();
-	}
-
-	public PixelCanvas asResized(int newwidth, int newheight){
-		return new PixelCanvas(PixmapUtils.resize(pixmap, newwidth, newheight));
 	}
 
 	public void drawPixmap(Pixmap pixmap){
