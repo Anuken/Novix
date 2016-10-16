@@ -101,7 +101,6 @@ public class ProjectManager{
 
 		new DialogClasses.InputDialog("Copy Project", project.name, "Copy Name: "){
 			public void result(String text){
-				//if(validateProjectName(text)) return;
 
 				try{
 					long id = generateProjectID();
@@ -123,7 +122,6 @@ public class ProjectManager{
 	public void renameProject(final Project project){
 		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
-				//if(validateProjectName(text, project)) return;
 				project.name = text;
 				main.projectmenu.update(true);
 			}
