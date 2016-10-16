@@ -201,7 +201,6 @@ public class ProjectManager{
 
 		saveProjectsFile();
 		
-		
 		if(projects.get(last) == null){ // no project selected
 			tryLoadAnotherProject();
 		}else{
