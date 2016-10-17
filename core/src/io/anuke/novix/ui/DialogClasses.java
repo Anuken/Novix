@@ -603,19 +603,26 @@ public class DialogClasses{
 	}
 
 	public static class ExportScaledDialog extends MenuDialog{
-		VisTextField field;
+		VisTextField scalefield;
 		VisTextField directory;
 
 		public ExportScaledDialog(){
 			super("Export Scaled Image");
 
-			field = new VisTextField("1");
-			field.setTextFieldFilter(new FloatFilter());
+			scalefield = new VisTextField("1");
+			scalefield.setTextFieldFilter(new FloatFilter());
 
 			VisTextButton button = new VisTextButton("...");
 
 			directory = new VisTextField("");
 			directory.setTouchable(Touchable.disabled);
+			
+			final ChangeListener oklistener = new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					ok.setDisabled(directory.getText().isEmpty() || scalefield.getText().isEmpty() || scalefield.getText().replace("0", "").replace(".", "").isEmpty());
+				}
+			};
 
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -623,22 +630,18 @@ public class DialogClasses{
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
 							SceneUtils.moveTextToSide(directory);
+							oklistener.changed(null, null);
 						}
 					}.show(getStage());
 				}
 			});
 
-			ChangeListener oklistener = new ChangeListener(){
-				@Override
-				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(directory.getText().isEmpty() || field.getText().isEmpty() || field.getText().replace("0", "").replace(".", "").isEmpty());
-				}
-			};
+			
 
-			field.addListener(oklistener);
+			scalefield.addListener(oklistener);
 			directory.addListener(oklistener);
 
-			field.fire(new ChangeListener.ChangeEvent());
+			scalefield.fire(new ChangeListener.ChangeEvent());
 			directory.fire(new ChangeListener.ChangeEvent());
 
 			float sidepad = 20 * s;
@@ -652,11 +655,11 @@ public class DialogClasses{
 			getContentTable().row();
 
 			getContentTable().add(new VisLabel("Scale:")).padTop(15 * s).padBottom(30 * s).padLeft(sidepad);
-			getContentTable().add(field).grow().height(height).padTop(15 * s).padBottom(30 * s).colspan(2).padRight(sidepad);
+			getContentTable().add(scalefield).grow().height(height).padTop(15 * s).padBottom(30 * s).colspan(2).padRight(sidepad);
 		}
 
 		public void result(){
-			exportPixmap(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
+			exportPixmap(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, Float.parseFloat(scalefield.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
 
@@ -1561,7 +1564,7 @@ public class DialogClasses{
 	public static void exportPixmap(Pixmap pixmap, FileHandle file){
 		try{
 			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
-			PixmapIO.writePNG(file, Core.i.drawgrid.canvas.pixmap);
+			PixmapIO.writePNG(file, pixmap);
 			showInfo(Core.i.stage, "Image exported to " + file + ".");
 		}catch(Exception e){
 			e.printStackTrace();
