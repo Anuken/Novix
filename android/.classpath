@@ -16,7 +16,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/uCore"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/uCore-Tools"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="/uCore-Tools/lib/gwt-geom.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

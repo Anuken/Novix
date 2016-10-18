@@ -1,8 +1,7 @@
 package io.anuke.novix.ui;
 
-import static io.anuke.novix.modules.Core.s;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.ui.DialogClasses.BaseDialog;
+
+import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
@@ -13,7 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
+import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisSlider;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.ui.DialogClasses.BaseDialog;
 
 public class SettingsMenu extends BaseDialog{
 	private Core main;

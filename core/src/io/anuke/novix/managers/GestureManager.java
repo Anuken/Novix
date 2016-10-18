@@ -1,13 +1,15 @@
 package io.anuke.novix.managers;
 
-import static io.anuke.novix.modules.Core.s;
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.tools.Tool;
+
+import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.novix.tools.Tool;
 
 public class GestureManager implements GestureListener{
 	private Core main;

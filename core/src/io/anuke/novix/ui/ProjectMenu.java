@@ -1,6 +1,7 @@
 package io.anuke.novix.ui;
 
-import static io.anuke.novix.modules.Core.s;
+
+import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;

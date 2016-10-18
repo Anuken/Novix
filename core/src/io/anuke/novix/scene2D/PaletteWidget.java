@@ -2,7 +2,8 @@ package io.anuke.novix.scene2D;
 
 
 
-import static io.anuke.novix.modules.Core.s;
+
+import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;

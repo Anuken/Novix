@@ -1,5 +1,8 @@
 package io.anuke.novix.modules;
 
+
+import static io.anuke.ucore.UCore.s;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -84,7 +87,7 @@ public class Tutorial extends Module<Novix>{
 	public boolean touchDown(int x, int y, int pointer, int button){
 		if(active){
 			stage.tap(x, Gdx.graphics.getHeight() - y);
-			if(x > Gdx.graphics.getWidth() - 50*Core.s && (Gdx.graphics.getHeight() - y) < 30 * Core.s){
+			if(x > Gdx.graphics.getWidth() - 50*s && (Gdx.graphics.getHeight() - y) < 30 * s){
 				active = false;
 				new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want to\nexit the tutorial?"){
 					boolean confirming;

@@ -1,6 +1,7 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.novix.modules.Core;
+
+import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.kotcrab.vis.ui.VisUI;
@@ -13,7 +14,7 @@ public class CollapseButton extends VisImageButton{
 	public CollapseButton(){
 		super("default");
 		setStyle(new VisImageButtonStyle(getStyle()));
-		this.getImageCell().size(50*Core.s);
+		this.getImageCell().size(50*s);
 		getStyle().up = VisUI.getSkin().getDrawable("button");
 		set(up);
 	}

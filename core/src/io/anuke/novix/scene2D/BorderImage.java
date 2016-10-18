@@ -1,11 +1,13 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.utils.MiscUtils;
+
+import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import io.anuke.utils.MiscUtils;
 
 public class BorderImage extends Actor{
 	
@@ -18,7 +20,7 @@ public class BorderImage extends Actor{
 		
 		MiscUtils.setBatchAlpha(batch, alpha);
 		
-		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), (int)(2*Core.s), (int)(2*Core.s));
+		MiscUtils.drawBorder(batch, getX(), getY(), getWidth(), getHeight(), (int)(2*s), (int)(2*s));
 	}
 	
 }

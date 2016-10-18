@@ -1,6 +1,7 @@
 package io.anuke.novix.ui;
 
-import static io.anuke.novix.modules.Core.s;
+
+import static io.anuke.ucore.UCore.s;
 
 import java.util.Arrays;
 
