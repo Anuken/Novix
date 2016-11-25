@@ -10,12 +10,13 @@
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/openjdk-1.7.0-u80-unofficial-linux-amd64-image"/>
+	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/uCore"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/uCore-Tools"/>
-	<classpathentry exported="true" kind="lib" path="/uCore-Tools/lib/gwt-geom.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/uCore"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/uCore-Tools"/>
+	<classpathentry kind="lib" path="/home/anuke/Android/Sdk/platforms/android-22/android.jar"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
