@@ -21,6 +21,7 @@ import io.anuke.novix.tools.DrawAction;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Tool;
 import io.anuke.ucore.UCore;
+import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.graphics.Textures;
 import io.anuke.utils.MiscUtils;
@@ -262,7 +263,10 @@ public class DrawingGrid extends Actor{
 
 	public void setCanvas(PixelCanvas canvas, boolean saveOp){
 		Gdx.app.log("pedebugging", "Drawgrid: setting new canvas.");
+		
+		
 		if(this.canvas != null){
+			Gdx.app.log("pedebugging", "this.Pixmap disposed at start?" + PixmapUtils.isDisposed(this.canvas.pixmap));
 			if(saveOp){
 				Gdx.app.log("pedebugging", "Drawgrid: performing switch operation: " + this.canvas.name);
 				DrawAction action = new DrawAction();
@@ -276,6 +280,7 @@ public class DrawingGrid extends Actor{
 		}
 
 		resetCanvas(canvas);
+		Gdx.app.log("pedebugging", "Pixmap disposed at end?" + PixmapUtils.isDisposed(canvas.pixmap));
 	}
 	
 	/**Used for undo operations only.*/

@@ -5,11 +5,13 @@ import java.util.Stack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene2D.DrawingGrid;
+import io.anuke.ucore.graphics.Hue;
 import io.anuke.utils.MiscUtils;
 
 public enum Tool{
@@ -81,6 +83,12 @@ public enum Tool{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
 			Color selected = canvas.getColor(x, y);
+			for(int i = 0; i < Core.i.getCurrentPalette().size(); i ++){
+				if(Hue.approximate(selected, Core.i.getCurrentPalette().colors[i], 0.001f)){
+					((ClickListener)Core.i.boxes[i].getListeners().get(0)).clicked(null, 0, 0);
+					return;
+				}
+			}
 			selected.a = 1f;
 			Core.i.setSelectedColor(selected);
 			Core.i.picker.addRecentColor(selected);

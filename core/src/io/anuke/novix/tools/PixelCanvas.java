@@ -213,6 +213,10 @@ public class PixelCanvas implements Disposable{
 
 	@Override
 	public void dispose(){
+		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+		String name = e.getFileName().replace(".java", "");
+		
+		Gdx.app.log("pedebugging", "DISPOSING canvas! " + name + "::"+e.getMethodName() + " - " + e.getLineNumber());
 		texture.dispose();
 		pixmap.dispose();
 	}

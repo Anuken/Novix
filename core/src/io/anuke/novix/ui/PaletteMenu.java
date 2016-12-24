@@ -66,7 +66,7 @@ public class PaletteMenu extends BaseDialog{
 
 			public void clicked(InputEvent event, float x, float y){
 				PopupMenu menu = new PopupMenu();
-				menu.addItem(new TallMenuItem("resize", new ChangeListener(){
+				menu.addItem(new TallMenuItem("Resize", new ChangeListener(){
 					public void changed(ChangeEvent event, Actor actor){
 						new DialogClasses.NumberInputDialog("Resize Palette", palette.size() + "", "Size: "){
 							public void result(int size){
@@ -86,7 +86,7 @@ public class PaletteMenu extends BaseDialog{
 						}.show(getStage());
 					}
 				}));
-				menu.addItem(new TallMenuItem("rename", new ChangeListener(){
+				menu.addItem(new TallMenuItem("Rename", new ChangeListener(){
 					public void changed(ChangeEvent event, Actor actor){
 						new DialogClasses.InputDialog("Rename Palette", palette.name, "Name: "){
 							public void result(String string){
@@ -96,7 +96,7 @@ public class PaletteMenu extends BaseDialog{
 						}.show(getStage());
 					}
 				}));
-				menu.addItem(new TallMenuItem("delete", new ChangeListener(){
+				menu.addItem(new TallMenuItem("Delete", new ChangeListener(){
 					public void changed(ChangeEvent event, Actor actor){
 						if(widget != currentWidget){
 							new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){

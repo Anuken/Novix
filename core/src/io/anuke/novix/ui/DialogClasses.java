@@ -1283,7 +1283,7 @@ public class DialogClasses{
 			numberfield = new VisTextField(fieldtext);
 			numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
 			getContentTable().center().add(new VisLabel(text));
-			getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f);
+			getContentTable().center().add(numberfield).pad(20 * s).padLeft(0f).size(160*s, 40*s);
 		}
 
 		public final void result(){
@@ -1309,7 +1309,7 @@ public class DialogClasses{
 			VisLabel label = new VisLabel(info);
 			label.setAlignment(Align.center);
 			label.setWrap(true);
-			getContentTable().add(label).width(400f).padTop(20*s).padBottom(20*s);
+			getContentTable().add(label).width(400f*s).padTop(20*s).padBottom(20*s);
 		}
 
 	}
@@ -1545,7 +1545,7 @@ public class DialogClasses{
 		if(e.getCause() != null){
 			extra = convertToString(e.getCause());
 		}else{
-			extra = convertToString(e);
+			extra = convertToString((Throwable)e);
 		}
 		return extra;
 	}
