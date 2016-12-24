@@ -1,8 +1,8 @@
 #Novix
 
-An Android pixel editor.
+A pixel editor for Android.
 
-![pixels](http://i.imgur.com/tK7kgTe.png)
+![pixels](http://i.imgur.com/GGGlNND.png)
 
 
-[play store link](https://play.google.com/store/apps/details?id=io.anuke.novix)
+[Google Play Link](https://play.google.com/store/apps/details?id=io.anuke.novix)
