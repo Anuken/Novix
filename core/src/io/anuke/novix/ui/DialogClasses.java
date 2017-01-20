@@ -12,47 +12,18 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.Separator;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
-import com.kotcrab.vis.ui.widget.VisDialog;
-import com.kotcrab.vis.ui.widget.VisImage;
-import com.kotcrab.vis.ui.widget.VisImageButton;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisSlider;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisTextField;
+import com.kotcrab.vis.ui.util.InputValidator;
+import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Filter;
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.AlphaImage;
-import io.anuke.novix.scene2D.ColorBox;
-import io.anuke.novix.scene2D.ColorWidget;
-import io.anuke.novix.scene2D.FileChooser;
-import io.anuke.novix.scene2D.GridImage;
-import io.anuke.novix.scene2D.ImagePreview;
-import io.anuke.novix.scene2D.ShiftedImage;
+import io.anuke.novix.scene2D.*;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
 import io.anuke.ucore.UCore;
@@ -604,13 +575,13 @@ public class DialogClasses{
 	}
 
 	public static class ExportScaledDialog extends MenuDialog{
-		VisTextField scalefield;
+		VisValidatableTextField scalefield;
 		VisTextField directory;
 
 		public ExportScaledDialog(){
 			super("Export Scaled Image");
 
-			scalefield = new VisTextField("1");
+			scalefield = new VisValidatableTextField("1");
 			scalefield.setTextFieldFilter(new FloatFilter());
 
 			VisTextButton button = new VisTextButton("...");
@@ -621,7 +592,7 @@ public class DialogClasses{
 			final ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(directory.getText().isEmpty() || scalefield.getText().isEmpty() || scalefield.getText().replace("0", "").replace(".", "").isEmpty());
+					ok.setDisabled(!scalefield.isInputValid() || directory.getText().isEmpty() || scalefield.getText().isEmpty() || scalefield.getText().replace("0", "").replace(".", "").isEmpty());
 				}
 			};
 
@@ -636,7 +607,16 @@ public class DialogClasses{
 					}.show(getStage());
 				}
 			});
-
+			
+			scalefield.addValidator(new InputValidator(){
+				public boolean validateInput(String input){
+					try{
+						return Float.parseFloat(input) <= 100;
+					}catch (Exception e){
+						return false;
+					}
+				}
+			});
 
 			scalefield.addListener(oklistener);
 			directory.addListener(oklistener);
@@ -749,7 +729,7 @@ public class DialogClasses{
 
 			final VisCheckBox box = new VisCheckBox("Keep Aspect Ratio", true);
 
-			box.getImageStackCell().size(40);
+			box.getImageStackCell().size(40*s);
 
 			box.addListener(new ChangeListener(){
 				public void changed(ChangeEvent event, Actor actor){
@@ -895,7 +875,7 @@ public class DialogClasses{
 				left.setColor(color);
 				right.setColor(color);
 
-				float size = 70;
+				float size = 70*s;
 
 				left.setSize(size, size);
 				right.setSize(size, size);
@@ -1585,7 +1565,6 @@ public class DialogClasses{
 
 		return cell.size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad + 2).padRight(sidePad + 2);
 	}
-
 	static class FloatFilter implements VisTextField.TextFieldFilter{
 		@Override
 		public boolean acceptChar(VisTextField textField, char c){
