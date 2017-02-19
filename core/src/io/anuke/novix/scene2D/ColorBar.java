@@ -96,6 +96,6 @@ public class ColorBar extends BarActor{
 
 	@Override
 	public Color getSelectedColor(){
-		return Hue.blend(leftColor, rightColor, selection);
+		return Hue.mix(leftColor, rightColor, selection);
 	}
 }

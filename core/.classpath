@@ -9,5 +9,6 @@
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/uCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/uCore-Tools"/>
+	<classpathentry kind="lib" path="/home/anuke/Android/Sdk/platforms/android-25/android.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

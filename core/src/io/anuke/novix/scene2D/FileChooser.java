@@ -1,14 +1,11 @@
 package io.anuke.novix.scene2D;
 
-import io.anuke.novix.ui.DialogClasses.BaseDialog;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.android.TextFieldDialogListener;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -24,10 +21,15 @@ import com.badlogic.gdx.utils.Pools;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
+import android.os.Environment;
+import io.anuke.novix.android.TextFieldDialogListener;
+import io.anuke.novix.ui.DialogClasses.BaseDialog;
+import io.anuke.utils.MiscUtils;
+
 public class FileChooser extends BaseDialog{
 	private static float s = MiscUtils.densityScale();
 	private Table files;
-	private FileHandle homeDirectory = directory = MiscUtils.getHomeDirectory();//Gdx.app.getType() == ApplicationType.Desktop ? Gdx.files.absolute(System.getProperty("user.home")) : Gdx.files.absolute(Environment.getExternalStorageDirectory().getAbsolutePath());
+	private FileHandle homeDirectory = directory = Gdx.app.getType() == ApplicationType.Desktop ? Gdx.files.absolute(System.getProperty("user.home")) : Gdx.files.absolute(Environment.getExternalStorageDirectory().getAbsolutePath());//Gdx.app.getType() == ApplicationType.Desktop ? Gdx.files.absolute(System.getProperty("user.home")) : Gdx.files.absolute(Environment.getExternalStorageDirectory().getAbsolutePath());
 	private FileHandle directory = homeDirectory;
 	private VisScrollPane pane;
 	private VisTextField navigation, filefield;
@@ -307,9 +309,6 @@ public class FileChooser extends BaseDialog{
 		public void push(FileHandle file){
 			if(index != history.size) history.truncate(index);
 			history.add(file);
-			index ++;
-
-			//print();
 		}
 
 		public void back(){
@@ -317,8 +316,6 @@ public class FileChooser extends BaseDialog{
 			index --;
 			directory = history.get(index - 1);
 			updateFiles(false);
-
-			//print();
 		}
 
 		public void forward(){
@@ -326,8 +323,6 @@ public class FileChooser extends BaseDialog{
 			directory = history.get(index);
 			index ++;
 			updateFiles(false);
-
-			//print();
 		}
 
 		public boolean canForward(){
@@ -350,7 +345,6 @@ public class FileChooser extends BaseDialog{
 					System.out.println("--" + file.toString() + "--");
 				}
 			}
-
 		}
 	}
 

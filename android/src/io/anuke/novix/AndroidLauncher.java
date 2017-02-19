@@ -6,13 +6,10 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Rect;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
-import io.anuke.utils.android.AndroidKeyboard;;
+import io.anuke.novix.android.AndroidKeyboard;
 
 public class AndroidLauncher extends AndroidApplication{
 	private View rootView;

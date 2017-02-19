@@ -1,10 +1,5 @@
 package io.anuke.novix.tools;
 
-import io.anuke.utils.SceneUtils;
-import io.anuke.utils.android.AndroidKeyboard;
-import io.anuke.utils.android.TextFieldDialogListener;
-import io.anuke.utils.android.AndroidKeyboard.AndroidKeyboardListener;
-
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -15,6 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.Focusable;
 import com.kotcrab.vis.ui.widget.VisTextField;
+
+import io.anuke.novix.android.AndroidKeyboard;
+import io.anuke.novix.android.AndroidKeyboard.AndroidKeyboardListener;
+import io.anuke.novix.android.TextFieldDialogListener;
+import io.anuke.utils.SceneUtils;
 
 public class DialogKeyboardMoveListener implements AndroidKeyboardListener{
 	HashMap<Actor, Float> moved = new HashMap<Actor, Float>();
