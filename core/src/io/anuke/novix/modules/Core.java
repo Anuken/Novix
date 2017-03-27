@@ -41,11 +41,10 @@ import io.anuke.novix.ui.*;
 import io.anuke.novix.ui.DialogClasses.MenuDialog;
 import io.anuke.novix.ui.ProjectMenu.ProjectTable;
 import io.anuke.ucore.UCore;
-import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.graphics.Textures;
 import io.anuke.ucore.modules.Module;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.SceneUtils;
+import io.anuke.utools.MiscUtils;
+import io.anuke.utools.SceneUtils;
 
 public class Core extends Module<Novix>{
 	public static Core i;
@@ -147,10 +146,7 @@ public class Core extends Module<Novix>{
 
 			final VisImageButton button = new VisImageButton((Drawable) null);
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
-			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name()); // whatever
-																								// icon
-																								// is
-																								// needed
+			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name());
 			button.setGenerateDisabledImage(true);
 			button.getImageCell().size(50 * s);
 			ctool.button = button;
@@ -196,14 +192,9 @@ public class Core extends Module<Novix>{
 			public float getPrefWidth(){
 				return Gdx.graphics.getWidth();
 			}
-
-			// public float getPrefHeight(){
-			// return Gdx.graphics.getHeight() - toolcollapsebutton.getTop() -
-			// colorcollapsebutton.getHeight();
-			// }
 		};
 
-		pickertable.background("window-border");
+		pickertable.background("button-window-bg");
 
 		picker = new ColorWidget(){
 			public void onColorChanged(){
@@ -237,7 +228,10 @@ public class Core extends Module<Novix>{
 		updateColorMenu();
 
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
-
+		
+		SceneUtils.addIconToButton(palettebutton, new VisImage("icon-palette"), 40*s);
+		palettebutton.getLabelCell().expand(false, false);
+		
 		palettemenu = new PaletteMenu(this);
 
 		palettebutton.addListener(new ClickListener(){
@@ -246,7 +240,7 @@ public class Core extends Module<Novix>{
 			}
 		});
 		pickertable.add().grow().row();
-		;
+		
 		picker.pack();
 		Cell<?> cell = pickertable.add(picker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
 		pickertable.row();
@@ -505,7 +499,7 @@ public class Core extends Module<Novix>{
 	}
 
 	public void loadSkin(){
-		FileHandle skinFile = Gdx.files.internal("x2/uiskin.json");
+		FileHandle skinFile = Gdx.files.internal("ui/uiskin.json");
 		Skin skin = new Skin();
 
 		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
@@ -575,7 +569,6 @@ public class Core extends Module<Novix>{
 		projectmanager = new ProjectManager(this);
 		loadSkin();
 
-		ShapeUtils.region = VisUI.getSkin().getRegion("white");
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
 
 		projectmanager.loadProjects();
@@ -610,16 +603,6 @@ public class Core extends Module<Novix>{
 				checkTutorial();
 			}
 		}, 0.1f);
-
-		// TextureUnpacker packer = new TextureUnpacker();
-
-		// TextureAtlasData data = new
-		// TextureAtlasData(Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/uiskin.atlas"),
-		// Gdx.files.absolute("/home/cobalt/PixelEditor/android/assets/x2/"),
-		// false);
-		// packer.splitAtlas(data,
-		// Gdx.files.absolute("/home/cobalt/Documents/Sprites/uiout").file().getAbsoluteFile().toString());
-
 	}
 
 	@Override
@@ -637,7 +620,7 @@ public class Core extends Module<Novix>{
 
 	@Override
 	public void dispose(){
-		/* if(Gdx.app.getType() == ApplicationType.Android) */pause();
+		pause();
 		VisUI.dispose();
 		Textures.dispose();
 	}

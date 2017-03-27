@@ -93,7 +93,6 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public void pinchStop(){
-		// TODO Auto-generated method stub
 		
 	}
 }

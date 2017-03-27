@@ -129,13 +129,6 @@ public enum Filter{
 
 			pixmap.setColor(color.set(newRed, newGreen, newBlue, color.a));
 			pixmap.drawPixel(x, y);
-
-			/*
-			float i = (color.r + color.g + color.b)/3f;
-			color.set(i, i, i, color.a);
-			pixmap.setColor(color);
-			pixmap.drawPixel(x, y);
-			*/
 		}
 	};
 	protected static Color color = new Color();

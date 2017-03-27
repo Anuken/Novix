@@ -12,7 +12,7 @@ import com.kotcrab.vis.ui.VisUI;
 
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.ucore.graphics.Textures;
-import io.anuke.utils.MiscUtils;
+import io.anuke.utools.MiscUtils;
 
 public class ColorBox extends Widget implements Disableable{
 	public static final Style defaultStyle = new Style();

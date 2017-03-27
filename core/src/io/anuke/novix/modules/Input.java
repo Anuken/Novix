@@ -17,7 +17,7 @@ import io.anuke.novix.managers.GestureManager;
 import io.anuke.novix.scene2D.DrawingGrid;
 import io.anuke.novix.tools.Tool;
 import io.anuke.ucore.modules.Module;
-import io.anuke.utils.SceneUtils;
+import io.anuke.utools.SceneUtils;
 
 public class Input extends Module<Novix> implements InputProcessor{
 	private Input input;

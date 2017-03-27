@@ -33,8 +33,8 @@ import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene2D.PaletteWidget;
 import io.anuke.novix.scene2D.TallMenuItem;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
-import io.anuke.utils.SceneUtils;
-import io.anuke.utils.SceneUtils.TextFieldEmptyListener;
+import io.anuke.utools.SceneUtils;
+import io.anuke.utools.SceneUtils.TextFieldEmptyListener;
 
 public class PaletteMenu extends BaseDialog{
 	private Core main;

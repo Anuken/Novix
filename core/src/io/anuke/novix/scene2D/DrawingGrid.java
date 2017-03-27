@@ -24,8 +24,8 @@ import io.anuke.ucore.UCore;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.graphics.Textures;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.MiscUtils.GridChecker;
+import io.anuke.utools.MiscUtils;
+import io.anuke.utools.MiscUtils.GridChecker;
 
 public class DrawingGrid extends Actor{
 	private Core core;

@@ -12,7 +12,7 @@ import com.kotcrab.vis.ui.VisUI;
 
 import io.anuke.ucore.UCore;
 import io.anuke.ucore.graphics.Hue;
-import io.anuke.utils.MiscUtils;
+import io.anuke.utools.MiscUtils;
 
 public abstract class BarActor extends Actor implements Disableable{
 	public static final float s = MiscUtils.densityScale();

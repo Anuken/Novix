@@ -13,8 +13,8 @@ import com.kotcrab.vis.ui.widget.VisTextField;
 
 import io.anuke.novix.android.AndroidKeyboard;
 import io.anuke.novix.android.AndroidKeyboard.AndroidKeyboardListener;
+import io.anuke.utools.SceneUtils;
 import io.anuke.novix.android.TextFieldDialogListener;
-import io.anuke.utils.SceneUtils;
 
 public class DialogKeyboardMoveListener implements AndroidKeyboardListener{
 	HashMap<Actor, Float> moved = new HashMap<Actor, Float>();

@@ -19,7 +19,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 
 import io.anuke.novix.modules.Core;
 import io.anuke.ucore.graphics.Hue;
-import io.anuke.utils.MiscUtils;
+import io.anuke.utools.MiscUtils;
 
 public class ColorWidget extends VisTable{
 	public static final int palettewidth = 16;

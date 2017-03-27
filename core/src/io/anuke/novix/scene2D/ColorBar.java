@@ -9,7 +9,7 @@ import com.kotcrab.vis.ui.VisUI;
 
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.ucore.graphics.Textures;
-import io.anuke.utils.MiscUtils;
+import io.anuke.utools.MiscUtils;
 
 public class ColorBar extends BarActor{
 	protected Sprite sprite;

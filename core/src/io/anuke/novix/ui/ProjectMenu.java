@@ -7,10 +7,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,24 +15,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.PopupMenu;
-import com.kotcrab.vis.ui.widget.VisDialog;
-import com.kotcrab.vis.ui.widget.VisImageButton;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisScrollPane;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.*;
 
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.AnimatedImage;
-import io.anuke.novix.scene2D.BorderImage;
-import io.anuke.novix.scene2D.StaticPreviewImage;
-import io.anuke.novix.scene2D.TallMenuItem;
+import io.anuke.novix.scene2D.*;
 import io.anuke.novix.tools.Project;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
 import io.anuke.novix.ui.DialogClasses.OpenProjectFileDialog;
 import io.anuke.ucore.graphics.Hue;
-import io.anuke.utils.SceneUtils;
+import io.anuke.utools.SceneUtils;
 
 public class ProjectMenu extends BaseDialog{
 	private Core main;
@@ -100,6 +88,7 @@ public class ProjectMenu extends BaseDialog{
 		newbutton.setName("newproject");
 
 		SceneUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40 * s);
+		
 		
 		VisTextButton settingsbutton = new VisTextButton("Settings");
 		settingsbutton.addListener(new ClickListener(){

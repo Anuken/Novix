@@ -1,12 +1,12 @@
 package io.anuke.novix.tools;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.utils.MiscUtils;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
+
+import io.anuke.novix.modules.Core;
+import io.anuke.utools.MiscUtils;
 
 public class Project implements Disposable, Comparable<Project>{
 	public String name;
@@ -32,8 +32,6 @@ public class Project implements Disposable, Comparable<Project>{
 	}
 	
 	public void reloadTexture(){
-		//Gdx.app.log("pedebugging", "Project \"" + name + "\": reloading texture. ");
-		
 		if(cachedTexture != null) cachedTexture.dispose();
 		cachedTexture = new Texture(getFile());
 		cachedTexture.getTextureData().prepare();

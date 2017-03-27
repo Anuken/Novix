@@ -7,45 +7,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.Separator;
-import com.kotcrab.vis.ui.widget.VisImageButton;
+import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisSlider;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene2D.ColorBar;
 import io.anuke.novix.scene2D.FileChooser;
 import io.anuke.novix.tools.PixelCanvas;
-import io.anuke.novix.ui.DialogClasses.BaseDialog;
-import io.anuke.novix.ui.DialogClasses.ClearDialog;
-import io.anuke.novix.ui.DialogClasses.ColorAlphaDialog;
-import io.anuke.novix.ui.DialogClasses.ColorizeDialog;
-import io.anuke.novix.ui.DialogClasses.ContrastDialog;
-import io.anuke.novix.ui.DialogClasses.CropDialog;
-import io.anuke.novix.ui.DialogClasses.ExportScaledDialog;
-import io.anuke.novix.ui.DialogClasses.FlipDialog;
-import io.anuke.novix.ui.DialogClasses.InvertDialog;
-import io.anuke.novix.ui.DialogClasses.OutlineDialog;
-import io.anuke.novix.ui.DialogClasses.ReplaceDialog;
-import io.anuke.novix.ui.DialogClasses.RotateDialog;
-import io.anuke.novix.ui.DialogClasses.ScaleDialog;
-import io.anuke.novix.ui.DialogClasses.ShiftDialog;
-import io.anuke.novix.ui.DialogClasses.SizeDialog;
-import io.anuke.novix.ui.DialogClasses.SymmetryDialog;
+import io.anuke.novix.ui.DialogClasses.*;
 import io.anuke.ucore.graphics.PixmapUtils;
-import io.anuke.utils.SceneUtils;
+import io.anuke.utools.SceneUtils;
 
 public class ToolMenu extends VisTable{
 	private Core main;
@@ -58,16 +40,29 @@ public class ToolMenu extends VisTable{
 	
 	public ToolMenu(Core main){
 		this.main = main;
-		setBackground("window-border");
+		setBackground("menu");
 		
 		menutable = new VisTable();
 		optionstable = new VisTable();
 		
-		top().left().add(menutable).align(Align.topLeft).expand().fill().row();
+		
+		
+		top().left().add(menutable).align(Align.topLeft).padBottom(10).expand().fill().row();
 		top().left().add(optionstable).expand().fill().row();
 		optionstable.row();
 		
 		setupMenu();
+		
+		//setDebug(true, true);
+	}
+	
+	@Override
+	protected void drawBackground (Batch batch, float parentAlpha, float x, float y) {
+		super.drawBackground(batch, parentAlpha, x, y);
+		
+		float pad = 8;
+		
+		VisUI.getSkin().getDrawable("menu-bg").draw(batch, 0, menutable.getY() - pad, getWidth(), menutable.getHeight() + pad);
 	}
 	
 	public void updateColor(Color color){
@@ -79,14 +74,19 @@ public class ToolMenu extends VisTable{
 		brushslider.fire(new ChangeListener.ChangeEvent());
 	}
 	
-	private VisTextButton addMenuButton(String text){
+	private VisTextButton addMenuButton(String text, String icon){
 		float height = 70f*s;
 		VisTextButton button = new VisTextButton(text);
-		menutable.top().left().add(button).width(Gdx.graphics.getWidth() / 5 - 3).height(height).expandX().fillX().padTop(5f * s).align(Align.topLeft);
+		button.setStyle(new TextButtonStyle(button.getStyle()));
+		
+		button.getLabelCell().expand(false, false).fill(false, false);
+		
+		SceneUtils.addIconToButton(button, new VisImage("icon-" + icon), 20*s);
+		menutable.top().left().add(button)/*.width(Gdx.graphics.getWidth() / 5 - 3)*/.height(height).growX().padTop(5f * s).align(Align.topLeft);
 		return button;
 	}
 	
-	private void addMenu(String name, MenuButton... buttonlist){
+	private void addMenu(String name, String icon, MenuButton... buttonlist){
 		final ButtonMenu buttons = new ButtonMenu(name);
 		buttons.getContentTable().top().left();
 		for(MenuButton button : buttonlist){
@@ -99,6 +99,7 @@ public class ToolMenu extends VisTable{
 				currentMenu.hide();
 			}
 		});
+		
 		SceneUtils.addIconToButton(backbutton, new Image(VisUI.getSkin().getDrawable("icon-arrow-left")), 40*s);
 		backbutton.getLabelCell().padRight(40);
 		
@@ -106,8 +107,7 @@ public class ToolMenu extends VisTable{
 		buttons.getContentTable().add(new Separator()).padTop(10*s).padBottom(5*s).growX().row();
 		buttons.getButtonsTable().add(backbutton).height(60*s).width(350*s);
 		
-		
-		addMenuButton(name+ "...").addListener(new ClickListener(){
+		addMenuButton(name, icon).addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				buttons.show(getStage());
 				currentMenu = buttons;
@@ -118,6 +118,13 @@ public class ToolMenu extends VisTable{
 	private static class MenuButton extends VisTextButton{
 		public MenuButton(String name, String desc){
 			super(name);
+			
+			String icon = "icon-" + name.toLowerCase().replace(" ", "");
+			
+			if(VisUI.getSkin().getAtlas().findRegion(icon) != null){
+				SceneUtils.addIconToButton(this, new VisImage(icon), 20*s);
+				getCells().first().padRight(4*s);
+			}
 			
 			getLabel().setAlignment(Align.topLeft);
 			left();
@@ -156,14 +163,14 @@ public class ToolMenu extends VisTable{
 	private void setupMenu(){
 		final Stage stage = main.stage;
 		
-		VisTextButton menu = addMenuButton("Menu");
+		VisTextButton menu = addMenuButton("Menu", "menu");
 		menu.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				main.openProjectMenu();
 			}
 		});
 		
-		addMenu("Image",
+		addMenu("Image", "image",
 		new MenuButton("Resize", "Change the canvas size."){
 			public void clicked(){
 				new SizeDialog("Resize Canvas"){
@@ -197,7 +204,7 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		addMenu("Filters", 
+		addMenu("Filters", "filter",
 		new MenuButton("Colorize", "Configure image hue,\nbrightness and saturation."){
 			public void clicked(){
 				new ColorizeDialog().show(stage);
@@ -229,7 +236,7 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		addMenu("Edit", 
+		addMenu("Edit", "edit",
 		new MenuButton("Flip", "Flip the image."){
 			public void clicked(){
 				new FlipDialog().show(stage);
@@ -251,7 +258,7 @@ public class ToolMenu extends VisTable{
 			}
 		});
 		
-		addMenu("File",
+		addMenu("File", "file",
 		new MenuButton("Export", "Export the image as a PNG."){
 			public void clicked(){
 				new FileChooser(FileChooser.pngFilter, false){

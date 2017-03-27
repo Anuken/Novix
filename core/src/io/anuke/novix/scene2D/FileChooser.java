@@ -24,7 +24,7 @@ import com.kotcrab.vis.ui.widget.*;
 import android.os.Environment;
 import io.anuke.novix.android.TextFieldDialogListener;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
-import io.anuke.utils.MiscUtils;
+import io.anuke.utools.MiscUtils;
 
 public class FileChooser extends BaseDialog{
 	private static float s = MiscUtils.densityScale();
@@ -122,10 +122,7 @@ public class FileChooser extends BaseDialog{
 			}
 		});
 
-		//VisImageButton newfolder = new VisImageButton(VisUI.getSkin().getDrawable("icon-folder-new"));
-
 		Table table = getContentTable();
-		//	table.setDebug(true, true);
 
 		table.top().left();
 		table.add(icontable).expandX().fillX();
@@ -134,7 +131,6 @@ public class FileChooser extends BaseDialog{
 		icontable.add(back).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
 		icontable.add(forward).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
 		icontable.add(home).expandX().fillX().height(60*s).padBottom(10f*s).uniform();
-		//icontable.add(newfolder).expandX().fillX().height(60).padBottom(10f).uniform();
 
 		table.row();
 		table.add(navigation).colspan(3).left().padBottom(10f*s).expandX().fillX().height(40f*s);
@@ -205,9 +201,6 @@ public class FileChooser extends BaseDialog{
 		}
 		
 		Pools.free(layout);
-		
-		//navigation.setCursorPosition(0);
-		//navigation.setCursorPosition(navigation.getText().length());
 
 		files.clearChildren();
 		FileHandle[] names = getFileNames();

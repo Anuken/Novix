@@ -28,8 +28,8 @@ import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
 import io.anuke.ucore.UCore;
 import io.anuke.ucore.graphics.PixmapUtils;
-import io.anuke.utils.MiscUtils;
-import io.anuke.utils.SceneUtils;
+import io.anuke.utools.MiscUtils;
+import io.anuke.utools.SceneUtils;
 
 public class DialogClasses{
 
