@@ -32,6 +32,7 @@ import io.anuke.utools.SceneUtils;
 
 public class ToolTable extends VisTable{
 	private static ButtonMenu currentMenu;
+	public final String selectcolor = "7aaceaff";
 	
 	private Core main;
 	private VisTable menutable, optionstable;
@@ -399,7 +400,7 @@ public class ToolTable extends VisTable{
 		brushslider.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				brushlabel.setText("Brush Size: [#"+Core.i.selectcolor +"]" + (int)brushslider.getValue());
+				brushlabel.setText("Brush Size: [#"+selectcolor +"]" + (int)brushslider.getValue());
 				main.prefs.put("brushsize", (int)brushslider.getValue());
 				main.drawgrid.brushSize = (int)brushslider.getValue();
 			}
@@ -419,7 +420,7 @@ public class ToolTable extends VisTable{
 		alphabar.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				opacity.setText("Opacity: [#"+Core.i.selectcolor +"]" + (int)(alphabar.getSelection()*100) + "%");
+				opacity.setText("Opacity: [#"+selectcolor +"]" + (int)(alphabar.getSelection()*100) + "%");
 				main.drawgrid.canvas.setAlpha(alphabar.getSelection());
 				main.prefs.put("opacity", alphabar.getSelection());
 			}

@@ -19,7 +19,7 @@ public class StaticPreviewImage extends Group{
 		border.setColor(Color.CORAL);
 		int scale = 16;
 		float ratio = 1f/((float)texture.getWidth() / texture.getHeight());
-		AlphaImage alpha = new AlphaImage(scale, (int)(scale*ratio));
+		AlphaImage alpha = new AlphaImage(scale, (scale*ratio));
 
 		stack = new Stack();
 
@@ -37,7 +37,7 @@ public class StaticPreviewImage extends Group{
 		float yscl = getHeight() / texture.getHeight();
 		
 		if(MathUtils.isPowerOfTwo(texture.getWidth()) && MathUtils.isPowerOfTwo(texture.getHeight()))
-		setSize((int)(xscl/2)*2 * texture.getWidth(), (int)(yscl/2)*2 * texture.getHeight());
+		setSize(xscl * texture.getWidth(), yscl * texture.getHeight());
 		
 		stack.setBounds(0, 0, getWidth(), getHeight());
 	}

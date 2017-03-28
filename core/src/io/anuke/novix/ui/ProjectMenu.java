@@ -247,14 +247,14 @@ public class ProjectMenu extends BaseDialog{
 					if(project == main.getCurrentProject()) project.reloadTexture();
 
 					Texture texture = project.cachedTexture;
-
+					
 					sizelabel.setText("Size: " + texture.getWidth() + "x" + texture.getHeight());
 
 					StaticPreviewImage image = new StaticPreviewImage(texture);
 					imagecell.setActor(image);
 
 					SceneUtils.fitCell(imagecell, 128 * s, (float)texture.getWidth() / texture.getHeight());
-
+					
 					imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);
 
 					pack();

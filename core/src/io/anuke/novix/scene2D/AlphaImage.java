@@ -9,9 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.anuke.ucore.graphics.Textures;
 
 public class AlphaImage extends Actor{
-	private int imageWidth, imageHeight;
+	private float imageWidth, imageHeight;
 	
-	public AlphaImage(int w, int h){
+	public AlphaImage(float w, float h){
 		this.imageWidth = w;
 		this.imageHeight = h;
 	}

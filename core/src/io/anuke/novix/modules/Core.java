@@ -44,12 +44,13 @@ import io.anuke.utools.SceneUtils;
 
 public class Core extends Module<Novix>{
 	public static Core i;
+	
 	public final int largeImageSize = 100 * 100;
 	public final Color clearcolor = Color.valueOf("12161b");
+	
 	public final FileHandle paletteFile = Gdx.files.local("palettes.json");
 	public final FileHandle projectFile = Gdx.files.local("projects.json");
 	public final FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
-	public final String selectcolor = "7aaceaff";
 	
 	public Stage stage;
 	public DrawingGrid drawgrid;

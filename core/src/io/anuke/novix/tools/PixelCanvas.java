@@ -1,7 +1,6 @@
 package io.anuke.novix.tools;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
+import io.anuke.novix.Novix;
 import io.anuke.novix.modules.Core;
 import io.anuke.ucore.graphics.PixmapUtils;
 
@@ -169,7 +169,7 @@ public class PixelCanvas implements Disposable{
 			texture.draw(pixmap, 0, 0);
 			drawn = true;
 		}else{
-			Gdx.app.log("pedebugging", "skipping drawing...");
+			Novix.log("skipping drawing...");
 			drawn = false;
 		}
 	}
@@ -213,10 +213,7 @@ public class PixelCanvas implements Disposable{
 
 	@Override
 	public void dispose(){
-		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-		String name = e.getFileName().replace(".java", "");
-		
-		Gdx.app.log("pedebugging", "DISPOSING canvas! " + name + "::"+e.getMethodName() + " - " + e.getLineNumber());
+		Novix.log("DISPOSING canvas! " + name);
 		texture.dispose();
 		pixmap.dispose();
 	}
