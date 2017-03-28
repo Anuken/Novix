@@ -386,9 +386,10 @@ public enum TutorialStage{
 			
 			VisImageButton button = pane.findActor(Core.i.projectmanager.getProjects().iterator().next().name+names[stage]+"button");
 			
+			rectarrow(button);
+			
 			text(width / 2, height/2+50*s, "Use this button to " + names[stage]+ " a project.");
 			color(select);
-			rectarrow(button);
 			
 			color(Color.PURPLE);
 			text(width / 2, height / 2, "<tap to continue>");
@@ -501,7 +502,7 @@ public enum TutorialStage{
 
 	public void color(float r, float g, float b, float a){
 		batch.setColor(r, g, b, a * trans);
-		VisUI.getSkin().getFont("border-font").setColor(r, g, b, a);
+		VisUI.getSkin().getFont("border-font").setColor(r, g, b, a*trans);
 	}
 
 	protected void next(){
