@@ -30,7 +30,7 @@ import io.anuke.novix.ui.DialogClasses.*;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.utools.SceneUtils;
 
-public class ToolMenu extends VisTable{
+public class ToolTable extends VisTable{
 	private static ButtonMenu currentMenu;
 	
 	private Core main;
@@ -43,7 +43,7 @@ public class ToolMenu extends VisTable{
 	private Tool tool;
 	
 	
-	public ToolMenu(Core main){
+	public ToolTable(Core main){
 		final VisTable tooltable = new VisTable();
 		tooltable.setFillParent(true);
 		main.stage.addActor(tooltable);

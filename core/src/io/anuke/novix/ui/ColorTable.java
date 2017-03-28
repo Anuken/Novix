@@ -18,7 +18,7 @@ import io.anuke.novix.scene2D.*;
 import io.anuke.utools.MiscUtils;
 import io.anuke.utools.SceneUtils;
 
-public class ColorMenu extends VisTable{
+public class ColorTable extends VisTable{
 	private ColorBox[] boxes;
 	private ColorWidget picker;
 	private VisTable colortable;
@@ -27,7 +27,7 @@ public class ColorMenu extends VisTable{
 	private CollapseButton collapsebutton;
 	private int paletteColor;
 	
-	public ColorMenu(final Core c){
+	public ColorTable(final Core c){
 		background("button-window-bg");
 		
 		palettemenu = new PaletteMenu(c);

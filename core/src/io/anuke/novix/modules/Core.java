@@ -48,18 +48,21 @@ public class Core extends Module<Novix>{
 	public final Color clearcolor = Color.valueOf("12161b");
 	public final FileHandle paletteFile = Gdx.files.local("palettes.json");
 	public final FileHandle projectFile = Gdx.files.local("projects.json");
+	public final FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
 	public final String selectcolor = "7aaceaff";
 	
-	public DrawingGrid drawgrid;
 	public Stage stage;
-	public FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
+	public DrawingGrid drawgrid;
+	
 	public ProjectManager projectmanager;
 	public PaletteManager palettemanager;
 	public PrefsManager prefs;
+	
 	public SettingsMenu settingsmenu;
 	public ProjectMenu projectmenu;
-	public ToolMenu toolmenu;
-	public ColorMenu colormenu;
+	
+	public ToolTable toolmenu;
+	public ColorTable colormenu;
 
 	@Override
 	public void update(){
@@ -85,6 +88,7 @@ public class Core extends Module<Novix>{
 
 		settingsmenu.addPercentScrollSetting("Cursor Size");
 		settingsmenu.addPercentScrollSetting("Cursor Speed");
+		settingsmenu.addCheckSetting("Gestures", true);
 		settingsmenu.addButton("Re-take Tutorial", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
@@ -98,11 +102,11 @@ public class Core extends Module<Novix>{
 		projectmenu = new ProjectMenu(this);
 		projectmenu.update(true);
 		
-		colormenu = new ColorMenu(this);
+		colormenu = new ColorTable(this);
 	}
 
 	void setupTools(){
-		toolmenu = new ToolMenu(this);
+		toolmenu = new ToolTable(this);
 	}
 
 	public void openSettingsMenu(){

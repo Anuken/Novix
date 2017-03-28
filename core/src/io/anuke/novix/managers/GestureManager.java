@@ -39,8 +39,9 @@ public class GestureManager implements GestureListener{
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
-		if(Core.i.getCurrentDialog() != null || 
-				(!Core.i.drawgrid.input.checkRange((int)touchy) && Core.i.toolmenu.getTool() == Tool.zoom && !(!Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()))) return false;
+		if(!Core.i.prefs.getBoolean("gestures", true) || Core.i.getCurrentDialog() != null || 
+				(!Core.i.drawgrid.input.checkRange((int)touchy) && Core.i.toolmenu.getTool() == Tool.zoom 
+				&& !(!Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()))) return false;
 		
 		float swipevelocity = this.swipevelocity*s;
 		float flingvelocity = this.flingvelocity*s;
