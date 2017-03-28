@@ -16,44 +16,138 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.ColorBar;
-import io.anuke.novix.scene2D.FileChooser;
+import io.anuke.novix.scene2D.*;
 import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Tool;
 import io.anuke.novix.ui.DialogClasses.*;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.utools.SceneUtils;
 
 public class ToolMenu extends VisTable{
+	private static ButtonMenu currentMenu;
+	
 	private Core main;
 	private VisTable menutable, optionstable;
 	private VisSlider brushslider;
 	private ColorBar alphabar;
 	private VisImageButton gridbutton;
-	private static ButtonMenu currentMenu;
+	private CollapseButton collapsebutton;
+	private SmoothCollapsibleWidget collapser;
+	private Tool tool;
 	
 	
 	public ToolMenu(Core main){
+		final VisTable tooltable = new VisTable();
+		tooltable.setFillParent(true);
+		main.stage.addActor(tooltable);
+
 		this.main = main;
 		setBackground("menu");
 		
 		menutable = new VisTable();
 		optionstable = new VisTable();
 		
-		
-		
 		top().left().add(menutable).align(Align.topLeft).padBottom(10).expand().fill().row();
 		top().left().add(optionstable).expand().fill().row();
 		optionstable.row();
 		
 		setupMenu();
+		setupTable(tooltable);
+	}
+	
+	private void setupTable(final Table tooltable){
+		final float size = Gdx.graphics.getWidth() / (Tool.values().length);
 		
-		//setDebug(true, true);
+		collapser = new SmoothCollapsibleWidget(this, false);
+		collapser.setName("toolcollapser");
+
+		collapser.setCollapsed(true);
+
+		collapsebutton = new CollapseButton();
+		collapsebutton.setName("toolcollapsebutton");
+
+		collapsebutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				collapser.setCollapsed(!collapser.isCollapsed());
+				collapsebutton.flip();
+
+				if(!main.colorMenuCollapsed() && event != null){
+					main.colormenu.collapse();
+				}
+			}
+		});
+
+		tooltable.bottom().left().add(collapser).height(20 * s).colspan(Tool.values().length).fillX().expandX();
+		tooltable.row();
+		tooltable.bottom().left().add(collapsebutton).height(60 * s).colspan(Tool.values().length).fillX()
+				.expandX();
+		tooltable.row();
+
+		Tool[] tools = Tool.values();
+
+		for(int i = 0; i < tools.length; i++){
+			final Tool ctool = tools[i];
+
+			final VisImageButton button = new VisImageButton((Drawable) null);
+			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
+			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name());
+			button.setGenerateDisabledImage(true);
+			button.getImageCell().size(50 * s);
+			ctool.button = button;
+			button.addListener(new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					ctool.onSelected();
+					if(!ctool.selectable()){
+						button.setChecked(false);
+						return;
+					}
+					tool = ctool;
+					tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
+					if(!button.isChecked())
+						button.setChecked(true);
+					
+					for(Actor actor : tooltable.getChildren()){
+						if(!(actor instanceof VisImageButton))
+							continue;
+						VisImageButton other = (VisImageButton) actor;
+						if(other != button)
+							other.setChecked(false);
+					}
+				}
+			});
+
+			if(i == 0){
+				button.setChecked(true);
+				tool = ctool;
+			}
+
+			tooltable.bottom().left().add(button).size(size + 1f);
+		}
+
+		tooltable.pack();
+	}
+	
+	public void collapse(){
+		((ClickListener) collapsebutton.getListeners().get(2)).clicked(null, 0, 0);
+	}
+	
+	public boolean collapsed(){
+		return collapser.isCollapsed();
+	}
+	
+	public CollapseButton getButton(){
+		return collapsebutton;
+	}
+	
+	public Tool getTool(){
+		return tool;
 	}
 	
 	@Override
@@ -279,7 +373,7 @@ public class ToolMenu extends VisTable{
 					public void fileSelected(FileHandle file){
 						try{
 							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)), true);
-							main.tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
+							tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();
 							DialogClasses.showError(stage, e);
@@ -357,6 +451,7 @@ public class ToolMenu extends VisTable{
 		modestyle.imageUp = VisUI.getSkin().getDrawable("icon-cursor");
 		gridstyle.imageUp = VisUI.getSkin().getDrawable("icon-grid");
 		final VisLabel cursorlabel = new VisLabel();
+		final VisLabel gridlabel = new VisLabel();
 		
 		final VisImageButton modebutton = new VisImageButton(modestyle);
 		modebutton.setChecked(main.prefs.getBoolean("cursormode", true));
@@ -381,10 +476,12 @@ public class ToolMenu extends VisTable{
 		
 		gridbutton.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
+				gridlabel.setText("Grid: " + (gridbutton.isChecked() ? "[CORAL]On" : "[PURPLE]Off"));
 				main.prefs.put("grid", gridbutton.isChecked());
 				main.prefs.save();
 			}
 		});
+		gridbutton.fire(new ChangeListener.ChangeEvent());
 		
 		Table menutable = new VisTable();
 		Table othertable = new VisTable();
@@ -398,7 +495,7 @@ public class ToolMenu extends VisTable{
 		menutable.add(cursorlabel).align(Align.topLeft).padTop(12*s).row();;
 		menutable.add(modebutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
 		
-		menutable.add(new VisLabel("Grid:")).align(Align.topLeft).padTop(8*s).row();;
+		menutable.add(gridlabel).align(Align.topLeft).padTop(8*s).row();;
 		menutable.add(gridbutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
 		
 		othertable.bottom().right();
@@ -414,11 +511,11 @@ public class ToolMenu extends VisTable{
 		return alphabar.selection;
 	}
 
-	
 	public VisImageButton getGridButton(){
 		return gridbutton;
 	}
 
+	@Override
 	public float getPrefWidth(){
 		return Gdx.graphics.getWidth();
 	}

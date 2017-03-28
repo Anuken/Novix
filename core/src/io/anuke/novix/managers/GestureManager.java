@@ -40,13 +40,13 @@ public class GestureManager implements GestureListener{
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
 		if(Core.i.getCurrentDialog() != null || 
-				(!Core.i.drawgrid.input.checkRange((int)touchy) && Core.i.tool == Tool.zoom && !(!Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()))) return false;
+				(!Core.i.drawgrid.input.checkRange((int)touchy) && Core.i.toolmenu.getTool() == Tool.zoom && !(!Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()))) return false;
 		
 		float swipevelocity = this.swipevelocity*s;
 		float flingvelocity = this.flingvelocity*s;
 		
 		float tooltop = main.toolmenu.localToStageCoordinates(vector.set(0, 0)).y + main.toolmenu.getHeight();
-		float colortop = main.pickertable.localToStageCoordinates(vector.set(0, 0)).y;
+		float colortop = main.colormenu.localToStageCoordinates(vector.set(0, 0)).y;
 
 		if(Math.abs(velocityX) > swipevelocity && Math.abs(velocityY) < swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight() / 2, 250 * s)){
 			if( !main.colorMenuCollapsed() && velocityX < -swipevelocity) main.collapseColorMenu(); //swipe left, close color menu

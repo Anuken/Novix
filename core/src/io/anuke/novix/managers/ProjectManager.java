@@ -1,6 +1,5 @@
 package io.anuke.novix.managers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import io.anuke.novix.Novix;
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
@@ -71,7 +71,7 @@ public class ProjectManager{
 
 		Project project = loadProject(name, id);
 
-		Gdx.app.log("pedebugging", "Created new project with name " + name);
+		Novix.log("Created new project with name " + name);
 
 		return project;
 	}
@@ -81,7 +81,7 @@ public class ProjectManager{
 		project.lastloadtime = System.currentTimeMillis();
 		currentProject = project;
 
-		Gdx.app.log("pedebugging", "Opening project \"" + project.name + "\"...");
+		Novix.log("Opening project \"" + project.name + "\"...");
 
 		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
 
@@ -154,9 +154,9 @@ public class ProjectManager{
 		saveProjectsFile();
 		Core.i.prefs.put("lastproject", getCurrentProject().id);
 		savingProject = true;
-		Gdx.app.log("pedebugging", "Starting save..");
+		Novix.log("Starting save..");
 		PixmapIO.writePNG(currentProject.getFile(), main.drawgrid.canvas.pixmap);
-		Gdx.app.log("pedebugging", "Saving project.");
+		Novix.log("Saving project.");
 		savingProject = false;
 	}
 
@@ -170,7 +170,7 @@ public class ProjectManager{
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			Gdx.app.error("pedebugging", "Project file nonexistant or corrupt.");
+			Novix.log("Project file nonexistant or corrupt.");
 		}
 	}
 
@@ -190,7 +190,7 @@ public class ProjectManager{
 				project.reloadTexture();
 			}catch(Exception e){
 				e.printStackTrace();
-				Gdx.app.error("pedebugging", "Error loading project \"" + project.name + "\": corrupt file?");
+				Novix.log("Error loading project \"" + project.name + "\": corrupt file?");
 				
 				//remove project, it's dead to me. don't mention it, the user doesn't need to know about this
 				if(project != currentProject){
@@ -213,11 +213,11 @@ public class ProjectManager{
 
 				getFile(currentProject.id).copyTo(getBackupFile(currentProject.id));
 
-				Gdx.app.log("pedebugging", "Loaded and backed up current project.");
+				Novix.log("Loaded and backed up current project.");
 
 			}catch(Exception e){ //corruption!
 				e.printStackTrace();
-				Gdx.app.error("pedebugging", "Project file corrupted?");
+				Novix.log("Project file corrupted?");
 				projects.remove(currentProject.id); //remove project since it's corrupted
 				//try to fix this mess
 				if(getBackupFile(currentProject.id).exists()){
@@ -227,7 +227,7 @@ public class ProjectManager{
 						backedup = true;
 					}catch(Exception e2){ //well, we tried
 						e2.printStackTrace();
-						Gdx.app.error("pedebugging", "Backup attempt failed.");
+						Novix.log("Backup attempt failed.");
 						tryLoadAnotherProject();
 					}
 				//there is no backup, nowhere else to turn

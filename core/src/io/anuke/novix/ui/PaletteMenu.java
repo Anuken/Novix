@@ -8,24 +8,14 @@ import java.util.Arrays;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.PopupMenu;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
-import com.kotcrab.vis.ui.widget.VisDialog;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisScrollPane;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisTextField;
+import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Palette;
@@ -81,7 +71,7 @@ public class PaletteMenu extends BaseDialog{
 								palette.colors = newcolors;
 
 								update();
-								main.updateColorMenu();
+								main.colormenu.updateColorMenu();
 							}
 						}.show(getStage());
 					}

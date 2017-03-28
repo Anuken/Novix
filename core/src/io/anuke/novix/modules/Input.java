@@ -160,7 +160,7 @@ public class Input extends Module<Novix> implements InputProcessor{
 					DrawingGrid grid = drawgrid();
 					grid.setCursor(Gdx.input.getX() - grid.getX(), ((Gdx.graphics.getHeight() - Gdx.input.getY()) - grid.getY()));
 				}else*/
-			if(input.<Core>getModule(Core.class).tool == Tool.zoom){
+			if(input.<Core>getModule(Core.class).tool() == Tool.zoom){
 				drawgrid().offsetx -= deltaX / drawgrid().zoom;
 				drawgrid().offsety += deltaY / drawgrid().zoom;
 				drawgrid().updateSize();
@@ -171,7 +171,7 @@ public class Input extends Module<Novix> implements InputProcessor{
 
 		@Override
 		public boolean zoom(float initialDistance, float distance){
-			if(Core.i.tool != Tool.zoom || Core.i.menuOpen()) return false;
+			if(Core.i.tool() != Tool.zoom || Core.i.menuOpen()) return false;
 			float s = distance / initialDistance;
 			float newzoom = initzoom * s;
 			if(newzoom < drawgrid().maxZoom()) newzoom = drawgrid().maxZoom();
@@ -185,7 +185,7 @@ public class Input extends Module<Novix> implements InputProcessor{
 
 		@Override
 		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2){
-			if(Core.i.tool != Tool.zoom || Core.i.menuOpen()) return false;
+			if(Core.i.tool() != Tool.zoom || Core.i.menuOpen()) return false;
 
 			Vector2 afirst = initialPointer1.cpy().add(initialPointer2).scl(0.5f);
 			Vector2 alast = pointer1.cpy().add(pointer2).scl(0.5f);

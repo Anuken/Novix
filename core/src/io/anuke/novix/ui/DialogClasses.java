@@ -191,7 +191,7 @@ public class DialogClasses{
 		
 		public ColorChooseDialog(final FilterDialog filter){
 			super("Choose Color");
-			picker.setRecentColors(Core.i.picker.getRecentColors());
+			picker.setRecentColors(Core.i.colormenu.getRecentColors());
 			addCloseButton();
 			getContentTable().add(picker).expand().fill();
 

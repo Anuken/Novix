@@ -23,6 +23,7 @@ import io.anuke.novix.modules.Core;
 import io.anuke.novix.modules.Tutorial;
 import io.anuke.novix.scene2D.CollapseButton;
 import io.anuke.novix.scene2D.ColorBar;
+import io.anuke.novix.scene2D.SmoothCollapsibleWidget;
 import io.anuke.novix.ui.ProjectMenu.ProjectTable;
 import io.anuke.ucore.graphics.ShapeUtils;
 
@@ -32,7 +33,7 @@ public enum TutorialStage{
 
 		@Override
 		protected void draw(){
-			CollapseButton button = Core.i.colorcollapsebutton;
+			CollapseButton button = find("colorcollapsebutton");
 			button.draw(batch, 1f);
 
 			shade(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - button.getHeight());
@@ -55,12 +56,12 @@ public enum TutorialStage{
 
 		@Override
 		protected void draw(){
-			CollapseButton button = Core.i.colorcollapsebutton;
+			CollapseButton button = find("colorcollapsebutton");
 			
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), Core.i.toolcollapsebutton.getTop());
+			shade(0, 0, Gdx.graphics.getWidth(), find("toolcollapsebutton").getTop());
 			
-			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
+			Core.i.getSelectedBox().draw(batch, 1f);
 			
 			color(Color.WHITE);
 
@@ -80,14 +81,14 @@ public enum TutorialStage{
 	colors2{
 		@Override
 		protected void draw(){
-			CollapseButton button = Core.i.colorcollapsebutton;
+			CollapseButton button = find("colorcollapsebutton");
 			
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), Core.i.toolcollapsebutton.getTop());
+			shade(0, 0, Gdx.graphics.getWidth(), find("toolcollapsebutton").getTop());
 
 			color(Color.WHITE);
 
-			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
+			Core.i.getSelectedBox().draw(batch, 1f);
 
 			text(width / 2, height - 70*s, "< Tap any color in this bar to edit it. >");
 
@@ -102,13 +103,13 @@ public enum TutorialStage{
 	colors3{
 		@Override
 		protected void draw(){
-			CollapseButton button = Core.i.colorcollapsebutton;
-			VisTextButton palettebutton = (VisTextButton)Core.i.colorcollapser.getTable().getChildren().peek();
+			CollapseButton button = find("colorcollapsebutton");
+			VisTextButton palettebutton = find("palettebutton");
 
 			palettebutton.localToStageCoordinates(temp.set(0, 0));
 
 			shade(button.getX(), button.getY(), button.getWidth(), button.getHeight());
-			shade(0, 0, Gdx.graphics.getWidth(), Core.i.toolcollapsebutton.getTop());
+			shade(0, 0, Gdx.graphics.getWidth(), find("toolcollapsebutton").getTop());
 
 			color(Color.WHITE);
 			text(width / 2, temp.y + palettebutton.getHeight() * 1.5f, "Tap this button to access your palettes.");
@@ -120,7 +121,7 @@ public enum TutorialStage{
 				next();
 			}
 
-			Core.i.boxes[Core.i.paletteColor].draw(batch, 1f);
+			Core.i.getSelectedBox().draw(batch, 1f);
 		}
 	},
 	palettes{
@@ -162,8 +163,10 @@ public enum TutorialStage{
 				bar.fire(new ChangeListener.ChangeEvent());
 			}
 			
-			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
-			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,0, width, find("toolcollapsebutton").getTop());
+			
+			float h = colorHeight();
+			
 			shade(0,height-h, width, h);
 			
 			if(Core.i.getCurrentDialog() != null){
@@ -188,8 +191,8 @@ public enum TutorialStage{
 	},
 	canvasmodes{
 		protected void draw(){
-			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
-			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,0, width, find("toolcollapsebutton").getTop());
+			float h = colorHeight();
 			shade(0,height-h, width, h);
 			
 			color(Color.WHITE);
@@ -211,8 +214,8 @@ public enum TutorialStage{
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
 			
-			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
-			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,0, width, find("toolcollapsebutton").getTop());
+			float h = colorHeight();
 			shade(0,height-h, width, h);
 			
 			color(Color.WHITE);
@@ -237,8 +240,8 @@ public enum TutorialStage{
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
 			
-			shade(0,0, width, Core.i.toolcollapsebutton.getTop());
-			float h = Core.i.colortable.getPrefHeight()+ Core.i.boxes[0].getBorderThickness();
+			shade(0,0, width, find("toolcollapsebutton").getTop());
+			float h = colorHeight();
 			shade(0,height-h, width, h);
 			
 			color(Color.WHITE);
@@ -289,7 +292,7 @@ public enum TutorialStage{
 			}
 
 			if(y > height / 2 + 40*s){
-				Core.i.tool.button.setChecked(true);
+				Core.i.tool().button.setChecked(true);
 				next();
 			}
 		}
@@ -298,9 +301,9 @@ public enum TutorialStage{
 		@Override
 		protected void draw(){
 
-			float f = Core.i.toolcollapsebutton.getTop();
+			float f = find("toolcollapsebutton").getTop();
 			shade(0, 0, width, f);
-			shade(0, f + Core.i.toolcollapser.getDone() * Core.i.toolmenu.getPrefHeight() - 78*s, width, height - f);
+			shade(0, f + ((SmoothCollapsibleWidget)find("toolcollapser")).getDone() * Core.i.toolmenu.getPrefHeight() - 78*s-10, width, height - f);
 			
 			Actor modebutton = Core.i.stage.getRoot().findActor("modebutton");
 			Actor gridbutton = Core.i.stage.getRoot().findActor("gridbutton");
@@ -487,6 +490,10 @@ public enum TutorialStage{
 		color(select);
 		text(width - 30*s, 30*s, "Exit");
 	}
+	
+	float colorHeight(){
+		return ((Table)find("colortable")).getPrefHeight() + Core.i.colormenu.getBoxBorder();
+	}
 
 	public void color(Color color){
 		color(color.r, color.g, color.b, color.a);
@@ -560,6 +567,10 @@ public enum TutorialStage{
 
 	public void text(float x, float y, String text){
 		text(x, y, text, Align.center);
+	}
+	
+	public <T extends Actor> T find(String name){
+		return Core.i.stage.getRoot().findActor(name);
 	}
 
 	public void tap(int x, int y){

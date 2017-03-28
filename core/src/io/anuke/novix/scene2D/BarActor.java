@@ -11,12 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
 import com.kotcrab.vis.ui.VisUI;
 
 import io.anuke.ucore.UCore;
-import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.MiscUtils;
 
 public abstract class BarActor extends Actor implements Disableable{
 	public static final float s = MiscUtils.densityScale();
-	public static Color borderColor = Hue.lightness(0.24f);
+	public static Color borderColor = Color.valueOf("29323d");
 	public static final float selectionWidth = 20f*s;
 	protected static final float margin = 5f*s;
 	protected static final float border = 5f*s;

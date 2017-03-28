@@ -5,7 +5,6 @@ import java.util.Stack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
@@ -85,13 +84,13 @@ public enum Tool{
 			Color selected = canvas.getColor(x, y);
 			for(int i = 0; i < Core.i.getCurrentPalette().size(); i ++){
 				if(Hue.approximate(selected, Core.i.getCurrentPalette().colors[i], 0.001f)){
-					((ClickListener)Core.i.boxes[i].getListeners().get(0)).clicked(null, 0, 0);
+					Core.i.colormenu.setSelectedColor(i);
 					return;
 				}
 			}
 			selected.a = 1f;
-			Core.i.setSelectedColor(selected);
-			Core.i.picker.addRecentColor(selected);
+			Core.i.colormenu.setSelectedColor(selected);
+			Core.i.colormenu.addRecentColor(selected);
 		}
 		
 		public boolean symmetric(){

@@ -15,23 +15,20 @@ import io.anuke.ucore.graphics.Textures;
 import io.anuke.utools.MiscUtils;
 
 public class ColorBox extends Widget implements Disableable{
-	public static final Style defaultStyle = new Style();
-
 	public boolean selected, hovered;
+	public Color backgroundColor = Color.valueOf("29323d"),
+	disabledColor = Color.valueOf("0f1317"),
+	hoverColor = Color.GRAY,
+	selectedColor = Color.CORAL;
 	private boolean disabled;
-	private Style style;
 
 	public ColorBox(){
-		style = defaultStyle;
+		
 	}
 
 	public ColorBox(Color color){
 		this();
 		setColor(color);
-	}
-	
-	public Style getStyle(){
-		return style;
 	}
 	
 	public void addSelectListener(){
@@ -45,8 +42,8 @@ public class ColorBox extends Widget implements Disableable{
 		if(selected) border = getBorderThickness();
 		if(hovered) border = (int)getWidth() / 14;
 
-		batch.setColor( !selected ? style.box : style.selected);
-		if(hovered) batch.setColor(style.hovered);
+		batch.setColor( !selected ? backgroundColor : selectedColor);
+		if(hovered) batch.setColor(hoverColor);
 
 		MiscUtils.setBatchAlpha(batch, alpha);
 
@@ -57,7 +54,7 @@ public class ColorBox extends Widget implements Disableable{
 			batch.draw(Textures.get("alpha"), getX() + grayborder, getY() + grayborder, getWidth() - grayborder * 2, getHeight() - grayborder * 2, 0, 0, 2, 2);
 		}
 		
-		batch.setColor(disabled ? style.disabled : getColor());
+		batch.setColor(disabled ? disabledColor : getColor());
 
 		MiscUtils.setBatchAlpha(batch, alpha);
 

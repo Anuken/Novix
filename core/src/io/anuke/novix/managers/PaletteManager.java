@@ -1,11 +1,11 @@
 package io.anuke.novix.managers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import io.anuke.novix.Novix;
 import io.anuke.novix.graphics.Palette;
 import io.anuke.novix.modules.Core;
 
@@ -59,10 +59,10 @@ public class PaletteManager{
 				currentPalette = palettes.get(id);
 			}
 
-			Gdx.app.log("pedebugging", "Palettes loaded.");
+			Novix.log("Palettes loaded.");
 		}catch(Exception e){
 			e.printStackTrace();
-			Gdx.app.error("pedebugging", "Palette file nonexistant or corrupt.");
+			Novix.log("Palette file nonexistant or corrupt.");
 		}
 
 		if(currentPalette == null){

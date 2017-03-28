@@ -1,9 +1,9 @@
 package io.anuke.novix.managers;
 
-import io.anuke.novix.modules.Core;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+
+import io.anuke.novix.modules.Core;
 
 public class PrefsManager{
 	private Core core;
@@ -19,7 +19,7 @@ public class PrefsManager{
 		prefs.putBoolean(name, value);
 		//map.put(name, value);
 		
-		if(name.equals("grid"))
+		if(name.equals("grid") && core.toolmenu != null)
 		core.toolmenu.getGridButton().setChecked(value);
 	}
 	
