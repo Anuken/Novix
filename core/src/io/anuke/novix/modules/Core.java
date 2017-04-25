@@ -37,7 +37,6 @@ import io.anuke.novix.tools.*;
 import io.anuke.novix.ui.*;
 import io.anuke.novix.ui.DialogClasses.MenuDialog;
 import io.anuke.novix.ui.ProjectMenu.ProjectTable;
-import io.anuke.ucore.UCore;
 import io.anuke.ucore.graphics.Textures;
 import io.anuke.ucore.modules.Module;
 import io.anuke.utools.SceneUtils;
@@ -67,7 +66,7 @@ public class Core extends Module<Novix>{
 
 	@Override
 	public void update(){
-		UCore.clearScreen(clearcolor);
+		clearScreen(clearcolor);
 
 		if(FocusManager.getFocusedWidget() != null && (!(FocusManager.getFocusedWidget() instanceof VisTextField)))
 			FocusManager.resetFocus(stage);

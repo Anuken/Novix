@@ -12,7 +12,7 @@ public class HueBar extends BarActor {
 	
 	public HueBar() {
 		super(false);
-		if (!Textures.has("huebar"))
+		if (!Textures.loaded("huebar"))
 			Textures.put("huebar", PixmapUtils.hueTexture(150, 20));
 
 	}

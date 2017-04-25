@@ -18,10 +18,10 @@ import com.kotcrab.vis.ui.VisUI;
 import io.anuke.novix.Novix;
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.tools.*;
-import io.anuke.ucore.UCore;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.graphics.Textures;
+import io.anuke.ucore.util.Mathf;
 import io.anuke.utools.MiscUtils;
 import io.anuke.utools.MiscUtils.GridChecker;
 
@@ -154,8 +154,8 @@ public class DrawingGrid extends Actor{
 				cursorx += deltax;
 				cursory += deltay;
 
-				cursorx = UCore.clamp(cursorx, 0, getWidth() - 1);
-				cursory = UCore.clamp(cursory, 0, getHeight() - 1);
+				cursorx = Mathf.clamp(cursorx, 0, getWidth() - 1);
+				cursory = Mathf.clamp(cursory, 0, getHeight() - 1);
 
 			}else{
 				cursorx = x - getX();
@@ -247,8 +247,8 @@ public class DrawingGrid extends Actor{
 	public void setCursor(float x, float y){
 		cursorx = x;
 		cursory = y;
-		cursorx = UCore.clamp(cursorx, 0, getWidth() - 1);
-		cursory = UCore.clamp(cursory, 0, getHeight() - 1);
+		cursorx = Mathf.clamp(cursorx, 0, getWidth() - 1);
+		cursory = Mathf.clamp(cursory, 0, getHeight() - 1);
 		int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
 
 		selected.set(newx, newy);
@@ -448,8 +448,8 @@ public class DrawingGrid extends Actor{
 		if(cursorx < -getX()) cursorx = -getX();
 		if(cursory < Gdx.graphics.getHeight() / 2 - Gdx.graphics.getWidth() / 2 - getY()) cursory = Gdx.graphics.getHeight() / 2 - Gdx.graphics.getWidth() / 2 - getY();
 		
-		cursorx = UCore.clamp(cursorx, 0, getWidth() - 1);
-		cursory = UCore.clamp(cursory, 0, getHeight() - 1);
+		cursorx = Mathf.clamp(cursorx, 0, getWidth() - 1);
+		cursory = Mathf.clamp(cursory, 0, getHeight() - 1);
 		
 		updateCursorSelection();
 

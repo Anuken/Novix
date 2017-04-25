@@ -26,8 +26,8 @@ import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene2D.*;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
-import io.anuke.ucore.UCore;
 import io.anuke.ucore.graphics.PixmapUtils;
+import io.anuke.ucore.util.Mathf;
 import io.anuke.utools.MiscUtils;
 import io.anuke.utools.SceneUtils;
 
@@ -172,7 +172,6 @@ public class DialogClasses{
 			getContentTable().add(label).expand().align(Align.bottomLeft).row();
 			getContentTable().add(slider).expand().growX().align(Align.top).padTop(15*s).padBottom(30 * s);
 			
-			//setDebug(true, true);
 			updatePreview();
 		}
 
@@ -1113,8 +1112,8 @@ public class DialogClasses{
 
 						Vector2 vector = points[point.point];
 
-						vector.x = UCore.clamp(vector.x, getX(), getX() + getWidth());
-						vector.y = UCore.clamp(vector.y, getY(), getY() + getHeight());
+						vector.x = Mathf.clamp(vector.x, getX(), getX() + getWidth());
+						vector.y = Mathf.clamp(vector.y, getY(), getY() + getHeight());
 
 						if(point.point == 4){
 							points[0].x = vector.x;
@@ -1324,40 +1323,10 @@ public class DialogClasses{
 	
 	public static void showError(Stage stage, String info, String details){
 		new ErrorDialog(info, details).show(stage);
-		/*
-		VisDialog dialog = new VisDialog("Error", "dialog");
-		dialog.getTitleLabel().setColor(Color.RED);
-		dialog.addCloseButton();
-		dialog.getContentTable().add(new VisLabel(info)).padTop(20*s).padBottom(20*s);
-		
-		dialog.getContentTable().row();
-		
-		VisLabel error = new VisLabel(details);
-		error.setWrap(true);
-		error.setColor(Hue.blend(Color.GRAY, Color.RED, 0.5f));
-		error.setAlignment(Align.center);
-		dialog.getContentTable().center().add(error).align(Align.center).width(400f*s).padTop(10*s).padBottom(30*s);
-		
-		VisTextButton button = new VisTextButton("OK");
-		dialog.getButtonsTable().add(button).size(120*s, 60*s);
-		dialog.setObject(button, true);
-		dialog.show(stage);
-		*/
 	}
 	
 	public static void showError(Stage stage, String info){
 		new ErrorDialog(info, "").show(stage);
-		/*
-		VisDialog dialog = new VisDialog("Error", "dialog");
-		dialog.getTitleLabel().setColor(Color.RED);
-		dialog.addCloseButton();
-		dialog.getContentTable().add(new VisLabel(info)).padTop(20*MiscUtils.densityScale()).padBottom(20*MiscUtils.densityScale());
-			
-		VisTextButton button = new VisTextButton("OK");
-		dialog.getButtonsTable().add(button).size(120*MiscUtils.densityScale(), 60*MiscUtils.densityScale());
-		dialog.setObject(button, true);
-		dialog.show(stage);
-		*/
 	}
 	
 	public static void showError(Stage stage, Exception e){
@@ -1565,6 +1534,7 @@ public class DialogClasses{
 
 		return cell.size(width, height).padTop(3 + topPad).padBottom(topPad).padLeft(sidePad + 2).padRight(sidePad + 2);
 	}
+	
 	static class FloatFilter implements VisTextField.TextFieldFilter{
 		@Override
 		public boolean acceptChar(VisTextField textField, char c){

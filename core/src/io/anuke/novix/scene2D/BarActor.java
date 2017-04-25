@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
 import com.kotcrab.vis.ui.VisUI;
 
-import io.anuke.ucore.UCore;
+import io.anuke.ucore.util.Mathf;
 import io.anuke.utools.MiscUtils;
 
 public abstract class BarActor extends Actor implements Disableable{
@@ -69,7 +69,7 @@ public abstract class BarActor extends Actor implements Disableable{
 
 	private void updateSelection(float x, float y){
 		selection = !vertical ? ((x-selectionWidth/2) / (getWidth()-selectionWidth)) : ((y-selectionWidth/2) / (getHeight()-selectionWidth));
-		selection = UCore.clamp(selection, 0f, 1f);
+		selection = Mathf.clamp(selection, 0f, 1f);
 		fire(new ChangeListener.ChangeEvent());
 		onSelectionUpdated();
 	}

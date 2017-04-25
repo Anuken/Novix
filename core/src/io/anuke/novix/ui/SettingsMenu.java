@@ -12,11 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
-import com.kotcrab.vis.ui.widget.VisDialog;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisSlider;
-import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.*;
 
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
@@ -72,7 +68,7 @@ public class SettingsMenu extends BaseDialog{
 		DialogClasses.scaleSlider(slider);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
-				label.setText(name + ": " + (int)(slider.getValue()*100) + "%");
+				label.setText(name + ": [SKY]" + (int)(slider.getValue()*100) + "%");
 				main.prefs.put(convert(name), slider.getValue());
 			}
 		});
@@ -81,30 +77,41 @@ public class SettingsMenu extends BaseDialog{
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
 		table.row();
-		table.add(slider).width(300 * s).padBottom(40f*s);
+		table.add(slider).width(300 * s);
 		table.row();
+		table.add(new Separator()).colspan(1).padTop(10*s).padBottom(5*s).growX().row();
 	}
 
 	public void addCheckSetting(final String name, boolean value){
 		final VisLabel label = new VisLabel(name);
 		final VisCheckBox box = new VisCheckBox("", main.prefs.getBoolean(convert(name), value));
+		
+		Table row = new VisTable();
+		row.left();
+		
 		box.getImageStackCell().size(40 * s);
 		box.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				main.prefs.put(convert(name), box.isChecked());
+				label.setText(name + ": " + (box.isChecked() ? "[CORAL]On" : "[PURPLE]Off"));
 			}
 		});
+		box.fire(new ChangeListener.ChangeEvent());
+		
 		Table table = getContentTable();
-		table.top().left().add(label).align(Align.left);
-		table.add(box).align(Align.left);
+		row.top().left().add(label).align(Align.left);
+		row.add(box).padLeft(150*s);
+		
+		table.add(row).padTop(5*s).padBottom(5*s).align(Align.left);
 		table.row();
+		table.add(new Separator()).colspan(1).padTop(10*s).growX().row();
 	}
 	
 	public void addButton(String name, ChangeListener listener){
 		VisTextButton button = new VisTextButton(name);
 		button.addListener(listener);
 		Table table = getContentTable();
-		table.top().left().add(button).size(200*s, 60*s).align(Align.left);
+		table.top().left().add(button).size(200*s, 60*s).padTop(40*s).align(Align.left);
 		table.add().align(Align.left);
 	}
 	
