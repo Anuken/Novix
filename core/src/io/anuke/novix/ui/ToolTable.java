@@ -365,7 +365,12 @@ public class ToolTable extends VisTable{
 		},*/
 		new MenuButton("Export", "Export the image as a PNG."){
 			public void clicked(){
-				new ExportDialog().show(stage);
+				new FileChooser(FileChooser.pngFilter, false){
+					public void fileSelected(FileHandle file){
+						new ExportDialog(file).show(stage);
+					}
+				}.show(stage);
+				
 			}
 		},
 		new MenuButton("Open", "Load an image file\ninto this project."){

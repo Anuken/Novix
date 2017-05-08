@@ -98,21 +98,24 @@ public class FileChooser extends BaseDialog{
 		up.getImageCell().size(40*s);
 		up.addListener(new UpListener());
 
-		VisImageButton back = new VisImageButton(VisUI.getSkin().getDrawable("icon-arrow-left"));
+		final VisImageButton back = new VisImageButton(VisUI.getSkin().getDrawable("icon-arrow-left"));
 		back.getImageCell().size(40*s);
-		back.addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				stack.back();
-			}
-		});
-		VisImageButton forward = new VisImageButton(VisUI.getSkin().getDrawable("icon-arrow-right"));
+		
+		final VisImageButton forward = new VisImageButton(VisUI.getSkin().getDrawable("icon-arrow-right"));
 		forward.getImageCell().size(40*s);
+		
 		forward.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				stack.forward();
 			}
 		});
-
+		back.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				stack.back();
+			}
+		});
+		
+		
 		VisImageButton home = new VisImageButton(VisUI.getSkin().getDrawable("icon-home"));
 		home.getImageCell().size(40*s);
 		home.addListener(new ClickListener(){
@@ -302,6 +305,7 @@ public class FileChooser extends BaseDialog{
 		public void push(FileHandle file){
 			if(index != history.size) history.truncate(index);
 			history.add(file);
+			index ++;
 		}
 
 		public void back(){
@@ -323,7 +327,7 @@ public class FileChooser extends BaseDialog{
 		}
 
 		public boolean canBack(){
-			return !(index == 1);
+			return !(index == 1) && index > 0;
 		}
 
 		void print(){

@@ -575,11 +575,12 @@ public class DialogClasses{
 
 	public static class ExportDialog extends MenuDialog{
 		VisValidatableTextField scalefield, widthfield, heightfield;
-		VisTextField directory;
 		VisTextButton button;
+		FileHandle file;
 
-		public ExportDialog(){
+		public ExportDialog(FileHandle file){
 			super("Export Image");
+			this.file = file;
 			
 			widthfield = new VisValidatableTextField(Core.i.canvas().width()+"");
 			heightfield = new VisValidatableTextField(Core.i.canvas().height()+"");
@@ -590,10 +591,7 @@ public class DialogClasses{
 			scalefield = new VisValidatableTextField("1");
 			scalefield.setTextFieldFilter(new FloatFilter());
 
-			button = new VisTextButton("[YELLOW]Select...");
-
-			directory = new VisTextField("");
-			directory.setTouchable(Touchable.disabled);
+			button = new VisTextButton(file.name()+".png");
 			
 			scalefield.setProgrammaticChangeEvents(false);
 			widthfield.setProgrammaticChangeEvents(false);
@@ -602,17 +600,16 @@ public class DialogClasses{
 			final ChangeListener oklistener = new ChangeListener(){
 				@Override
 				public void changed(ChangeEvent event, Actor actor){
-					ok.setDisabled(!scalefield.isInputValid() || directory.getText().isEmpty() || scalefield.getText().isEmpty() || scalefield.getText().replace("0", "").replace(".", "").isEmpty());
+					ok.setDisabled(!scalefield.isInputValid() || scalefield.getText().isEmpty() || scalefield.getText().replace("0", "").replace(".", "").isEmpty());
 				}
 			};
 
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					new FileChooser(FileChooser.pngFilter, false){
-						public void fileSelected(FileHandle file){
-							directory.setText(file.file().getAbsolutePath());
-							button.setText(file.file().getName()+".png");
-							SceneUtils.moveTextToSide(directory);
+						public void fileSelected(FileHandle afile){
+							ExportDialog.this.file = afile;
+							button.setText(afile.file().getName()+".png");
 							oklistener.changed(null, null);
 						}
 					}.show(getStage());
@@ -695,10 +692,8 @@ public class DialogClasses{
 			});
 
 			scalefield.addListener(oklistener);
-			directory.addListener(oklistener);
 
 			scalefield.fire(new ChangeListener.ChangeEvent());
-			directory.fire(new ChangeListener.ChangeEvent());
 
 			float sidepad = 20 * s;
 
@@ -732,7 +727,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			exportPixmap(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, Float.parseFloat(scalefield.getText())), Gdx.files.absolute(directory.getText()));
+			exportPixmap(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, Float.parseFloat(scalefield.getText())), file);
 		}
 	}
 
