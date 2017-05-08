@@ -6,15 +6,19 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.ColorUtils;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
-import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
+import io.anuke.novix.android.AndroidTextFieldDialog;
+import io.anuke.novix.android.AndroidTextFieldDialog.TextPromptListener;
 import io.anuke.novix.modules.Core;
+import io.anuke.novix.ui.DialogClasses.InfoDialog;
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.MiscUtils;
 
@@ -28,15 +32,16 @@ public class ColorWidget extends VisTable{
 	Color selectedColor;
 	Color lastColor;
 	VisImageButton lock;
+	VisTextButton hexbutton;
 	ObjectSet<Color> usedColors = new ObjectSet<Color>();
 	Cell<?> padCell;
 	boolean expandPalette;
 
-	public ColorWidget(){
+	public ColorWidget() {
 		this(true);
 	}
 
-	public ColorWidget(boolean expandPalette){
+	public ColorWidget(boolean expandPalette) {
 		this.expandPalette = expandPalette;
 		setupUI();
 	}
@@ -44,7 +49,35 @@ public class ColorWidget extends VisTable{
 	public void setupUI(){
 		float s = MiscUtils.densityScale();
 
-		float width = Gdx.graphics.getWidth() - BarActor.selectionWidth * 2 - 70*s, height = 60 * s, spacing = 14 * s;
+		float width = Gdx.graphics.getWidth() - BarActor.selectionWidth * 2 - 70 * s, height = 60 * s, spacing = 14 * s;
+
+		hexbutton = new VisTextButton("");
+
+		hexbutton.addListener(new ClickListener(){
+			public void clicked(InputEvent event, float x, float y){
+				AndroidTextFieldDialog dialog = new AndroidTextFieldDialog();
+				dialog.setConfirmButtonLabel("OK").setText(hexbutton.getText());
+				dialog.setCancelButtonLabel("Cancel");
+				dialog.setMaxLength(7);
+				dialog.setTextPromptListener(new TextPromptListener(){
+					public void confirm(String text){
+						try{
+							Color color = Color.valueOf(text);
+							setSelectedColor(color);
+							hexbutton.setText(text.startsWith("#") ? text : "#"+text);
+						}catch (Exception e){
+							Gdx.app.postRunnable(new Runnable(){
+								public void run(){
+									new InfoDialog("Error","Invalid hex code!").show(getStage());
+								}
+							});
+						}
+					}
+				});
+				
+				dialog.show();
+			}
+		});
 
 		Table table = this;
 
@@ -79,7 +112,8 @@ public class ColorWidget extends VisTable{
 
 		table.top().center().add(hbar).padTop(spacing / 2f).row();
 
-		table.add(sbar).padTop(spacing).row();;
+		table.add(sbar).padTop(spacing).row();
+		
 
 		table.add(vbar).padTop(spacing);
 
@@ -92,9 +126,9 @@ public class ColorWidget extends VisTable{
 		currentBox = new ColorBox();
 
 		lastBox.addListener(new BoxListener(lastBox));
-		
+
 		final Table colors = new VisTable();
-		
+
 		VisImageButtonStyle style = new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class));
 		style.imageChecked = VisUI.getSkin().getDrawable("icon-lock");
 		style.imageUp = VisUI.getSkin().getDrawable("icon-lock-open");
@@ -102,7 +136,7 @@ public class ColorWidget extends VisTable{
 		style.down = null;
 		style.over = null;
 		style.checked = null;
-		
+
 		lock = new VisImageButton(style);
 		lock.setChecked(Core.i.prefs.getBoolean("lock"));
 		lock.addListener(new ChangeListener(){
@@ -110,53 +144,54 @@ public class ColorWidget extends VisTable{
 				hbar.setDisabled(lock.isChecked());
 				sbar.setDisabled(lock.isChecked());
 				vbar.setDisabled(lock.isChecked());
+				hexbutton.setDisabled(lock.isChecked());
 				colors.setTouchable(lock.isChecked() ? Touchable.disabled : Touchable.childrenOnly);
-				colors.setColor(lock.isChecked() ? new Color(1,1,1,0.5f) : Color.WHITE);
+				colors.setColor(lock.isChecked() ? new Color(1, 1, 1, 0.5f) : Color.WHITE);
 				Core.i.prefs.put("lock", lock.isChecked());
 			}
 		});
-		
+
 		lock.fire(new ChangeListener.ChangeEvent());
-		
-		lock.getImageCell().size(48*s);
 
-		//Image arrow = new Image(VisUI.getSkin().get("default", ColorPickerWidgetStyle.class).iconArrowRight);
+		lock.getImageCell().size(48 * s);
 
-		//colordisplay.add(lastBox).size(60*s);
-		//colordisplay.add(arrow);
 		colordisplay.add().size(70 * s);
 		colordisplay.add(currentBox).size((70 * s));
-		colordisplay.add(lock).size(70*s);
+		colordisplay.add(lock).size(70 * s);
+		
+		
+		table.row();
+		table.add(hexbutton).padBottom(5f * s).padTop(5*s).minWidth(150 * s).height(50 * s).top();
+		
 
 		table.row();
 		padCell = table.add();
-		//padCell.padTop(70);
 		table.row();
 		
-		table.add(new VisLabel("Recent Colors:")).padTop(15f * s).row();
+		
 
 		recentColors = new ColorBox[palettewidth];
 
-		
-		table.add(colors).expand().fill().padTop(10 * s);
+		table.add(colors).expand().fill();
 
 		float size = Gdx.graphics.getWidth() / (palettewidth / 2) - 4;
 
-		for(int x = 0;x < palettewidth;x ++){
+		for(int x = 0; x < palettewidth; x++){
 			final ColorBox box = new ColorBox();
 			box.setDisabled(true);
 			recentColors[x] = box;
 			box.addListener(new BoxListener(box));
 
-			if(x % 8 == 0) colors.row();
+			if(x % 8 == 0)
+				colors.row();
 			colors.add(box).size(size);
 		}
 	}
-	
+
 	public Cell<?> getPadCell(){
 		return padCell;
 	}
-	
+
 	public boolean isLocked(){
 		return lock.isChecked();
 	}
@@ -164,7 +199,7 @@ public class ColorWidget extends VisTable{
 	private class BoxListener extends InputListener{
 		private ColorBox box;
 
-		public BoxListener(ColorBox box){
+		public BoxListener(ColorBox box) {
 			this.box = box;
 		}
 
@@ -183,6 +218,7 @@ public class ColorWidget extends VisTable{
 	private void internalColorChanged(){
 		selectedColor = Hue.fromHSB(hbar.selection, sbar.selection, vbar.selection);
 		currentBox.setColor(selectedColor);
+		hexbutton.setText("#" + selectedColor.toString().substring(0, 6));
 		onColorChanged();
 	}
 
@@ -194,16 +230,16 @@ public class ColorWidget extends VisTable{
 		return recentColors;
 	}
 
-	public void setRecentColors(Color...colors){
-		for(int i = 0;i < palettewidth && i < colors.length;i ++){
+	public void setRecentColors(Color... colors){
+		for(int i = 0; i < palettewidth && i < colors.length; i++){
 			recentColors[i].setColor(colors[i]);
 			recentColors[i].setDisabled(false);
 		}
 	}
 
-	public void setRecentColors(ColorBox...colors){
-		for(int i = 0;i < palettewidth && i < colors.length;i ++){
-			if( !colors[i].isDisabled()){
+	public void setRecentColors(ColorBox... colors){
+		for(int i = 0; i < palettewidth && i < colors.length; i++){
+			if(!colors[i].isDisabled()){
 				usedColors.add(colors[i].getColor());
 				recentColors[i].setColor(colors[i].getColor());
 				recentColors[i].setDisabled(false);
@@ -221,19 +257,21 @@ public class ColorWidget extends VisTable{
 
 	public void addRecentColor(Color color){
 		//prevents duped colors
-		if(usedColors.contains(color)) return;
+		if(usedColors.contains(color))
+			return;
 
-		for(int i = palettewidth - 2;i >= 0;i --){
+		for(int i = palettewidth - 2; i >= 0; i--){
 			recentColors[i + 1].setColor(recentColors[i].getColor());
 			recentColors[i + 1].setDisabled(recentColors[i].isDisabled());
 		}
-		
+
 		recentColors[0].setColor(color);
 		usedColors.add(color);
 	}
 
 	public void setSelectedColor(Color color){
-		if(selectedColor != null && expandPalette) pushPalette();
+		if(selectedColor != null && expandPalette)
+			pushPalette();
 		lastColor = color.cpy();
 		lastBox.setColor(color);
 		setNewColor(color);

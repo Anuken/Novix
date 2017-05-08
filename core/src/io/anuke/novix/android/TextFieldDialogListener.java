@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.widget.VisTextField;
 
-import android.app.Activity;
 import android.text.InputType;
 import io.anuke.novix.android.AndroidTextFieldDialog.TextPromptListener;
 
@@ -43,7 +42,7 @@ public class TextFieldDialogListener extends ClickListener{
 		
 		if(Gdx.app.getType() == ApplicationType.Desktop) return;
 		
-		AndroidTextFieldDialog dialog = new AndroidTextFieldDialog((Activity)Gdx.app);
+		AndroidTextFieldDialog dialog = new AndroidTextFieldDialog();
 
 		dialog.setTextPromptListener(new TextPromptListener(){
 			public void confirm(String text){

@@ -19,8 +19,8 @@ public class AndroidTextFieldDialog{
 	private TextPromptListener listener;
 	private boolean isBuild;
 
-	public AndroidTextFieldDialog(Activity activity) {
-		this.activity = activity;
+	public AndroidTextFieldDialog() {
+		this.activity = (Activity)Gdx.app;
 		load();
 	}
 

@@ -420,12 +420,14 @@ public class DrawingGrid extends Actor{
 		//draw cursor
 		if(cursormode() || (touches > 0 && Core.i.tool().moveCursor()) || !Core.i.tool().moveCursor()){
 			batch.setColor(Color.PURPLE);
-			float csize = 30 * core.prefs.getFloat("cursorsize", 1f) * s;
+			float csize = 32 * core.prefs.getFloat("cursorsize", 1f) * s;
 			
 			batch.draw(Textures.get(Core.i.tool().cursor), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 			
 			batch.setColor(Color.CORAL);
-			if(Core.i.tool() != Tool.pencil && Core.i.tool() != Tool.zoom) 	batch.draw(VisUI.getSkin().getRegion("icon-" + Core.i.tool().name()), getX() + cursorx, getY() + cursory, csize, csize);
+			
+			if(Core.i.tool() != Tool.pencil && Core.i.tool() != Tool.zoom) 	
+				batch.draw(VisUI.getSkin().getRegion("icon-" + Core.i.tool().name()), getX() + cursorx, getY() + cursory, csize, csize);
 		} //seriously, why is this necessary
 		batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
 
