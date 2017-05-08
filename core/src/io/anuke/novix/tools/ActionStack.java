@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 import io.anuke.novix.modules.Core;
+import io.anuke.ucore.graphics.PixmapUtils;
 
 public class ActionStack implements Disposable{
 	private Array<DrawAction> stack = new Array<DrawAction>();
@@ -81,7 +82,9 @@ public class ActionStack implements Disposable{
 	public void dispose(){
 		for(DrawAction action : stack){
 			if(action.toCanvas != null && action.toCanvas != Core.i.canvas()) action.toCanvas.dispose();
-			if(action.fromCanvas != null  && action.fromCanvas != Core.i.canvas()) action.fromCanvas.dispose();
+			
+			if(action.fromCanvas != null  && action.fromCanvas != Core.i.canvas() 
+					&& !PixmapUtils.isDisposed(action.fromCanvas.pixmap)) action.fromCanvas.dispose();
 		}
 	}
 }

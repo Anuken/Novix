@@ -159,16 +159,12 @@ public class ColorWidget extends VisTable{
 		colordisplay.add(currentBox).size((70 * s));
 		colordisplay.add(lock).size(70 * s);
 		
-		
 		table.row();
 		table.add(hexbutton).padBottom(5f * s).padTop(5*s).minWidth(150 * s).height(50 * s).top();
 		
-
 		table.row();
 		padCell = table.add();
 		table.row();
-		
-		
 
 		recentColors = new ColorBox[palettewidth];
 
