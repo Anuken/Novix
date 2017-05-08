@@ -43,6 +43,7 @@ public class ProjectMenu extends BaseDialog{
 				return Gdx.graphics.getHeight();
 			}
 		};
+		
 		pane.setName("projectpane");
 		pane.setFadeScrollBars(false);
 		pane.setOverscroll(false, false);
@@ -87,8 +88,7 @@ public class ProjectMenu extends BaseDialog{
 		
 		newbutton.setName("newproject");
 
-		SceneUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 40 * s);
-		
+		SceneUtils.addIconToButton(newbutton, new Image(VisUI.getSkin().getDrawable("icon-plus")), 32 * s);
 		
 		VisTextButton settingsbutton = new VisTextButton("Settings");
 		settingsbutton.addListener(new ClickListener(){
@@ -97,10 +97,11 @@ public class ProjectMenu extends BaseDialog{
 			}
 		});
 		settingsbutton.setName("settings");
+		SceneUtils.addIconToButton(settingsbutton, new VisImage("icon-settings"), 32*s);
 
 		newtable.left().add(newbutton).padBottom(6 * s).size(newbuttonwidth, 60 * s);
 		newtable.left().add().grow();
-		newtable.left().add(settingsbutton).padBottom(6 * s).size(120 * s, 60 * s).align(Align.topRight);
+		newtable.left().add(settingsbutton).padBottom(6 * s).size(140 * s, 60 * s).align(Align.topRight);
 
 		getContentTable().add(newtable).grow().row();
 
@@ -161,9 +162,9 @@ public class ProjectMenu extends BaseDialog{
 			sizelabel = new VisLabel("Loading...");
 			sizelabel.setColor(Color.GRAY);
 
-			float imagesize = 40*s;
+			float imagesize = 42*s;
 
-			VisImageButton openbutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-open"));
+			VisImageButton openbutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-project-open"));
 			openbutton.setGenerateDisabledImage(true);
 			VisImageButton copybutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-copy"));
 			VisImageButton renamebutton = new VisImageButton(VisUI.getSkin().getDrawable("icon-rename"));
@@ -222,7 +223,7 @@ public class ProjectMenu extends BaseDialog{
 			top().left();
 
 			background("button");
-			setColor(Hue.lightness(0.87f));
+			setColor(Hue.lightness(0.85f));
 
 			imagecell = stack(new AnimatedImage(VisUI.getSkin().getDrawable("icon-load-1"), VisUI.getSkin().getDrawable("icon-load-2"), VisUI.getSkin().getDrawable("icon-load-3")), new BorderImage());
 			imagecell.padTop(imagecell.getPadTop() + 4).padBottom(imagecell.getPadBottom() + 4);

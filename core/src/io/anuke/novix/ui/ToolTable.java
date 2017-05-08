@@ -100,7 +100,7 @@ public class ToolTable extends VisTable{
 			button.setStyle(new VisImageButtonStyle(VisUI.getSkin().get("toggle", VisImageButtonStyle.class)));
 			button.getStyle().imageUp = VisUI.getSkin().getDrawable("icon-" + ctool.name());
 			button.setGenerateDisabledImage(true);
-			button.getImageCell().size(50 * s);
+			button.getImageCell().size(48 * s);
 			ctool.button = button;
 			button.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -463,7 +463,7 @@ public class ToolTable extends VisTable{
 		modebutton.setChecked(main.prefs.getBoolean("cursormode", true));
 		modebutton.setName("modebutton");
 		
-		modebutton.getImageCell().size(50*s);
+		modebutton.getImageCell().size(48*s);
 		
 		modebutton.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
@@ -478,7 +478,7 @@ public class ToolTable extends VisTable{
 		gridbutton.setChecked(main.prefs.getBoolean("grid", true));
 		gridbutton.setName("gridbutton");
 		
-		gridbutton.getImageCell().size(50*s);
+		gridbutton.getImageCell().size(48*s);
 		
 		gridbutton.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){

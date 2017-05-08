@@ -14,7 +14,7 @@ public class CollapseButton extends VisImageButton{
 	public CollapseButton(){
 		super("default");
 		setStyle(new VisImageButtonStyle(getStyle()));
-		this.getImageCell().size(50*s);
+		this.getImageCell().size(48*s);
 		getStyle().up = VisUI.getSkin().getDrawable("button");
 		set(up);
 	}

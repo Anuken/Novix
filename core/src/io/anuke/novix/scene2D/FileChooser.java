@@ -95,14 +95,14 @@ public class FileChooser extends BaseDialog{
 		VisTable icontable = new VisTable();
 
 		VisImageButton up = new VisImageButton(VisUI.getSkin().getDrawable("icon-folder-parent"));
-		up.getImageCell().size(40*s);
+		up.getImageCell().size(42*s);
 		up.addListener(new UpListener());
 
 		final VisImageButton back = new VisImageButton(VisUI.getSkin().getDrawable("icon-arrow-left"));
-		back.getImageCell().size(40*s);
+		back.getImageCell().size(42*s);
 		
 		final VisImageButton forward = new VisImageButton(VisUI.getSkin().getDrawable("icon-arrow-right"));
-		forward.getImageCell().size(40*s);
+		forward.getImageCell().size(42*s);
 		
 		forward.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
@@ -117,7 +117,7 @@ public class FileChooser extends BaseDialog{
 		});
 		
 		VisImageButton home = new VisImageButton(VisUI.getSkin().getDrawable("icon-home"));
-		home.getImageCell().size(40*s);
+		home.getImageCell().size(42*s);
 		home.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				directory = homeDirectory;
@@ -213,7 +213,7 @@ public class FileChooser extends BaseDialog{
 		VisTextButton upbutton = new VisTextButton("...");
 		upbutton.addListener(new UpListener());
 		
-		upbutton.left().add(upimage).padRight(4f*s).size(40*s);
+		upbutton.left().add(upimage).padRight(4f*s).size(42*s);
 		upbutton.getCells().reverse();
 		
 		files.top().left().add(upbutton).align(Align.topLeft).fillX().expandX().height(50*s).pad(2).colspan(2);
@@ -253,7 +253,7 @@ public class FileChooser extends BaseDialog{
 			
 			final Image image = new Image(VisUI.getSkin().getDrawable(file.isDirectory() ? "icon-folder" : "icon-file-text"));
 			
-			button.add(image).padRight(4f*s).size(40*s);
+			button.add(image).padRight(4f*s).size(42*s);
 			button.getCells().reverse();
 			files.top().left().add(button).align(Align.topLeft).fillX().expandX().height(50*s).pad(2*s).colspan(2);
 			button.getLabel().setAlignment(Align.left);

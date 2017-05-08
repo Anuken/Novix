@@ -2,10 +2,7 @@ package io.anuke.novix.scene2D;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -121,7 +118,7 @@ public class ColorWidget extends VisTable{
 		
 		lock.fire(new ChangeListener.ChangeEvent());
 		
-		lock.getImageCell().size(50*s);
+		lock.getImageCell().size(48*s);
 
 		//Image arrow = new Image(VisUI.getSkin().get("default", ColorPickerWidgetStyle.class).iconArrowRight);
 

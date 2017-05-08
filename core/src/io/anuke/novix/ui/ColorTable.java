@@ -73,7 +73,7 @@ public class ColorTable extends VisTable{
 		VisTextButton palettebutton = new VisTextButton("Palettes...");
 		palettebutton.setName("palettebutton");
 		
-		SceneUtils.addIconToButton(palettebutton, new VisImage("icon-palette"), 40*s);
+		SceneUtils.addIconToButton(palettebutton, new VisImage("icon-palette"), 42*s);
 		palettebutton.getLabelCell().expand(false, false);
 
 		palettebutton.addListener(new ClickListener(){

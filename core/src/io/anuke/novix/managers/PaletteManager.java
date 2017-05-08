@@ -45,8 +45,12 @@ public class PaletteManager{
 	}
 
 	public void savePalettes(){
-		String string = json.toJson(palettes);
-		main.paletteFile.writeString(string, false);
+		try{
+			String string = json.toJson(palettes);
+			main.paletteFile.writeString(string, false);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
