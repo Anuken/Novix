@@ -109,12 +109,12 @@ public class FileChooser extends BaseDialog{
 				stack.forward();
 			}
 		});
+		
 		back.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				stack.back();
 			}
 		});
-		
 		
 		VisImageButton home = new VisImageButton(VisUI.getSkin().getDrawable("icon-home"));
 		home.getImageCell().size(40*s);
