@@ -590,7 +590,7 @@ public class DialogClasses{
 			scalefield = new VisValidatableTextField("1");
 			scalefield.setTextFieldFilter(new FloatFilter());
 
-			button = new VisTextButton("Select...");
+			button = new VisTextButton("[YELLOW]Select...");
 
 			directory = new VisTextField("");
 			directory.setTouchable(Touchable.disabled);
@@ -704,20 +704,24 @@ public class DialogClasses{
 
 			float height = 45 * s;
 			float width = 90*s;
+			float isize = 35*s;
 			
 			Table content = getContentTable();
-
+			
+			content.add(new VisImage("icon-file")).size(isize).padTop(8);
 			content.add(new VisLabel("File:")).padTop(15 * s).left();
 			//content.add(directory).size(150 * s, 50 * s).padTop(15 * s);
 			content.add(button).fill().padTop(15 * s).height(height).colspan(3).padRight(sidepad);
 
 			content.row();
-
+			
+			content.add(new VisImage("icon-scale")).size(isize);
 			content.add(new VisLabel("Scale:")).padTop(15 * s).left().padBottom(10*s);
 			content.add(scalefield).grow().height(height).padTop(15 * s).colspan(3).padRight(sidepad).padBottom(10*s);
 		
 			content.row();
 			
+			content.add(new VisImage("icon-resize")).size(isize);
 			content.add(new VisLabel("Size:")).left();
 			content.add(widthfield).height(height).width(width);
 			content.add(new VisLabel("x"));
