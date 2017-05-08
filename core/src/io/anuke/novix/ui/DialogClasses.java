@@ -573,20 +573,31 @@ public class DialogClasses{
 		}
 	}
 
-	public static class ExportScaledDialog extends MenuDialog{
-		VisValidatableTextField scalefield;
+	public static class ExportDialog extends MenuDialog{
+		VisValidatableTextField scalefield, widthfield, heightfield;
 		VisTextField directory;
+		VisTextButton button;
 
-		public ExportScaledDialog(){
-			super("Export Scaled Image");
+		public ExportDialog(){
+			super("Export Image");
+			
+			widthfield = new VisValidatableTextField(Core.i.canvas().width()+"");
+			heightfield = new VisValidatableTextField(Core.i.canvas().height()+"");
+			
+			widthfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
+			heightfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
 
 			scalefield = new VisValidatableTextField("1");
 			scalefield.setTextFieldFilter(new FloatFilter());
 
-			VisTextButton button = new VisTextButton("...");
+			button = new VisTextButton("Select...");
 
 			directory = new VisTextField("");
 			directory.setTouchable(Touchable.disabled);
+			
+			scalefield.setProgrammaticChangeEvents(false);
+			widthfield.setProgrammaticChangeEvents(false);
+			heightfield.setProgrammaticChangeEvents(false);
 			
 			final ChangeListener oklistener = new ChangeListener(){
 				@Override
@@ -600,6 +611,7 @@ public class DialogClasses{
 					new FileChooser(FileChooser.pngFilter, false){
 						public void fileSelected(FileHandle file){
 							directory.setText(file.file().getAbsolutePath());
+							button.setText(file.file().getName()+".png");
 							SceneUtils.moveTextToSide(directory);
 							oklistener.changed(null, null);
 						}
@@ -607,12 +619,77 @@ public class DialogClasses{
 				}
 			});
 			
+			InputValidator sizeValid = new InputValidator(){
+				@Override
+				public boolean validateInput(String input){
+					try{
+						int i = Integer.parseInt(input);
+						return i >= 0;
+					}catch (Exception e){
+						return false;
+					}
+				}
+			};
+			
+			widthfield.addValidator(sizeValid);
+			heightfield.addValidator(sizeValid);
+			
 			scalefield.addValidator(new InputValidator(){
 				public boolean validateInput(String input){
 					try{
 						return Float.parseFloat(input) <= 100;
 					}catch (Exception e){
 						return false;
+					}
+				}
+			});
+			
+			scalefield.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					try{
+						float f = Float.parseFloat(scalefield.getText());
+						int w = (int)(Core.i.canvas().width()*f);
+						int h = (int)(Core.i.canvas().height()*f);
+						
+						widthfield.setText(w + "");
+						heightfield.setText(h + "");
+						
+					}catch (Exception e){
+					}
+				}
+			});
+			
+			widthfield.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					try{
+						int w = Integer.parseInt(widthfield.getText());
+						float f = (float)w/Core.i.canvas().width();
+						
+						int h = (int)(Core.i.canvas().height()*f);
+						
+						heightfield.setText(h + "");
+						scalefield.setText(f + "");
+						
+					}catch (Exception e){
+					}
+				}
+			});
+			
+			heightfield.addListener(new ChangeListener(){
+				@Override
+				public void changed(ChangeEvent event, Actor actor){
+					try{
+						int h = Integer.parseInt(heightfield.getText());
+						float f = (float)h/Core.i.canvas().height();
+						
+						int w = (int)(Core.i.canvas().width()*f);
+						
+						widthfield.setText(w + "");
+						scalefield.setText(f + "");
+						
+					}catch (Exception e){
 					}
 				}
 			});
@@ -626,15 +703,28 @@ public class DialogClasses{
 			float sidepad = 20 * s;
 
 			float height = 45 * s;
+			float width = 90*s;
+			
+			Table content = getContentTable();
 
-			getContentTable().add(new VisLabel("File:")).padTop(15 * s).padLeft(sidepad);
-			getContentTable().add(directory).size(150 * s, 50 * s).padTop(15 * s);
-			getContentTable().add(button).size(50 * s).padTop(15 * s).padRight(sidepad);
+			content.add(new VisLabel("File:")).padTop(15 * s).left();
+			//content.add(directory).size(150 * s, 50 * s).padTop(15 * s);
+			content.add(button).fill().padTop(15 * s).height(height).colspan(3).padRight(sidepad);
 
-			getContentTable().row();
+			content.row();
 
-			getContentTable().add(new VisLabel("Scale:")).padTop(15 * s).padBottom(30 * s).padLeft(sidepad);
-			getContentTable().add(scalefield).grow().height(height).padTop(15 * s).padBottom(30 * s).colspan(2).padRight(sidepad);
+			content.add(new VisLabel("Scale:")).padTop(15 * s).left().padBottom(10*s);
+			content.add(scalefield).grow().height(height).padTop(15 * s).colspan(3).padRight(sidepad).padBottom(10*s);
+		
+			content.row();
+			
+			content.add(new VisLabel("Size:")).left();
+			content.add(widthfield).height(height).width(width);
+			content.add(new VisLabel("x"));
+			content.add(heightfield).height(height).width(width).padRight(sidepad);
+			
+			content.row();
+			content.add().height(30*s);
 		}
 
 		public void result(){

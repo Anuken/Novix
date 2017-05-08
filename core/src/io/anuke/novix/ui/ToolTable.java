@@ -354,7 +354,7 @@ public class ToolTable extends VisTable{
 		});
 		
 		addMenu("File", "file",
-		new MenuButton("Export", "Export the image as a PNG."){
+		/*new MenuButton("Export", "Export the image as a PNG."){
 			public void clicked(){
 				new FileChooser(FileChooser.pngFilter, false){
 					public void fileSelected(FileHandle file){
@@ -362,10 +362,10 @@ public class ToolTable extends VisTable{
 					}
 				}.show(stage);
 			}
-		},
-		new MenuButton("Export Scaled", "Scale, then export the image."){
+		},*/
+		new MenuButton("Export", "Export the image as a PNG."){
 			public void clicked(){
-				new ExportScaledDialog().show(stage);
+				new ExportDialog().show(stage);
 			}
 		},
 		new MenuButton("Open", "Load an image file\ninto this project."){
