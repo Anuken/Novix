@@ -212,9 +212,11 @@ public class ToolTable extends VisTable{
 	
 	private static class MenuButton extends VisTextButton{
 		public MenuButton(String name, String desc){
+			this(name, desc, "icon-" + name.toLowerCase().replace(" ", ""));
+		}
+		
+		public MenuButton(String name, String desc, String icon){
 			super(name);
-			
-			String icon = "icon-" + name.toLowerCase().replace(" ", "");
 			
 			if(VisUI.getSkin().getAtlas().findRegion(icon) != null){
 				SceneUtils.addIconToButton(this, new VisImage(icon), 20*s);
@@ -291,6 +293,11 @@ public class ToolTable extends VisTable{
 		new MenuButton("Clear", "Clear the image."){
 			public void clicked(){
 				new ClearDialog().show(stage);
+			}
+		},
+		new MenuButton("Color Fill", "Fill the image with a color.", "icon-clear"){
+			public void clicked(){
+				new ColorFillDialog().show(stage);
 			}
 		},
 		new MenuButton("Symmetry", "Configure symmetry."){

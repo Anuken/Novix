@@ -189,6 +189,14 @@ public class DialogClasses{
 		};
 		
 		public ColorChooseDialog(final FilterDialog filter){
+			this(new Runnable(){
+				public void run(){
+					filter.updatePreview();
+				}
+			});
+		}
+		
+		public ColorChooseDialog(final Runnable changed){
 			super("Choose Color");
 			picker.setRecentColors(Core.i.colormenu.getRecentColors());
 			addCloseButton();
@@ -199,7 +207,7 @@ public class DialogClasses{
 			button.addListener(new ClickListener(){
 				@Override
 				public void clicked(InputEvent event, float x, float y){
-					filter.updatePreview();
+					changed.run();
 				}
 			});
 
@@ -1313,6 +1321,59 @@ public class DialogClasses{
 			for(int x = 0;x < canvas.width();x ++){
 				for(int y = 0;y < canvas.height();y ++){
 					canvas.erasePixelFullAlpha(x, y);
+				}
+			}
+			canvas.pushActions();
+			canvas.updateTexture();
+
+			canvas.setAlpha(alpha);
+		}
+	}
+	
+	public static class ColorFillDialog extends MenuDialog{
+		ColorBox selected;
+		
+		public ColorFillDialog(){
+			super("Fill Color");
+			
+			selected = new ColorBox(Core.i.selectedColor());
+
+			selected.addSelectListener();
+
+			final ColorChooseDialog dialog = new ColorChooseDialog(new Runnable(){public void run(){}}){
+				public void colorChanged(){
+					selected.setColor(picker.getSelectedColor());
+				}
+			};
+			
+			ClickListener listener = new ClickListener(){
+				public void clicked(InputEvent event, float x, float y){
+					selected = (ColorBox)event.getTarget();
+					dialog.picker.setSelectedColor(event.getTarget().getColor());
+					dialog.show(Core.i.stage);
+				}
+			};
+
+			selected.addListener(listener);
+
+			VisLabel label = new VisLabel("Fill Color:");
+
+			label.setAlignment(Align.center);
+			getContentTable().center().add(label).pad(20 * s).padBottom(0f).align(Align.center).row();
+			getContentTable().add(selected).size(60*s).padBottom(20f);
+		}
+
+		public void result(){
+			PixelCanvas canvas = Core.i.drawgrid.canvas;
+			float alpha = canvas.getAlpha();
+			
+			int color = Color.rgba8888(selected.getColor());
+			
+			canvas.setAlpha(1f);
+
+			for(int x = 0;x < canvas.width();x ++){
+				for(int y = 0;y < canvas.height();y ++){
+					canvas.drawPixelBlendless(x, y, color);
 				}
 			}
 			canvas.pushActions();
