@@ -1,6 +1,9 @@
 package io.anuke.novix.tools;
 
 
+import java.nio.ByteBuffer;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
@@ -9,20 +12,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.modules.Core;
 import io.anuke.ucore.graphics.PixmapUtils;
 
+//TODO fix this monster of a class
 public class PixelCanvas implements Disposable{
-	private Color color; // pixmap color
-	private Color temp = new Color();
+	final private static ObjectMap<Integer, ByteBuffer> buffers = new ObjectMap<Integer, ByteBuffer>();
+	
 	final public Pixmap pixmap;
 	final public Texture texture;
 	final public String name;
+	
+	private Color color; // pixmap color
+	private Color temp = new Color();
 	private float alpha = 1.0f;
 	private DrawAction action = new DrawAction();
-	public boolean drawn;
+	private boolean drawn;
 
 	public PixelCanvas(Pixmap pixmap){
 		this.pixmap = pixmap;
@@ -49,9 +57,9 @@ public class PixelCanvas implements Disposable{
 			//set blank color, since draw color does not equal output color
 			
 			PixmapUtils.drawPixel(texture, x, height() - 1 - y, getIntColor(x, y));
-			//texture.draw(blank, x, height() - 1 - y);
+		}else{
+			drawn = true;
 		}
-		drawn = true;
 	}
 
 	public void drawPixelBlendless(int x, int y, int color){
@@ -104,26 +112,59 @@ public class PixelCanvas implements Disposable{
 		texture.bind();
 		for(int rx = -rad;rx <= rad;rx ++){
 			for(int ry = -rad;ry <= rad;ry ++){
-				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) drawPixel(x + rx, y + ry, false);
+				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) 
+					drawPixel(x + rx, y + ry, false);
 			}
 		}
-		
+		drawn = false;
+		update(x-rad, y-rad, rad*2, rad*2);
 	}
 
 	public void eraseRadius(int x, int y, int rad){
 		texture.bind();
 		for(int rx = -rad;rx <= rad;rx ++){
 			for(int ry = -rad;ry <= rad;ry ++){
-				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) erasePixel(x + rx, y + ry, false);
+				if(Vector2.dst(rx, ry, 0, 0) < rad - 0.5f) 
+					erasePixel(x + rx, y + ry, false);
 			}
 		}
+		drawn = false;
+		update(x-rad, y-rad, rad*2, rad*2);
 	}
 	
-	public void update(){
-		if(drawn){
-			drawn = false;
-			updateTexture();
+	private void update(int x, int y, int w, int h){
+		if(x < 0) x = 0;
+		if(y < 0) y = 0;
+		if(x >= width()) x = width()-w/2;
+		if(y >= height()) y = height()-h/2;
+		if(x + w >= width()) w = width()-x;
+		if(y + h >= height()) h = height()-y;
+		
+		//Novix.log(x + ", " + y + ": " + w + "x" + h);
+		
+		int size = w*h;
+		ByteBuffer buffer = null;
+		
+		if(!buffers.containsKey(size)){
+			buffer = ByteBuffer.allocateDirect(size*4);
+			buffers.put(size, buffer);
+		}else{
+			buffer = buffers.get(size);
 		}
+		
+		buffer.clear();
+		buffer.position(0);
+		for(int cy = h-1; cy >= 0; cy --){
+			for(int cx = 0; cx < w; cx ++){
+			
+				int color = pixmap.getPixel(x+cx, height()-1-y-cy);
+				buffer.putInt(color);
+			}
+		}
+		buffer.position(0);
+		
+		Gdx.gl.glTexSubImage2D(texture.glTarget, 0, x, height()-y-h, w, h, 6408, 5121,
+				buffer);
 	}
 
 	public void drawPixel(int x, int y, Color color){
@@ -163,14 +204,22 @@ public class PixelCanvas implements Disposable{
 
 		pixmap.setColor(color);
 	}
+	
+	public void update(){
+		if(drawn){
+			drawn = false;
+			updateTexture();
+		}
+	}
 
 	public void updateTexture(){
 		if(!Core.i.projectmanager.isSavingProject()){
+			Novix.log("Updating...");
 			texture.draw(pixmap, 0, 0);
-			drawn = true;
+			drawn = false;
 		}else{
 			Novix.log("skipping drawing...");
-			drawn = false;
+			drawn = true;
 		}
 	}
 
