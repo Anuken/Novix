@@ -28,6 +28,7 @@ import io.anuke.utools.SceneUtils;
 public class ProjectMenu extends BaseDialog{
 	private Core main;
 	private VisScrollPane pane;
+	private boolean loading = false;
 	
 	public ProjectMenu(Core mainref){
 		super("Projects");
@@ -115,6 +116,18 @@ public class ProjectMenu extends BaseDialog{
 
 		getButtonsTable().add(projectback).width(Gdx.graphics.getWidth() - getPadLeft() - getPadRight()).height(60 * s);
 		setObject(projectback, false);
+	}
+	
+	public void startLoading(){
+		loading = true;
+	}
+	
+	public void notifyLoaded(){
+		loading = false;
+	}
+	
+	public boolean isLoading(){
+		return loading;
 	}
 	
 	public ProjectTable update(boolean loaded){
@@ -243,7 +256,7 @@ public class ProjectMenu extends BaseDialog{
 
 				public boolean act(float delta){
 					if(created) return true;
-					if( !loaded) return false;
+					if(!loaded) return false;
 
 					if(project == main.getCurrentProject()) project.reloadTexture();
 

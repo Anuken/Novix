@@ -267,46 +267,6 @@ public class ProjectManager{
 		return project;
 	}
 
-	/*
-		boolean checkIfProjectExists(String name, Project ignored){
-			for(Project project : projects.values()){
-				if(project == ignored) continue;
-				if(project.name.equals(name)) return true;
-			}
-			return false;
-		}
-
-		boolean validateProjectName(String name){
-			boolean exists = checkIfProjectExists(name, null);
-
-			if( !MiscUtils.isFileNameValid(name)){
-				DialogClasses.showError(main.stage, "Project name is invalid!");
-				return true;
-			}
-
-			if(exists){
-				DialogClasses.showError(main.stage, "A project with that name already exists!");
-			}
-
-			return exists;
-		}
-
-		boolean validateProjectName(String name, Project project){
-			if( !MiscUtils.isFileNameValid(name)){
-				DialogClasses.showError(main.stage, "Project name is invalid!");
-				return true;
-			}
-
-			boolean exists = checkIfProjectExists(name, project);
-
-			if(exists){
-				DialogClasses.showError(main.stage, "A project with that name already exists!");
-			}
-
-			return exists;
-		}
-		*/
-
 	public FileHandle getFile(long id){
 		return Core.i.projectDirectory.child(id + ".png");
 	}

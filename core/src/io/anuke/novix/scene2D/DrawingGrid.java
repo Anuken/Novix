@@ -44,6 +44,8 @@ public class DrawingGrid extends Actor{
 	public boolean vSymmetry = false, hSymmetry = false;
 	public int brushSize;
 	public GridInput input = new GridInput();
+	
+	
 	public class GridInput extends InputAdapter{
 		@Override
 		public boolean touchDown(int x, int y, int pointer, int button){
@@ -272,13 +274,18 @@ public class DrawingGrid extends Actor{
 				action.toCanvas = canvas;
 				actions.add(action);
 			}else{
-				Novix.log("Drawgrid: disposing old canvas: " + this.canvas.name);
-				this.canvas.dispose();
+				if(!Core.i.loadingProject()){
+					Novix.log("Drawgrid: disposing old canvas: " + this.canvas.name);
+					this.canvas.dispose();
+				}else{
+					Novix.log("Drawgrid: NOT disposing old canvas \"" + this.canvas.name + "\" due to core still loading it.");
+					Novix.log("TODO dispose it later, callbacks?");
+				}
 			}
 		}
 
 		resetCanvas(canvas);
-		Novix.log("Pixmap disposed at end?" + PixmapUtils.isDisposed(canvas.pixmap));
+		Novix.log("Pixmap disposed at end? " + PixmapUtils.isDisposed(canvas.pixmap));
 	}
 	
 	/**Used for undo operations only.*/

@@ -165,14 +165,20 @@ public class Core extends Module<Novix>{
 
 	public void openProjectMenu(){
 		final ProjectTable table = projectmenu.update(false);
+		projectmenu.startLoading();
 		projectmenu.show(stage);
 
 		new Thread(new Runnable(){
 			public void run(){
 				projectmanager.saveProject();
+				projectmenu.notifyLoaded();
 				table.loaded = true;
 			}
 		}).start();
+	}
+	
+	public boolean loadingProject(){
+		return projectmenu.isLoading();
 	}
 
 	public Color selectedColor(){
