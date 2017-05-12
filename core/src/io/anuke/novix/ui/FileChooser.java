@@ -1,4 +1,4 @@
-package io.anuke.novix.scene2D;
+package io.anuke.novix.ui;
 
 import java.io.File;
 import java.io.FileFilter;

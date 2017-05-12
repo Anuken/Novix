@@ -1,4 +1,4 @@
-package io.anuke.novix.scene2D;
+package io.anuke.novix.scene;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;

@@ -1,4 +1,4 @@
-package io.anuke.novix.scene2D;
+package io.anuke.novix.scene;
 
 
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;

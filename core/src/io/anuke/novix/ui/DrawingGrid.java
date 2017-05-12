@@ -1,4 +1,4 @@
-package io.anuke.novix.scene2D;
+package io.anuke.novix.ui;
 
 
 import static io.anuke.ucore.UCore.s;
@@ -17,6 +17,8 @@ import com.kotcrab.vis.ui.VisUI;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.modules.Core;
+import io.anuke.novix.scene.AlphaImage;
+import io.anuke.novix.scene.GridImage;
 import io.anuke.novix.tools.*;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.graphics.ShapeUtils;
@@ -120,7 +122,7 @@ public class DrawingGrid extends Actor{
 
 			float movex = deltax;
 			float movey = deltay;
-
+			
 			int move = (Math.round(Math.max(Math.abs(movex), Math.abs(movey))));
 
 			if(Math.abs(movex) > Math.abs(movey)){
@@ -133,21 +135,24 @@ public class DrawingGrid extends Actor{
 
 			float currentx = 0, currenty = 0;
 
-			for(int i = 0;i < move;i ++){
+			for(int i = 0; i < move; i ++){
 				currentx += movex;
 				currenty += movey;
+				
+				int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
+
 				if(cursormode()){
-					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
+					if( !(selected.x == newx && selected.y == newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) 
+							&& Core.i.tool().drawOnMove) 
+						processToolTap(newx, newy);
 
-					if( !(selected.x == newx && selected.y == newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) && Core.i.tool().drawOnMove) processToolTap(newx, newy);
-
-					selected.set(newx, newy);
 				}else{
-					int newx = (int)((cursorx + currentx) / (canvasScale() * zoom)), newy = (int)((cursory + currenty) / (canvasScale() * zoom));
-
-					if( !(selected.x == newx && selected.y == newy) && Core.i.tool().drawOnMove) processToolTap(newx, newy);
-					selected.set(newx, newy);
+					if( !(selected.x == newx && selected.y == newy) 
+							&& Core.i.tool().drawOnMove) 
+						processToolTap(newx, newy);
 				}
+				
+				selected.set(newx, newy);
 			}
 
 			if(cursormode()){

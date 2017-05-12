@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.DrawingGrid;
+import io.anuke.novix.ui.DrawingGrid;
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.MiscUtils;
 

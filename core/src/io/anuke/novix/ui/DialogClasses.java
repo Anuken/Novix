@@ -23,7 +23,7 @@ import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Filter;
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
+import io.anuke.novix.scene.*;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
 import io.anuke.ucore.graphics.PixmapUtils;

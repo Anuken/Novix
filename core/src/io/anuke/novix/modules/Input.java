@@ -14,8 +14,8 @@ import com.kotcrab.vis.ui.widget.VisTextField;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.managers.GestureManager;
-import io.anuke.novix.scene2D.DrawingGrid;
 import io.anuke.novix.tools.Tool;
+import io.anuke.novix.ui.DrawingGrid;
 import io.anuke.ucore.modules.Module;
 import io.anuke.utools.SceneUtils;
 

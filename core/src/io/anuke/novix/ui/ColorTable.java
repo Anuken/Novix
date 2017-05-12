@@ -14,7 +14,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
+import io.anuke.novix.scene.*;
 import io.anuke.utools.MiscUtils;
 import io.anuke.utools.SceneUtils;
 

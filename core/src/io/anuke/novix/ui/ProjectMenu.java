@@ -18,7 +18,7 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
+import io.anuke.novix.scene.*;
 import io.anuke.novix.tools.Project;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
 import io.anuke.novix.ui.DialogClasses.OpenProjectFileDialog;

@@ -23,7 +23,7 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.*;
+import io.anuke.novix.scene.*;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Tool;
 import io.anuke.novix.ui.DialogClasses.*;

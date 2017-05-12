@@ -21,9 +21,9 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import io.anuke.novix.modules.Core;
 import io.anuke.novix.modules.Tutorial;
-import io.anuke.novix.scene2D.CollapseButton;
-import io.anuke.novix.scene2D.ColorBar;
-import io.anuke.novix.scene2D.SmoothCollapsibleWidget;
+import io.anuke.novix.scene.CollapseButton;
+import io.anuke.novix.scene.ColorBar;
+import io.anuke.novix.scene.SmoothCollapsibleWidget;
 import io.anuke.novix.ui.ProjectMenu.ProjectTable;
 import io.anuke.ucore.graphics.ShapeUtils;
 

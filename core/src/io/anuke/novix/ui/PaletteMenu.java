@@ -20,8 +20,8 @@ import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Palette;
 import io.anuke.novix.modules.Core;
-import io.anuke.novix.scene2D.PaletteWidget;
-import io.anuke.novix.scene2D.TallMenuItem;
+import io.anuke.novix.scene.PaletteWidget;
+import io.anuke.novix.scene.TallMenuItem;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
 import io.anuke.utools.SceneUtils;
 import io.anuke.utools.SceneUtils.TextFieldEmptyListener;
