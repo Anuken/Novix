@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
-import io.anuke.novix.modules.Core;
+import io.anuke.novix.Core;
 import io.anuke.novix.ui.DrawingGrid;
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.MiscUtils;
@@ -17,7 +17,7 @@ public enum Tool{
 	pencil{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.drawRadius(x, y, Core.i.drawgrid.brushSize);
+			canvas.drawRadius(x, y, io.anuke.novix.drawgrid.brushSize);
 		}
 		
 		public boolean scalable(){
@@ -27,7 +27,7 @@ public enum Tool{
 	eraser{
 		@Override
 		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.eraseRadius(x, y, Core.i.drawgrid.brushSize);
+			canvas.eraseRadius(x, y, io.anuke.novix.drawgrid.brushSize);
 		}
 		
 		public void onColorChange(Color color, PixelCanvas canvas){
@@ -84,13 +84,13 @@ public enum Tool{
 			Color selected = canvas.getColor(x, y);
 			for(int i = 0; i < Core.i.getCurrentPalette().size(); i ++){
 				if(Hue.approximate(selected, Core.i.getCurrentPalette().colors[i], 0.001f)){
-					Core.i.colormenu.setSelectedColor(i);
+					io.anuke.novix.i.colormenu.setSelectedColor(i);
 					return;
 				}
 			}
 			selected.a = 1f;
-			Core.i.colormenu.setSelectedColor(selected);
-			Core.i.colormenu.addRecentColor(selected);
+			io.anuke.novix.i.colormenu.setSelectedColor(selected);
+			io.anuke.novix.i.colormenu.addRecentColor(selected);
 		}
 		
 		public boolean symmetric(){
@@ -134,7 +134,7 @@ public enum Tool{
 	},*/
 	undo(false, false){
 		public void onSelected(){
-			Core.i.drawgrid.actions.undo(Core.i.canvas());
+			io.anuke.novix.drawgrid.actions.undo(Core.i.canvas());
 		}
 
 		public boolean selectable(){
@@ -143,7 +143,7 @@ public enum Tool{
 	},
 	redo(false, false){
 		public void onSelected(){
-			Core.i.drawgrid.actions.redo(Core.i.canvas());
+			io.anuke.novix.drawgrid.actions.redo(Core.i.canvas());
 		}
 
 		public boolean selectable(){

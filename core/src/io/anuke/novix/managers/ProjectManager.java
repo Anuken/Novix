@@ -11,8 +11,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import io.anuke.novix.Core;
 import io.anuke.novix.Novix;
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
 import io.anuke.novix.ui.DialogClasses;
@@ -152,7 +152,7 @@ public class ProjectManager{
 
 	public void saveProject(){
 		saveProjectsFile();
-		Core.i.prefs.put("lastproject", getCurrentProject().id);
+		io.anuke.novix.i.prefs.put("lastproject", getCurrentProject().id);
 		savingProject = true;
 		Novix.log("Starting save..");
 		PixmapIO.writePNG(currentProject.getFile(), main.drawgrid.canvas.pixmap);
@@ -163,7 +163,7 @@ public class ProjectManager{
 	@SuppressWarnings("unchecked")
 	private void loadProjectFile(){
 		try{
-			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, Core.i.projectFile);
+			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, io.anuke.novix.i.projectFile);
 			projects = new ObjectMap<Long, Project>();
 			for(String key : map.keys()){
 				projects.put(Long.parseLong(key), map.get(key));
@@ -175,7 +175,7 @@ public class ProjectManager{
 	}
 
 	private void saveProjectsFile(){
-		Core.i.projectFile.writeString(json.toJson(projects), false);
+		io.anuke.novix.i.projectFile.writeString(json.toJson(projects), false);
 	}
 
 	public void loadProjects(){
@@ -236,7 +236,7 @@ public class ProjectManager{
 				}
 				
 				//show the result
-				Core.i.stage.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
+				io.anuke.novix.i.stage.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
 					@Override
 					public boolean act(float delta){
 						new InfoDialog("Info", backedup ? "[ORANGE]Your project file has been either corrupted or deleted.\n\n[GREEN]Fortunately, a backup has been found and loaded." : "[RED]Your project file has been either corrupted or deleted.\n\n[ORANGE]A backup has not been found.\n\n[ROYAL]If you believe this is an error, try reporting the circumstances under which you last closed the app at the Google Play store listing. This could help the developer fix the problem."){
@@ -244,7 +244,7 @@ public class ProjectManager{
 							public void result(){
 								currentProject.reloadTexture();
 							}
-						}.show(Core.i.stage);
+						}.show(io.anuke.novix.i.stage);
 						return true;
 					}
 				}));
@@ -268,11 +268,11 @@ public class ProjectManager{
 	}
 
 	public FileHandle getFile(long id){
-		return Core.i.projectDirectory.child(id + ".png");
+		return io.anuke.novix.i.projectDirectory.child(id + ".png");
 	}
 
 	public FileHandle getBackupFile(long id){
-		return Core.i.projectDirectory.child(id + "-backup.png");
+		return io.anuke.novix.i.projectDirectory.child(id + "-backup.png");
 	}
 
 	public long generateProjectID(){

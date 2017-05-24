@@ -19,7 +19,6 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene.PaletteWidget;
 import io.anuke.novix.scene.TallMenuItem;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
@@ -27,15 +26,13 @@ import io.anuke.utools.SceneUtils;
 import io.anuke.utools.SceneUtils.TextFieldEmptyListener;
 
 public class PaletteMenu extends BaseDialog{
-	private Core main;
 	private PaletteWidget currentWidget = null;
 
-	public PaletteMenu(Core main){
+	public PaletteMenu(){
 		super("Palettes");
-		this.main = main;
 		setMovable(false);
 		addCloseButton();
-		setStage(main.stage);
+		setStage(stage);
 		
 	}
 

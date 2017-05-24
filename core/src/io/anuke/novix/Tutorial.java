@@ -1,12 +1,11 @@
-package io.anuke.novix.modules;
+package io.anuke.novix;
 
-
+import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
-import io.anuke.novix.Novix;
 import io.anuke.novix.tools.TutorialStage;
 import io.anuke.novix.ui.DialogClasses;
 import io.anuke.ucore.graphics.ShapeUtils;
@@ -29,13 +28,13 @@ public class Tutorial extends Module<Novix>{
 			for(Rectangle rect : TutorialStage.cliprects)
 				rect.set(0, 0, 0, 0);
 
-			Core.i.stage.getBatch().begin();
+			batch.begin();
 
 			if(stage.trans < 1f){
 				if(laststage != null){
 					laststage.trans -= shadespeed;
 					if(laststage.trans < 0) laststage.trans = 0f;
-					laststage.draw(Core.i.stage.getBatch());
+					laststage.draw(batch);
 				}
 				stage.trans += shadespeed;
 				if(stage.trans > 1f) stage.trans = 1f;
@@ -43,7 +42,7 @@ public class Tutorial extends Module<Novix>{
 
 			}
 
-			stage.draw(Core.i.stage.getBatch());
+			stage.draw(batch);
 
 			if(stage.next){
 				stage.end();
@@ -52,13 +51,13 @@ public class Tutorial extends Module<Novix>{
 				stage.trans = 0f;
 			}
 
-			Core.i.stage.getBatch().end();
+			batch.end();
 		}else{
 			if(stage.trans > 0){
 				Gdx.graphics.requestRendering();
-				Core.i.stage.getBatch().begin();
-				stage.draw(Core.i.stage.getBatch());
-				Core.i.stage.getBatch().end();
+				batch.begin();
+				stage.draw(batch);
+				batch.end();
 				stage.trans -= shadespeed;
 			}
 		}
@@ -105,10 +104,10 @@ public class Tutorial extends Module<Novix>{
 						super.close();
 						if(confirming){
 							end();
-							if(Core.i.projectmenu.getStage() != null){
-								if(!Core.i.colorMenuCollapsed()) Core.i.collapseColorMenu();
-								if(!Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
-								Core.i.projectmenu.hide();
+							if(core.projectmenu.getStage() != null){
+								if(!core.colorMenuCollapsed()) core.collapseColorMenu();
+								if(!core.toolMenuCollapsed()) core.collapseToolMenu();
+								core.projectmenu.hide();
 							}
 						}else{
 							active = true;
@@ -116,7 +115,7 @@ public class Tutorial extends Module<Novix>{
 					}
 					
 					public void hide(){}
-				}.show(Core.i.stage);
+				}.show(Var.stage);
 				
 				
 			}

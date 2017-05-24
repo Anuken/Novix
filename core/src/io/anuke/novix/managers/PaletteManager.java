@@ -5,9 +5,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import io.anuke.novix.Core;
 import io.anuke.novix.Novix;
 import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.modules.Core;
 
 public class PaletteManager{
 	private Core main;

@@ -2,9 +2,6 @@ package io.anuke.novix;
 
 import com.badlogic.gdx.Gdx;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.modules.Input;
-import io.anuke.novix.modules.Tutorial;
 import io.anuke.ucore.modules.ModuleController;
 
 public class Novix extends ModuleController<Novix>{
@@ -14,6 +11,9 @@ public class Novix extends ModuleController<Novix>{
 		addModule(Input.class);
 		addModule(Core.class);
 		addModule(Tutorial.class);
+		
+		Var.input = getModule(Input.class);
+		Var.tutorial = getModule(Tutorial.class);
 	}
 	
 	public static void log(Object o){

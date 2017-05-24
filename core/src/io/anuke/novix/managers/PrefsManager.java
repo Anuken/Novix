@@ -3,7 +3,7 @@ package io.anuke.novix.managers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
-import io.anuke.novix.modules.Core;
+import io.anuke.novix.Core;
 
 public class PrefsManager{
 	private Core core;

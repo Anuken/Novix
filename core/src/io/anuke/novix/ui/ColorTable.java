@@ -13,7 +13,7 @@ import com.kotcrab.vis.ui.widget.VisImage;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
-import io.anuke.novix.modules.Core;
+import io.anuke.novix.Core;
 import io.anuke.novix.scene.*;
 import io.anuke.utools.MiscUtils;
 import io.anuke.utools.SceneUtils;
@@ -87,7 +87,7 @@ public class ColorTable extends VisTable{
 		Cell<?> cell = add(picker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
 		row();
 		center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		collapser.setY(Core.i.toolmenu.getButton().getTop());
+		collapser.setY(io.anuke.novix.i.toolmenu.getButton().getTop());
 		collapser.toBack();
 		collapser.resetY();
 		Vector2 pos = picker.localToStageCoordinates(new Vector2());
@@ -117,11 +117,11 @@ public class ColorTable extends VisTable{
 	
 	public void openPaletteMenu(){
 		palettemenu.update();
-		palettemenu.show(Core.i.stage);
+		palettemenu.show(io.anuke.novix.i.stage);
 	}
 	
 	public void setSelectedColor(int color){
-		((ClickListener)Core.i.colormenu.boxes[color].getListeners().get(0)).clicked(null, 0, 0);
+		((ClickListener)io.anuke.novix.colormenu.boxes[color].getListeners().get(0)).clicked(null, 0, 0);
 	}
 	
 	public void addRecentColor(Color color){
@@ -189,7 +189,7 @@ public class ColorTable extends VisTable{
 					picker.addRecentColor(boxes[paletteColor].getColor().cpy());
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
-					Core.i.prefs.put("palettecolor", paletteColor);
+					io.anuke.novix.i.prefs.put("palettecolor", paletteColor);
 					box.selected = true;
 					box.toFront();
 					setSelectedColor(box.getColor());
@@ -210,7 +210,7 @@ public class ColorTable extends VisTable{
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color.cpy());
 		Core.i.getCurrentPalette().colors[paletteColor] = color.cpy();
-		Core.i.toolmenu.updateColor(color.cpy());
+		io.anuke.novix.i.toolmenu.updateColor(color.cpy());
 		Core.i.updateToolColor();
 	}
 
@@ -221,7 +221,7 @@ public class ColorTable extends VisTable{
 	}
 
 	public void setupBoxColors(){
-		paletteColor = Core.i.prefs.getInteger("palettecolor", 0);
+		paletteColor = io.anuke.novix.i.prefs.getInteger("palettecolor", 0);
 		for(ColorBox box : boxes)
 			box.getColor().a = 1f;
 

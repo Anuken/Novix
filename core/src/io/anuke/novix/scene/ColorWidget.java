@@ -15,9 +15,9 @@ import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
+import io.anuke.novix.Core;
 import io.anuke.novix.android.AndroidTextFieldDialog;
 import io.anuke.novix.android.AndroidTextFieldDialog.TextPromptListener;
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.ui.DialogClasses.InfoDialog;
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.MiscUtils;
@@ -138,7 +138,7 @@ public class ColorWidget extends VisTable{
 		style.checked = null;
 
 		lock = new VisImageButton(style);
-		lock.setChecked(Core.i.prefs.getBoolean("lock"));
+		lock.setChecked(io.anuke.novix.i.prefs.getBoolean("lock"));
 		lock.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				hbar.setDisabled(lock.isChecked());
@@ -147,7 +147,7 @@ public class ColorWidget extends VisTable{
 				hexbutton.setDisabled(lock.isChecked());
 				colors.setTouchable(lock.isChecked() ? Touchable.disabled : Touchable.childrenOnly);
 				colors.setColor(lock.isChecked() ? new Color(1, 1, 1, 0.5f) : Color.WHITE);
-				Core.i.prefs.put("lock", lock.isChecked());
+				io.anuke.novix.i.prefs.put("lock", lock.isChecked());
 			}
 		});
 

@@ -1,31 +1,21 @@
-package io.anuke.novix.modules;
-
-import static io.anuke.ucore.UCore.s;
-
-import java.lang.reflect.Field;
+package io.anuke.novix;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.FocusManager;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisImageButton;
+import com.kotcrab.vis.ui.widget.VisTextField;
 
-import io.anuke.novix.Novix;
 import io.anuke.novix.android.AndroidKeyboard;
 import io.anuke.novix.graphics.Palette;
 import io.anuke.novix.managers.PaletteManager;
@@ -34,39 +24,95 @@ import io.anuke.novix.managers.ProjectManager;
 import io.anuke.novix.scene.ColorBox;
 import io.anuke.novix.tools.*;
 import io.anuke.novix.ui.*;
-import io.anuke.novix.ui.DialogClasses.MenuDialog;
 import io.anuke.novix.ui.ProjectMenu.ProjectTable;
 import io.anuke.ucore.graphics.Textures;
 import io.anuke.ucore.modules.Module;
 import io.anuke.utools.SceneUtils;
 
 public class Core extends Module<Novix>{
-	public static Core i;
-	
-	public final int largeImageSize = 100 * 100;
-	public final Color clearcolor = Color.valueOf("12161b");
+	public static final int largeImageSize = 100 * 100;
+	public static final Color clearcolor = Color.valueOf("12161b");
 	
 	public final FileHandle paletteFile = Gdx.files.local("palettes.json");
 	public final FileHandle projectFile = Gdx.files.local("projects.json");
 	public final FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
 	
-	public Stage stage;
-	public DrawingGrid drawgrid;
+	Stage stage;
+	DrawingGrid drawgrid;
 	
-	public ProjectManager projectmanager;
-	public PaletteManager palettemanager;
-	public PrefsManager prefs;
+	private ProjectManager projectmanager;
+	private PaletteManager palettemanager;
+	private PrefsManager prefs;
 	
-	public SettingsMenu settingsmenu;
-	public ProjectMenu projectmenu;
+	private SettingsMenu settingsmenu;
+	private ProjectMenu projectmenu;
+	private TutorialDialog tutorialmenu;
 	
-	public ToolTable toolmenu;
-	public ColorTable colormenu;
+	private ToolTable toolmenu;
+	private ColorTable colormenu;
+	
+	public Core() {
+		
+		Gdx.graphics.setContinuousRendering(false);
+
+		projectDirectory.mkdirs();
+		prefs = new PrefsManager(this);
+
+		palettemanager = new PaletteManager(this);
+		palettemanager.loadPalettes();
+
+		Textures.load("textures/");
+		Textures.repeatWrap("alpha", "stripe");
+		
+		stage = new Stage(new ScreenViewport());
+		projectmanager = new ProjectManager(this);
+		
+		SkinLoader.load();
+
+		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
+
+		projectmanager.loadProjects();
+		
+		tutorialmenu = new TutorialDialog();
+
+		setupTools();
+		setupCanvas();
+		setupExtraMenus();
+
+		updateToolColor();
+
+		toolmenu.initialize();
+		
+		Var.load(this);
+
+		// autosave
+		Timer.schedule(new Task(){
+			@Override
+			public void run(){
+				new Thread(new Runnable(){
+					public void run(){
+						projectmanager.saveProject();
+						palettemanager.savePalettes();
+						prefs.save();
+					}
+				}).start();
+			}
+		}, 20, 20);
+		
+		//delayed tutorial
+		Timer.schedule(new Task(){
+			@Override
+			public void run(){
+				checkTutorial();
+			}
+		}, 0.1f);
+	}
+	
 
 	@Override
 	public void update(){
 		clearScreen(clearcolor);
-
+		
 		if(FocusManager.getFocusedWidget() != null && (!(FocusManager.getFocusedWidget() instanceof VisTextField)))
 			FocusManager.resetFocus(stage);
 		
@@ -83,7 +129,7 @@ public class Core extends Module<Novix>{
 
 	void setupExtraMenus(){
 
-		settingsmenu = new SettingsMenu(this);
+		settingsmenu = new SettingsMenu();
 
 		settingsmenu.addPercentScrollSetting("Cursor Size");
 		settingsmenu.addPercentScrollSetting("Cursor Speed");
@@ -98,7 +144,7 @@ public class Core extends Module<Novix>{
 			}
 		});
 
-		projectmenu = new ProjectMenu(this);
+		projectmenu = new ProjectMenu();
 		projectmenu.update(true);
 		
 		colormenu = new ColorTable(this);
@@ -122,32 +168,9 @@ public class Core extends Module<Novix>{
 
 	void checkTutorial(){
 		if(!prefs.getBoolean("tutorial")){
-			MenuDialog dialog = new MenuDialog("Tutorial"){
-				{
-					VisLabel header = new VisLabel("Welcome to Novix!");
-					LabelStyle style = new LabelStyle(header.getStyle());
-					style.font = VisUI.getSkin().getFont("large-font");
-					style.fontColor = Color.CORAL;
-					header.setStyle(style);
-
-					getContentTable().add(header).pad(20 * s).row();
-
-					VisImage image = new VisImage("icon");
-
-					getContentTable().add(image).size(image.getPrefWidth() * s, image.getPrefHeight() * s).row();
-
-					getContentTable().add("Would you like to take the tutorial?").pad(20 * s);
-					// setFillParent(true);
-				}
-
-				public void result(){
-					getModule(Tutorial.class).begin();
-				}
-			};
-			dialog.addTitleSeperator();
-		
-			dialog.show(stage);
+			tutorialmenu.show(stage);
 		}
+		
 		prefs.put("tutorial", true);
 	}
 
@@ -242,7 +265,7 @@ public class Core extends Module<Novix>{
 
 	public VisDialog getCurrentDialog(){
 		if(stage.getScrollFocus() != null){
-			Actor actor = SceneUtils.getTopParent(Core.i.stage.getScrollFocus());
+			Actor actor = SceneUtils.getTopParent(stage.getScrollFocus());
 			if(actor instanceof VisDialog){
 				return (VisDialog) actor;
 			}
@@ -260,114 +283,12 @@ public class Core extends Module<Novix>{
 		return drawgrid.canvas;
 	}
 	
+	public boolean saving(){
+		return projectmanager.isSavingProject();
+	}
+	
 	public ActionStack actionStack(){
 		return drawgrid.actions;
-	}
-
-	public void loadSkin(){
-		FileHandle skinFile = Gdx.files.internal("ui/uiskin.json");
-		Skin skin = new Skin();
-
-		FileHandle atlasFile = skinFile.sibling(skinFile.nameWithoutExtension() + ".atlas");
-		if(atlasFile.exists()){
-			TextureAtlas atlas = new TextureAtlas(atlasFile);
-			try{
-				Field field = skin.getClass().getDeclaredField("atlas");
-				field.setAccessible(true);
-				field.set(skin, atlas);
-			}catch(Exception e){
-				throw new RuntimeException(e);
-			}
-			skin.addRegions(atlas);
-		}
-		// Color shadowcolor = new Color(0, 0, 0, 0.6f);
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/smooth.ttf"));
-
-		FreeTypeFontParameter normalparameter = new FreeTypeFontParameter();
-		normalparameter.size = (int) (22 * s);
-
-		FreeTypeFontParameter largeparameter = new FreeTypeFontParameter();
-		largeparameter.size = (int) (26 * s);
-
-		FreeTypeFontParameter borderparameter = new FreeTypeFontParameter();
-		borderparameter.size = (int) (26 * s);
-		borderparameter.borderWidth = 2 * s;
-		borderparameter.borderColor = clearcolor;
-		borderparameter.spaceX = -2;
-
-		BitmapFont font = generator.generateFont(normalparameter);
-		font.getData().markupEnabled = true;
-		BitmapFont largefont = generator.generateFont(largeparameter);
-		BitmapFont borderfont = generator.generateFont(borderparameter);
-		borderfont.getData().markupEnabled = true;
-
-		skin.add("default-font", font);
-		skin.add("large-font", largefont);
-		skin.add("border-font", borderfont);
-
-		skin.load(skinFile);
-
-		VisUI.load(skin);
-		skin.get(Window.WindowStyle.class).titleFont = largefont;
-		skin.get(Window.WindowStyle.class).titleFontColor = Color.CORAL;
-
-		skin.get("dialog", Window.WindowStyle.class).titleFont = largefont;
-		skin.get("dialog", Window.WindowStyle.class).titleFontColor = Color.CORAL;
-
-		generator.dispose();
-	}
-
-	public Core() {
-		Gdx.graphics.setContinuousRendering(false);
-
-		i = this;
-
-		projectDirectory.mkdirs();
-		prefs = new PrefsManager(this);
-
-		palettemanager = new PaletteManager(this);
-		palettemanager.loadPalettes();
-
-		Textures.load("textures/");
-		Textures.repeatWrap("alpha", "stripe");
-		stage = new Stage();
-		stage.setViewport(new ScreenViewport());
-		projectmanager = new ProjectManager(this);
-		loadSkin();
-
-		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
-
-		projectmanager.loadProjects();
-
-		setupTools();
-		setupCanvas();
-		setupExtraMenus();
-
-		updateToolColor();
-
-		toolmenu.initialize();
-
-		// autosave
-		Timer.schedule(new Task(){
-			@Override
-			public void run(){
-				new Thread(new Runnable(){
-					public void run(){
-						projectmanager.saveProject();
-						palettemanager.savePalettes();
-						prefs.save();
-					}
-				}).start();
-			}
-		}, 20, 20);
-		
-		//delated tutorial
-		Timer.schedule(new Task(){
-			@Override
-			public void run(){
-				checkTutorial();
-			}
-		}, 0.1f);
 	}
 
 	@Override

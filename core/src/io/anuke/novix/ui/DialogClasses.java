@@ -21,8 +21,8 @@ import com.kotcrab.vis.ui.util.InputValidator;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
+import io.anuke.novix.Core;
 import io.anuke.novix.graphics.Filter;
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene.*;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
@@ -44,8 +44,8 @@ public class DialogClasses{
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 
-			widthfield.setText((Core.i.drawgrid.canvas.width()) + "");
-			heightfield.setText(Core.i.drawgrid.canvas.height() + "");
+			widthfield.setText((io.anuke.novix.drawgrid.canvas.width()) + "");
+			heightfield.setText(io.anuke.novix.drawgrid.canvas.height() + "");
 
 			float twidth = 160 * s, theight = 40 * s;
 
@@ -97,8 +97,8 @@ public class DialogClasses{
 			heightfield = new VisTextField();
 			namefield = new VisTextField();
 
-			widthfield.setText((Core.i.drawgrid.canvas.width()) + "");
-			heightfield.setText(Core.i.drawgrid.canvas.height() + "");
+			widthfield.setText((io.anuke.novix.drawgrid.canvas.width()) + "");
+			heightfield.setText(io.anuke.novix.drawgrid.canvas.height() + "");
 
 			float twidth = 160 * s, theight = 40 * s;
 
@@ -198,7 +198,7 @@ public class DialogClasses{
 		
 		public ColorChooseDialog(final Runnable changed){
 			super("Choose Color");
-			picker.setRecentColors(Core.i.colormenu.getRecentColors());
+			picker.setRecentColors(io.anuke.novix.i.colormenu.getRecentColors());
 			addCloseButton();
 			getContentTable().add(picker).expand().fill();
 
@@ -243,7 +243,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					dialog.picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Core.i.stage);
+					dialog.show(io.anuke.novix.i.stage);
 				}
 			};
 
@@ -319,7 +319,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					dialog.picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Core.i.stage);
+					dialog.show(io.anuke.novix.i.stage);
 				}
 			};
 
@@ -515,12 +515,12 @@ public class DialogClasses{
 
 		public final void result(){
 			filter.apply(sourcePixmap(), pixmap(), getArgs());
-			Core.i.drawgrid.canvas.drawPixmap(pixmap());
+			io.anuke.novix.drawgrid.canvas.drawPixmap(pixmap());
 			pixmap().dispose();
 		}
 
 		public Pixmap sourcePixmap(){
-			return Core.i.drawgrid.canvas.pixmap;
+			return io.anuke.novix.canvas.pixmap;
 		}
 
 		public Pixmap pixmap(){
@@ -559,8 +559,8 @@ public class DialogClasses{
 		public SymmetryDialog(){
 			super("Edit Symmetry");
 
-			vbox = new VisCheckBox("Vertical Symmetry", Core.i.drawgrid.vSymmetry);
-			hbox = new VisCheckBox("Horizontal Symmetry", Core.i.drawgrid.hSymmetry);
+			vbox = new VisCheckBox("Vertical Symmetry", io.anuke.novix.drawgrid.vSymmetry);
+			hbox = new VisCheckBox("Horizontal Symmetry", io.anuke.novix.drawgrid.hSymmetry);
 
 			hbox.getImageStackCell().size(40 * s);
 			vbox.getImageStackCell().size(40 * s);
@@ -572,8 +572,8 @@ public class DialogClasses{
 		}
 		
 		public void result(){
-			Core.i.drawgrid.hSymmetry = hbox.isChecked();
-			Core.i.drawgrid.vSymmetry = vbox.isChecked();
+			io.anuke.novix.drawgrid.hSymmetry = hbox.isChecked();
+			io.anuke.novix.drawgrid.vSymmetry = vbox.isChecked();
 		}
 
 		Object[] getArgs(){
@@ -735,7 +735,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			exportPixmap(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, Float.parseFloat(scalefield.getText())), file);
+			exportPixmap(PixmapUtils.scale(io.anuke.novix.canvas.pixmap, Float.parseFloat(scalefield.getText())), file);
 		}
 	}
 
@@ -793,12 +793,12 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			long id = Core.i.projectmanager.generateProjectID();
+			long id = io.anuke.novix.i.projectmanager.generateProjectID();
 			FileHandle file = Gdx.files.absolute(directory.getText());
-			FileHandle to = Core.i.projectmanager.getFile(id);
+			FileHandle to = io.anuke.novix.i.projectmanager.getFile(id);
 			file.copyTo(to);
-			Project project = Core.i.projectmanager.loadProject(namefield.getText(), id);
-			Core.i.projectmanager.openProject(project);
+			Project project = io.anuke.novix.i.projectmanager.loadProject(namefield.getText(), id);
+			io.anuke.novix.i.projectmanager.openProject(project);
 			//exportPixmap(PixmapUtils.scale(Main.i.drawgrid.canvas.pixmap, Float.parseFloat(field.getText())), Gdx.files.absolute(directory.getText()));
 		}
 	}
@@ -809,10 +809,10 @@ public class DialogClasses{
 		public ScaleDialog(){
 			super("Scale Image");
 
-			final float aspectRatio = (float)Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
+			final float aspectRatio = (float)io.anuke.novix.drawgrid.canvas.width() / io.anuke.novix.drawgrid.canvas.height();
 
-			widthfield = new VisTextField(Core.i.drawgrid.canvas.width() + "");
-			heightfield = new VisTextField(Core.i.drawgrid.canvas.height() + "");
+			widthfield = new VisTextField(io.anuke.novix.drawgrid.canvas.width() + "");
+			heightfield = new VisTextField(io.anuke.novix.drawgrid.canvas.height() + "");
 
 			widthfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
 			heightfield.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
@@ -852,8 +852,8 @@ public class DialogClasses{
 						}
 					}
 
-					float xscl = (float)Integer.parseInt(widthfield.getText()) / Core.i.drawgrid.canvas.width();
-					float yscl = (float)Integer.parseInt(heightfield.getText()) / Core.i.drawgrid.canvas.height();
+					float xscl = (float)Integer.parseInt(widthfield.getText()) / io.anuke.novix.drawgrid.canvas.width();
+					float yscl = (float)Integer.parseInt(heightfield.getText()) / io.anuke.novix.drawgrid.canvas.height();
 
 					xscalefield.setText(MiscUtils.displayFloat(xscl));
 					yscalefield.setText(MiscUtils.displayFloat(yscl));
@@ -878,8 +878,8 @@ public class DialogClasses{
 						}
 					}
 
-					int width = (int)(Float.parseFloat(xscalefield.getText()) * Core.i.drawgrid.canvas.width());
-					int height = (int)(Float.parseFloat(yscalefield.getText()) * Core.i.drawgrid.canvas.height());
+					int width = (int)(Float.parseFloat(xscalefield.getText()) * io.anuke.novix.drawgrid.canvas.width());
+					int height = (int)(Float.parseFloat(yscalefield.getText()) * io.anuke.novix.drawgrid.canvas.height());
 
 					widthfield.setText(width + "");
 					heightfield.setText(height + "");
@@ -924,9 +924,9 @@ public class DialogClasses{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
 
-				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(Core.i.drawgrid.canvas.pixmap, xscale, yscale));
+				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(io.anuke.novix.canvas.pixmap, xscale, yscale));
 
-				Core.i.drawgrid.setCanvas(canvas, true);
+				io.anuke.novix.i.drawgrid.setCanvas(canvas, true);
 				Core.i.checkGridResize();
 				Core.i.updateToolColor();
 			}catch(Exception e){
@@ -1051,9 +1051,9 @@ public class DialogClasses{
 			public ShiftImagePreview(){
 				stack = new Stack();
 
-				AlphaImage alpha = new AlphaImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
-				GridImage grid = new GridImage(Core.i.drawgrid.canvas.width(), Core.i.drawgrid.canvas.height());
-				image = new ShiftedImage(Core.i.drawgrid.canvas.texture);
+				AlphaImage alpha = new AlphaImage(io.anuke.novix.drawgrid.canvas.width(), io.anuke.novix.drawgrid.canvas.height());
+				GridImage grid = new GridImage(io.anuke.novix.drawgrid.canvas.width(), io.anuke.novix.drawgrid.canvas.height());
+				image = new ShiftedImage(io.anuke.novix.canvas.texture);
 				controller = new ShiftController(){
 					public void shifted(int x, int y){
 						image.offsetx += x;
@@ -1064,7 +1064,7 @@ public class DialogClasses{
 				stack.add(alpha);
 				stack.add(image);
 
-				if(Core.i.prefs.getBoolean("grid")) stack.add(grid);
+				if(io.anuke.novix.i.prefs.getBoolean("grid")) stack.add(grid);
 
 				stack.add(controller);
 
@@ -1084,7 +1084,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Core.i.drawgrid.canvas;
+			PixelCanvas canvas = io.anuke.novix.drawgrid.canvas;
 			Pixmap temp = PixmapUtils.copy(canvas.pixmap);
 
 			int offsetx = preview.image.offsetx, offsety = preview.image.offsety;
@@ -1127,9 +1127,9 @@ public class DialogClasses{
 			y = Math.min(preview.controller.sely1, preview.controller.sely2);
 			y2 = Math.max(preview.controller.sely1, preview.controller.sely2);
 
-			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(Core.i.drawgrid.canvas.pixmap, x, y, x2 - x, y2 - y));
+			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(io.anuke.novix.canvas.pixmap, x, y, x2 - x, y2 - y));
 
-			Core.i.drawgrid.setCanvas(canvas, true);
+			io.anuke.novix.i.drawgrid.setCanvas(canvas, true);
 			Core.i.updateToolColor();
 		}
 
@@ -1137,7 +1137,7 @@ public class DialogClasses{
 			CropController controller;
 
 			public CropImagePreview(){
-				super(Core.i.drawgrid.canvas.pixmap);
+				super(io.anuke.novix.canvas.pixmap);
 				stack.add((controller = new CropController(this)));
 
 			}
@@ -1313,7 +1313,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Core.i.drawgrid.canvas;
+			PixelCanvas canvas = io.anuke.novix.drawgrid.canvas;
 			float alpha = canvas.getAlpha();
 
 			canvas.setAlpha(1f);
@@ -1350,7 +1350,7 @@ public class DialogClasses{
 				public void clicked(InputEvent event, float x, float y){
 					selected = (ColorBox)event.getTarget();
 					dialog.picker.setSelectedColor(event.getTarget().getColor());
-					dialog.show(Core.i.stage);
+					dialog.show(io.anuke.novix.i.stage);
 				}
 			};
 
@@ -1364,7 +1364,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = Core.i.drawgrid.canvas;
+			PixelCanvas canvas = io.anuke.novix.drawgrid.canvas;
 			float alpha = canvas.getAlpha();
 			
 			int color = Color.rgba8888(selected.getColor());
@@ -1664,15 +1664,15 @@ public class DialogClasses{
 		try{
 			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
 			PixmapIO.writePNG(file, pixmap);
-			showInfo(Core.i.stage, "Image exported to " + file + ".");
+			showInfo(io.anuke.novix.i.stage, "Image exported to " + file + ".");
 		}catch(Exception e){
 			e.printStackTrace();
-			showError(Core.i.stage, e);
+			showError(io.anuke.novix.i.stage, e);
 		}
 	}
 
 	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){
-		float ratio = (float)Core.i.drawgrid.canvas.width() / Core.i.drawgrid.canvas.height();
+		float ratio = (float)io.anuke.novix.drawgrid.canvas.width() / io.anuke.novix.drawgrid.canvas.height();
 
 		float isize = 400*s;
 		float width = isize, height = isize / ratio;

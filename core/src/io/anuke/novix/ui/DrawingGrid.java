@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 
+import io.anuke.novix.Core;
 import io.anuke.novix.Novix;
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene.AlphaImage;
 import io.anuke.novix.scene.GridImage;
 import io.anuke.novix.tools.*;
@@ -317,7 +317,7 @@ public class DrawingGrid extends Actor{
 		offsety = getHeight() / 2;
 		gridimage.setImageSize(canvas.width(), canvas.height());
 		alphaimage.setImageSize(canvas.width(), canvas.height());
-		Core.i.projectmanager.saveProject();
+		io.anuke.novix.i.projectmanager.saveProject();
 	}
 
 	public void updateCursorSelection(){

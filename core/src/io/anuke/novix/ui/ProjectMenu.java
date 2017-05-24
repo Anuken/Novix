@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.scene.*;
 import io.anuke.novix.tools.Project;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
@@ -26,13 +25,11 @@ import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.SceneUtils;
 
 public class ProjectMenu extends BaseDialog{
-	private Core main;
 	private VisScrollPane pane;
 	private boolean loading = false;
 	
-	public ProjectMenu(Core mainref){
+	public ProjectMenu(){
 		super("Projects");
-		this.main = mainref;
 		
 		addTitleSeperator();
 		padTop(getPadTop()+10*s);

@@ -14,15 +14,12 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
-import io.anuke.novix.modules.Core;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
 
 public class SettingsMenu extends BaseDialog{
-	private Core main;
 	
-	public SettingsMenu(Core main){
+	public SettingsMenu(){
 		super("Settings");
-		this.main = main;
 		
 		addTitleSeperator();
 		

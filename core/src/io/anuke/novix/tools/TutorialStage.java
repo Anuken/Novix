@@ -19,8 +19,8 @@ import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisScrollPane;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.modules.Tutorial;
+import io.anuke.novix.Core;
+import io.anuke.novix.Tutorial;
 import io.anuke.novix.scene.CollapseButton;
 import io.anuke.novix.scene.ColorBar;
 import io.anuke.novix.scene.SmoothCollapsibleWidget;
@@ -157,7 +157,7 @@ public enum TutorialStage{
 	},
 	canvas{
 		protected void draw(){
-			ColorBar bar = Core.i.stage.getRoot().findActor("alphabar");
+			ColorBar bar = io.anuke.novix.i.stage.getRoot().findActor("alphabar");
 			if(!MathUtils.isEqual(bar.getSelection(), 1f)){
 				bar.setSelection(1f);
 				bar.fire(new ChangeListener.ChangeEvent());
@@ -176,7 +176,7 @@ public enum TutorialStage{
 			if(!Core.i.colorMenuCollapsed()) Core.i.collapseColorMenu();
 			if(!Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
 			
-			Core.i.drawgrid.zoom = 1f;
+			io.anuke.novix.drawgrid.zoom = 1f;
 			
 			color(Color.WHITE);
 			text(width / 2, height/2, "This is the canvas.");
@@ -209,7 +209,7 @@ public enum TutorialStage{
 	canvascursormode{
 		
 		protected void draw(){
-			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
+			VisImageButton button = io.anuke.novix.i.stage.getRoot().findActor("modebutton");
 			if(!button.isChecked()){
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
@@ -235,7 +235,7 @@ public enum TutorialStage{
 	canvastouchmode{
 		
 		protected void draw(){
-			VisImageButton button = Core.i.stage.getRoot().findActor("modebutton");
+			VisImageButton button = io.anuke.novix.i.stage.getRoot().findActor("modebutton");
 			if(button.isChecked()){
 				((ClickListener)button.getListeners().get(0)).clicked(null,0,0);
 			}
@@ -303,10 +303,10 @@ public enum TutorialStage{
 
 			float f = find("toolcollapsebutton").getTop();
 			shade(0, 0, width, f);
-			shade(0, f + ((SmoothCollapsibleWidget)find("toolcollapser")).getDone() * Core.i.toolmenu.getPrefHeight() - 78*s-10, width, height - f);
+			shade(0, f + ((SmoothCollapsibleWidget)find("toolcollapser")).getDone() * io.anuke.novix.i.toolmenu.getPrefHeight() - 78*s-10, width, height - f);
 			
-			Actor modebutton = Core.i.stage.getRoot().findActor("modebutton");
-			Actor gridbutton = Core.i.stage.getRoot().findActor("gridbutton");
+			Actor modebutton = io.anuke.novix.i.stage.getRoot().findActor("modebutton");
+			Actor gridbutton = io.anuke.novix.i.stage.getRoot().findActor("gridbutton");
 			modebutton.localToStageCoordinates(temp.set(0,0));
 
 			color(Color.WHITE);
@@ -328,16 +328,16 @@ public enum TutorialStage{
 	toolmenu{
 		protected void draw(){
 			if(Core.i.toolMenuCollapsed()) Core.i.collapseToolMenu();
-			VisTextButton button = (VisTextButton)((Table)Core.i.toolmenu.getChildren().first()).getChildren().first();
+			VisTextButton button = (VisTextButton)((Table)io.anuke.novix.i.toolmenu.getChildren().first()).getChildren().first();
 			float f = width / Tool.values().length + 61*s;
 			
 			color(select);
 			rect(button);
 
-			shade(0, 0, width, f + Core.i.toolmenu.getPrefHeight() - 77*s);
-			shade(0, f + Core.i.toolmenu.getPrefHeight(), width, height - f);
+			shade(0, 0, width, f + io.anuke.novix.i.toolmenu.getPrefHeight() - 77*s);
+			shade(0, f + io.anuke.novix.i.toolmenu.getPrefHeight(), width, height - f);
 			
-			shade(button.getWidth() + 4*s, f + Core.i.toolmenu.getPrefHeight() - 77*s, width, button.getHeight() + 7*s);
+			shade(button.getWidth() + 4*s, f + io.anuke.novix.i.toolmenu.getPrefHeight() - 77*s, width, button.getHeight() + 7*s);
 
 			color(select);
 			rect(button);
@@ -345,7 +345,7 @@ public enum TutorialStage{
 			color(Color.WHITE);
 			text(width / 2, height / 2 + 220*s, "Press this button to\ncontinue to the menu.");
 
-			if(Core.i.projectmenu.getStage() != null){
+			if(io.anuke.novix.i.projectmenu.getStage() != null){
 				next();
 			}
 		}
@@ -371,11 +371,11 @@ public enum TutorialStage{
 		String[] names = {"open", "copy", "rename", "delete"};
 		int stage = 0;
 		protected void draw(){
-			VisScrollPane pane = ((VisScrollPane)Core.i.stage.getRoot().findActor("projectpane"));
+			VisScrollPane pane = ((VisScrollPane)io.anuke.novix.i.stage.getRoot().findActor("projectpane"));
 			pane.setSmoothScrolling(false);
 			pane.setScrollPercentY(0);
 			
-			ProjectTable table = Core.i.projectmenu.getFirstTable();
+			ProjectTable table = io.anuke.novix.i.projectmenu.getFirstTable();
 			project(table);
 
 			shade(0, 0, width, temp.y);
@@ -384,7 +384,7 @@ public enum TutorialStage{
 
 			color(Color.WHITE);
 			
-			VisImageButton button = pane.findActor(Core.i.projectmanager.getProjects().iterator().next().name+names[stage]+"button");
+			VisImageButton button = pane.findActor(io.anuke.novix.i.projectmanager.getProjects().iterator().next().name+names[stage]+"button");
 			
 			rectarrow(button);
 			
@@ -409,7 +409,7 @@ public enum TutorialStage{
 	},
 	newproject{
 		protected void draw(){
-			VisTextButton button = Core.i.stage.getRoot().findActor("newproject");
+			VisTextButton button = io.anuke.novix.i.stage.getRoot().findActor("newproject");
 			
 			button.localToStageCoordinates(temp.set(0,0));
 			temp.y -= 6;
@@ -434,7 +434,7 @@ public enum TutorialStage{
 	},
 	settings{
 		protected void draw(){
-			VisTextButton button = Core.i.stage.getRoot().findActor("settings");
+			VisTextButton button = io.anuke.novix.i.stage.getRoot().findActor("settings");
 			
 			button.localToStageCoordinates(temp.set(0,0));
 			temp.y -= 6;
@@ -466,7 +466,7 @@ public enum TutorialStage{
 		}
 		
 		public void tap(int x, int y){
-			((ClickListener)Core.i.stage.getRoot().findActor("modebutton").getListeners().get(0)).clicked(null,0,0);
+			((ClickListener)io.anuke.novix.i.stage.getRoot().findActor("modebutton").getListeners().get(0)).clicked(null,0,0);
 			if(Core.i.getCurrentDialog() != null) Core.i.getCurrentDialog().hide();
 			Core.i.collapseToolMenu();
 			Core.i.getModule(Tutorial.class).end();
@@ -493,7 +493,7 @@ public enum TutorialStage{
 	}
 	
 	float colorHeight(){
-		return ((Table)find("colortable")).getPrefHeight() + Core.i.colormenu.getBoxBorder();
+		return ((Table)find("colortable")).getPrefHeight() + io.anuke.novix.i.colormenu.getBoxBorder();
 	}
 
 	public void color(Color color){
@@ -562,7 +562,7 @@ public enum TutorialStage{
 	public void text(float x, float y, String text, int align){
 		VisUI.getSkin().getFont("border-font").getCache().clear();
 		VisUI.getSkin().getFont("border-font").getCache().addText(text, x, y, 0, align, false);
-		VisUI.getSkin().getFont("border-font").getCache().setAlphas(Core.i.stage.getBatch().getColor().a);
+		VisUI.getSkin().getFont("border-font").getCache().setAlphas(io.anuke.novix.i.stage.getBatch().getColor().a);
 		VisUI.getSkin().getFont("border-font").getCache().draw(batch);
 	}
 
@@ -571,7 +571,7 @@ public enum TutorialStage{
 	}
 	
 	public <T extends Actor> T find(String name){
-		return Core.i.stage.getRoot().findActor(name);
+		return io.anuke.novix.i.stage.getRoot().findActor(name);
 	}
 
 	public void tap(int x, int y){

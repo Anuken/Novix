@@ -1,6 +1,8 @@
 package io.anuke.novix.tools;
 
 
+import static io.anuke.novix.Var.core;
+
 import java.nio.ByteBuffer;
 
 import com.badlogic.gdx.Gdx;
@@ -15,10 +17,8 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
-import io.anuke.novix.modules.Core;
 import io.anuke.ucore.graphics.PixmapUtils;
 
-//TODO fix this monster of a class
 public class PixelCanvas implements Disposable{
 	final private static ObjectMap<Integer, ByteBuffer> buffers = new ObjectMap<Integer, ByteBuffer>();
 	
@@ -34,16 +34,13 @@ public class PixelCanvas implements Disposable{
 
 	public PixelCanvas(Pixmap pixmap){
 		this.pixmap = pixmap;
-		name = Core.i.getCurrentProject().name;
+		name = core.getCurrentProject().name;
 		texture = new Texture(pixmap);
 		updateTexture();
 	}
 
 	public PixelCanvas(int width, int height){
-		pixmap = new Pixmap(width, height, Format.RGBA8888);
-		texture = new Texture(pixmap);
-		name = Core.i.getCurrentProject().name;
-		updateTexture();
+		this(new Pixmap(width, height, Format.RGBA8888));
 	}
 
 	public void drawPixel(int x, int y, boolean update){
@@ -213,7 +210,7 @@ public class PixelCanvas implements Disposable{
 	}
 
 	public void updateTexture(){
-		if(!Core.i.projectmanager.isSavingProject()){
+		if(!core.saving()){
 			Novix.log("Updating...");
 			texture.draw(pixmap, 0, 0);
 			drawn = false;
@@ -230,7 +227,7 @@ public class PixelCanvas implements Disposable{
 
 	public void pushActions(){
 		if(action.positions.size == 0) return;
-		Core.i.actionStack().add(action);
+		core.actionStack().add(action);
 		action = new DrawAction();
 	}
 

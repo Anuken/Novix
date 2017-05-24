@@ -3,7 +3,7 @@ package io.anuke.novix.tools;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
-import io.anuke.novix.modules.Core;
+import io.anuke.novix.Core;
 import io.anuke.ucore.graphics.PixmapUtils;
 
 public class ActionStack implements Disposable{
@@ -28,7 +28,6 @@ public class ActionStack implements Disposable{
 		stack.add(action);
 		
 		update();
-		//print();
 	}
 	
 	public boolean canUndo(){
@@ -46,7 +45,6 @@ public class ActionStack implements Disposable{
 		index --;
 		
 		update();
-		//print();
 	}
 
 	public void redo(PixelCanvas canvas){
@@ -56,7 +54,6 @@ public class ActionStack implements Disposable{
 		stack.get(stack.size - 1 + index).apply(canvas, true);
 		
 		update();
-		//print();
 	}
 	
 	private void update(){
