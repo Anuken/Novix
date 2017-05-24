@@ -1,4 +1,4 @@
-package io.anuke.novix;
+package io.anuke.novix.modules;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -16,6 +16,9 @@ import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisTextField;
 
+import io.anuke.novix.Novix;
+import io.anuke.novix.SkinLoader;
+import io.anuke.novix.Var;
 import io.anuke.novix.android.AndroidKeyboard;
 import io.anuke.novix.graphics.Palette;
 import io.anuke.novix.managers.PaletteManager;
@@ -38,7 +41,6 @@ public class Core extends Module<Novix>{
 	public final FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
 	
 	Stage stage;
-	DrawingGrid drawgrid;
 	
 	private ProjectManager projectmanager;
 	private PaletteManager palettemanager;
@@ -279,16 +281,12 @@ public class Core extends Module<Novix>{
 			((VisImageButton) stage.getRoot().findActor("gridbutton")).setChecked(false);
 	}
 	
-	public PixelCanvas canvas(){
-		return drawgrid.canvas;
-	}
-	
 	public boolean saving(){
 		return projectmanager.isSavingProject();
 	}
 	
-	public ActionStack actionStack(){
-		return drawgrid.actions;
+	public Stage stage(){
+		return stage;
 	}
 
 	@Override

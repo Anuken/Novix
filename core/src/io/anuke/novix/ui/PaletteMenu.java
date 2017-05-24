@@ -1,6 +1,6 @@
 package io.anuke.novix.ui;
 
-
+import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
 import java.util.Arrays;
@@ -68,7 +68,7 @@ public class PaletteMenu extends BaseDialog{
 								palette.colors = newcolors;
 
 								update();
-								main.colormenu.updateColorMenu();
+								core.colormenu.updateColorMenu();
 							}
 						}.show(getStage());
 					}
@@ -88,7 +88,7 @@ public class PaletteMenu extends BaseDialog{
 						if(widget != currentWidget){
 							new DialogClasses.ConfirmDialog("Delete Palette", "Are you sure you want\nto delete this palette?"){
 								public void result(){
-									main.palettemanager.removePalette(palette);
+									core.palettemanager.removePalette(palette);
 									update();
 								}
 							}.show(getStage());
@@ -111,9 +111,9 @@ public class PaletteMenu extends BaseDialog{
 
 		getContentTable().add(pane).left().grow().maxHeight(Gdx.graphics.getHeight() / 2);
 
-		for(final Palette palette : main.palettemanager.getPalettes()){
-			final PaletteWidget widget = new PaletteWidget(palette, palette == main.getCurrentPalette());
-			if(main.getCurrentPalette() == palette) currentWidget = widget;
+		for(final Palette palette : core.palettemanager.getPalettes()){
+			final PaletteWidget widget = new PaletteWidget(palette, palette == core.getCurrentPalette());
+			if(core.getCurrentPalette() == palette) currentWidget = widget;
 
 			widget.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
@@ -126,7 +126,7 @@ public class PaletteMenu extends BaseDialog{
 						currentWidget = widget;
 
 						widget.setSelected(true);
-						main.setPalette(palette);
+						core.setPalette(palette);
 					}
 
 				}
@@ -157,7 +157,7 @@ public class PaletteMenu extends BaseDialog{
 					{
 						numberfield = new VisTextField("8");
 						numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-						box = new VisCheckBox("Auto-Generate", main.prefs.getBoolean("genpalettes", true));
+						box = new VisCheckBox("Auto-Generate", core.prefs.getBoolean("genpalettes", true));
 						box.getImageStackCell().size(40*s);
 						
 						getContentTable().center();
@@ -176,9 +176,9 @@ public class PaletteMenu extends BaseDialog{
 							DialogClasses.showInfo(getStage(), "A palette may not have\nmore than 32 colors.");
 							return;
 						}
-						main.palettemanager.addPalette(new Palette(string, main.palettemanager.generatePaletteID(), Integer.parseInt(numberfield.getText()), box.isChecked()));
+						core.palettemanager.addPalette(new Palette(string, core.palettemanager.generatePaletteID(), Integer.parseInt(numberfield.getText()), box.isChecked()));
 						update();
-						main.prefs.put("genpalettes", box.isChecked());
+						core.prefs.put("genpalettes", box.isChecked());
 					}
 
 				}.show(getStage());
@@ -193,7 +193,7 @@ public class PaletteMenu extends BaseDialog{
 
 		pack();
 
-		main.stage.setScrollFocus(pane);
+		core.stage.setScrollFocus(pane);
 
 		pane.setSmoothScrolling(false);
 		pane.setScrollPercentY(scrolly);

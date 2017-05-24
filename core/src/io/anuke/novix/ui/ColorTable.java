@@ -1,5 +1,6 @@
 package io.anuke.novix.ui;
 
+import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Gdx;
@@ -13,7 +14,6 @@ import com.kotcrab.vis.ui.widget.VisImage;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
-import io.anuke.novix.Core;
 import io.anuke.novix.scene.*;
 import io.anuke.utools.MiscUtils;
 import io.anuke.utools.SceneUtils;
@@ -27,14 +27,14 @@ public class ColorTable extends VisTable{
 	private CollapseButton collapsebutton;
 	private int paletteColor;
 	
-	public ColorTable(final Core c){
+	public ColorTable(){
 		background("button-window-bg");
 		
-		palettemenu = new PaletteMenu(c);
+		palettemenu = new PaletteMenu();
 
 		picker = new ColorWidget(){
 			public void onColorChanged(){
-				if(c.colormenu != null)
+				if(core.colormenu != null)
 				updateSelectedColor(picker.getSelectedColor());
 			}
 		};
@@ -42,7 +42,7 @@ public class ColorTable extends VisTable{
 		colortable = new VisTable();
 		colortable.setName("colortable");
 		colortable.setFillParent(true);
-		c.stage.addActor(colortable);
+		stage.addActor(colortable);
 
 		colortable.top().left();
 		
@@ -51,19 +51,19 @@ public class ColorTable extends VisTable{
 		collapsebutton.flip();
 
 		collapser = new SmoothCollapsibleWidget(this);
-		c.stage.addActor(collapser);
+		stage.addActor(collapser);
 		
 		collapsebutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
 				if(!collapser.isCollapsed()){
 					picker.setSelectedColor(picker.getSelectedColor());
-					c.tool().onColorChange(c.selectedColor(), c.drawgrid.canvas);
+					core.tool().onColorChange(core.selectedColor(), drawing.canvas);
 				}
 				collapser.setCollapsed(!collapser.isCollapsed());
 				collapsebutton.flip();
 
-				if(!c.toolMenuCollapsed() && event != null){
-					c.toolmenu.collapse();
+				if(!core.toolMenuCollapsed() && event != null){
+					core.collapseColorMenu();
 				}
 			}
 		});
@@ -87,7 +87,7 @@ public class ColorTable extends VisTable{
 		Cell<?> cell = add(picker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
 		row();
 		center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		collapser.setY(io.anuke.novix.i.toolmenu.getButton().getTop());
+		collapser.setY(core.toolmenu.getButton().getTop());
 		collapser.toBack();
 		collapser.resetY();
 		Vector2 pos = picker.localToStageCoordinates(new Vector2());
@@ -117,11 +117,11 @@ public class ColorTable extends VisTable{
 	
 	public void openPaletteMenu(){
 		palettemenu.update();
-		palettemenu.show(io.anuke.novix.i.stage);
+		palettemenu.show(stage);
 	}
 	
 	public void setSelectedColor(int color){
-		((ClickListener)io.anuke.novix.colormenu.boxes[color].getListeners().get(0)).clicked(null, 0, 0);
+		((ClickListener)core.boxes[color].getListeners().get(0)).clicked(null, 0, 0);
 	}
 	
 	public void addRecentColor(Color color){
@@ -129,7 +129,7 @@ public class ColorTable extends VisTable{
 	}
 	
 	public Color getSelectedColor(){
-		return Core.i.getCurrentPalette().colors[paletteColor];
+		return core.getCurrentPalette().colors[paletteColor];
 	}
 	
 	public void resetPaletteColor(){
@@ -154,7 +154,7 @@ public class ColorTable extends VisTable{
 		int maxcolorsize = (int) (65 * s);
 		int mincolorsize = (int) (30 * s);
 
-		int colorsize = Gdx.graphics.getWidth() / Core.i.getCurrentPalette().size() - MiscUtils.densityScale(3);
+		int colorsize = Gdx.graphics.getWidth() / core.getCurrentPalette().size() - MiscUtils.densityScale(3);
 
 		int perow = 0; // colors per row
 
@@ -166,30 +166,30 @@ public class ColorTable extends VisTable{
 		}
 
 		colortable.add(collapsebutton).expandX().fillX()
-				.colspan((perow == 0 ? Core.i.getCurrentPalette().size() : perow) + 2).height(50f * s);
+				.colspan((perow == 0 ? core.getCurrentPalette().size() : perow) + 2).height(50f * s);
 		collapsebutton.setZIndex(collapser.getZIndex() + 10);
 
 		colortable.row();
 
 		colortable.add().growX();
 
-		boxes = new ColorBox[Core.i.getCurrentPalette().size()];
+		boxes = new ColorBox[core.getCurrentPalette().size()];
 
-		for(int i = 0; i < Core.i.getCurrentPalette().size(); i++){
+		for(int i = 0; i < core.getCurrentPalette().size(); i++){
 			final int index = i;
 			final ColorBox box = new ColorBox();
 
 			boxes[i] = box;
 			colortable.add(box).size(colorsize);
 
-			box.setColor(Core.i.getCurrentPalette().colors[i]);
+			box.setColor(core.getCurrentPalette().colors[i]);
 
 			box.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
 					picker.addRecentColor(boxes[paletteColor].getColor().cpy());
 					boxes[paletteColor].selected = false;
 					paletteColor = index;
-					io.anuke.novix.i.prefs.put("palettecolor", paletteColor);
+					core.prefs.put("palettecolor", paletteColor);
 					box.selected = true;
 					box.toFront();
 					setSelectedColor(box.getColor());
@@ -209,19 +209,19 @@ public class ColorTable extends VisTable{
 	
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color.cpy());
-		Core.i.getCurrentPalette().colors[paletteColor] = color.cpy();
-		io.anuke.novix.i.toolmenu.updateColor(color.cpy());
-		Core.i.updateToolColor();
+		core.getCurrentPalette().colors[paletteColor] = color.cpy();
+		core.toolmenu.updateColor(color.cpy());
+		core.updateToolColor();
 	}
 
 	public void setSelectedColor(Color color){
 		updateSelectedColor(color);
 		picker.setSelectedColor(color);
-		Core.i.updateToolColor();
+		core.updateToolColor();
 	}
 
 	public void setupBoxColors(){
-		paletteColor = io.anuke.novix.i.prefs.getInteger("palettecolor", 0);
+		paletteColor = core.prefs.getInteger("palettecolor", 0);
 		for(ColorBox box : boxes)
 			box.getColor().a = 1f;
 
@@ -231,7 +231,7 @@ public class ColorTable extends VisTable{
 		picker.setRecentColors(boxes);
 		boxes[paletteColor].selected = true;
 		boxes[paletteColor].toFront();
-		picker.setSelectedColor(Core.i.getCurrentPalette().colors[paletteColor]);
+		picker.setSelectedColor(core.getCurrentPalette().colors[paletteColor]);
 	}
 	
 	public float getPrefWidth(){

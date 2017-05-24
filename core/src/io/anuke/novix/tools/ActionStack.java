@@ -3,7 +3,7 @@ package io.anuke.novix.tools;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
-import io.anuke.novix.Core;
+import io.anuke.novix.modules.Core;
 import io.anuke.ucore.graphics.PixmapUtils;
 
 public class ActionStack implements Disposable{

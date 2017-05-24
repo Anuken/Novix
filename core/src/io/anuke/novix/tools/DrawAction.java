@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Keys;
 
-import io.anuke.novix.Core;
+import io.anuke.novix.modules.Core;
 import io.anuke.utools.MiscUtils;
 
 public class DrawAction{

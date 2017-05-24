@@ -1,6 +1,6 @@
 package io.anuke.novix.ui;
 
-
+import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Gdx;
@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -22,19 +21,20 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
-import io.anuke.novix.Core;
-import io.anuke.novix.scene.*;
+import io.anuke.novix.scene.CollapseButton;
+import io.anuke.novix.scene.ColorBar;
+import io.anuke.novix.scene.SmoothCollapsibleWidget;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Tool;
 import io.anuke.novix.ui.DialogClasses.*;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.utools.SceneUtils;
 
+//TODO proper prefs references
 public class ToolTable extends VisTable{
 	private static ButtonMenu currentMenu;
 	public final String selectcolor = "7aaceaff";
 	
-	private Core main;
 	private VisTable menutable, optionstable;
 	private VisSlider brushslider;
 	private ColorBar alphabar;
@@ -44,12 +44,13 @@ public class ToolTable extends VisTable{
 	private Tool tool;
 	
 	
-	public ToolTable(Core main){
+	public ToolTable(){
+		setName("toolmenu");
+		
 		final VisTable tooltable = new VisTable();
 		tooltable.setFillParent(true);
-		main.stage.addActor(tooltable);
+		stage.addActor(tooltable);
 
-		this.main = main;
 		setBackground("menu");
 		
 		menutable = new VisTable();
@@ -79,8 +80,8 @@ public class ToolTable extends VisTable{
 				collapser.setCollapsed(!collapser.isCollapsed());
 				collapsebutton.flip();
 
-				if(!main.colorMenuCollapsed() && event != null){
-					main.colormenu.collapse();
+				if(!core.colorMenuCollapsed() && event != null){
+					core.collapseColorMenu();
 				}
 			}
 		});
@@ -110,7 +111,7 @@ public class ToolTable extends VisTable{
 						return;
 					}
 					tool = ctool;
-					tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
+					tool.onColorChange(core.selectedColor(), core.drawgrid.canvas);
 					if(!button.isChecked())
 						button.setChecked(true);
 					
@@ -258,12 +259,10 @@ public class ToolTable extends VisTable{
 	}
 	
 	private void setupMenu(){
-		final Stage stage = main.stage;
-		
 		VisTextButton menu = addMenuButton("Menu", "menu");
 		menu.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.openProjectMenu();
+				core.openProjectMenu();
 			}
 		});
 		
@@ -274,13 +273,13 @@ public class ToolTable extends VisTable{
 					@Override
 					public void result(int width, int height){
 						
-						PixelCanvas canvas = main.canvas();
+						PixelCanvas canvas = core.canvas();
 						PixelCanvas ncanvas = new PixelCanvas(PixmapUtils.resize(canvas.pixmap, width, height));
-						main.drawgrid.setCanvas(ncanvas, true);
+						core.drawgrid.setCanvas(ncanvas, true);
 						
-						main.checkGridResize();
+						core.checkGridResize();
 						
-						main.updateToolColor();
+						core.updateToolColor();
 					}
 				}.show(stage);
 			}
@@ -361,15 +360,6 @@ public class ToolTable extends VisTable{
 		});
 		
 		addMenu("File", "file",
-		/*new MenuButton("Export", "Export the image as a PNG."){
-			public void clicked(){
-				new FileChooser(FileChooser.pngFilter, false){
-					public void fileSelected(FileHandle file){
-						DialogClasses.exportPixmap(main.drawgrid.canvas.pixmap, file);
-					}
-				}.show(stage);
-			}
-		},*/
 		new MenuButton("Export", "Export the image as a PNG."){
 			public void clicked(){
 				new FileChooser(FileChooser.pngFilter, false){
@@ -385,8 +375,8 @@ public class ToolTable extends VisTable{
 				new FileChooser(FileChooser.jpegFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
-							main.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)), true);
-							tool.onColorChange(main.selectedColor(), main.drawgrid.canvas);
+							core.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)), true);
+							tool.onColorChange(core.selectedColor(), core.drawgrid.canvas);
 						}catch(Exception e){
 							e.printStackTrace();
 							DialogClasses.showError(stage, e);
@@ -406,15 +396,15 @@ public class ToolTable extends VisTable{
 		
 		DialogClasses.scaleSlider(brushslider);
 		
-		brushslider.setValue(main.prefs.getInteger("brushsize", 1));
+		brushslider.setValue(core.prefs.getInteger("brushsize", 1));
 		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());
 
 		brushslider.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				brushlabel.setText("Brush Size: [#"+selectcolor +"]" + (int)brushslider.getValue());
-				main.prefs.put("brushsize", (int)brushslider.getValue());
-				main.drawgrid.brushSize = (int)brushslider.getValue();
+				core.prefs.put("brushsize", (int)brushslider.getValue());
+				core.drawgrid.brushSize = (int)brushslider.getValue();
 			}
 		});
 
@@ -423,7 +413,7 @@ public class ToolTable extends VisTable{
 		
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
 		alphabar.setSize(50 * s, 300 * s);
-		alphabar.setSelection(main.prefs.getFloat("opacity", 1f));
+		alphabar.setSelection(core.prefs.getFloat("opacity", 1f));
 
 		optionstable.bottom().left();
 
@@ -433,8 +423,8 @@ public class ToolTable extends VisTable{
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
 				opacity.setText("Opacity: [#"+selectcolor +"]" + (int)(alphabar.getSelection()*100) + "%");
-				main.drawgrid.canvas.setAlpha(alphabar.getSelection());
-				main.prefs.put("opacity", alphabar.getSelection());
+				core.drawgrid.canvas.setAlpha(alphabar.getSelection());
+				core.prefs.put("opacity", alphabar.getSelection());
 			}
 		});
 
@@ -445,13 +435,13 @@ public class ToolTable extends VisTable{
 
 		menubutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.openProjectMenu();
+				core.openProjectMenu();
 			}
 		});
 
 		settingsbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.openSettingsMenu();
+				core.openSettingsMenu();
 			}
 		});
 
@@ -467,7 +457,7 @@ public class ToolTable extends VisTable{
 		final VisLabel gridlabel = new VisLabel();
 		
 		final VisImageButton modebutton = new VisImageButton(modestyle);
-		modebutton.setChecked(main.prefs.getBoolean("cursormode", true));
+		modebutton.setChecked(core.prefs.getBoolean("cursormode", true));
 		modebutton.setName("modebutton");
 		
 		modebutton.getImageCell().size(48*s);
@@ -475,14 +465,14 @@ public class ToolTable extends VisTable{
 		modebutton.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				cursorlabel.setText("Mode: " + (modebutton.isChecked() ? "[CORAL]Cursor" : "[PURPLE]Touch"));
-				main.prefs.put("cursormode", modebutton.isChecked());
-				main.prefs.save();
+				core.prefs.put("cursormode", modebutton.isChecked());
+				core.prefs.save();
 			}
 		});
 		modebutton.fire(new ChangeListener.ChangeEvent());
 		
 		gridbutton = new VisImageButton(gridstyle);
-		gridbutton.setChecked(main.prefs.getBoolean("grid", true));
+		gridbutton.setChecked(core.prefs.getBoolean("grid", true));
 		gridbutton.setName("gridbutton");
 		
 		gridbutton.getImageCell().size(48*s);
@@ -490,8 +480,8 @@ public class ToolTable extends VisTable{
 		gridbutton.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				gridlabel.setText("Grid: " + (gridbutton.isChecked() ? "[CORAL]On" : "[PURPLE]Off"));
-				main.prefs.put("grid", gridbutton.isChecked());
-				main.prefs.save();
+				core.prefs.put("grid", gridbutton.isChecked());
+				core.prefs.save();
 			}
 		});
 		gridbutton.fire(new ChangeListener.ChangeEvent());

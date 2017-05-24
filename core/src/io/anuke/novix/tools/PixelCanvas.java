@@ -1,7 +1,7 @@
 package io.anuke.novix.tools;
 
 
-import static io.anuke.novix.Var.core;
+import static io.anuke.novix.Var.*;
 
 import java.nio.ByteBuffer;
 
@@ -227,7 +227,7 @@ public class PixelCanvas implements Disposable{
 
 	public void pushActions(){
 		if(action.positions.size == 0) return;
-		core.actionStack().add(action);
+		drawing.pushAction(action);
 		action = new DrawAction();
 	}
 

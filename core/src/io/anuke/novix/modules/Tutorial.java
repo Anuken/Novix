@@ -1,4 +1,4 @@
-package io.anuke.novix;
+package io.anuke.novix.modules;
 
 import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
@@ -6,6 +6,8 @@ import static io.anuke.ucore.UCore.s;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
+import io.anuke.novix.Novix;
+import io.anuke.novix.Var;
 import io.anuke.novix.tools.TutorialStage;
 import io.anuke.novix.ui.DialogClasses;
 import io.anuke.ucore.graphics.ShapeUtils;

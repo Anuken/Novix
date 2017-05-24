@@ -1,5 +1,7 @@
 package io.anuke.novix.managers;
 
+import static io.anuke.novix.Var.*;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -11,7 +13,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
-import io.anuke.novix.Core;
 import io.anuke.novix.Novix;
 import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Project;
@@ -22,15 +23,10 @@ import io.anuke.novix.ui.DialogClasses.NamedSizeDialog;
 public class ProjectManager{
 	private ObjectMap<Long, Project> projects = new ObjectMap<Long, Project>();
 	private Json json = new Json();
-	private Core main;
 	private Project currentProject;
 	private boolean savingProject = false;
 	private Array<Project> projectsort = new Array<Project>();
 	private boolean backedup;
-
-	public ProjectManager(Core main){
-		this.main = main;
-	}
 
 	public Iterable<Project> getProjects(){
 		projectsort.clear();
@@ -60,7 +56,7 @@ public class ProjectManager{
 				openProject(project);
 
 			}
-		}.show(main.stage);
+		}.show(stage);
 	}
 
 	public Project createNewProject(String name, int width, int height){
@@ -77,7 +73,7 @@ public class ProjectManager{
 	}
 
 	public void openProject(Project project){
-		main.prefs.put("lastproject", project.id);
+		core.prefs.put("lastproject", project.id);
 		project.lastloadtime = System.currentTimeMillis();
 		currentProject = project;
 
@@ -86,15 +82,15 @@ public class ProjectManager{
 		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
 
 		if(canvas.width() > 100 || canvas.height() > 100){
-			main.prefs.put("grid", false);
+			core.prefs.put("grid", false);
 		}
 
-		main.prefs.save();
+		core.prefs.save();
 		
-		main.drawgrid.clearActionStack();
-		main.drawgrid.setCanvas(canvas, false);
-		main.updateToolColor();
-		main.projectmenu.hide();
+		core.drawgrid.clearActionStack();
+		core.drawgrid.setCanvas(canvas, false);
+		core.updateToolColor();
+		core.projectmenu.hide();
 	}
 
 	public void copyProject(final Project project){
@@ -110,27 +106,27 @@ public class ProjectManager{
 					Project newproject = new Project(text, id);
 
 					projects.put(newproject.id, newproject);
-					main.projectmenu.update(true);
+					core.projectmenu.update(true);
 				}catch(Exception e){
-					DialogClasses.showError(main.stage, "Error copying file!", e);
+					DialogClasses.showError(stage, "Error copying file!", e);
 					e.printStackTrace();
 				}
 			}
-		}.show(main.stage);
+		}.show(stage);
 	}
 
 	public void renameProject(final Project project){
 		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
 				project.name = text;
-				main.projectmenu.update(true);
+				core.projectmenu.update(true);
 			}
-		}.show(main.stage);
+		}.show(stage);
 	}
 
 	public void deleteProject(final Project project){
 		if(project == currentProject){
-			DialogClasses.showInfo(main.stage, "You cannot delete the canvas you are currently using!");
+			DialogClasses.showInfo(stage, "You cannot delete the canvas you are currently using!");
 			return;
 		}
 
@@ -141,21 +137,21 @@ public class ProjectManager{
 					if(getBackupFile(project.id).exists()) getBackupFile(project.id).delete();
 					project.dispose();
 					projects.remove(project.id);
-					main.projectmenu.update(true);
+					core.projectmenu.update(true);
 				}catch(Exception e){
-					DialogClasses.showError(main.stage, "Error deleting file!", e);
+					DialogClasses.showError(stage, "Error deleting file!", e);
 					e.printStackTrace();
 				}
 			}
-		}.show(main.stage);
+		}.show(stage);
 	}
 
 	public void saveProject(){
 		saveProjectsFile();
-		io.anuke.novix.i.prefs.put("lastproject", getCurrentProject().id);
+		core.prefs.put("lastproject", getCurrentProject().id);
 		savingProject = true;
 		Novix.log("Starting save..");
-		PixmapIO.writePNG(currentProject.getFile(), main.drawgrid.canvas.pixmap);
+		PixmapIO.writePNG(currentProject.getFile(), core.drawgrid.canvas.pixmap);
 		Novix.log("Saving project.");
 		savingProject = false;
 	}
@@ -163,7 +159,7 @@ public class ProjectManager{
 	@SuppressWarnings("unchecked")
 	private void loadProjectFile(){
 		try{
-			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, io.anuke.novix.i.projectFile);
+			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, core.projectFile);
 			projects = new ObjectMap<Long, Project>();
 			for(String key : map.keys()){
 				projects.put(Long.parseLong(key), map.get(key));
@@ -175,13 +171,13 @@ public class ProjectManager{
 	}
 
 	private void saveProjectsFile(){
-		io.anuke.novix.i.projectFile.writeString(json.toJson(projects), false);
+		core.projectFile.writeString(json.toJson(projects), false);
 	}
 
 	public void loadProjects(){
 		loadProjectFile();
 		
-		long last = main.prefs.getLong("lastproject");
+		long last = core.prefs.getLong("lastproject");
 
 		currentProject = projects.get(last);
 
@@ -236,7 +232,7 @@ public class ProjectManager{
 				}
 				
 				//show the result
-				io.anuke.novix.i.stage.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
+				stage.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
 					@Override
 					public boolean act(float delta){
 						new InfoDialog("Info", backedup ? "[ORANGE]Your project file has been either corrupted or deleted.\n\n[GREEN]Fortunately, a backup has been found and loaded." : "[RED]Your project file has been either corrupted or deleted.\n\n[ORANGE]A backup has not been found.\n\n[ROYAL]If you believe this is an error, try reporting the circumstances under which you last closed the app at the Google Play store listing. This could help the developer fix the problem."){
@@ -244,7 +240,7 @@ public class ProjectManager{
 							public void result(){
 								currentProject.reloadTexture();
 							}
-						}.show(io.anuke.novix.i.stage);
+						}.show(stage);
 						return true;
 					}
 				}));
@@ -268,11 +264,11 @@ public class ProjectManager{
 	}
 
 	public FileHandle getFile(long id){
-		return io.anuke.novix.i.projectDirectory.child(id + ".png");
+		return core.projectDirectory.child(id + ".png");
 	}
 
 	public FileHandle getBackupFile(long id){
-		return io.anuke.novix.i.projectDirectory.child(id + "-backup.png");
+		return core.projectDirectory.child(id + "-backup.png");
 	}
 
 	public long generateProjectID(){

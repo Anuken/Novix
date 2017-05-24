@@ -1,17 +1,18 @@
 package io.anuke.novix.managers;
 
 
-import static io.anuke.novix.Var.core;
+import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import io.anuke.novix.Core;
 import io.anuke.novix.Novix;
 import io.anuke.novix.tools.Tool;
+
 public class GestureManager extends GestureAdapter{
 	private float touchy;
 	private Vector2 vector = new Vector2();
@@ -25,15 +26,17 @@ public class GestureManager extends GestureAdapter{
 	
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button){
-		if(!io.anuke.novix.i.prefs.getBoolean("gestures", true) || Core.i.getCurrentDialog() != null || 
-				(!io.anuke.novix.drawgrid.input.checkRange((int)touchy) && io.anuke.novix.i.toolmenu.getTool() == Tool.zoom 
-				&& !(!Core.i.colorMenuCollapsed() || !Core.i.toolMenuCollapsed()))) return false;
+		Actor toolmenu = stage.getRoot().findActor("toolmenu");
+		
+		if(!core.prefs.getBoolean("gestures", true) || core.getCurrentDialog() != null || 
+				(!drawing.hasMouse(touchy) && core.tool() == Tool.zoom 
+				&& !(!core.colorMenuCollapsed() || !core.toolMenuCollapsed()))) return false;
 		
 		float swipevelocity = this.swipevelocity*s;
 		float flingvelocity = this.flingvelocity*s;
 		
-		float tooltop = core.toolmenu.localToStageCoordinates(vector.set(0, 0)).y + core.toolmenu.getHeight();
-		float colortop = core.colormenu.localToStageCoordinates(vector.set(0, 0)).y;
+		float tooltop = toolmenu.localToStageCoordinates(vector.set(0, 0)).y + toolmenu.getHeight();
+		float colortop = toolmenu.localToStageCoordinates(vector.set(0, 0)).y;
 
 		if(Math.abs(velocityX) > swipevelocity && Math.abs(velocityY) < swipevelocity && MathUtils.isEqual(touchy, Gdx.graphics.getHeight() / 2, 250 * s)){
 			if( !core.colorMenuCollapsed() && velocityX < -swipevelocity) core.collapseColorMenu(); //swipe left, close color menu

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 
-import io.anuke.novix.Core;
 import io.anuke.utools.MiscUtils;
 
 public class Project implements Disposable, Comparable<Project>{
@@ -39,7 +38,8 @@ public class Project implements Disposable, Comparable<Project>{
 	}
 	
 	public FileHandle getFile(){
-		return io.anuke.novix.i.projectmanager.getFile(id);
+		//TODO
+		return projectmanager.getFile(id);
 	}
 	
 	public void dispose(){

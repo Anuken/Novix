@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.kotcrab.vis.ui.VisUI;
 
+import io.anuke.novix.modules.Core;
+
 public class SkinLoader{
 	
 	public static Skin load(){

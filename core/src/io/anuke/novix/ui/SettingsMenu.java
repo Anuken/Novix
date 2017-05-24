@@ -1,6 +1,6 @@
 package io.anuke.novix.ui;
 
-
+import static io.anuke.novix.Var.core;
 import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -38,16 +38,16 @@ public class SettingsMenu extends BaseDialog{
 	}
 	
 	public void addScrollSetting(final String name, int min, int max, int value){
-		final VisLabel label = new VisLabel(name + ": " + main.prefs.getInteger(name, value));
+		final VisLabel label = new VisLabel(name + ": " + core.prefs.getInteger(name, value));
 		final VisSlider slider = new VisSlider(min, max, 1, false);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				label.setText(name + ": " + slider.getValue());
-				main.prefs.put(name, (int)slider.getValue());
+				core.prefs.put(name, (int)slider.getValue());
 			}
 		});
 		DialogClasses.scaleSlider(slider);
-		slider.setValue(main.prefs.getInteger(name));
+		slider.setValue(core.prefs.getInteger(name));
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
 		table.row();
@@ -66,10 +66,10 @@ public class SettingsMenu extends BaseDialog{
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
 				label.setText(name + ": [SKY]" + (int)(slider.getValue()*100) + "%");
-				main.prefs.put(convert(name), slider.getValue());
+				core.prefs.put(convert(name), slider.getValue());
 			}
 		});
-		slider.setValue(main.prefs.getFloat(convert(name), 1f));
+		slider.setValue(core.prefs.getFloat(convert(name), 1f));
 		slider.fire(new ChangeListener.ChangeEvent());
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
@@ -81,7 +81,7 @@ public class SettingsMenu extends BaseDialog{
 
 	public void addCheckSetting(final String name, boolean value){
 		final VisLabel label = new VisLabel(name);
-		final VisCheckBox box = new VisCheckBox("", main.prefs.getBoolean(convert(name), value));
+		final VisCheckBox box = new VisCheckBox("", core.prefs.getBoolean(convert(name), value));
 		
 		Table row = new VisTable();
 		row.left();
@@ -89,7 +89,7 @@ public class SettingsMenu extends BaseDialog{
 		box.getImageStackCell().size(40 * s);
 		box.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
-				main.prefs.put(convert(name), box.isChecked());
+				core.prefs.put(convert(name), box.isChecked());
 				label.setText(name + ": " + (box.isChecked() ? "[CORAL]On" : "[PURPLE]Off"));
 			}
 		});
@@ -125,6 +125,6 @@ public class SettingsMenu extends BaseDialog{
 	}
 	
 	public void result(Object o){
-		main.prefs.save();
+		core.prefs.save();
 	}
 }	

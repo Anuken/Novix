@@ -1,6 +1,6 @@
 package io.anuke.novix.ui;
 
-
+import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -60,7 +60,7 @@ public class ProjectMenu extends BaseDialog{
 		popup.addItem(new TallMenuItem("New...", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				main.projectmanager.newProject();
+				core.projectmanager.newProject();
 			}
 		}){
 			public float getPrefWidth(){
@@ -70,7 +70,7 @@ public class ProjectMenu extends BaseDialog{
 		popup.addItem(new TallMenuItem("From File..", new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				new OpenProjectFileDialog().show(main.stage);
+				new OpenProjectFileDialog().show(stage);
 			}
 		}){
 			public float getPrefWidth(){
@@ -80,7 +80,7 @@ public class ProjectMenu extends BaseDialog{
 		
 		newbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				popup.showMenu(main.stage, newbutton);
+				popup.showMenu(stage, newbutton);
 			}
 		});
 		
@@ -91,7 +91,7 @@ public class ProjectMenu extends BaseDialog{
 		VisTextButton settingsbutton = new VisTextButton("Settings");
 		settingsbutton.addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
-				main.openSettingsMenu();
+				core.openSettingsMenu();
 			}
 		});
 		settingsbutton.setName("settings");
@@ -133,11 +133,11 @@ public class ProjectMenu extends BaseDialog{
 		scrolltable.clearChildren();
 
 		ProjectTable current = null;
-		for(Project project : main.projectmanager.getProjects()){
-			ProjectTable table = new ProjectTable(project, project == main.getCurrentProject() ? loaded : true);
+		for(Project project : core.projectmanager.getProjects()){
+			ProjectTable table = new ProjectTable(project, project == core.getCurrentProject() ? loaded : true);
 			scrolltable.top().left().add(table).padTop(8*s).growX().padRight(10 * s).row();
 			
-			if(project == main.getCurrentProject()) current = table;
+			if(project == core.getCurrentProject()) current = table;
 		}
 		return current;
 	}
@@ -185,32 +185,32 @@ public class ProjectMenu extends BaseDialog{
 			renamebutton.setName(project.name + "renamebutton");
 			deletebutton.setName(project.name + "deletebutton");
 
-			if(project == main.getCurrentProject()){
+			if(project == core.getCurrentProject()){
 				openbutton.setDisabled(true);
 				openbutton.setColor(Hue.lightness(0.94f));
 			}
 
 			openbutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					if(project != main.getCurrentProject()) main.projectmanager.openProject(project);
+					if(project != core.getCurrentProject()) core.projectmanager.openProject(project);
 				}
 			});
 
 			copybutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					main.projectmanager.copyProject(project);
+					core.projectmanager.copyProject(project);
 				}
 			});
 
 			renamebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					main.projectmanager.renameProject(project);
+					core.projectmanager.renameProject(project);
 				}
 			});
 
 			deletebutton.addListener(new ClickListener(){
 				public void clicked(InputEvent event, float x, float y){
-					main.projectmanager.deleteProject(project);
+					core.projectmanager.deleteProject(project);
 				}
 			});
 
@@ -255,7 +255,7 @@ public class ProjectMenu extends BaseDialog{
 					if(created) return true;
 					if(!loaded) return false;
 
-					if(project == main.getCurrentProject()) project.reloadTexture();
+					if(project == core.getCurrentProject()) project.reloadTexture();
 
 					Texture texture = project.cachedTexture;
 					
