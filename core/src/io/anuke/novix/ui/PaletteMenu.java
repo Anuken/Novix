@@ -68,7 +68,7 @@ public class PaletteMenu extends BaseDialog{
 								palette.colors = newcolors;
 
 								update();
-								core.colormenu.updateColorMenu();
+								core.updateColorMenu();
 							}
 						}.show(getStage());
 					}
@@ -157,7 +157,7 @@ public class PaletteMenu extends BaseDialog{
 					{
 						numberfield = new VisTextField("8");
 						numberfield.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-						box = new VisCheckBox("Auto-Generate", core.prefs.getBoolean("genpalettes", true));
+						box = new VisCheckBox("Auto-Generate", core.prefs.getBoolean("genpalettes"));
 						box.getImageStackCell().size(40*s);
 						
 						getContentTable().center();
@@ -193,7 +193,7 @@ public class PaletteMenu extends BaseDialog{
 
 		pack();
 
-		core.stage.setScrollFocus(pane);
+		stage.setScrollFocus(pane);
 
 		pane.setSmoothScrolling(false);
 		pane.setScrollPercentY(scrolly);

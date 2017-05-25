@@ -15,8 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.kotcrab.vis.ui.VisUI;
 
-import io.anuke.novix.modules.Core;
-
 public class SkinLoader{
 	
 	public static Skin load(){
@@ -47,7 +45,7 @@ public class SkinLoader{
 		FreeTypeFontParameter borderparameter = new FreeTypeFontParameter();
 		borderparameter.size = (int) (26 * s);
 		borderparameter.borderWidth = 2 * s;
-		borderparameter.borderColor = Core.clearcolor;
+		borderparameter.borderColor = Var.clearcolor;
 		borderparameter.spaceX = -2;
 
 		BitmapFont font = generator.generateFont(normalparameter);

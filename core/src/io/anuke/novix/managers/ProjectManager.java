@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
-import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Layer;
 import io.anuke.novix.tools.Project;
 import io.anuke.novix.ui.DialogClasses;
 import io.anuke.novix.ui.DialogClasses.InfoDialog;
@@ -51,7 +51,7 @@ public class ProjectManager{
 			public void result(String name, int width, int height){
 				//if(validateProjectName(name)) return;
 
-				Project project = createNewProject(name, width, height);
+				Project project = createNewProject(name, 1, width, height);
 
 				openProject(project);
 
@@ -59,13 +59,18 @@ public class ProjectManager{
 		}.show(stage);
 	}
 
-	public Project createNewProject(String name, int width, int height){
+	public Project createNewProject(String name, int layers, int width, int height){
 		long id = generateProjectID();
-
-		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
-		PixmapIO.writePNG(getFile(id), pixmap);
-
+		
 		Project project = loadProject(name, id);
+		project.layers = layers;
+		
+		FileHandle[] files = project.getFiles();
+		
+		for(FileHandle file : files){
+			Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
+			PixmapIO.writePNG(file, pixmap);
+		}
 
 		Novix.log("Created new project with name " + name);
 
@@ -78,19 +83,17 @@ public class ProjectManager{
 		currentProject = project;
 
 		Novix.log("Opening project \"" + project.name + "\"...");
+		
+		//TODO actual layer setting
+		Layer[] layers = project.loadLayers();
 
-		PixelCanvas canvas = new PixelCanvas(project.getCachedPixmap());
-
-		if(canvas.width() > 100 || canvas.height() > 100){
+		if(layers[0].width() > 100 || layers[0].height() > 100){
 			core.prefs.put("grid", false);
 		}
+		
+		drawing.loadLayers(layers);
 
 		core.prefs.save();
-		
-		core.drawgrid.clearActionStack();
-		core.drawgrid.setCanvas(canvas, false);
-		core.updateToolColor();
-		core.projectmenu.hide();
 	}
 
 	public void copyProject(final Project project){
@@ -100,13 +103,16 @@ public class ProjectManager{
 
 				try{
 					long id = generateProjectID();
-
-					getFile(project.id).copyTo(getFile(id));
-
+					
 					Project newproject = new Project(text, id);
+					
+					int i = 0;
+					for(FileHandle file : project.getFiles()){
+						file.copyTo(newproject.getFiles()[i++]);
+					}
 
 					projects.put(newproject.id, newproject);
-					core.projectmenu.update(true);
+					core.updateProjects();
 				}catch(Exception e){
 					DialogClasses.showError(stage, "Error copying file!", e);
 					e.printStackTrace();
@@ -119,7 +125,7 @@ public class ProjectManager{
 		new DialogClasses.InputDialog("Rename Project", project.name, "Name: "){
 			public void result(String text){
 				project.name = text;
-				core.projectmenu.update(true);
+				core.updateProjects();
 			}
 		}.show(stage);
 	}
@@ -130,14 +136,20 @@ public class ProjectManager{
 			return;
 		}
 
-		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this canvas?"){
+		new DialogClasses.ConfirmDialog("Confirm", "Are you sure you want\nto delete this project?"){
 			public void result(){
 				try{
-					project.getFile().delete();
-					if(getBackupFile(project.id).exists()) getBackupFile(project.id).delete();
+					for(FileHandle file : project.getFiles()){
+						file.delete();
+					}
+					
+					for(FileHandle file : project.getBackupFiles()){
+						file.delete();
+					}
+					
 					project.dispose();
 					projects.remove(project.id);
-					core.projectmenu.update(true);
+					core.updateProjects();
 				}catch(Exception e){
 					DialogClasses.showError(stage, "Error deleting file!", e);
 					e.printStackTrace();
@@ -145,21 +157,29 @@ public class ProjectManager{
 			}
 		}.show(stage);
 	}
-
+	
+	/**This is usually run asynchronously.*/
 	public void saveProject(){
 		saveProjectsFile();
+		
+		//TODO only save if each layer has been modified
 		core.prefs.put("lastproject", getCurrentProject().id);
 		savingProject = true;
+		
 		Novix.log("Starting save..");
-		PixmapIO.writePNG(currentProject.getFile(), core.drawgrid.canvas.pixmap);
+		
+		FileHandle[] files = currentProject.getFiles();
+		for(int i = 0; i < files.length; i ++){
+			PixmapIO.writePNG(files[i], drawing.getLayer(i).getPixmap());
+		}
+		
 		Novix.log("Saving project.");
 		savingProject = false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadProjectFile(){
 		try{
-			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, core.projectFile);
+			ObjectMap<String, Project> map = json.fromJson(ObjectMap.class, projectFile);
 			projects = new ObjectMap<Long, Project>();
 			for(String key : map.keys()){
 				projects.put(Long.parseLong(key), map.get(key));
@@ -171,7 +191,7 @@ public class ProjectManager{
 	}
 
 	private void saveProjectsFile(){
-		core.projectFile.writeString(json.toJson(projects), false);
+		projectFile.writeString(json.toJson(projects), false);
 	}
 
 	public void loadProjects(){
@@ -198,6 +218,7 @@ public class ProjectManager{
 		saveProjectsFile();
 		
 		if(projects.get(last) == null){ // no project selected
+			Novix.log("No project selected.");
 			tryLoadAnotherProject();
 		}else{
 			backedup = false;
@@ -206,15 +227,21 @@ public class ProjectManager{
 
 				currentProject = projects.get(last);
 				currentProject.reloadTexture();
-
-				getFile(currentProject.id).copyTo(getBackupFile(currentProject.id));
-
+				
+				int i = 0;
+				for(FileHandle file : currentProject.getFiles()){
+					file.copyTo(currentProject.getBackupFiles()[i++]);
+				}
+				
+				
 				Novix.log("Loaded and backed up current project.");
 
 			}catch(Exception e){ //corruption!
 				e.printStackTrace();
 				Novix.log("Project file corrupted?");
 				projects.remove(currentProject.id); //remove project since it's corrupted
+				//TODO backups
+				/*
 				//try to fix this mess
 				if(getBackupFile(currentProject.id).exists()){
 					try{
@@ -230,7 +257,7 @@ public class ProjectManager{
 				}else{
 					tryLoadAnotherProject();
 				}
-				
+				*/
 				//show the result
 				stage.addAction(Actions.sequence(Actions.delay(0.01f), new Action(){
 					@Override
@@ -251,10 +278,12 @@ public class ProjectManager{
 
 	void tryLoadAnotherProject(){
 		if(projects.size == 0){
-			currentProject = createNewProject("Untitled", 16, 16);
+			currentProject = createNewProject("Untitled", 1, 16, 16);
 		}else{
 			currentProject = projects.values().next();
 		}
+		
+		drawing.loadLayers(currentProject.loadLayers());
 	}
 
 	public Project loadProject(String name, long id){
@@ -263,15 +292,7 @@ public class ProjectManager{
 		return project;
 	}
 
-	public FileHandle getFile(long id){
-		return core.projectDirectory.child(id + ".png");
-	}
-
-	public FileHandle getBackupFile(long id){
-		return core.projectDirectory.child(id + "-backup.png");
-	}
-
-	public long generateProjectID(){
+	public static long generateProjectID(){
 		long id = MathUtils.random(Long.MAX_VALUE - 1);
 		return id;
 	}

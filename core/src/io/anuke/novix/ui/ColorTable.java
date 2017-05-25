@@ -34,7 +34,7 @@ public class ColorTable extends VisTable{
 
 		picker = new ColorWidget(){
 			public void onColorChanged(){
-				if(core.colormenu != null)
+				if(drawing != null)
 				updateSelectedColor(picker.getSelectedColor());
 			}
 		};
@@ -57,7 +57,7 @@ public class ColorTable extends VisTable{
 			public void clicked(InputEvent event, float x, float y){
 				if(!collapser.isCollapsed()){
 					picker.setSelectedColor(picker.getSelectedColor());
-					core.tool().onColorChange(core.selectedColor(), drawing.canvas);
+					core.tool().onColorChange(core.selectedColor(), drawing.getLayer());
 				}
 				collapser.setCollapsed(!collapser.isCollapsed());
 				collapsebutton.flip();
@@ -87,7 +87,10 @@ public class ColorTable extends VisTable{
 		Cell<?> cell = add(picker).expand().fill().padBottom(10f * s).padTop(0f).padBottom(20 * s);
 		row();
 		center().add(palettebutton).align(Align.center).padBottom(10f * s).height(60 * s).growX();
-		collapser.setY(core.toolmenu.getButton().getTop());
+		
+		ToolTable toolmenu = stage.getRoot().findActor("toolmenu");
+		collapser.setY(toolmenu.getButton().getTop());
+		
 		collapser.toBack();
 		collapser.resetY();
 		Vector2 pos = picker.localToStageCoordinates(new Vector2());
@@ -121,7 +124,7 @@ public class ColorTable extends VisTable{
 	}
 	
 	public void setSelectedColor(int color){
-		((ClickListener)core.boxes[color].getListeners().get(0)).clicked(null, 0, 0);
+		((ClickListener)boxes[color].getListeners().get(0)).clicked(null, 0, 0);
 	}
 	
 	public void addRecentColor(Color color){
@@ -210,18 +213,18 @@ public class ColorTable extends VisTable{
 	public void updateSelectedColor(Color color){
 		boxes[paletteColor].setColor(color.cpy());
 		core.getCurrentPalette().colors[paletteColor] = color.cpy();
-		core.toolmenu.updateColor(color.cpy());
-		core.updateToolColor();
+		//core.toolmenu.updateColor(color.cpy());
+		drawing.updateToolColor();
 	}
 
 	public void setSelectedColor(Color color){
 		updateSelectedColor(color);
 		picker.setSelectedColor(color);
-		core.updateToolColor();
+		drawing.updateToolColor();
 	}
 
 	public void setupBoxColors(){
-		paletteColor = core.prefs.getInteger("palettecolor", 0);
+		paletteColor = core.prefs.getInteger("palettecolor");
 		for(ColorBox box : boxes)
 			box.getColor().a = 1f;
 

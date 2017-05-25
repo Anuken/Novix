@@ -1,5 +1,7 @@
 package io.anuke.novix.scene;
 
+import static io.anuke.novix.Var.core;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.*;

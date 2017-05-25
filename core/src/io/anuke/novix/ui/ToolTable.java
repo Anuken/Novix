@@ -6,7 +6,6 @@ import static io.anuke.ucore.UCore.s;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -24,10 +23,8 @@ import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 import io.anuke.novix.scene.CollapseButton;
 import io.anuke.novix.scene.ColorBar;
 import io.anuke.novix.scene.SmoothCollapsibleWidget;
-import io.anuke.novix.tools.PixelCanvas;
 import io.anuke.novix.tools.Tool;
 import io.anuke.novix.ui.DialogClasses.*;
-import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.utools.SceneUtils;
 
 //TODO proper prefs references
@@ -111,7 +108,7 @@ public class ToolTable extends VisTable{
 						return;
 					}
 					tool = ctool;
-					tool.onColorChange(core.selectedColor(), core.drawgrid.canvas);
+					tool.onColorChange(core.selectedColor(), drawing.getLayer());
 					if(!button.isChecked())
 						button.setChecked(true);
 					
@@ -270,16 +267,15 @@ public class ToolTable extends VisTable{
 		new MenuButton("Resize", "Change the canvas size."){
 			public void clicked(){
 				new SizeDialog("Resize Canvas"){
-					@Override
 					public void result(int width, int height){
-						
-						PixelCanvas canvas = core.canvas();
-						PixelCanvas ncanvas = new PixelCanvas(PixmapUtils.resize(canvas.pixmap, width, height));
-						core.drawgrid.setCanvas(ncanvas, true);
+						//TODO
+						//Layer canvas = core.canvas();
+						//Layer ncanvas = new Layer(PixmapUtils.resize(canvas.pixmap, width, height));
+						//core.drawgrid.setCanvas(ncanvas, true);
 						
 						core.checkGridResize();
 						
-						core.updateToolColor();
+						//core.updateToolColor();
 					}
 				}.show(stage);
 			}
@@ -375,8 +371,9 @@ public class ToolTable extends VisTable{
 				new FileChooser(FileChooser.jpegFilter, true){
 					public void fileSelected(FileHandle file){
 						try{
-							core.drawgrid.setCanvas(new PixelCanvas(new Pixmap(file)), true);
-							tool.onColorChange(core.selectedColor(), core.drawgrid.canvas);
+							//TODO
+							//core.drawgrid.setCanvas(new Layer(new Pixmap(file)), true);
+							tool.onColorChange(core.selectedColor(), drawing.getLayer());
 						}catch(Exception e){
 							e.printStackTrace();
 							DialogClasses.showError(stage, e);
@@ -396,7 +393,7 @@ public class ToolTable extends VisTable{
 		
 		DialogClasses.scaleSlider(brushslider);
 		
-		brushslider.setValue(core.prefs.getInteger("brushsize", 1));
+		brushslider.setValue(core.prefs.getInteger("brushsize"));
 		final VisLabel brushlabel = new VisLabel("Brush Size: " + brushslider.getValue());
 
 		brushslider.addListener(new ChangeListener(){
@@ -404,7 +401,6 @@ public class ToolTable extends VisTable{
 			public void changed(ChangeEvent event, Actor actor){
 				brushlabel.setText("Brush Size: [#"+selectcolor +"]" + (int)brushslider.getValue());
 				core.prefs.put("brushsize", (int)brushslider.getValue());
-				core.drawgrid.brushSize = (int)brushslider.getValue();
 			}
 		});
 
@@ -413,7 +409,7 @@ public class ToolTable extends VisTable{
 		
 		alphabar.setColors(Color.CLEAR.cpy(), Color.WHITE);
 		alphabar.setSize(50 * s, 300 * s);
-		alphabar.setSelection(core.prefs.getFloat("opacity", 1f));
+		alphabar.setSelection(core.prefs.getFloat("opacity"));
 
 		optionstable.bottom().left();
 
@@ -422,8 +418,9 @@ public class ToolTable extends VisTable{
 		alphabar.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
+				//TODO
 				opacity.setText("Opacity: [#"+selectcolor +"]" + (int)(alphabar.getSelection()*100) + "%");
-				core.drawgrid.canvas.setAlpha(alphabar.getSelection());
+				//drawing.updateAlpha(alphabar.getSelection());
 				core.prefs.put("opacity", alphabar.getSelection());
 			}
 		});
@@ -457,7 +454,7 @@ public class ToolTable extends VisTable{
 		final VisLabel gridlabel = new VisLabel();
 		
 		final VisImageButton modebutton = new VisImageButton(modestyle);
-		modebutton.setChecked(core.prefs.getBoolean("cursormode", true));
+		modebutton.setChecked(core.prefs.getBoolean("cursormode"));
 		modebutton.setName("modebutton");
 		
 		modebutton.getImageCell().size(48*s);
@@ -472,7 +469,7 @@ public class ToolTable extends VisTable{
 		modebutton.fire(new ChangeListener.ChangeEvent());
 		
 		gridbutton = new VisImageButton(gridstyle);
-		gridbutton.setChecked(core.prefs.getBoolean("grid", true));
+		gridbutton.setChecked(core.prefs.getBoolean("grid"));
 		gridbutton.setName("gridbutton");
 		
 		gridbutton.getImageCell().size(48*s);

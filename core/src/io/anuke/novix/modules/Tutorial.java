@@ -106,10 +106,10 @@ public class Tutorial extends Module<Novix>{
 						super.close();
 						if(confirming){
 							end();
-							if(core.projectmenu.getStage() != null){
+							if(core.projectsShown()){
 								if(!core.colorMenuCollapsed()) core.collapseColorMenu();
 								if(!core.toolMenuCollapsed()) core.collapseToolMenu();
-								core.projectmenu.hide();
+								core.hideProjects();
 							}
 						}else{
 							active = true;

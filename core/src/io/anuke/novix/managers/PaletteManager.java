@@ -1,5 +1,7 @@
 package io.anuke.novix.managers;
 
+import static io.anuke.novix.Var.*;
+
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -7,18 +9,12 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.graphics.Palette;
-import io.anuke.novix.modules.Core;
 
 public class PaletteManager{
-	private Core main;
 	private Json json = new Json();
 	private Palette currentPalette;
 	private ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
 	private Array<Palette> palettesort = new Array<Palette>();
-
-	public PaletteManager(Core main){
-		this.main = main;
-	}
 
 	public Palette getCurrentPalette(){
 		return currentPalette;
@@ -47,18 +43,17 @@ public class PaletteManager{
 	public void savePalettes(){
 		try{
 			String string = json.toJson(palettes);
-			main.paletteFile.writeString(string, false);
+			paletteFile.writeString(string, false);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadPalettes(){
 		try{
-			palettes = json.fromJson(ObjectMap.class, main.paletteFile);
-
-			String id = main.prefs.getString("lastpalette");
+			palettes = json.fromJson(ObjectMap.class, paletteFile);
+			
+			String id = core.prefs.getString("lastpalette");
 			if(id != null){
 				currentPalette = palettes.get(id);
 			}
@@ -72,7 +67,7 @@ public class PaletteManager{
 		if(currentPalette == null){
 			currentPalette = new Palette("Untitled", generatePaletteID(), 8, true);
 			palettes.put(currentPalette.id, currentPalette);
-			main.prefs.put("lastpalette", currentPalette.id);
+			core.prefs.put("lastpalette", currentPalette.id);
 		}
 	}
 

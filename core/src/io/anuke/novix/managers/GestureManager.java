@@ -1,6 +1,5 @@
 package io.anuke.novix.managers;
 
-
 import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
@@ -28,7 +27,7 @@ public class GestureManager extends GestureAdapter{
 	public boolean fling(float velocityX, float velocityY, int button){
 		Actor toolmenu = stage.getRoot().findActor("toolmenu");
 		
-		if(!core.prefs.getBoolean("gestures", true) || core.getCurrentDialog() != null || 
+		if(!core.prefs.getBoolean("gestures") || core.getCurrentDialog() != null || 
 				(!drawing.hasMouse(touchy) && core.tool() == Tool.zoom 
 				&& !(!core.colorMenuCollapsed() || !core.toolMenuCollapsed()))) return false;
 		

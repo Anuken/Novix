@@ -10,8 +10,8 @@ public class Novix extends ModuleController<Novix>{
 	@Override
 	public void init(){
 		addModule(Input.class);
-		addModule(Drawing.class);
 		addModule(Core.class);
+		addModule(Drawing.class);
 		addModule(Tutorial.class);
 		
 		Var.input = getModule(Input.class);

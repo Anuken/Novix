@@ -3,6 +3,8 @@ package io.anuke.novix.modules;
 import static io.anuke.novix.Var.*;
 import static io.anuke.ucore.UCore.s;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -13,14 +15,15 @@ import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisDialog;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.scene.AlphaImage;
 import io.anuke.novix.scene.GridImage;
 import io.anuke.novix.tools.*;
-import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.graphics.Textures;
 import io.anuke.ucore.modules.Module;
@@ -46,7 +49,8 @@ public class Drawing extends Module<Novix>{
 	private float baseCursorSpeed = 1.03f;
 	
 	private ActionStack actions = new ActionStack();
-	private PixelCanvas canvas;
+	private Layer[] layers;
+	private Layer layer;
 	private DrawingGrid grid;
 	
 	public Drawing(){
@@ -58,6 +62,52 @@ public class Drawing extends Module<Novix>{
 	@Override
 	public void init(){
 		stage.addActor(grid);
+		updateToolColor();
+	}
+	
+	@Override
+	public void update(){
+		
+		if(core.tool() == Tool.zoom)
+			grid.setCursor(Gdx.graphics.getWidth()/2 - grid.getX(), Gdx.graphics.getHeight()/2 - grid.getY());
+		
+		// pc debugging
+		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null
+				|| stage.getKeyboardFocus() instanceof VisDialog)
+			stage.setKeyboardFocus(grid);
+	}
+	
+	/*
+	public static void exportProject(FileHandle file){
+		try{
+			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
+			PixmapIO.writePNG(file, pixmap);
+			showInfo(stage, "Image exported to " + file + ".");
+		}catch(Exception e){
+			e.printStackTrace();
+			showError(stage, e);
+		}
+	}
+	*/
+	public void loadLayers(Layer[] layers){
+		actions.dispose();
+		
+		actions = new ActionStack();
+		
+		Novix.log("Loading layers... " + Arrays.toString(layers));
+		
+		this.layers = layers;
+		this.layer = layers[0];
+		
+		grid.resetView();
+	}
+	
+	public int width(){
+		return layer.width();
+	}
+	
+	public int height(){
+		return layer.height();
 	}
 	
 	public GestureDetector getGestureDetector(){
@@ -65,8 +115,33 @@ public class Drawing extends Module<Novix>{
 		return gesture;
 	}
 	
+	public void updateToolColor(){
+		core.tool().onColorChange(core.selectedColor(), layer);
+		layer.setAlpha(core.prefs.getFloat("alpha"));
+	}
+	
+	public boolean isImageLarge(){
+		return layer.width() * layer.height() > largeImageSize;
+	}
+	
+	public void undo(){
+		//TODO
+	}
+	
+	public void redo(){
+		//TODO
+	}
+	
 	public void pushAction(DrawAction action){
 		//TODO
+	}
+	
+	public Layer getLayer(){
+		return layer;
+	}
+	
+	public Layer getLayer(int index){
+		return layers[index];
 	}
 	
 	public void updateGrid(){
@@ -98,7 +173,7 @@ public class Drawing extends Module<Novix>{
 	public boolean touchDown(int x, int y, int pointer, int button){
 		if( !core.tool().moveCursor() || !core.colorMenuCollapsed() || !core.toolMenuCollapsed() || grid.checkRange(y)) return false;
 		touches ++;
-		if(cursormode()){
+		if(cursorMode()){
 			if(moving){
 				processToolTap(selected.x, selected.y);
 				return true;
@@ -120,14 +195,14 @@ public class Drawing extends Module<Novix>{
 	public boolean touchUp(int x, int y, int pointer, int button){
 		if(touches == 0) return false;
 		
-		if(cursormode()){
+		if(cursorMode()){
 			if(pointer == tpointer){
 				moving = false;
 			}else{
-				if(core.tool().push) canvas.pushActions();
+				if(core.tool().push) layer.pushActions();
 			}
 		}else{
-			if(core.tool().push) canvas.pushActions();
+			if(core.tool().push) layer.pushActions();
 		}
 		
 		touches --;
@@ -140,7 +215,7 @@ public class Drawing extends Module<Novix>{
 	public boolean keyUp(int keycode){
 		if(keycode == Keys.E){
 			if(core.tool().push){
-				canvas.pushActions();
+				layer.pushActions();
 			}
 			return true;
 		}
@@ -160,7 +235,7 @@ public class Drawing extends Module<Novix>{
 	@Override
 	public boolean touchDragged(int x, int y, int pointer){
 		if(pointer != 0 && Gdx.app.getType() != ApplicationType.Desktop /*|| checkRange(y)*/ || touches == 0 || !core.tool().moveCursor()) return false; //not the second pointer
-		float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed", 1f);
+		float cursorSpeed = baseCursorSpeed * core.prefs.getFloat("cursorspeed");
 		
 		float deltax = Gdx.input.getDeltaX(pointer) * cursorSpeed;
 		float deltay = -Gdx.input.getDeltaY(pointer) * cursorSpeed;
@@ -184,9 +259,10 @@ public class Drawing extends Module<Novix>{
 			currentx += movex;
 			currenty += movey;
 			
-			int newx = (int)((cursorx + currentx) / (grid.canvasScale() * zoom)), newy = (int)((cursory + currenty) / (grid.canvasScale() * zoom));
+			int newx = (int)((cursorx + currentx) / (grid.layerScale() * grid.zoom)), 
+					newy = (int)((cursory + currenty) / (grid.layerScale() * grid.zoom));
 
-			if(cursormode()){
+			if(cursorMode()){
 				if( !(selected.x == newx && selected.y == newy) && (touches > 1 || Gdx.input.isKeyPressed(Keys.E)) 
 						&& core.tool().drawOnMove) 
 					processToolTap(newx, newy);
@@ -200,7 +276,7 @@ public class Drawing extends Module<Novix>{
 			selected.set(newx, newy);
 		}
 
-		if(cursormode()){
+		if(cursorMode()){
 			if(pointer != tpointer || !core.tool().moveCursor()) return false;
 
 			cursorx += deltax;
@@ -217,18 +293,18 @@ public class Drawing extends Module<Novix>{
 	}
 	
 	private void processToolTap(int x, int y){
-		core.tool().clicked(core.selectedColor(), canvas, x, y);
+		core.tool().clicked(core.selectedColor(), layer, x, y);
 
 		if(core.tool().symmetric()){
-			if(vSymmetry){
-				core.tool().clicked(core.selectedColor(), canvas, canvas.width() - 1 - x, y);
+			if(vSymmetry()){
+				core.tool().clicked(core.selectedColor(), layer, layer.width() - 1 - x, y);
 			}
 
-			if(hSymmetry){
-				core.tool().clicked(core.selectedColor(), canvas, x, canvas.height() - 1 - y);
+			if(hSymmetry()){
+				core.tool().clicked(core.selectedColor(), layer, x, layer.height() - 1 - y);
 
-				if(vSymmetry){
-					core.tool().clicked(core.selectedColor(), canvas, canvas.width() - 1 - x, canvas.height() - 1 - y);
+				if(vSymmetry()){
+					core.tool().clicked(core.selectedColor(), layer, layer.width() - 1 - x, layer.height() - 1 - y);
 				}
 			}
 		}
@@ -259,41 +335,53 @@ public class Drawing extends Module<Novix>{
 		}
 	}
 	
-	public void setCanvas(PixelCanvas canvas, Operation op){
-		Novix.log("Drawgrid: setting new canvas.");
+	/*
+	public void setCanvas(PixelCanvas layer, Operation op){
+		Novix.log("Drawgrid: setting new layer.");
 		
 		
-		if(this.canvas != null){
-			Novix.log("this.Pixmap disposed at start?" + PixmapUtils.isDisposed(this.canvas.pixmap));
+		if(this.layer != null){
+			Novix.log("this.Pixmap disposed at start?" + PixmapUtils.isDisposed(this.layer.pixmap));
 			
 			if(saveOp){
-				Novix.log("Drawgrid: performing switch operation: " + this.canvas.name);
+				Novix.log("Drawgrid: performing switch operation: " + this.layer.name);
 				DrawAction action = new DrawAction();
-				action.fromCanvas = this.canvas;
-				action.toCanvas = canvas;
+				action.fromCanvas = this.layer;
+				action.toCanvas = layer;
 				actions.add(action);
 			}else{
 				if(!core.loadingProject()){
-					Novix.log("Drawgrid: disposing old canvas: " + this.canvas.name);
-					this.canvas.dispose();
+					Novix.log("Drawgrid: disposing old layer: " + this.layer.name);
+					this.layer.dispose();
 				}else{
-					Novix.log("Drawgrid: NOT disposing old canvas \"" + this.canvas.name + "\" due to core still loading it.");
+					Novix.log("Drawgrid: NOT disposing old layer \"" + this.layer.name + "\" due to core still loading it.");
 					Novix.log("TODO dispose it later, callbacks?");
 				}
 			}
 		}
 		
-		this.canvas = canvas;
+		this.layer = layer;
 		grid.resetCanvas();
 		//save project here, probably async
 		
-		Novix.log("Pixmap disposed at end? " + PixmapUtils.isDisposed(canvas.pixmap));
+		Novix.log("Pixmap disposed at end? " + PixmapUtils.isDisposed(layer.pixmap));
+	}
+	*/
+	
+	private int brushSize(){
+		return core.prefs.getInteger("brushsize");
 	}
 	
-	/**Used for undo operations only.*/
-	public void actionSetCanvas(PixelCanvas canvas){
-		Novix.log("Drawgrid: undoing operation.");
-		grid.resetCanvas();
+	private boolean hSymmetry(){
+		return core.prefs.getBoolean("hsymmetry");
+	}
+	
+	private boolean vSymmetry(){
+		return core.prefs.getBoolean("vsymmetry");
+	}
+	
+	private boolean cursorMode(){
+		return core.prefs.getBoolean("cursormode");
 	}
 	
 	public static enum Operation{
@@ -387,7 +475,7 @@ public class Drawing extends Module<Novix>{
 		}
 
 		public void setZoom(float newzoom){
-			float max = Math.max(canvas.width(), canvas.height())/5;
+			float max = Math.max(layer.width(), layer.height())/5;
 			if(newzoom < maxZoom()) newzoom = maxZoom();
 			if(newzoom > max) newzoom = max;
 
@@ -406,7 +494,7 @@ public class Drawing extends Module<Novix>{
 			cursory = y;
 			cursorx = Mathf.clamp(cursorx, 0, getWidth() - 1);
 			cursory = Mathf.clamp(cursory, 0, getHeight() - 1);
-			int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
+			int newx = (int)(cursorx / (layerScale() * zoom)), newy = (int)(cursory / (layerScale() * zoom));
 
 			selected.set(newx, newy);
 		}
@@ -416,10 +504,8 @@ public class Drawing extends Module<Novix>{
 			actions = new ActionStack();
 		}
 		
-		/**Called internally. This simply sets the current canvas and performs no other operations.*/
-		private void resetCanvas(){
-
-			Novix.log("Drawgrid: new canvas \"" + canvas.name + "\" set.");
+		/**Called internally. This simply resets the view.*/
+		private void resetView(){
 
 			updateSize();
 			updateBounds();
@@ -428,20 +514,20 @@ public class Drawing extends Module<Novix>{
 			
 			cursorx = getWidth() / 2;
 			cursory = getHeight() / 2;
-			selected.set((int)(cursorx / canvasScale()), (int)(cursory / canvasScale()));
+			selected.set((int)(cursorx / layerScale()), (int)(cursory / layerScale()));
 			offsetx = getWidth() / 2;
 			offsety = getHeight() / 2;
-			gridimage.setImageSize(canvas.width(), canvas.height());
-			alphaimage.setImageSize(canvas.width(), canvas.height());
+			gridimage.setImageSize(layer.width(), layer.height());
+			alphaimage.setImageSize(layer.width(), layer.height());
 		}
 
 		public void updateCursorSelection(){
-			int newx = (int)(cursorx / (canvasScale() * zoom)), newy = (int)(cursory / (canvasScale() * zoom));
+			int newx = (int)(cursorx / (layerScale() * zoom)), newy = (int)(cursory / (layerScale() * zoom));
 			selected.set(newx, newy);
 		}
 
 		public void draw(Batch batch, float parentAlpha){
-			canvas.update();
+			layer.update();
 			setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
 			setZIndex(0);
 
@@ -454,59 +540,49 @@ public class Drawing extends Module<Novix>{
 				clipBegin(Gdx.graphics.getWidth() / 2 - min() / 2, Gdx.graphics.getHeight() / 2 - min() / 2, min(), min());
 			}
 
-			float cscl = canvasScale() * zoom;
+			float cscl = layerScale() * zoom;
 
 			batch.setColor(Color.WHITE);
 
 			int asize = 20;
-			int u = (int)(((getWidth()/s) / asize) / canvas.width()) * canvas.width();
+			int u = (int)(((getWidth()/s) / asize) / layer.width()) * layer.width();
 			
 			if(u == 0){
 				u = (int)(getWidth() / asize);
 				if(u == 0) u = 1;
 				
-				u = u > canvas.width() ? canvas.width() : canvas.width()/(canvas.width() / u);
+				u = u > layer.width() ? layer.width() : layer.width()/(layer.width() / u);
 			}
 			
-			batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, u / ((float)canvas.width() / canvas.height()), 0, 0);
+			batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, u / ((float)layer.width() / layer.height()), 0, 0);
 
-			alphaimage.setImageSize(canvas.width(), canvas.height());
+			alphaimage.setImageSize(layer.width(), layer.height());
 			alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
-			//alphaimage.draw(batch, parentAlpha);
 
-			batch.draw(canvas.texture, getX(), getY(), getWidth(), getHeight());
+			batch.draw(layer.getTexture(), getX(), getY(), getWidth(), getHeight());
 
-			if(core.prefs.getBoolean("grid", true)){
+			if(core.prefs.getBoolean("grid")){
 				gridimage.setBounds(getX(), getY(), getWidth(), getHeight());
 				gridimage.draw(batch, parentAlpha);
 			}
 
 			//draw symmetry lines
-
-			if(vSymmetry){
+			if(vSymmetry()){
 				batch.setColor(Color.CYAN);
 				batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), (int)(getX() + getWidth() / 2f - 2f), getY(), 4, getHeight());
 			}
 
-			if(hSymmetry){
+			if(hSymmetry()){
 				batch.setColor(Color.PURPLE);
 				batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), getX(), (int)(getY() + getHeight() / 2f - 2f), getWidth(), 4);
 			}
 
 			//draw center of grid
-			//batch.setColor(Color.CORAL);
-
-			//float size = 4;
-			//batch.draw(VisUI.getSkin().getAtlas().findRegion("white"), (int)(getX() + getWidth() / 2f - size / 2), (int)(getY() + getHeight() / 2f - size / 2), size, size);
-
-			int xt = (int)(4 * (10f / canvas.width() * zoom)); //extra border thickness
+			int xt = (int)(4 * (10f / layer.width() * zoom)); //extra border thickness
 
 			//draw selection
-			if((cursormode() || (touches > 0 && core.tool().moveCursor())) && core.tool().drawCursor()){
-				tempcolor.set(canvas.getIntColor(selected.x, selected.y));
-				//tempcolor.r = 1f - tempcolor.r;
-				//tempcolor.g = 1f - tempcolor.g;
-				//tempcolor.b = 1f - tempcolor.b;
+			if((cursorMode() || (touches > 0 && core.tool().moveCursor())) && core.tool().drawCursor()){
+				tempcolor.set(layer.getIntColor(selected.x, selected.y));
 				float sum = tempcolor.r + tempcolor.g + tempcolor.b;
 				int a = 18;
 				if(sum >= 1.5f && tempcolor.a >= 0.01f && !(core.tool().scalable() && core.prefs.getInteger("brushsize") > 1)){
@@ -521,16 +597,16 @@ public class Drawing extends Module<Novix>{
 				drawSelection(batch, selected.x, selected.y, cscl, xt);
 
 				//	batch.setColor(Hue.blend(Color.CORAL, Color.WHITE, 0.5f));
-				if(vSymmetry){
-					drawSelection(batch, canvas.width() - 1 - selected.x, selected.y, cscl, xt);
+				if(vSymmetry()){
+					drawSelection(batch, layer.width() - 1 - selected.x, selected.y, cscl, xt);
 				}
 
-				if(hSymmetry){
-					drawSelection(batch, selected.x, canvas.height() - 1 - selected.y, cscl, xt);
+				if(hSymmetry()){
+					drawSelection(batch, selected.x, layer.height() - 1 - selected.y, cscl, xt);
 				}
 
-				if(vSymmetry && hSymmetry){
-					drawSelection(batch, canvas.width() - 1 - selected.x, canvas.height() - 1 - selected.y, cscl, xt);
+				if(vSymmetry() && hSymmetry()){
+					drawSelection(batch, layer.width() - 1 - selected.x, layer.height() - 1 - selected.y, cscl, xt);
 				}
 			}
 
@@ -545,9 +621,9 @@ public class Drawing extends Module<Novix>{
 			MiscUtils.drawBorder(batch, (int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), (int)(2*s), aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 			//draw cursor
-			if(cursormode() || (touches > 0 && core.tool().moveCursor()) || !core.tool().moveCursor()){
+			if(cursorMode() || (touches > 0 && core.tool().moveCursor()) || !core.tool().moveCursor()){
 				batch.setColor(Color.PURPLE);
-				float csize = 32 * core.prefs.getFloat("cursorsize", 1f) * s;
+				float csize = 32 * core.prefs.getFloat("cursorsize") * s;
 				
 				batch.draw(Textures.get(core.tool().cursor), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
 				
@@ -556,6 +632,7 @@ public class Drawing extends Module<Novix>{
 				if(core.tool() != Tool.pencil && core.tool() != Tool.zoom) 	
 					batch.draw(VisUI.getSkin().getRegion("icon-" + core.tool().name()), getX() + cursorx, getY() + cursory, csize, csize);
 			} //seriously, why is this necessary
+			
 			batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
 
 			if(clip){
@@ -567,7 +644,7 @@ public class Drawing extends Module<Novix>{
 
 		private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
 			ShapeUtils.thickness = (int)(4*s);
-			ShapeUtils.polygon(batch, !core.tool().scalable() ? brushPolygons[0] : brushPolygons[brushSize - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
+			ShapeUtils.polygon(batch, !core.tool().scalable() ? brushPolygons[0] : brushPolygons[brushSize() - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
 		}
 
 		public void updateCursor(){
@@ -614,7 +691,7 @@ public class Drawing extends Module<Novix>{
 
 		public void updateSize(){
 			setWidth(min() * zoom);
-			setHeight(min() / canvas.width() * canvas.height() * zoom);
+			setHeight(min() / layer.width() * layer.height() * zoom);
 
 			setX(Gdx.graphics.getWidth() / 2 - offsetx * zoom);
 			setY(Gdx.graphics.getHeight() / 2 - offsety * zoom);
@@ -628,8 +705,8 @@ public class Drawing extends Module<Novix>{
 			return getWidth() / getHeight();
 		}
 
-		public float canvasScale(){
-			return min() / canvas.width();
+		public float layerScale(){
+			return min() / layer.width();
 		}
 
 		public float min(){

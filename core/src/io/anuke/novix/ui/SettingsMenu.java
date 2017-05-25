@@ -37,8 +37,8 @@ public class SettingsMenu extends BaseDialog{
 		setObject(back, false);
 	}
 	
-	public void addScrollSetting(final String name, int min, int max, int value){
-		final VisLabel label = new VisLabel(name + ": " + core.prefs.getInteger(name, value));
+	public void addScrollSetting(final String name, int min, int max){
+		final VisLabel label = new VisLabel(name + ": " + core.prefs.getInteger(name));
 		final VisSlider slider = new VisSlider(min, max, 1, false);
 		slider.addListener(new ChangeListener(){
 			public void changed(ChangeEvent event, Actor actor){
@@ -69,7 +69,7 @@ public class SettingsMenu extends BaseDialog{
 				core.prefs.put(convert(name), slider.getValue());
 			}
 		});
-		slider.setValue(core.prefs.getFloat(convert(name), 1f));
+		slider.setValue(core.prefs.getFloat(convert(name)));
 		slider.fire(new ChangeListener.ChangeEvent());
 		Table table = getContentTable();
 		table.top().left().add(label).align(Align.left);
@@ -81,7 +81,7 @@ public class SettingsMenu extends BaseDialog{
 
 	public void addCheckSetting(final String name, boolean value){
 		final VisLabel label = new VisLabel(name);
-		final VisCheckBox box = new VisCheckBox("", core.prefs.getBoolean(convert(name), value));
+		final VisCheckBox box = new VisCheckBox("", core.prefs.getBoolean(convert(name)));
 		
 		Table row = new VisTable();
 		row.left();

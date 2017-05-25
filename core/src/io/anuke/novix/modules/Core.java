@@ -1,11 +1,11 @@
 package io.anuke.novix.modules;
 
+import static io.anuke.novix.Var.*;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
@@ -25,7 +25,9 @@ import io.anuke.novix.managers.PaletteManager;
 import io.anuke.novix.managers.PrefsManager;
 import io.anuke.novix.managers.ProjectManager;
 import io.anuke.novix.scene.ColorBox;
-import io.anuke.novix.tools.*;
+import io.anuke.novix.tools.DialogKeyboardMoveListener;
+import io.anuke.novix.tools.Project;
+import io.anuke.novix.tools.Tool;
 import io.anuke.novix.ui.*;
 import io.anuke.novix.ui.ProjectMenu.ProjectTable;
 import io.anuke.ucore.graphics.Textures;
@@ -33,18 +35,11 @@ import io.anuke.ucore.modules.Module;
 import io.anuke.utools.SceneUtils;
 
 public class Core extends Module<Novix>{
-	public static final int largeImageSize = 100 * 100;
-	public static final Color clearcolor = Color.valueOf("12161b");
-	
-	public final FileHandle paletteFile = Gdx.files.local("palettes.json");
-	public final FileHandle projectFile = Gdx.files.local("projects.json");
-	public final FileHandle projectDirectory = Gdx.files.absolute(Gdx.files.getExternalStoragePath()).child("NovixProjects");
-	
 	Stage stage;
 	
-	private ProjectManager projectmanager;
-	private PaletteManager palettemanager;
-	private PrefsManager prefs;
+	public ProjectManager projectmanager;
+	public PaletteManager palettemanager;
+	public PrefsManager prefs;
 	
 	private SettingsMenu settingsmenu;
 	private ProjectMenu projectmenu;
@@ -54,38 +49,32 @@ public class Core extends Module<Novix>{
 	private ColorTable colormenu;
 	
 	public Core() {
+		stage = new Stage(new ScreenViewport());
+		Var.load(this);
 		
 		Gdx.graphics.setContinuousRendering(false);
 
 		projectDirectory.mkdirs();
-		prefs = new PrefsManager(this);
+		prefs = new PrefsManager();
 
-		palettemanager = new PaletteManager(this);
+		palettemanager = new PaletteManager();
 		palettemanager.loadPalettes();
 
 		Textures.load("textures/");
 		Textures.repeatWrap("alpha", "stripe");
 		
-		stage = new Stage(new ScreenViewport());
-		projectmanager = new ProjectManager(this);
+		projectmanager = new ProjectManager();
 		
 		SkinLoader.load();
 
 		AndroidKeyboard.setListener(new DialogKeyboardMoveListener());
-
-		projectmanager.loadProjects();
 		
 		tutorialmenu = new TutorialDialog();
 
 		setupTools();
-		setupCanvas();
 		setupExtraMenus();
 
-		updateToolColor();
-
 		toolmenu.initialize();
-		
-		Var.load(this);
 
 		// autosave
 		Timer.schedule(new Task(){
@@ -110,6 +99,10 @@ public class Core extends Module<Novix>{
 		}, 0.1f);
 	}
 	
+	@Override
+	public void init(){
+		projectmanager.loadProjects();
+	}
 
 	@Override
 	public void update(){
@@ -118,15 +111,9 @@ public class Core extends Module<Novix>{
 		if(FocusManager.getFocusedWidget() != null && (!(FocusManager.getFocusedWidget() instanceof VisTextField)))
 			FocusManager.resetFocus(stage);
 		
-		toolmenu.getTool().update(drawgrid);
-		
 		stage.act(Gdx.graphics.getDeltaTime() > 2 / 60f ? 1 / 60f : Gdx.graphics.getDeltaTime());
 		stage.draw();
 
-		// pc debugging
-		if(stage.getKeyboardFocus() instanceof Button || stage.getKeyboardFocus() == null
-				|| stage.getKeyboardFocus() instanceof VisDialog)
-			stage.setKeyboardFocus(drawgrid);
 	}
 
 	void setupExtraMenus(){
@@ -149,23 +136,15 @@ public class Core extends Module<Novix>{
 		projectmenu = new ProjectMenu();
 		projectmenu.update(true);
 		
-		colormenu = new ColorTable(this);
+		colormenu = new ColorTable();
 	}
 
 	void setupTools(){
-		toolmenu = new ToolTable(this);
+		toolmenu = new ToolTable();
 	}
 
 	public void openSettingsMenu(){
 		settingsmenu.show(stage);
-	}
-
-	void setupCanvas(){
-		drawgrid = new DrawingGrid(this);
-
-		drawgrid.setCanvas(new PixelCanvas(getCurrentProject().getCachedPixmap()), false);
-
-		stage.addActor(drawgrid);
 	}
 
 	void checkTutorial(){
@@ -201,19 +180,29 @@ public class Core extends Module<Novix>{
 		}).start();
 	}
 	
+	/**Updates the project menu.*/
+	public void updateProjects(){
+		projectmenu.update(true);
+	}
+	
+	public void updateColorMenu(){
+		colormenu.updateColorMenu();
+	}
+	
+	public void hideProjects(){
+		projectmenu.hide();
+	}
+	
+	public boolean projectsShown(){
+		return projectmenu.getStage() != null;
+	}
+	
 	public boolean loadingProject(){
 		return projectmenu.isLoading();
 	}
 
 	public Color selectedColor(){
 		return colormenu.getSelectedColor().cpy();
-	}
-
-	public void updateToolColor(){
-		if(toolmenu.getTool() != null && drawgrid != null){
-			toolmenu.getTool().onColorChange(selectedColor(), drawgrid.canvas);
-			drawgrid.canvas.setAlpha(toolmenu.getBarAlphaValue());
-		}
 	}
 
 	public Project getCurrentProject(){
@@ -248,13 +237,21 @@ public class Core extends Module<Novix>{
 	public boolean menuOpen(){
 		return !colorMenuCollapsed() || !toolMenuCollapsed();
 	}
-
-	public boolean isImageLarge(){
-		return drawgrid.canvas.width() * drawgrid.canvas.height() > largeImageSize;
-	}
 	
 	public Tool tool(){
 		return toolmenu.getTool();
+	}
+	
+	public void setSelectedColor(Color color){
+		colormenu.setSelectedColor(color);
+	}
+	
+	public void setSelectedColor(int index){
+		colormenu.setSelectedColor(index);
+	}
+	
+	public void addRecentColor(Color color){
+		colormenu.addRecentColor(color);
 	}
 	
 	public int getColorIndex(){
@@ -277,7 +274,8 @@ public class Core extends Module<Novix>{
 
 	public void checkGridResize(){
 		((VisImageButton) stage.getRoot().findActor("gridbutton")).setProgrammaticChangeEvents(true);
-		if(drawgrid.canvas.width() * drawgrid.canvas.height() >= 100 * 100)
+		
+		if(drawing.isImageLarge())
 			((VisImageButton) stage.getRoot().findActor("gridbutton")).setChecked(false);
 	}
 	

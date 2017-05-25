@@ -8,7 +8,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -23,7 +22,7 @@ import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Filter;
 import io.anuke.novix.scene.*;
-import io.anuke.novix.tools.PixelCanvas;
+import io.anuke.novix.tools.Layer;
 import io.anuke.novix.tools.Project;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.util.Mathf;
@@ -923,7 +922,7 @@ public class DialogClasses{
 				float xscale = Float.parseFloat(xscalefield.getText());
 				float yscale = Float.parseFloat(yscalefield.getText());
 
-				PixelCanvas canvas = new PixelCanvas(PixmapUtils.scale(drawing.canvas.pixmap, xscale, yscale));
+				Layer canvas = new Layer(PixmapUtils.scale(drawing.canvas.pixmap, xscale, yscale));
 
 				drawing.setCanvas(canvas, true);
 				core.checkGridResize();
@@ -1083,7 +1082,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = drawing.canvas;
+			Layer canvas = drawing.canvas;
 			Pixmap temp = PixmapUtils.copy(canvas.pixmap);
 
 			int offsetx = preview.image.offsetx, offsety = preview.image.offsety;
@@ -1126,7 +1125,7 @@ public class DialogClasses{
 			y = Math.min(preview.controller.sely1, preview.controller.sely2);
 			y2 = Math.max(preview.controller.sely1, preview.controller.sely2);
 
-			PixelCanvas canvas = new PixelCanvas(PixmapUtils.crop(drawing.canvas.pixmap, x, y, x2 - x, y2 - y));
+			Layer canvas = new Layer(PixmapUtils.crop(drawing.canvas.pixmap, x, y, x2 - x, y2 - y));
 
 			drawing.setCanvas(canvas, true);
 			core.updateToolColor();
@@ -1312,7 +1311,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = drawing.canvas;
+			Layer canvas = drawing.canvas;
 			float alpha = canvas.getAlpha();
 
 			canvas.setAlpha(1f);
@@ -1363,7 +1362,7 @@ public class DialogClasses{
 		}
 
 		public void result(){
-			PixelCanvas canvas = drawing.canvas;
+			Layer canvas = drawing.canvas;
 			float alpha = canvas.getAlpha();
 			
 			int color = Color.rgba8888(selected.getColor());
@@ -1657,17 +1656,6 @@ public class DialogClasses{
 		}
 		
 		return string;
-	}
-
-	public static void exportPixmap(Pixmap pixmap, FileHandle file){
-		try{
-			if( !file.extension().equalsIgnoreCase("png")) file = file.parent().child(file.nameWithoutExtension() + ".png");
-			PixmapIO.writePNG(file, pixmap);
-			showInfo(stage, "Image exported to " + file + ".");
-		}catch(Exception e){
-			e.printStackTrace();
-			showError(stage, e);
-		}
 	}
 
 	static Cell<? extends Actor> resizeImageCell(Cell<? extends Actor> cell){

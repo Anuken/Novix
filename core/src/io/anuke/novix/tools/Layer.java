@@ -19,12 +19,13 @@ import com.badlogic.gdx.utils.ObjectMap;
 import io.anuke.novix.Novix;
 import io.anuke.ucore.graphics.PixmapUtils;
 
-public class PixelCanvas implements Disposable{
+public class Layer implements Disposable{
 	final private static ObjectMap<Integer, ByteBuffer> buffers = new ObjectMap<Integer, ByteBuffer>();
 	
-	final public Pixmap pixmap;
-	final public Texture texture;
 	final public String name;
+	
+	final private Pixmap pixmap;
+	final private Texture texture;
 	
 	private Color color; // pixmap color
 	private Color temp = new Color();
@@ -32,15 +33,23 @@ public class PixelCanvas implements Disposable{
 	private DrawAction action = new DrawAction();
 	private boolean drawn;
 
-	public PixelCanvas(Pixmap pixmap){
+	public Layer(Pixmap pixmap){
 		this.pixmap = pixmap;
 		name = core.getCurrentProject().name;
 		texture = new Texture(pixmap);
 		updateTexture();
 	}
 
-	public PixelCanvas(int width, int height){
+	public Layer(int width, int height){
 		this(new Pixmap(width, height, Format.RGBA8888));
+	}
+	
+	public Texture getTexture(){
+		return texture;
+	}
+	
+	public Pixmap getPixmap(){
+		return pixmap;
 	}
 
 	public void drawPixel(int x, int y, boolean update){
@@ -52,7 +61,6 @@ public class PixelCanvas implements Disposable{
 		
 		if(update){
 			//set blank color, since draw color does not equal output color
-			
 			PixmapUtils.drawPixel(texture, x, height() - 1 - y, getIntColor(x, y));
 		}else{
 			drawn = true;

@@ -1,23 +1,22 @@
 package io.anuke.novix.tools;
 
+import static io.anuke.novix.Var.*;
+
 import java.util.Stack;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.IntSet;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
-import io.anuke.novix.modules.Core;
-import io.anuke.novix.ui.DrawingGrid;
 import io.anuke.ucore.graphics.Hue;
 import io.anuke.utools.MiscUtils;
 
 public enum Tool{
 	pencil{
 		@Override
-		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.drawRadius(x, y, io.anuke.novix.drawgrid.brushSize);
+		public void clicked(Color color, Layer canvas, int x, int y){
+			canvas.drawRadius(x, y, core.prefs.getInteger("brushsize"));
 		}
 		
 		public boolean scalable(){
@@ -26,11 +25,11 @@ public enum Tool{
 	},
 	eraser{
 		@Override
-		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.eraseRadius(x, y, io.anuke.novix.drawgrid.brushSize);
+		public void clicked(Color color, Layer canvas, int x, int y){
+			canvas.eraseRadius(x, y, core.prefs.getInteger("brushsize"));
 		}
 		
-		public void onColorChange(Color color, PixelCanvas canvas){
+		public void onColorChange(Color color, Layer canvas){
 			canvas.setColor(Color.CLEAR.cpy(), true);
 		}
 		
@@ -40,8 +39,8 @@ public enum Tool{
 	},
 	fill(true, false){
 		@Override
-		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-			canvas.texture.bind();
+		public void clicked(Color color, Layer canvas, int x, int y){
+			canvas.getTexture().bind();
 			
 			int dest = canvas.getIntColor(x, y);
 
@@ -79,18 +78,19 @@ public enum Tool{
 		}
 	},
 	pick(false){
+		//TODO
 		@Override
-		public void clicked(Color color, PixelCanvas canvas, int x, int y){
+		public void clicked(Color color, Layer canvas, int x, int y){
 			Color selected = canvas.getColor(x, y);
-			for(int i = 0; i < Core.i.getCurrentPalette().size(); i ++){
-				if(Hue.approximate(selected, Core.i.getCurrentPalette().colors[i], 0.001f)){
-					io.anuke.novix.i.colormenu.setSelectedColor(i);
+			for(int i = 0; i < core.getCurrentPalette().size(); i ++){
+				if(Hue.approximate(selected, core.getCurrentPalette().colors[i], 0.001f)){
+					core.setSelectedColor(i);
 					return;
 				}
 			}
 			selected.a = 1f;
-			io.anuke.novix.i.colormenu.setSelectedColor(selected);
-			io.anuke.novix.i.colormenu.addRecentColor(selected);
+			core.setSelectedColor(selected);
+			core.addRecentColor(selected);
 		}
 		
 		public boolean symmetric(){
@@ -100,14 +100,6 @@ public enum Tool{
 	zoom(false, false){
 		{
 			cursor = "cursor-zoom";
-		}
-		@Override
-		public void clicked(Color color, PixelCanvas canvas, int x, int y){
-
-		}
-
-		public void update(DrawingGrid grid){
-			grid.setCursor(Gdx.graphics.getWidth()/2 - grid.getX(), Gdx.graphics.getHeight()/2 - grid.getY());
 		}
 
 		public boolean moveCursor(){
@@ -122,19 +114,9 @@ public enum Tool{
 			return false;
 		}
 	},
-	/*
-	grid(false, false){
-		public boolean selectable(){
-			return false;
-		}
-		
-		public void onSelected(){
-			Core.i.drawgrid.canvas.actions.undo();
-		}
-	},*/
 	undo(false, false){
 		public void onSelected(){
-			io.anuke.novix.drawgrid.actions.undo(Core.i.canvas());
+			drawing.undo();
 		}
 
 		public boolean selectable(){
@@ -143,7 +125,7 @@ public enum Tool{
 	},
 	redo(false, false){
 		public void onSelected(){
-			io.anuke.novix.drawgrid.actions.redo(Core.i.canvas());
+			drawing.redo();
 		}
 
 		public boolean selectable(){
@@ -189,15 +171,11 @@ public enum Tool{
 		return true;
 	}
 
-	public void update(DrawingGrid grid){
-
-	}
-
 	public void onSelected(){
 
 	}
 
-	public void onColorChange(Color color, PixelCanvas canvas){
+	public void onColorChange(Color color, Layer canvas){
 		canvas.setColor(color);
 	}
 
@@ -205,6 +183,6 @@ public enum Tool{
 		return name().substring(0, 1).toUpperCase() + name().substring(1);
 	}
 
-	public void clicked(Color color, PixelCanvas canvas, int x, int y){
+	public void clicked(Color color, Layer canvas, int x, int y){
 	}
 }
