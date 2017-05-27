@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
-import io.anuke.novix.tools.Layer;
-import io.anuke.novix.tools.Project;
+import io.anuke.novix.internal.Layer;
+import io.anuke.novix.internal.Project;
 import io.anuke.novix.ui.DialogClasses;
 import io.anuke.novix.ui.DialogClasses.InfoDialog;
 import io.anuke.novix.ui.DialogClasses.NamedSizeDialog;
@@ -203,7 +203,7 @@ public class ProjectManager{
 
 		for(Project project : projects.values()){
 			try{
-				project.reloadTexture();
+				project.reloadTextures();
 			}catch(Exception e){
 				e.printStackTrace();
 				Novix.log("Error loading project \"" + project.name + "\": corrupt file?");
@@ -226,13 +226,14 @@ public class ProjectManager{
 			try{
 
 				currentProject = projects.get(last);
-				currentProject.reloadTexture();
+				currentProject.reloadTextures();
 				
 				int i = 0;
 				for(FileHandle file : currentProject.getFiles()){
 					file.copyTo(currentProject.getBackupFiles()[i++]);
 				}
 				
+				drawing.loadLayers(currentProject.loadLayers());
 				
 				Novix.log("Loaded and backed up current project.");
 
@@ -265,7 +266,7 @@ public class ProjectManager{
 						new InfoDialog("Info", backedup ? "[ORANGE]Your project file has been either corrupted or deleted.\n\n[GREEN]Fortunately, a backup has been found and loaded." : "[RED]Your project file has been either corrupted or deleted.\n\n[ORANGE]A backup has not been found.\n\n[ROYAL]If you believe this is an error, try reporting the circumstances under which you last closed the app at the Google Play store listing. This could help the developer fix the problem."){
 
 							public void result(){
-								currentProject.reloadTexture();
+								currentProject.reloadTextures();
 							}
 						}.show(stage);
 						return true;

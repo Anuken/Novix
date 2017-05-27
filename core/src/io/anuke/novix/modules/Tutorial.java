@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.Var;
-import io.anuke.novix.tools.TutorialStage;
+import io.anuke.novix.internal.TutorialStage;
 import io.anuke.novix.ui.DialogClasses;
 import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.modules.Module;

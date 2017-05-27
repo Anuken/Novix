@@ -7,13 +7,16 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 
-public class StaticPreviewImage extends Group{
+import io.anuke.novix.internal.Project;
+
+public class ProjectPreviewImage extends Group{
 	private Stack stack;
-	private Texture texture;
+	private Project project;
 	
-	public StaticPreviewImage(Texture texture){
-		this.texture = texture;
-		Image image = new Image(texture);
+	public ProjectPreviewImage(Project project){
+		this.project = project;
+		
+		Texture texture = project.cachedTextures[0];
 
 		BorderImage border = new BorderImage();
 		border.setColor(Color.CORAL);
@@ -30,13 +33,17 @@ public class StaticPreviewImage extends Group{
 			scaley = scale*ratio;
 		}
 		
-		
 		AlphaImage alpha = new AlphaImage(scalex, scaley);
 
 		stack = new Stack();
 
 		stack.add(alpha);
-		stack.add(image);
+		
+		for(int i = 0; i < project.layers; i ++){
+			Image image = new Image(project.cachedTextures[i]);
+			stack.add(image);
+		}
+		
 		stack.add(border);
 		
 		addActor(stack);
@@ -45,6 +52,8 @@ public class StaticPreviewImage extends Group{
 	@Override
 	public void act(float delta){
 		super.act(delta);
+		Texture texture = project.cachedTextures[0];
+		
 		float xscl = getWidth() / texture.getWidth();
 		float yscl = getHeight() / texture.getHeight();
 		

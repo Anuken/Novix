@@ -1,4 +1,4 @@
-package io.anuke.novix.tools;
+package io.anuke.novix.internal;
 
 import static io.anuke.novix.Var.projectDirectory;
 
@@ -13,24 +13,24 @@ public class Project implements Disposable, Comparable<Project>{
 	public int layers = 1;
 	public long lastloadtime;
 	
-	public transient Texture cachedTexture;
+	public transient Texture[] cachedTextures;
 	
 	public Project(String name, long id){
 		this.name = name;
 		this.id = id;
-		reloadTexture();
 	}
 	
 	public Project(){}
 	
-	public void reloadTexture(){
-		//TODO
-		/*
-		if(cachedTexture != null) cachedTexture.dispose();
-		cachedTexture = new Texture(getFile());
-		cachedTexture.getTextureData().prepare();
-		cachedPixmap = cachedTexture.getTextureData().consumePixmap();
-		*/
+	public void reloadTextures(){
+		if(cachedTextures != null)
+			dispose();
+		
+		cachedTextures = new Texture[layers];
+		
+		for(int i = 0; i < layers; i ++){
+			cachedTextures[i] = new Texture(getFiles()[i]);
+		}
 	}
 	
 	public FileHandle[] getFiles(){
@@ -70,6 +70,7 @@ public class Project implements Disposable, Comparable<Project>{
 	
 	@Override
 	public void dispose(){
-		cachedTexture.dispose();
+		for(Texture texture : cachedTextures)
+			texture.dispose();
 	}
 }

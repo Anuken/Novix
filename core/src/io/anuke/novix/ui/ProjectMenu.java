@@ -17,8 +17,8 @@ import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 
+import io.anuke.novix.internal.Project;
 import io.anuke.novix.scene.*;
-import io.anuke.novix.tools.Project;
 import io.anuke.novix.ui.DialogClasses.BaseDialog;
 import io.anuke.novix.ui.DialogClasses.OpenProjectFileDialog;
 import io.anuke.ucore.graphics.Hue;
@@ -255,13 +255,14 @@ public class ProjectMenu extends BaseDialog{
 					if(created) return true;
 					if(!loaded) return false;
 
-					if(project == core.getCurrentProject()) project.reloadTexture();
+					if(project == core.getCurrentProject()) 
+						project.reloadTextures();
 
-					Texture texture = project.cachedTexture;
+					Texture texture = project.cachedTextures[0];
 					
 					sizelabel.setText("Size: " + texture.getWidth() + "x" + texture.getHeight());
 
-					StaticPreviewImage image = new StaticPreviewImage(texture);
+					ProjectPreviewImage image = new ProjectPreviewImage(project);
 					imagecell.setActor(image);
 
 					SceneUtils.fitCell(imagecell, 128 * s, (float)texture.getWidth() / texture.getHeight());

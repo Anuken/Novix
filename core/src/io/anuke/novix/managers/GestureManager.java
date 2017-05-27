@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import io.anuke.novix.Novix;
-import io.anuke.novix.tools.Tool;
+import io.anuke.novix.internal.Tool;
 
 public class GestureManager extends GestureAdapter{
 	private float touchy;

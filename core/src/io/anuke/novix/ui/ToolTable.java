@@ -20,10 +20,10 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisImageButton.VisImageButtonStyle;
 
+import io.anuke.novix.internal.Tool;
 import io.anuke.novix.scene.CollapseButton;
 import io.anuke.novix.scene.ColorBar;
 import io.anuke.novix.scene.SmoothCollapsibleWidget;
-import io.anuke.novix.tools.Tool;
 import io.anuke.novix.ui.DialogClasses.*;
 import io.anuke.utools.SceneUtils;
 
@@ -490,21 +490,21 @@ public class ToolTable extends VisTable{
 		optionstable.add(menutable).growY();
 		optionstable.add(othertable).grow();
 		
-		menutable.top().left();
+		//menutable.top().left();
 		
-		menutable.add(cursorlabel).align(Align.topLeft).padTop(12*s).row();;
-		menutable.add(modebutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
+		//menutable.add(cursorlabel).align(Align.topLeft).padTop(12*s).row();;
+		//menutable.add(modebutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
 		
-		menutable.add(gridlabel).align(Align.topLeft).padTop(8*s).row();;
-		menutable.add(gridbutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
+		//menutable.add(gridlabel).align(Align.topLeft).padTop(8*s).row();;
+		//menutable.add(gridbutton).size(80*s).align(Align.topLeft).padTop(12*s).row();
 		
-		othertable.bottom().right();
+		//othertable.bottom().right();
 		
-		othertable.add(brushlabel).padRight(10*s).minWidth(150*s).align(Align.center);
-		othertable.add(opacity).minWidth(150*s).align(Align.center);
-		othertable.row();
-		othertable.add(brushslider).growY().padTop(20*s).padBottom(20*s).padRight(15*s);
-		othertable.add(alphabar).padTop(20*s).padBottom(20*s);
+		//othertable.add(brushlabel).padRight(10*s).minWidth(150*s).align(Align.center);
+		//othertable.add(opacity).minWidth(150*s).align(Align.center);
+		//othertable.row();
+		//othertable.add(brushslider).growY().padTop(20*s).padBottom(20*s).padRight(15*s);
+		//othertable.add(alphabar).padTop(20*s).padBottom(20*s);
 	}
 	
 	public float getBarAlphaValue(){

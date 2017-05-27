@@ -1,4 +1,4 @@
-package io.anuke.novix.tools;
+package io.anuke.novix.internal;
 
 import static io.anuke.novix.Var.*;
 

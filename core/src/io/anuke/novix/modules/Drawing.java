@@ -21,9 +21,9 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisDialog;
 
 import io.anuke.novix.Novix;
+import io.anuke.novix.internal.*;
 import io.anuke.novix.scene.AlphaImage;
 import io.anuke.novix.scene.GridImage;
-import io.anuke.novix.tools.*;
 import io.anuke.ucore.graphics.ShapeUtils;
 import io.anuke.ucore.graphics.Textures;
 import io.anuke.ucore.modules.Module;
@@ -48,7 +48,7 @@ public class Drawing extends Module<Novix>{
 	private Color tempcolor = new Color();
 	private float baseCursorSpeed = 1.03f;
 	
-	private ActionStack actions = new ActionStack();
+	private OperationStack operations = new OperationStack();
 	private Layer[] layers;
 	private Layer layer;
 	private DrawingGrid grid;
@@ -90,9 +90,9 @@ public class Drawing extends Module<Novix>{
 	}
 	*/
 	public void loadLayers(Layer[] layers){
-		actions.dispose();
+		operations.dispose();
 		
-		actions = new ActionStack();
+		operations = new OperationStack();
 		
 		Novix.log("Loading layers... " + Arrays.toString(layers));
 		
@@ -126,14 +126,17 @@ public class Drawing extends Module<Novix>{
 	
 	public void undo(){
 		//TODO
+		operations.undo();
 	}
 	
 	public void redo(){
 		//TODO
+		operations.redo();
 	}
 	
-	public void pushAction(DrawAction action){
+	public void pushOperation(DrawOperation action){
 		//TODO
+		operations.add(action);
 	}
 	
 	public Layer getLayer(){
@@ -199,10 +202,10 @@ public class Drawing extends Module<Novix>{
 			if(pointer == tpointer){
 				moving = false;
 			}else{
-				if(core.tool().push) layer.pushActions();
+				if(core.tool().push) layer.pushOperation();
 			}
 		}else{
-			if(core.tool().push) layer.pushActions();
+			if(core.tool().push) layer.pushOperation();
 		}
 		
 		touches --;
@@ -215,7 +218,7 @@ public class Drawing extends Module<Novix>{
 	public boolean keyUp(int keycode){
 		if(keycode == Keys.E){
 			if(core.tool().push){
-				layer.pushActions();
+				layer.pushOperation();
 			}
 			return true;
 		}
@@ -334,39 +337,6 @@ public class Drawing extends Module<Novix>{
 			brushPolygons[i - 1] = MiscUtils.getOutline(checker);
 		}
 	}
-	
-	/*
-	public void setCanvas(PixelCanvas layer, Operation op){
-		Novix.log("Drawgrid: setting new layer.");
-		
-		
-		if(this.layer != null){
-			Novix.log("this.Pixmap disposed at start?" + PixmapUtils.isDisposed(this.layer.pixmap));
-			
-			if(saveOp){
-				Novix.log("Drawgrid: performing switch operation: " + this.layer.name);
-				DrawAction action = new DrawAction();
-				action.fromCanvas = this.layer;
-				action.toCanvas = layer;
-				actions.add(action);
-			}else{
-				if(!core.loadingProject()){
-					Novix.log("Drawgrid: disposing old layer: " + this.layer.name);
-					this.layer.dispose();
-				}else{
-					Novix.log("Drawgrid: NOT disposing old layer \"" + this.layer.name + "\" due to core still loading it.");
-					Novix.log("TODO dispose it later, callbacks?");
-				}
-			}
-		}
-		
-		this.layer = layer;
-		grid.resetCanvas();
-		//save project here, probably async
-		
-		Novix.log("Pixmap disposed at end? " + PixmapUtils.isDisposed(layer.pixmap));
-	}
-	*/
 	
 	private int brushSize(){
 		return core.prefs.getInteger("brushsize");
@@ -499,11 +469,6 @@ public class Drawing extends Module<Novix>{
 			selected.set(newx, newy);
 		}
 		
-		public void clearActionStack(){
-			actions.dispose();
-			actions = new ActionStack();
-		}
-		
 		/**Called internally. This simply resets the view.*/
 		private void resetView(){
 
@@ -558,8 +523,11 @@ public class Drawing extends Module<Novix>{
 
 			alphaimage.setImageSize(layer.width(), layer.height());
 			alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
-
-			batch.draw(layer.getTexture(), getX(), getY(), getWidth(), getHeight());
+			
+			for(int i = 0; i < layers.length; i ++){
+				if(layers[i].visible)
+					batch.draw(layers[i].getTexture(), getX(), getY(), getWidth(), getHeight());
+			}
 
 			if(core.prefs.getBoolean("grid")){
 				gridimage.setBounds(getX(), getY(), getWidth(), getHeight());

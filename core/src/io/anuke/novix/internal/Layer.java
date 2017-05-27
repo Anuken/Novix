@@ -1,4 +1,4 @@
-package io.anuke.novix.tools;
+package io.anuke.novix.internal;
 
 
 import static io.anuke.novix.Var.*;
@@ -23,6 +23,7 @@ public class Layer implements Disposable{
 	final private static ObjectMap<Integer, ByteBuffer> buffers = new ObjectMap<Integer, ByteBuffer>();
 	
 	final public String name;
+	public boolean visible;
 	
 	final private Pixmap pixmap;
 	final private Texture texture;
@@ -30,13 +31,14 @@ public class Layer implements Disposable{
 	private Color color; // pixmap color
 	private Color temp = new Color();
 	private float alpha = 1.0f;
-	private DrawAction action = new DrawAction();
+	private PixelOperation operation;
 	private boolean drawn;
 
 	public Layer(Pixmap pixmap){
 		this.pixmap = pixmap;
 		name = core.getCurrentProject().name;
 		texture = new Texture(pixmap);
+		operation = new PixelOperation(this);
 		updateTexture();
 	}
 
@@ -57,7 +59,7 @@ public class Layer implements Disposable{
 
 		pixmap.drawPixel(x, height() - 1 - y);
 
-		action.push(x, y, preColor, getIntColor(x, y));
+		operation.addPixel(this, x, y, preColor, getIntColor(x, y));
 		
 		if(update){
 			//set blank color, since draw color does not equal output color
@@ -72,7 +74,7 @@ public class Layer implements Disposable{
 
 		pixmap.drawPixel(x, height() - 1 - y, color);
 
-		action.push(x, y, preColor, color);
+		operation.addPixel(this, x, y, preColor, color);
 	}
 
 	public void erasePixel(int x, int y, boolean update){
@@ -96,7 +98,7 @@ public class Layer implements Disposable{
 		
 		if(update)PixmapUtils.drawPixel(texture, x, height() - 1 - y, newcolor);
 		
-		action.push(x, y, preColor, newcolor);
+		operation.addPixel(this, x, y, preColor, newcolor);
 		
 		drawn = true;
 	}
@@ -110,7 +112,7 @@ public class Layer implements Disposable{
 
 		Pixmap.setBlending(Blending.SourceOver);
 
-		action.push(x, y, color, 0);
+		operation.addPixel(this, x, y, color, 0);
 	}
 
 	public void drawRadius(int x, int y, int rad){
@@ -230,13 +232,14 @@ public class Layer implements Disposable{
 
 	public void updateAndPush(){
 		texture.draw(pixmap, 0, 0);
-		pushActions();
+		pushOperation();
 	}
 
-	public void pushActions(){
-		if(action.positions.size == 0) return;
-		drawing.pushAction(action);
-		action = new DrawAction();
+	public void pushOperation(){
+		if(operation.isEmpty()) return;
+		
+		drawing.pushOperation(operation);
+		operation = new PixelOperation(this);
 	}
 
 	public int width(){
@@ -250,7 +253,7 @@ public class Layer implements Disposable{
 	public void drawPixmap(Pixmap pixmap){
 		for(int x = 0;x < width();x ++){
 			for(int y = 0;y < height();y ++){
-				action.push(x, y, getIntColor(x, y), pixmap.getPixel(x, height() - 1 - y));
+				operation.addPixel(this, x, y, getIntColor(x, y), pixmap.getPixel(x, height() - 1 - y));
 			}
 		}
 

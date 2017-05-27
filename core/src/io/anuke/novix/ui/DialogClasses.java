@@ -21,9 +21,9 @@ import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldFilter;
 
 import io.anuke.novix.graphics.Filter;
+import io.anuke.novix.internal.Layer;
+import io.anuke.novix.internal.Project;
 import io.anuke.novix.scene.*;
-import io.anuke.novix.tools.Layer;
-import io.anuke.novix.tools.Project;
 import io.anuke.ucore.graphics.PixmapUtils;
 import io.anuke.ucore.util.Mathf;
 import io.anuke.utools.MiscUtils;
@@ -1321,7 +1321,7 @@ public class DialogClasses{
 					canvas.erasePixelFullAlpha(x, y);
 				}
 			}
-			canvas.pushActions();
+			canvas.pushOperation();
 			canvas.updateTexture();
 
 			canvas.setAlpha(alpha);
@@ -1374,7 +1374,7 @@ public class DialogClasses{
 					canvas.drawPixelBlendless(x, y, color);
 				}
 			}
-			canvas.pushActions();
+			canvas.pushOperation();
 			canvas.updateTexture();
 
 			canvas.setAlpha(alpha);
