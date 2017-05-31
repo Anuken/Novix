@@ -1,8 +1,5 @@
 package io.anuke.novix.internal;
 
-
-import static io.anuke.novix.Var.*;
-
 import java.nio.ByteBuffer;
 
 import com.badlogic.gdx.Gdx;
@@ -17,6 +14,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
+import io.anuke.novix.Vars;
 import io.anuke.ucore.graphics.PixmapUtils;
 
 public class Layer implements Disposable{
@@ -36,7 +34,7 @@ public class Layer implements Disposable{
 
 	public Layer(Pixmap pixmap){
 		this.pixmap = pixmap;
-		name = core.getCurrentProject().name;
+		name = Vars.control.projects().current().name;
 		texture = new Texture(pixmap);
 		operation = new PixelOperation(this);
 		updateTexture();
@@ -90,11 +88,11 @@ public class Layer implements Disposable{
 		}
 		int newcolor = Color.rgba8888(temp.r, temp.g, temp.b, newalpha);
 
-		Pixmap.setBlending(Blending.None);
+		pixmap.setBlending(Blending.None);
 
 		pixmap.drawPixel(x, height() - 1 - y, newcolor);
 
-		Pixmap.setBlending(Blending.SourceOver);
+		pixmap.setBlending(Blending.SourceOver);
 		
 		if(update)PixmapUtils.drawPixel(texture, x, height() - 1 - y, newcolor);
 		
@@ -106,11 +104,11 @@ public class Layer implements Disposable{
 	public void erasePixelFullAlpha(int x, int y){
 		int color = getIntColor(x, y);
 
-		Pixmap.setBlending(Blending.None);
+		pixmap.setBlending(Blending.None);
 
 		pixmap.drawPixel(x, height() - 1 - y, 0);
 
-		Pixmap.setBlending(Blending.SourceOver);
+		pixmap.setBlending(Blending.SourceOver);
 
 		operation.addPixel(this, x, y, color, 0);
 	}
@@ -220,7 +218,7 @@ public class Layer implements Disposable{
 	}
 
 	public void updateTexture(){
-		if(!core.saving()){
+		if(!Vars.control.saving()){
 			Novix.log("Updating...");
 			texture.draw(pixmap, 0, 0);
 			drawn = false;
@@ -238,7 +236,7 @@ public class Layer implements Disposable{
 	public void pushOperation(){
 		if(operation.isEmpty()) return;
 		
-		drawing.pushOperation(operation);
+		Vars.drawing.pushOperation(operation);
 		operation = new PixelOperation(this);
 	}
 
@@ -256,10 +254,10 @@ public class Layer implements Disposable{
 				operation.addPixel(this, x, y, getIntColor(x, y), pixmap.getPixel(x, height() - 1 - y));
 			}
 		}
-
-		Pixmap.setBlending(Blending.None);
+		
+		pixmap.setBlending(Blending.None);
 		this.pixmap.drawPixmap(pixmap, 0, 0);
-		Pixmap.setBlending(Blending.SourceOver);
+		pixmap.setBlending(Blending.SourceOver);
 
 		updateAndPush();
 	}
@@ -270,7 +268,7 @@ public class Layer implements Disposable{
 
 	@Override
 	public void dispose(){
-		Novix.log("DISPOSING canvas! " + name);
+		Novix.log("Disposing canvas: " + name);
 		texture.dispose();
 		pixmap.dispose();
 	}

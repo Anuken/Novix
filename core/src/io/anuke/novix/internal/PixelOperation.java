@@ -1,10 +1,7 @@
 package io.anuke.novix.internal;
 
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.utils.ObjectMap;
-
-import io.anuke.utools.MiscUtils;
 
 public class PixelOperation extends DrawOperation{
 	
@@ -16,7 +13,7 @@ public class PixelOperation extends DrawOperation{
 	
 	public void addPixel(Layer layer, int x, int y, int from, int to){
 		if(from == to) return; //ignore action that doesn't do anything
-		int key = MiscUtils.asInt(x, y, layer.width());
+		int key = y*layer.width()+x;
 		if(positions.containsKey(key)){
 			ColorPair pos = positions.get(key);
 			pos.tocolor = to;
@@ -46,10 +43,10 @@ public class PixelOperation extends DrawOperation{
 			int x = i % layer.width();
 			int y = i / layer.width();
 			
-			Pixmap.setBlending(Blending.None);
+			layer.getPixmap().setBlending(Blending.None);
 			layer.drawPixelActionless(x, y, reapply ? pos.tocolor : pos.fromcolor);
 
-			Pixmap.setBlending(Blending.SourceOver);
+			layer.getPixmap().setBlending(Blending.SourceOver);
 		}
 		
 		layer.updatePixmapColor();

@@ -7,21 +7,18 @@ public class OperationStack{
 	private int index = 0;
 	
 	public OperationStack(){
-		update();
+		
 	}
 	
 	public void clear(){
 		stack.clear();
 		index = 0;
-		update();
 	}
 	
 	public void add(DrawOperation action){
 		stack.truncate(stack.size + index);
 		index = 0;
 		stack.add(action);
-		
-		update();
 	}
 	
 	public boolean canUndo(){
@@ -37,8 +34,6 @@ public class OperationStack{
 
 		stack.get(stack.size - 1 + index).apply();
 		index --;
-		
-		update();
 	}
 
 	public void redo(){
@@ -46,13 +41,6 @@ public class OperationStack{
 		
 		index ++;
 		stack.get(stack.size - 1 + index).reapply();
-		
-		update();
-	}
-	
-	private void update(){
-		Tool.undo.button.setDisabled(!canUndo());
-		Tool.redo.button.setDisabled(!canRedo());
 	}
 
 	public void dispose(){

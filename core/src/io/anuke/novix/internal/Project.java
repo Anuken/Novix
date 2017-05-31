@@ -1,26 +1,25 @@
 package io.anuke.novix.internal;
 
-import static io.anuke.novix.Var.projectDirectory;
-
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 
+import io.anuke.novix.Vars;
+
 public class Project implements Disposable, Comparable<Project>{
-	public long id;
+	public String id;
 	public String name;
 	public int layers = 1;
 	public long lastloadtime;
 	
 	public transient Texture[] cachedTextures;
 	
-	public Project(String name, long id){
+	public Project(String name, int layers, String id){
 		this.name = name;
 		this.id = id;
 	}
 	
-	public Project(){}
+	private Project(){}
 	
 	public void reloadTextures(){
 		if(cachedTextures != null)
@@ -37,7 +36,7 @@ public class Project implements Disposable, Comparable<Project>{
 		FileHandle[] files = new FileHandle[layers];
 		
 		for(int i = 0; i < layers; i ++){
-			files[i] = projectDirectory.child(id +"-"+i+ ".png");
+			files[i] = Vars.projectDirectory.child(id +"-"+i+ ".png");
 		}
 		
 		return files;
@@ -47,19 +46,10 @@ public class Project implements Disposable, Comparable<Project>{
 		FileHandle[] files = new FileHandle[layers];
 		
 		for(int i = 0; i < layers; i ++){
-			files[i] = projectDirectory.child(id +"-"+i+ "-backup.png");
+			files[i] = Vars.projectDirectory.child(id +"-"+i+ "-backup.png");
 		}
 		
 		return files;
-	}
-	
-	public Layer[] loadLayers(){
-		Layer[] layers = new Layer[this.layers];
-		for(int i = 0; i < this.layers; i ++){
-			layers[i] = new Layer(new Pixmap(getFiles()[i]));
-		}
-		//TODO
-		return layers;
 	}
 	
 	@Override

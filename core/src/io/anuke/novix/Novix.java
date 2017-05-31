@@ -2,21 +2,15 @@ package io.anuke.novix;
 
 import com.badlogic.gdx.Gdx;
 
-import io.anuke.novix.modules.*;
-import io.anuke.ucore.modules.ModuleController;
+import io.anuke.ucore.modules.Core;
 
-public class Novix extends ModuleController<Novix>{
+public class Novix extends Core {
 	
 	@Override
 	public void init(){
-		addModule(Input.class);
-		addModule(Core.class);
-		addModule(Drawing.class);
-		addModule(Tutorial.class);
-		
-		Var.input = getModule(Input.class);
-		Var.tutorial = getModule(Tutorial.class);
-		Var.drawing = getModule(Drawing.class);
+		add(Vars.control = new Control());
+		add(Vars.ui = new UI());
+		add(Vars.drawing = new Drawing());
 	}
 	
 	public static void log(Object o){
@@ -25,4 +19,5 @@ public class Novix extends ModuleController<Novix>{
 		
 		Gdx.app.log("[" + name + "::" + e.getMethodName() + "]", "" + o);
 	}
+	
 }
