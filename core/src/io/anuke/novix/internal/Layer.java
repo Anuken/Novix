@@ -21,7 +21,7 @@ public class Layer implements Disposable{
 	final private static ObjectMap<Integer, ByteBuffer> buffers = new ObjectMap<Integer, ByteBuffer>();
 	
 	final public String name;
-	public boolean visible;
+	public boolean visible = true;
 	
 	final private Pixmap pixmap;
 	final private Texture texture;

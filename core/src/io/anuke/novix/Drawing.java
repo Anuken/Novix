@@ -14,6 +14,8 @@ import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 
 import io.anuke.novix.element.AlphaImage;
 import io.anuke.novix.element.GridImage;
@@ -47,7 +49,6 @@ public class Drawing extends Module{
 	
 	public Drawing(){
 		generatePolygons();
-		
 		grid = new DrawingGrid();
 	}
 	
@@ -296,27 +297,52 @@ public class Drawing extends Module{
 	}
 	
 	private void generatePolygons(){
-		for(int i = 1; i < 11; i ++){
-			/*
-			GridChecker checker = new GridChecker(){
-				@Override
-				public int getWidth(){
-					return index * 2;
-				}
-
-				@Override
-				public int getHeight(){
-					return index * 2;
-				}
-
-				@Override
-				public boolean exists(int x, int y){
-					return Vector2.dst(x - index, y - index, 0, 0) < index - 0.5f;
-				}
-			};
-			*/
-			//brushPolygons[i - 1] = MiscUtils.getOutline(checker);
+		for(int i = 0; i < 10; i ++){
+			brushPolygons[i] = polygon(i+1);
 		}
+	}
+	
+	private Vector2[] polygon(int index){
+		int size = index*2;
+		IntArray ints = new IntArray();
+		
+		//add edges (bottom left corner)
+		for(int x = -1; x < size+1; x ++){
+			for(int y = -1; y < size+1; y ++){
+				if((solid(index, x, y) || solid(index, x-1, y) || solid(index, x, y-1) || solid(index, x-1, y-1)) &&
+						!(solid(index, x, y) && solid(index, x-1, y) && solid(index, x, y-1) && solid(index, x-1, y-1))){
+					ints.add(x+y*(size+1));
+				}
+			}
+		}
+		
+		Array<Vector2> path = new Array<Vector2>();
+		
+		int cindex = 0;
+		while(ints.size > 0){
+			int x = ints.get(cindex)%(size+1);
+			int y = ints.get(cindex)/(size+1);
+			path.add(new Vector2(x-1, y-1));
+			ints.removeIndex(cindex);
+			
+			//find nearby edge
+			for(int i = 0; i < ints.size; i ++){
+				
+				int x2 = ints.get(i)%(size+1);
+				int y2 = ints.get(i)/(size+1);
+				if(Math.abs(x2-x) <= 1 && Math.abs(y2-y) <= 1 && 
+						!(Math.abs(x2-x) == 1 && Math.abs(y2-y) == 1)){
+					cindex = i;
+					break;
+				}
+			}
+		}
+		
+		return path.toArray(Vector2.class);
+	}
+	
+	private boolean solid(int index, int x, int y){
+		return Vector2.dst(x, y, index, index) < index - 0.5f;
 	}
 	
 	private int brushSize(){
@@ -408,7 +434,6 @@ public class Drawing extends Module{
 		public DrawingGrid(){
 			gridimage = new GridImage(1, 1);
 			alphaimage = new AlphaImage(1, 1);
-			generatePolygons();
 		}
 		
 		public boolean checkRange(int y){
@@ -471,7 +496,8 @@ public class Drawing extends Module{
 			int newx = (int)(cursorx / (layerScale() * zoom)), newy = (int)(cursory / (layerScale() * zoom));
 			selected.set(newx, newy);
 		}
-
+		
+		@Override
 		public void draw(Batch batch, float parentAlpha){
 			layer.update();
 			setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Align.center);
@@ -502,15 +528,17 @@ public class Drawing extends Module{
 				
 				u = u > layer.width() ? layer.width() : layer.width()/(layer.width() / u);
 			}
-			
 			//batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, u / ((float)layer.width() / layer.height()), 0, 0);
-
+			
 			alphaimage.setImageSize(layer.width(), layer.height());
 			alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
+			alphaimage.draw(batch, parentAlpha);
+			alphaimage.setTileSize((getWidth()/u));
 			
 			for(int i = 0; i < layers.length; i ++){
-				if(layers[i].visible)
+				if(layers[i].visible){
 					batch.draw(layers[i].getTexture(), getX(), getY(), getWidth(), getHeight());
+				}
 			}
 
 			if(Settings.getBool("grid")){
@@ -567,7 +595,7 @@ public class Drawing extends Module{
 			Draw.thick(2*s);
 
 			//draw screen edges
-			Draw.linerect(Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), min(), 2);
+			Draw.linerect(Gdx.graphics.getWidth() / 2 - min() / 2f, Gdx.graphics.getHeight() / 2 - min() / 2f, min(), min());
 
 			batch.setColor(Color.CORAL);
 			
@@ -579,22 +607,17 @@ public class Drawing extends Module{
 				Draw.color(Color.PURPLE);
 				float csize = 32 * Settings.getFloat("cursorsize") * s;
 				
-				//TODO
-				//batch.draw(Textures.get(control.tool().cursor()), getX() + cursorx - csize / 2, getY() + cursory - csize / 2, csize, csize);
-				
 				Draw.color(Color.CORAL);
 				
-				if(control.tool() != Tool.pencil && control.tool() != Tool.zoom) 	
+				if(control.tool() != Tool.zoom) 	
 					Draw.crect("icon-" + control.tool().name(), getX() + cursorx, getY() + cursory, csize, csize);
-			} //seriously, why is this necessary
+			}
 			
-			//TODO
-			//batch.draw(Textures.get("alpha"), -999, -999, 30, 30);
-
+			batch.flush();
 			if(clip){
 				clipEnd();
 			}
-			batch.flush();
+			
 			batch.setColor(Color.WHITE);
 		}
 

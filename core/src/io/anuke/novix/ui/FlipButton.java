@@ -15,6 +15,10 @@ public class FlipButton extends ImageButton{
 		});
 	}
 	
+	public boolean flipped(){
+		return flipped;
+	}
+	
 	public void flip(){
 		flipped = !flipped;
 		getStyle().imageUp = DrawContext.skin.getDrawable(flipped ? "icon-up" : "icon-down");

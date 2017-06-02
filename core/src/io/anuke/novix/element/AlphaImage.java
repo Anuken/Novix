@@ -4,9 +4,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 import io.anuke.ucore.core.Draw;
 import io.anuke.ucore.scene.Element;
+import io.anuke.ucore.scene.style.TiledDrawable;
 
 public class AlphaImage extends Element{
 	private float imageWidth, imageHeight;
+	private TiledDrawable tile;
 	
 	public AlphaImage(float w, float h){
 		this.imageWidth = w;
@@ -15,13 +17,20 @@ public class AlphaImage extends Element{
 	
 	@Override
 	public void draw(Batch batch, float alpha){
+		if(tile == null){
+			tile = new TiledDrawable(Draw.region("alpha"));
+			tile.setTileSize(getWidth()/imageWidth, getHeight()/imageHeight);
+		}
+		
 		Draw.alpha(alpha);
 		
-		Draw.region("alpha").setU2(imageWidth);
-		Draw.region("alpha").setV2(imageHeight);
-		Draw.crect("alpha", getX(), getY(), getWidth(), getHeight());
+		tile.draw(batch, x, y, width, height);
 		
 		Draw.color();
+	}
+	
+	public void setTileSize(float size){
+		tile.setTileSize(size, size);
 	}
 	
 	public void setImageSize(int w, int h){

@@ -2,12 +2,13 @@ package io.anuke.novix.ui;
 
 import com.badlogic.gdx.graphics.Color;
 
+import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class TopMenu extends Table{
 	FlipButton flip;
 	ColorDisplay display;
-	boolean open = true;
+	TopSlider slider;
 	
 	public TopMenu(){
 		setFillParent(true);
@@ -15,7 +16,7 @@ public class TopMenu extends Table{
 	}
 	
 	public boolean open(){
-		return open;
+		return !flip.flipped();
 	}
 	
 	public void updateDisplay(Color[] colors){
@@ -24,11 +25,19 @@ public class TopMenu extends Table{
 	
 	private void setup(){
 		display = new ColorDisplay();
+		slider = new TopSlider();
+		DrawContext.scene.add(slider);
 		top();
 		
 		flip = new FlipButton(false);
+		flip.clicked(()->{
+			slider.slide(!flip.flipped());
+		});
+		
 		add(flip).growX().height(60);
 		row();
 		add(display);
+		
+		slider.padTop(flip.getHeight());
 	}
 }
