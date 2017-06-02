@@ -22,11 +22,11 @@ public class OperationStack{
 	}
 	
 	public boolean canUndo(){
-		return !(stack.size - 1 + index < 1);
+		return !(stack.size - 1 + index < 0);
 	}
 	
 	public boolean canRedo(){
-		return !(index > -1 || stack.size - 1 + index < 0);
+		return !(index > -1 || stack.size + index < 0);
 	}
 
 	public void undo(){

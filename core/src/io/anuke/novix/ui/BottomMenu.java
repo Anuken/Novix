@@ -73,7 +73,7 @@ public class BottomMenu extends Table{
 			Vars.drawing.undo();
 		});
 		redo.clicked(()->{
-			Vars.drawing.undo();
+			Vars.drawing.redo();
 		});
 		
 		add(undo);

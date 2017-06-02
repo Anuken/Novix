@@ -219,7 +219,6 @@ public class Layer implements Disposable{
 
 	public void updateTexture(){
 		if(!Vars.control.saving()){
-			Novix.log("Updating...");
 			texture.draw(pixmap, 0, 0);
 			drawn = false;
 		}else{
