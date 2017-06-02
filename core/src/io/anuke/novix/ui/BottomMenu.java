@@ -10,12 +10,17 @@ import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class BottomMenu extends Table{
-	FlipButton flip;
-	BottomSlider slider;
+	private FlipButton flip;
+	private BottomSlider slider;
 
 	public BottomMenu(){
 		setFillParent(true);
 		setup();
+	}
+	
+	public void toggle(){
+		flip.flip();
+		slider.slide(!flip.flipped());
 	}
 	
 	private void setup(){
@@ -31,6 +36,10 @@ public class BottomMenu extends Table{
 		
 		flip.clicked(()->{
 			slider.slide(!flip.flipped());
+			
+			if(Vars.ui.top().open()){
+				Vars.ui.top().toggle();
+			}
 		});
 		
 		add(flip).colspan(amount).height(60).growX();
@@ -75,6 +84,6 @@ public class BottomMenu extends Table{
 	}
 	
 	public boolean open(){
-		return flip.flipped();
+		return !flip.flipped();
 	}
 }

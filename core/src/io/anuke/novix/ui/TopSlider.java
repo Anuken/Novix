@@ -10,8 +10,9 @@ import io.anuke.ucore.scene.builders.table;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class TopSlider extends Table{
-	float duration = 0.18f;
-	Table content;
+	private float duration = 0.18f;
+	private Table content;
+	private ColorPicker picker;
 	
 	public TopSlider(){
 		setup();
@@ -20,23 +21,31 @@ public class TopSlider extends Table{
 	@Override
 	public Table padTop(float top){
 		super.padTop(top);
-		setY(Gdx.graphics.getHeight()-top*2);
+		setY(content.getHeight());
 		
 		return this;
 	}
 	
 	void setup(){
-		bottom().left();
+		picker = new ColorPicker();
+		top().left();
 		
 		build.begin(this);
 		
 		new table("button"){{
 			atop();
 			aleft();
+			get().padTop(64);
 			
-			new button("asdf", ()->{
+			picker.padLeft(12);
+			picker.padRight(12);
+			add(picker).growX().padTop(12);
+			
+			row();
+			
+			new button("Palettes...", ()->{
 				
-			}).fillX().padTop(100).padBottom(100);
+			}).growX().height(60).padBottom(12).padLeft(4).padRight(4);
 			
 			content = get();
 		}}.expandX().fillX();

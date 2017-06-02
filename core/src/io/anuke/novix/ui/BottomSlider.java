@@ -5,13 +5,12 @@ import com.badlogic.gdx.math.Interpolation;
 
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.builders.build;
-import io.anuke.ucore.scene.builders.button;
 import io.anuke.ucore.scene.builders.table;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class BottomSlider extends Table{
-	float duration = 0.18f;
-	Table content;
+	private float duration = 0.18f;
+	private Table content;
 	
 	public BottomSlider(){
 		setup();
@@ -28,9 +27,7 @@ public class BottomSlider extends Table{
 			atop();
 			aleft();
 			
-			new button("asdf", ()->{
-				
-			}).fillX().padTop(100).padBottom(100);
+			
 			
 			content = get();
 		}}.expandX().fillX();
