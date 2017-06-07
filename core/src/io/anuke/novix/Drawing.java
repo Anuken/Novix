@@ -125,8 +125,16 @@ public class Drawing extends Module{
 		return layer;
 	}
 	
+	public Layer[] getLayers(){
+		return layers;
+	}
+	
 	public Layer getLayer(int index){
 		return layers[index];
+	}
+	
+	public void setLayer(int idx){
+		layer = layers[idx];
 	}
 	
 	public void updateGrid(){

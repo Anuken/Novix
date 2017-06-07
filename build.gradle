@@ -55,7 +55,7 @@ project(":core") {
     	//compile fileTree(dir: '../core/lib', include: '*.jar')
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        compile 'com.github.Anuken:ucore:4ab1a97'
+      //  compile 'com.github.Anuken:ucore:4ab1a97'
     }
 }
 

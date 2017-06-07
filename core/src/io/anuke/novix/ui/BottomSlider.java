@@ -15,6 +15,7 @@ import io.anuke.ucore.scene.ui.layout.Table;
 public class BottomSlider extends Table{
 	private float duration = 0.18f;
 	private Table content;
+	protected LayerDisplay display;
 	
 	public BottomSlider(){
 		setup();
@@ -25,19 +26,22 @@ public class BottomSlider extends Table{
 	private void addMenus(Table table){
 		table.pad(0);
 		
-		table.defaults().growX();
+		table.defaults().growX().height(50);
 		
-		table.addButton("one", ()->{
+		table.addButton("Menu", ()->{
 			
+		}, b->{
+			b.addImage("icon-menu").size(32);
+			b.getCells().reverse();
 		});
 		
-		table.addButton("two", ()->{
-			
-		});
+		menu(table, "Image", "image");
+		menu(table, "Filters", "filter");
+		menu(table, "Edit", "edit");
+		menu(table, "File", "file");
+		//
 		
-		table.addButton("three", ()->{
-			
-		});
+		//menu(table, "");
 	}
 	
 	private void button(Table table, String name, String description, String icon, Listenable clicked){
@@ -50,8 +54,8 @@ public class BottomSlider extends Table{
 	
 	private void menu(Table table, String name, String icon, Object... objects){
 		TextButton button = new TextButton(name);
-		Image image = new Image(Draw.getPatch(name));
-		button.add(image).size(48);
+		Image image = new Image(Draw.getPatch("icon-"+icon));
+		button.add(image).size(32);
 		button.getCells().reverse();
 		
 		table.add(button);
@@ -59,6 +63,8 @@ public class BottomSlider extends Table{
 	
 	private void setup(){
 		bottom().left();
+		
+		display = new LayerDisplay();
 		
 		build.begin(this);
 		
@@ -75,13 +81,16 @@ public class BottomSlider extends Table{
 			
 			row();
 			
-			add().size(200);
+			Table extra = new Table();
+			
+			add(extra).left();
+			
+			extra.add(display).left().pad(10);
 			
 			content = get();
 		}}.expandX().fillX();
 		
 		build.end();
-		
 		
 		pack();
 	}

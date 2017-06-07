@@ -23,6 +23,10 @@ public class BottomMenu extends Table{
 		slider.slide(!flip.flipped());
 	}
 	
+	public void updateLayerDisplay(){
+		slider.display.updateImage();
+	}
+	
 	private void setup(){
 		slider = new BottomSlider();
 		DrawContext.scene.add(slider);

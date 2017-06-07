@@ -35,6 +35,8 @@ public class UI extends SceneModule{
 		
 		bottom = new BottomMenu();
 		scene.add(bottom);
+		
+		bottom.updateLayerDisplay();
 	}
 	
 	public boolean menuOpen(){
