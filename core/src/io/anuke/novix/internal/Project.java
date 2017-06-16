@@ -52,6 +52,10 @@ public class Project implements Disposable, Comparable<Project>{
 		return files;
 	}
 	
+	public Texture[] getCachedTextures(){
+		return cachedTextures;
+	}
+	
 	@Override
 	public int compareTo(Project other){
 		if(other.lastloadtime == lastloadtime) return 0;

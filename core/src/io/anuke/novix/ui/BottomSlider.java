@@ -3,6 +3,7 @@ package io.anuke.novix.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 
+import io.anuke.novix.Vars;
 import io.anuke.ucore.core.Draw;
 import io.anuke.ucore.function.Listenable;
 import io.anuke.ucore.scene.actions.Actions;
@@ -29,7 +30,7 @@ public class BottomSlider extends Table{
 		table.defaults().growX().height(50);
 		
 		table.addButton("Menu", ()->{
-			
+			Vars.ui.showProjectMenu();
 		}, b->{
 			b.addImage("icon-menu").size(32);
 			b.getCells().reverse();

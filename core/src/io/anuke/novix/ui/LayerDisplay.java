@@ -4,7 +4,9 @@ import io.anuke.novix.Vars;
 import io.anuke.novix.element.LayerImage;
 import io.anuke.novix.internal.Layer;
 import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.ImageButton;
+import io.anuke.ucore.scene.ui.TextButton;
 import io.anuke.ucore.scene.ui.layout.Stack;
 import io.anuke.ucore.scene.ui.layout.Table;
 
@@ -36,24 +38,34 @@ public class LayerDisplay extends Table{
 		
 		tabs.top();
 		
+		ButtonGroup group = new ButtonGroup();
+		
 		for(int i = 0; i < layers.length; i ++){
 			int index = i;
 			
 			
 			tabs.defaults().size(50).top();
 			
-			tabs.addButton("asdf", ()->{
+			TextButton lbutton = new TextButton("asdf", "toggle");
+			lbutton.clicked(()->{
 				Vars.drawing.setLayer(index);
 			});
 			
-			ImageButton button = new ImageButton("icon-invisible", "toggle");
-			button.getStyle().imageChecked = DrawContext.skin.getDrawable("icon-visible");
-			button.setChecked(true);
-			button.clicked(()->{
-				Vars.drawing.getLayers()[index].visible = button.isChecked();
+			group.add(lbutton);
+			
+			tabs.add(lbutton);
+			
+			lbutton.setChecked(Vars.drawing.getLayer(i) == Vars.drawing.getLayer());
+			
+			ImageButton visible = new ImageButton("icon-invisible", "toggle");
+			
+			visible.getStyle().imageChecked = DrawContext.skin.getDrawable("icon-visible");
+			visible.setChecked(true);
+			visible.clicked(()->{
+				Vars.drawing.getLayers()[index].visible = visible.isChecked();
 			});
 			
-			tabs.add(button);
+			tabs.add(visible);
 			
 			tabs.row();
 		}

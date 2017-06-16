@@ -2,9 +2,7 @@ package io.anuke.novix;
 
 import static io.anuke.novix.Vars.*;
 
-import io.anuke.novix.ui.BottomMenu;
-import io.anuke.novix.ui.Canvas;
-import io.anuke.novix.ui.TopMenu;
+import io.anuke.novix.ui.*;
 import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.core.Inputs;
 import io.anuke.ucore.modules.SceneModule;
@@ -13,6 +11,7 @@ public class UI extends SceneModule{
 	TopMenu top;
 	BottomMenu bottom;
 	Canvas canvas;
+	ProjectMenu projects;
 	
 	@Override
 	public void init(){
@@ -26,6 +25,10 @@ public class UI extends SceneModule{
 	}
 	
 	void setup(){
+		projects = new ProjectMenu();
+		projects.setVisible(false);
+		scene.add(projects);
+		
 		canvas = new Canvas();
 		canvas.setFillParent(true);
 		scene.add(canvas);
@@ -37,6 +40,10 @@ public class UI extends SceneModule{
 		scene.add(bottom);
 		
 		bottom.updateLayerDisplay();
+	}
+	
+	public void showProjectMenu(){
+		projects.show();
 	}
 	
 	public boolean menuOpen(){
