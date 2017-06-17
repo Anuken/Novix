@@ -38,7 +38,7 @@ public class Projects{
 		return currentProject;
 	}
 
-	private Project createNewProject(String name, int layers, int width, int height){
+	public Project createNewProject(String name, int layers, int width, int height){
 		String id = generateProjectID();
 		
 		Project project = loadProject(name, layers, id);
@@ -74,7 +74,7 @@ public class Projects{
 		Settings.save();
 	}
 	
-	/**This is usually run asynchronously.*/
+	/**This is should be run asynchronously.*/
 	public void saveProject(){
 		saveProjectsFile();
 		
@@ -151,6 +151,8 @@ public class Projects{
 				}
 				
 				Novix.log("Loaded and backed up current project.");
+				
+				openProject(currentProject);
 
 			}catch(Exception e){ //corruption!
 				e.printStackTrace();
@@ -203,7 +205,7 @@ public class Projects{
 		openProject(currentProject);
 	}
 
-	public Project loadProject(String name, int layers, String id){
+	private Project loadProject(String name, int layers, String id){
 		Project project = new Project(name, layers, id);
 		projects.put(project.id, project);
 		return project;

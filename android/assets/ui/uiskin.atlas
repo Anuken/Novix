@@ -11,6 +11,13 @@ alpha
   orig: 2, 2
   offset: 0, 0
   index: -1
+blank
+  rotate: false
+  xy: 414, 178
+  size: 3, 3
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
 border
   rotate: false
   xy: 495, 110
@@ -181,7 +188,7 @@ default-select
   index: -1
 default-select-selection
   rotate: false
-  xy: 414, 178
+  xy: 414, 173
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -927,7 +934,7 @@ textfield-over
   index: -1
 tooltip-bg
   rotate: false
-  xy: 414, 173
+  xy: 334, 8
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -956,7 +963,7 @@ tree-plus
   index: -1
 tree-selection
   rotate: false
-  xy: 334, 8
+  xy: 472, 81
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -964,7 +971,7 @@ tree-selection
   index: -1
 white
   rotate: false
-  xy: 472, 81
+  xy: 484, 72
   size: 3, 3
   orig: 3, 3
   offset: 0, 0
@@ -988,7 +995,7 @@ window-border
   index: -1
 window-border-bg
   rotate: false
-  xy: 484, 72
+  xy: 334, 3
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3

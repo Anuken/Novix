@@ -1,23 +1,76 @@
 package io.anuke.novix.handlers;
 
+import static io.anuke.novix.Vars.*;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 
+import io.anuke.novix.Novix;
 import io.anuke.novix.internal.Palette;
+import io.anuke.ucore.core.Settings;
 
 public class Palettes{
 	private Palette current;
+	private ObjectMap<String, Palette> palettes = new ObjectMap<String, Palette>();
+	private Array<Palette> palettesort = new Array<Palette>();
 	
 	public Palettes(){
 		
 	}
 	
-	public void load(){
-		current = new Palette("Test Palette", genColors(32));
-	}
-	
 	public Palette current(){
 		return current;
+	}
+	
+	public Array<Palette> getPalettes(){
+		palettesort.clear();
+		for(Palette p : palettes.values())
+			palettesort.add(p);
+		
+		palettesort.sort();
+		
+		return palettesort;
+	}
+	
+	public void removePalette(Palette palette){
+		palettes.remove(palette.id);
+	}
+
+	public void addPalette(Palette palette){
+		palettes.put(palette.id, palette);
+	}
+
+	public void save(){
+		try{
+			String string = json.toJson(palettes);
+			paletteFile.writeString(string, false);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void load(){
+		try{
+			palettes = json.fromJson(ObjectMap.class, paletteFile);
+			
+			String id = Settings.getString("lastpalette");
+			if(id != null){
+				current = palettes.get(id);
+			}
+
+			Novix.log("Palettes loaded.");
+		}catch(Exception e){
+			e.printStackTrace();
+			Novix.log("Palette file nonexistant or corrupt.");
+		}
+
+		if(current == null){
+			current = new Palette("Untitled", genColors(8));
+			palettes.put(current.id, current);
+			Settings.putString("lastpalette", current.id);
+		}
 	}
 	
 	private Color[] genColors(int length){
@@ -46,7 +99,7 @@ public class Palettes{
 		return colors;
 	}
 	
-	public static long genID(){
-		return MathUtils.random(Long.MAX_VALUE - 1);
+	public static String genID(){
+		return MathUtils.random(Long.MAX_VALUE - 1) + "";
 	}
 }

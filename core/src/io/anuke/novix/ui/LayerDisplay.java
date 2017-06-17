@@ -44,7 +44,7 @@ public class LayerDisplay extends Table{
 			int index = i;
 			
 			
-			tabs.defaults().size(50).top();
+			//tabs.defaults().size(50).top();
 			
 			TextButton lbutton = new TextButton("asdf", "toggle");
 			lbutton.clicked(()->{
@@ -53,11 +53,12 @@ public class LayerDisplay extends Table{
 			
 			group.add(lbutton);
 			
-			tabs.add(lbutton);
+			tabs.add(lbutton).height(50);
 			
 			lbutton.setChecked(Vars.drawing.getLayer(i) == Vars.drawing.getLayer());
 			
 			ImageButton visible = new ImageButton("icon-invisible", "toggle");
+			visible.resizeImage(30);
 			
 			visible.getStyle().imageChecked = DrawContext.skin.getDrawable("icon-visible");
 			visible.setChecked(true);
@@ -65,7 +66,7 @@ public class LayerDisplay extends Table{
 				Vars.drawing.getLayers()[index].visible = visible.isChecked();
 			});
 			
-			tabs.add(visible);
+			tabs.add(visible).size(50);
 			
 			tabs.row();
 		}

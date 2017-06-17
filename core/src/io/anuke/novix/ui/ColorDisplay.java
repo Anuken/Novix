@@ -13,7 +13,7 @@ public class ColorDisplay extends Table{
 	public void update(Color[] colors){
 		clear();
 
-		int maxcolorsize = 65;
+		int maxcolorsize = 57;
 		int mincolorsize = 30;
 
 		int colorsize = Gdx.graphics.getWidth() / colors.length;

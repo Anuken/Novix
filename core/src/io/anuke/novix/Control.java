@@ -9,6 +9,7 @@ import io.anuke.novix.internal.Tool;
 import io.anuke.ucore.core.Inputs;
 import io.anuke.ucore.core.Settings;
 import io.anuke.ucore.modules.RendererModule;
+import io.anuke.ucore.util.Timers;
 
 public class Control extends RendererModule{
 	private Palettes palettes;
@@ -60,6 +61,18 @@ public class Control extends RendererModule{
 			Gdx.app.exit();
 		
 		clearScreen();
+	}
+	
+	@Override
+	public void pause(){
+		Novix.log("Saving...");
+		
+		Timers.mark();
+		
+		projects.saveProject();
+		palettes.save();
+		
+		Novix.log("Save time: " + Timers.elapsed() + "ms");
 	}
 	
 	public void setTool(Tool tool){

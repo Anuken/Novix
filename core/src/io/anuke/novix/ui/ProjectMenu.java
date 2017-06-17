@@ -1,44 +1,52 @@
 package io.anuke.novix.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.Texture;
 
 import io.anuke.novix.Vars;
-import io.anuke.novix.element.AlphaImage;
-import io.anuke.novix.element.BorderImage;
-import io.anuke.novix.element.FloatingMenu;
+import io.anuke.novix.dialogs.ProjectDialogs;
+import io.anuke.novix.element.*;
 import io.anuke.novix.internal.Project;
+import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.scene.builders.*;
-import io.anuke.ucore.scene.event.Touchable;
 import io.anuke.ucore.scene.ui.Image;
 import io.anuke.ucore.scene.ui.layout.Stack;
 import io.anuke.ucore.scene.ui.layout.Table;
 
-public class ProjectMenu extends Table{
+public class ProjectMenu extends FloatingMenu{
 	private Table content;
 	private FloatingMenu newProject;
 	
 	public ProjectMenu(){
+		super("Projects");
+		
+		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
+		
+		pad(10);
+		
+		clearChildren();
+		
 		setupMenus();
 		
 		top().left();
 		
-		setFillParent(true);
-		background("button");
-		setTouchable(Touchable.enabled);
+		//setFillParent(true);
+		///background("button");
+		//setTouchable(Touchable.enabled);
 		
 		content = new Table();
 		
-		add("Projects").left();
+		add("Projects", Colors.get("title")).left();
 		row();
 		
-		add(new Table("white")).growX().height(6).padBottom(6).padTop(6);
+		add(new Border()).growX().height(6).padBottom(6).padTop(6);
 		
 		row();
 		
 		Table tasks = new Table();
 		
-		tasks.defaults().size(150, 50);
+		tasks.defaults().size(175, 50);
 		
 		tasks.top().left();
 		
@@ -46,7 +54,7 @@ public class ProjectMenu extends Table{
 			newProject.show();
 		}).left();
 		
-		tasks.add().growX();
+		tasks.add().size(0, 0).growX();
 		
 		tasks.addImageTextButton("Settings", "icon-settings", 32, ()->{
 			
@@ -62,13 +70,28 @@ public class ProjectMenu extends Table{
 		
 		addCenteredImageTextButton("Back", "icon-arrow-left", 40, ()->{
 			hide();
-		}).growX().height(60).padBottom(8);
+		}).growX().height(60).padBottom(0);
 	}
 	
 	void setupMenus(){
 		newProject = new FloatingMenu("New Project");
+		
+		newProject.addMenuItem("New", "Create an entirely new project.", ()->{
+			newProject.hide();
+			ProjectDialogs.newProject.show();
+		});
+		
+		newProject.addMenuItem("From File", "Loading an already existing image file.", ()->{
+			newProject.hide();
+		});
+		
 	}
 	
+	public void show(){
+		super.show();
+		rebuildList();
+	}
+	/*
 	public void show(){
 		rebuildList();
 		toFront();
@@ -78,7 +101,7 @@ public class ProjectMenu extends Table{
 	public void hide(){
 		setVisible(false);
 	}
-	
+	*/
 	public void rebuildList(){
 		Iterable<Project> projects = Vars.control.projects().getProjects();
 		
@@ -89,6 +112,8 @@ public class ProjectMenu extends Table{
 			
 			ProjectTable table = new ProjectTable(p);
 			content.add(table).growX();
+			
+			content.row();
 		}
 	}
 	
@@ -121,25 +146,25 @@ public class ProjectMenu extends Table{
 				
 				aleft().atop();
 				
-				new label(project.name).color(Color.CORAL).left();
+				new label(project.name).color("title").left();
 				
 				row();
 				
 				new label(tex[0].getWidth() + "x" + tex[0].getHeight())
-				.padTop(10).color(Color.GRAY).left();
+				.padTop(10).color("shading").left();
 				
 			}}.top().left().end().expandX();
 			
 			row();
 			pad(10);
 			
-			float isize = 30;
+			float isize = 42;
 			
 			new table(){{
 				aleft();
 				defaults().size(80, 50);
 				
-				new imagebutton("icon-open", isize, ()->{
+				new imagebutton("icon-project-open", isize, ()->{
 					
 				});
 				

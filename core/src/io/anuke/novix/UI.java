@@ -2,10 +2,14 @@ package io.anuke.novix;
 
 import static io.anuke.novix.Vars.*;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Colors;
+
 import io.anuke.novix.ui.*;
 import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.core.Inputs;
 import io.anuke.ucore.modules.SceneModule;
+import io.anuke.ucore.scene.ui.layout.Unit;
 
 public class UI extends SceneModule{
 	TopMenu top;
@@ -15,7 +19,11 @@ public class UI extends SceneModule{
 	
 	@Override
 	public void init(){
+		setColors();
+		DrawContext.font.setUseIntegerPositions(true);
+		DrawContext.font.getData().setScale((int)(Unit.dp.inPixels(1f)+0.001f));
 		DrawContext.atlas = DrawContext.skin.getAtlas();
+		
 		setup();
 		
 		top.updateDisplay(control.palettes().current().colors);
@@ -24,10 +32,15 @@ public class UI extends SceneModule{
 		Inputs.addProcessor(drawing);
 	}
 	
+	void setColors(){
+		Colors.put("accent", Color.ROYAL);
+		Colors.put("title", Color.CORAL);
+		Colors.put("shading", Color.GRAY);
+		Colors.put("border", Color.ROYAL);
+	}
+	
 	void setup(){
 		projects = new ProjectMenu();
-		projects.setVisible(false);
-		scene.add(projects);
 		
 		canvas = new Canvas();
 		canvas.setFillParent(true);
