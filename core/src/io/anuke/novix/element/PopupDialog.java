@@ -31,13 +31,14 @@ public class PopupDialog extends Table{
 		
 		content = new Table();
 		
-		add(content);
+		addChild(content);
 	}
 	
 	public PopupDialog addItem(String text, String icon, float isize, Listenable clicked){
 		
 		ImageButton button = new ImageButton(icon);
 		button.resizeImage(isize);
+		button.clicked(clicked);
 		button.add(text).left().bottom();
 		button.left();
 		button.getImageCell().left().padRight(4);

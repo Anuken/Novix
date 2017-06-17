@@ -73,7 +73,7 @@ public class Palettes{
 		}
 	}
 	
-	private Color[] genColors(int length){
+	public Color[] genColors(int length){
 		Color[] colors = new Color[length];
 		
 		int clen = MathUtils.random(1, 4);

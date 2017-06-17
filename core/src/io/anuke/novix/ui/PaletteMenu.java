@@ -9,20 +9,30 @@ import io.anuke.novix.dialogs.PaletteDialogs;
 import io.anuke.novix.element.ColorBox;
 import io.anuke.novix.element.FloatingMenu;
 import io.anuke.novix.internal.Palette;
+import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.core.Graphics;
+import io.anuke.ucore.scene.event.Touchable;
 import io.anuke.ucore.scene.ui.ScrollPane;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class PaletteMenu extends FloatingMenu{
 	Table mainTable = new Table();
+	ScrollPane pane;
 	float maxWidth = 400;
 	
 	public PaletteMenu(){
 		super("Palettes");
 		
-		ScrollPane pane = new ScrollPane(mainTable);
+		pane = new ScrollPane(mainTable);
+		//pane.setFadeScrollBars(false);
 		
-		content.add(pane);
+		content.add(pane).growX();
+		
+		content.row();
+		
+		content.addCenteredImageTextButton("New Palette", "icon-plus", 30, ()->{
+			PaletteDialogs.newPalette.show();
+		}).width(maxWidth).height(46).padTop(10);
 	}
 	
 	void rebuild(){
@@ -32,19 +42,18 @@ public class PaletteMenu extends FloatingMenu{
 		
 		for(Palette palette : list){
 			
-			mainTable.add(new PaletteTable(palette)).width(maxWidth);
+			mainTable.add(new PaletteTable(palette)).width(maxWidth).padTop(4);
 			
 			mainTable.row();
 		}
 		
-		mainTable.addCenteredImageTextButton("New Palette", "icon-plus", 30, ()->{
-			
-		}).growX().height(46).padTop(8);
+		
 	}
 	
 	public void show(){
 		super.show();
 		rebuild();
+		DrawContext.scene.setScrollFocus(pane);
 	}
 	
 	class PaletteTable extends Table{
@@ -61,15 +70,11 @@ public class PaletteMenu extends FloatingMenu{
 			title.add().growX();
 			
 			title.addIButton("dots", "icon-dots", 40, ()->{
+				
+				PaletteDialogs.palette = palette;
+				
 				Table c = PaletteDialogs.editPalette.content();
-				
-				PaletteDialogs.editPalette.getCell(c).padLeft(0).padBottom(0);
-				
-				PaletteDialogs.editPalette.pack();
-				
-				float padl = (Gdx.input.getX()) - c.getX(), padb = (Graphics.mouse().y) - c.getY();
-				
-				PaletteDialogs.editPalette.getCell(c).padLeft(padl).padBottom(padb);
+				c.setPosition(Gdx.input.getX() - c.getPrefWidth()/2, Graphics.mouse().y-c.getPrefHeight()/2);
 				
 				PaletteDialogs.editPalette.show();
 			}).size(40);
@@ -90,8 +95,10 @@ public class PaletteMenu extends FloatingMenu{
 		Table table = new Table();
 
 		ColorBox[] boxes = new ColorBox[colors.length];
-		for(int i = 0;i < boxes.length;i ++)
+		for(int i = 0;i < boxes.length;i ++){
 			boxes[i] = new ColorBox(colors[i]);
+			boxes[i].setTouchable(Touchable.disabled);
+		}
 
 		float rowsize = width / boxes.length;
 

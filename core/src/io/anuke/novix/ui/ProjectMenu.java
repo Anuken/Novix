@@ -76,12 +76,12 @@ public class ProjectMenu extends FloatingMenu{
 	void setupMenus(){
 		newProject = new FloatingMenu("New Project");
 		
-		newProject.addMenuItem("New", "Create an entirely new project.", ()->{
+		newProject.addMenuItem("New", "icon-file", "Create an entirely new project.", ()->{
 			newProject.hide();
 			ProjectDialogs.newProject.show();
 		});
 		
-		newProject.addMenuItem("From File", "Loading an already existing image file.", ()->{
+		newProject.addMenuItem("From File", "icon-project-open", "Loading an already existing image file.", ()->{
 			newProject.hide();
 		});
 		
@@ -111,7 +111,7 @@ public class ProjectMenu extends FloatingMenu{
 		for(Project p : projects){
 			
 			ProjectTable table = new ProjectTable(p);
-			content.add(table).growX();
+			content.add(table).growX().padTop(4);
 			
 			content.row();
 		}

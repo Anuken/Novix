@@ -35,6 +35,7 @@ public class UI extends SceneModule{
 	void setColors(){
 		Colors.put("accent", Color.ROYAL);
 		Colors.put("title", Color.CORAL);
+		Colors.put("text", Color.CORAL);
 		Colors.put("shading", Color.GRAY);
 		Colors.put("border", Color.ROYAL);
 	}

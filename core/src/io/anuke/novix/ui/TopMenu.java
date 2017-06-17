@@ -29,6 +29,10 @@ public class TopMenu extends Table{
 		slider.slide(!flip.flipped());
 	}
 	
+	public void updatePaletteMenu(){
+		slider.paletteMenu().rebuild();
+	}
+	
 	private void setup(){
 		display = new ColorDisplay();
 		slider = new TopSlider();

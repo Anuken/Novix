@@ -9,6 +9,7 @@ import io.anuke.ucore.function.ActionProvider;
 import io.anuke.ucore.function.Listenable;
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.event.Touchable;
+import io.anuke.ucore.scene.ui.Image;
 import io.anuke.ucore.scene.ui.TextButton;
 import io.anuke.ucore.scene.ui.layout.Table;
 
@@ -26,9 +27,10 @@ public class FloatingMenu extends Table{
 	public FloatingMenu(String text){
 		setFillParent(true);
 		setTouchable(Touchable.enabled);
-		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.8f)));
+		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
 		
 		content = new Table();
+		//content.background("button");
 		
 		title = new Table();
 		title.background("button").pad(8);
@@ -53,11 +55,22 @@ public class FloatingMenu extends Table{
 		return title;
 	}
 	
-	public void addMenuItem(String text, String detail, Listenable clicked){
+	public void addMenuItem(String text, String icon, String detail, Listenable clicked){
 		TextButton button = new TextButton(text, "invisible");
 		button.clicked(clicked);
-		button.row();
-		button.add(detail, Colors.get("shading"));
+		
+		button.left();
+		
+		Image image = new Image(icon);
+		button.clearChildren();
+		button.add(image).left().size(40).padRight(6);
+		
+		Table table = new Table();
+		table.add(button.getLabel()).left();
+		table.row();
+		table.add(detail, Colors.get("shading"));
+		
+		button.add(table);
 		
 		button.pad(16);
 		

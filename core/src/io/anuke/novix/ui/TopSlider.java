@@ -59,6 +59,10 @@ public class TopSlider extends Table{
 		pack();
 	}
 	
+	public PaletteMenu paletteMenu(){
+		return palettemenu;
+	}
+	
 	void slide(boolean up){
 		addAction(Actions.moveBy(0, up ? content.getHeight() : -content.getHeight(), duration, Interpolation.fade));
 	}
