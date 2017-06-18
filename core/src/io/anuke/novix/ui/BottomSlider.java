@@ -3,6 +3,7 @@ package io.anuke.novix.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 
+import io.anuke.novix.Novix;
 import io.anuke.novix.Vars;
 import io.anuke.novix.element.FloatingMenu;
 import io.anuke.ucore.core.Draw;
@@ -93,7 +94,9 @@ public class BottomSlider extends Table{
 			
 		})
 		.add("Open", "icon-open", "Load an image file into this project.", ()->{
-			
+			FileChooser.open("Open Image", f->{
+				Novix.log("Image opened: " + f);
+			});
 		});
 		//
 		

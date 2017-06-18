@@ -25,6 +25,10 @@ public class FloatingMenu extends Table{
 	};
 	
 	public FloatingMenu(String text){
+		this(true, text);
+	}
+	
+	public FloatingMenu(boolean backbutton, String text){
 		setFillParent(true);
 		setTouchable(Touchable.enabled);
 		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
@@ -42,6 +46,7 @@ public class FloatingMenu extends Table{
 		add(content).grow();
 		row();
 		
+		if(backbutton)
 		addCenteredImageTextButton("Back", "icon-arrow-left", 40, ()->{
 			hide();
 		}).growX().height(62).pad(10);
