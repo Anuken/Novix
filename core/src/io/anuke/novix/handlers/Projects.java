@@ -37,6 +37,22 @@ public class Projects{
 	public Project current(){
 		return currentProject;
 	}
+	
+	public void addProject(Project project){
+		projects.put(project.id, project);
+	}
+	
+	public Project copyProject(Project project){
+		String newname = project.name + "copy";
+		Project copy = new Project(newname, project.layers, generateProjectID());
+		
+		int i = 0;
+		for(FileHandle file : project.getFiles()){
+			file.copyTo(copy.getFiles()[i++]);
+		}
+		
+		return copy;
+	}
 
 	public Project createNewProject(String name, int layers, int width, int height){
 		String id = generateProjectID();

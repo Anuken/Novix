@@ -89,7 +89,7 @@ public class ProjectMenu extends FloatingMenu{
 	
 	public void show(){
 		super.show();
-		rebuildList();
+		rebuild();
 	}
 	/*
 	public void show(){
@@ -102,7 +102,7 @@ public class ProjectMenu extends FloatingMenu{
 		setVisible(false);
 	}
 	*/
-	public void rebuildList(){
+	public void rebuild(){
 		Iterable<Project> projects = Vars.control.projects().getProjects();
 		
 		content.clearChildren();
@@ -165,11 +165,16 @@ public class ProjectMenu extends FloatingMenu{
 				defaults().size(80, 50);
 				
 				new imagebutton("icon-project-open", isize, ()->{
-					
+					ProjectMenu.this.hide();
+					Vars.control.projects().openProject(project);
 				});
 				
 				new imagebutton("icon-copy", isize, ()->{
+					Project copy = Vars.control.projects().copyProject(project);
 					
+					Vars.control.projects().addProject(copy);
+					
+					rebuild();
 				});
 				
 				new imagebutton("icon-rename", isize, ()->{
@@ -179,6 +184,7 @@ public class ProjectMenu extends FloatingMenu{
 				new imagebutton("icon-trash", isize, ()->{
 					
 				});
+				
 			}}.end().colspan(2).left();
 			
 			build.end();
