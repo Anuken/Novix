@@ -11,12 +11,14 @@ import io.anuke.novix.internal.Project;
 import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.scene.builders.*;
 import io.anuke.ucore.scene.ui.Image;
+import io.anuke.ucore.scene.ui.ScrollPane;
 import io.anuke.ucore.scene.ui.layout.Stack;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class ProjectMenu extends FloatingMenu{
-	private Table content;
+	private Table pcontent;
 	private FloatingMenu newProject;
+	private ScrollPane pane;
 	
 	public ProjectMenu(){
 		super("Projects");
@@ -35,7 +37,8 @@ public class ProjectMenu extends FloatingMenu{
 		///background("button");
 		//setTouchable(Touchable.enabled);
 		
-		content = new Table();
+		pcontent = new Table();
+		pane = new ScrollPane(pcontent);
 		
 		add("Projects", Colors.get("title")).left();
 		row();
@@ -64,7 +67,7 @@ public class ProjectMenu extends FloatingMenu{
 		
 		row().growX();
 		
-		add(content).padTop(6).grow();
+		add(pane).padTop(6).grow();
 		
 		row();
 		
@@ -89,6 +92,7 @@ public class ProjectMenu extends FloatingMenu{
 	
 	public void show(){
 		super.show();
+		DrawContext.scene.setScrollFocus(pane);
 		rebuild();
 	}
 	/*
@@ -105,15 +109,15 @@ public class ProjectMenu extends FloatingMenu{
 	public void rebuild(){
 		Iterable<Project> projects = Vars.control.projects().getProjects();
 		
-		content.clearChildren();
-		content.top();
+		pcontent.clearChildren();
+		pcontent.top();
 		
 		for(Project p : projects){
 			
 			ProjectTable table = new ProjectTable(p);
-			content.add(table).growX().padTop(4);
+			pcontent.add(table).growX().padTop(4);
 			
-			content.row();
+			pcontent.row();
 		}
 	}
 	
