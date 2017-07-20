@@ -15,6 +15,7 @@ import io.anuke.ucore.scene.ui.layout.Table;
 
 public class FloatingMenu extends Table{
 	protected Table title, content;
+	protected Listenable shown, hidden;
 	
 	static ActionProvider showAction = ()->{
 		return Actions.sequence(Actions.alpha(0f), Actions.alpha(1f, 0.3f, Interpolation.fade));
@@ -34,7 +35,6 @@ public class FloatingMenu extends Table{
 		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
 		
 		content = new Table();
-		//content.background("button");
 		
 		title = new Table();
 		title.background("button").pad(8);
@@ -83,12 +83,24 @@ public class FloatingMenu extends Table{
 		content.row();
 	}
 	
+	public void shown(Listenable l){
+		shown = l;
+	}
+	
+	public void hidden(Listenable l){
+		hidden = l;
+	}
+	
 	public void show(){
 		addAction(showAction.get());
 		DrawContext.scene.add(this);
+		if(shown != null)
+			shown.listen();
 	}
 	
 	public void hide(){
 		addAction(Actions.sequence(hideAction.get(), Actions.removeActor()));
+		if(hidden != null)
+			hidden.listen();
 	}
 }

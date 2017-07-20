@@ -39,6 +39,8 @@ public class TopMenu extends Table{
 		DrawContext.scene.add(slider);
 		top();
 		
+		slider.setVisible(()-> isVisible());
+		
 		flip = new FlipButton(false);
 		
 		flip.clicked(()->{

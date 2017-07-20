@@ -164,7 +164,7 @@ public class Drawing extends Module{
 	
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button){
-		if( !control.tool().move() || ui.menuOpen() || grid.checkRange(y)) return false;
+		if( !control.tool().move() || ui.menuOpen() || grid.checkRange(y) || ui.hasFilter()) return false;
 		
 		touches ++;
 		if(cursorMode()){
@@ -569,7 +569,8 @@ public class Drawing extends Module{
 			int xt = (int)(4 * (10f / layer.width() * zoom)); //extra border thickness
 
 			//draw selection
-			if((cursorMode() || (touches > 0 && control.tool().move())) && control.tool().drawCursor()){
+			if((cursorMode() || (touches > 0 && control.tool().move())) && control.tool().drawCursor() &&
+					!ui.hasFilter()){
 				tempcolor.set(layer.getIntColor(selected.x, selected.y));
 				float sum = tempcolor.r + tempcolor.g + tempcolor.b;
 				int a = 18;
@@ -611,7 +612,7 @@ public class Drawing extends Module{
 			Draw.linerect((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight(), aspectRatio() < 1 ? 1 : 0, aspectRatio() > 1 ? 1 : 0);
 
 			//draw cursor
-			if(cursorMode() || (touches > 0 && control.tool().move()) || !control.tool().move()){
+			if((cursorMode() || (touches > 0 && control.tool().move()) || !control.tool().move()) && !ui.hasFilter()){
 				Draw.color(Color.PURPLE);
 				float csize = 32 * Settings.getFloat("cursorsize") * s;
 				

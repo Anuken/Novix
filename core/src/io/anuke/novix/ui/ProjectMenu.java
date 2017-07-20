@@ -182,11 +182,13 @@ public class ProjectMenu extends FloatingMenu{
 				});
 				
 				new imagebutton("icon-rename", isize, ()->{
-					
+					ProjectDialogs.project = project;
+					ProjectDialogs.rename.show();
 				});
 				
 				new imagebutton("icon-trash", isize, ()->{
-					
+					ProjectDialogs.project = project;
+					ProjectDialogs.confirmDelete.show();
 				});
 				
 			}}.end().colspan(2).left();

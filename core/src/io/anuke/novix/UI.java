@@ -5,6 +5,7 @@ import static io.anuke.novix.Vars.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
 
+import io.anuke.novix.dialogs.FilterDialogs.FilterMenu;
 import io.anuke.novix.ui.*;
 import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.core.Inputs;
@@ -16,6 +17,7 @@ public class UI extends SceneModule{
 	BottomMenu bottom;
 	Canvas canvas;
 	ProjectMenu projects;
+	FilterMenu filter;
 	
 	@Override
 	public void init(){
@@ -54,6 +56,9 @@ public class UI extends SceneModule{
 		scene.add(bottom);
 		
 		bottom.updateLayerDisplay();
+		
+		top.setVisible(()->filter == null);
+		bottom.setVisible(()->filter == null);
 	}
 	
 	public void showProjectMenu(){
@@ -70,6 +75,18 @@ public class UI extends SceneModule{
 	
 	public BottomMenu bottom(){
 		return bottom;
+	}
+	
+	public boolean hasFilter(){
+		return filter != null;
+	}
+	
+	public void setFilterMenu(FilterMenu menu){
+		this.filter = menu;
+	}
+	
+	public ProjectMenu getProjectMenu(){
+		return projects;
 	}
 	
 }

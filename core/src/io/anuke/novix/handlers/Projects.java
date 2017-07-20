@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.internal.Layer;
@@ -42,9 +43,14 @@ public class Projects{
 		projects.put(project.id, project);
 	}
 	
+	public void removeProject(Project project){
+		projects.remove(project.id);
+	}
+	
 	public Project copyProject(Project project){
 		String newname = project.name + "copy";
 		Project copy = new Project(newname, project.layers, generateProjectID());
+		copy.lastloadtime = TimeUtils.millis();
 		
 		int i = 0;
 		for(FileHandle file : project.getFiles()){

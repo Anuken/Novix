@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.Vars;
+import io.anuke.novix.dialogs.FilterDialogs;
 import io.anuke.novix.element.FloatingMenu;
 import io.anuke.ucore.core.Draw;
 import io.anuke.ucore.function.Listenable;
@@ -58,7 +59,7 @@ public class BottomSlider extends Table{
 		
 		menu(table, "Filters", "filter")
 		.add("Colorize", "icon-colorize", "Configure image huge, brightness\nand saturation.", ()->{
-			
+			FilterDialogs.colorize.show();
 		})
 		.add("Invert", "icon-invert", "Invert the image color.", ()->{
 			

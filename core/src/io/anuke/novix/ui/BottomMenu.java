@@ -29,12 +29,12 @@ public class BottomMenu extends Table{
 	
 	private void setup(){
 		slider = new BottomSlider();
+		slider.setVisible(()-> isVisible());
 		DrawContext.scene.add(slider);
 		
 		bottom().left();
 		
 		int amount = Tool.values().length + 2;
-		
 		
 		flip = new FlipButton(true);
 		
