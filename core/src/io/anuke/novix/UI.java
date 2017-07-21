@@ -85,6 +85,10 @@ public class UI extends SceneModule{
 		this.filter = menu;
 	}
 	
+	public FilterMenu getFilterMenu(){
+		return filter;
+	}
+	
 	public ProjectMenu getProjectMenu(){
 		return projects;
 	}

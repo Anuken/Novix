@@ -62,19 +62,19 @@ public class BottomSlider extends Table{
 			FilterDialogs.colorize.show();
 		})
 		.add("Invert", "icon-invert", "Invert the image color.", ()->{
-			
+			FilterDialogs.invert.show();
 		})
 		.add("Replace", "icon-replace", "Replace a color with another.", ()->{
-	
+			FilterDialogs.replace.show();
 		})
 		.add("Contrast", "icon-filter", "Change image contrast.", ()->{
-	
+			FilterDialogs.contrast.show();
 		})
 		.add("Outline", "icon-outline", "Add an outline around image contents.", ()->{
-	
+			FilterDialogs.outline.show();
 		})
 		.add("Erase Color", "icon-erasecolor", "Erase a color from the image.", ()->{
-			
+			FilterDialogs.coloralpha.show();
 		});
 		menu(table, "Edit", "edit")
 		.add("Flip", "icon-flip", "Flip the image.", ()->{

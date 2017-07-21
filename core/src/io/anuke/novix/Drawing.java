@@ -545,7 +545,9 @@ public class Drawing extends Module{
 			
 			for(int i = 0; i < layers.length; i ++){
 				if(layers[i].visible){
-					batch.draw(layers[i].getTexture(), getX(), getY(), getWidth(), getHeight());
+					batch.draw(
+							ui.hasFilter() && layers[i].getPreviewTexture() != null ? layers[i].getPreviewTexture() : layers[i].getTexture(), 
+							getX(), getY(), getWidth(), getHeight());
 				}
 			}
 
@@ -574,11 +576,13 @@ public class Drawing extends Module{
 				tempcolor.set(layer.getIntColor(selected.x, selected.y));
 				float sum = tempcolor.r + tempcolor.g + tempcolor.b;
 				int a = 18;
+				
 				if(sum >= 1.5f && tempcolor.a >= 0.01f && !(control.tool().scalable() && brushSize() > 1)){
 					tempcolor.set((14 + a) / 255f, (15 + a) / 255f, (36 + a) / 255f, 1);
 				}else{
 					tempcolor.set(Color.CORAL);
 				}
+				
 				tempcolor.a = 1f;
 
 				batch.setColor(tempcolor);
@@ -616,7 +620,8 @@ public class Drawing extends Module{
 				Draw.color(Color.PURPLE);
 				float csize = 32 * Settings.getFloat("cursorsize") * s;
 				
-				Draw.color(Color.CORAL);
+				//TODO is color switching the right choice?
+				Draw.color(tempcolor);
 				
 				if(control.tool() != Tool.zoom) 	
 					Draw.crect("icon-" + control.tool().name(), getX() + cursorx, getY() + cursory, csize, csize);

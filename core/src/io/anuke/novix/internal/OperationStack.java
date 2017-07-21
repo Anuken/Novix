@@ -32,7 +32,7 @@ public class OperationStack{
 	public void undo(){
 		if(!canUndo()) return;
 
-		stack.get(stack.size - 1 + index).apply();
+		stack.get(stack.size - 1 + index).undo();
 		index --;
 	}
 
@@ -40,7 +40,8 @@ public class OperationStack{
 		if(!canRedo()) return;
 		
 		index ++;
-		stack.get(stack.size - 1 + index).reapply();
+		stack.get(stack.size - 1 + index).redo();
+		
 	}
 
 	public void dispose(){

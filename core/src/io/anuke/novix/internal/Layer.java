@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.Vars;
+import io.anuke.novix.filter.Filter;
 import io.anuke.ucore.graphics.PixmapUtils;
 
 public class Layer implements Disposable{
@@ -25,6 +26,9 @@ public class Layer implements Disposable{
 	
 	final private Pixmap pixmap;
 	final private Texture texture;
+	
+	private Pixmap filterPixmap;
+	private Texture filterTexture;
 	
 	private Color color; // pixmap color
 	private Color temp = new Color();
@@ -246,7 +250,8 @@ public class Layer implements Disposable{
 	public int height(){
 		return pixmap.getHeight();
 	}
-
+	
+	/*
 	public void drawPixmap(Pixmap pixmap){
 		for(int x = 0;x < width();x ++){
 			for(int y = 0;y < height();y ++){
@@ -260,9 +265,47 @@ public class Layer implements Disposable{
 
 		updateAndPush();
 	}
+	*/
+	
+	public void applyPixmap(Pixmap apply){
+		pixmap.setBlending(Blending.None);
+		pixmap.drawPixmap(apply, 0, 0);
+		texture.draw(pixmap, 0, 0);
+		pixmap.setBlending(Blending.SourceOver);
+	}
 
 	public float getAlpha(){
 		return alpha;
+	}
+	
+	public void applyPreviewFilter(Filter filter, Object...args){
+		if(filterPixmap == null){
+			filterPixmap = new Pixmap(pixmap.getWidth(), pixmap.getHeight(), Format.RGBA8888);
+		}else if(filterPixmap.getWidth() != pixmap.getWidth() || filterPixmap.getHeight() != pixmap.getHeight()){
+			filterPixmap.dispose();
+			filterPixmap = new Pixmap(pixmap.getWidth(), pixmap.getHeight(), Format.RGBA8888);
+		}
+		
+		filter.process(pixmap, filterPixmap, args);
+		
+		if(filterTexture == null){
+			filterTexture = new Texture(filterPixmap);
+		}else if(filterTexture.getWidth() != texture.getWidth() || filterTexture.getHeight() != texture.getHeight()){
+			filterTexture.dispose();
+			filterTexture = new Texture(filterPixmap);
+		}else{
+			filterTexture.draw(filterPixmap, 0, 0);
+		}
+	}
+	
+	public void applyFilter(){
+		Vars.drawing.pushOperation(new FilterOperation(this, PixmapUtils.copy(pixmap), PixmapUtils.copy(filterPixmap)));
+		pixmap.drawPixmap(filterPixmap, 0, 0);
+		texture.draw(pixmap, 0, 0);
+	}
+	
+	public Texture getPreviewTexture(){
+		return filterTexture;
 	}
 
 	@Override
@@ -270,6 +313,12 @@ public class Layer implements Disposable{
 		Novix.log("Disposing canvas: " + name);
 		texture.dispose();
 		pixmap.dispose();
+		
+		if(filterPixmap != null)
+			filterPixmap.dispose();
+		
+		if(filterTexture != null)
+			filterTexture.dispose();
 	}
 
 }

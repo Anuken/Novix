@@ -27,12 +27,12 @@ public class PixelOperation extends DrawOperation{
 	}
 
 	@Override
-	public void apply(){
+	public void undo(){
 		set(false);
 	}
 
 	@Override
-	public void reapply(){
+	public void redo(){
 		set(true);
 	}
 	

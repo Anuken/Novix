@@ -7,6 +7,6 @@ public abstract class DrawOperation{
 		this.layer = layer;
 	}
 	
-	public abstract void apply();
-	public abstract void reapply();
+	public abstract void undo();
+	public abstract void redo();
 }
