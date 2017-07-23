@@ -22,8 +22,14 @@ public class ColorBox extends ImageButton{
 		return getImage().getColor();
 	}
 	
+	public void setImageColor(Color color){
+		getImage().setColor(color);
+	}
+	
 	@Override
 	public void act(float delta){
 		super.act(delta);
 	}
+
+	
 }

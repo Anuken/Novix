@@ -19,7 +19,7 @@ public class ColorPicker extends Table{
 	
 	private Bar hbar, sbar, bbar;
 	private ColorListenable changed;
-	private Color color = Color.CORAL.cpy(), tmp = new Color();
+	private Color color = Color.CORAL.cpy(), tmp = new Color(1, 1, 1, 1);
 	
 	public ColorPicker(){
 		setup();
@@ -109,6 +109,8 @@ public class ColorPicker extends Table{
 					selection = x/width;
 					selection = Mathf.clamp(selection);
 					updateColor();
+					if(changed != null)
+						changed.changed(color);
 				}
 			});
 		}

@@ -33,6 +33,18 @@ public class TopMenu extends Table{
 		slider.paletteMenu().rebuild();
 	}
 	
+	public int getSelectedColorIndex(){
+		return display.getSelected();
+	}
+	
+	public Color getSelectedColor(){
+		return display.getSelectedColor();
+	}
+	
+	public void setSelectedColor(Color color){
+		display.setColor(display.getSelected(), color);
+	}
+	
 	private void setup(){
 		display = new ColorDisplay();
 		slider = new TopSlider();
@@ -56,5 +68,9 @@ public class TopMenu extends Table{
 		add(display);
 		
 		slider.padTop(60);
+	}
+	
+	public TopSlider slider(){
+		return slider;
 	}
 }

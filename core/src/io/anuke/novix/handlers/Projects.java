@@ -12,9 +12,11 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import io.anuke.novix.Novix;
+import io.anuke.novix.Vars;
 import io.anuke.novix.internal.Layer;
 import io.anuke.novix.internal.Project;
 import io.anuke.ucore.core.Settings;
+import io.anuke.ucore.util.Timers;
 
 public class Projects{
 	private ObjectMap<String, Project> projects = new ObjectMap<>();
@@ -92,6 +94,11 @@ public class Projects{
 		}
 		
 		drawing.loadLayers(layers);
+		
+		//xd
+		Timers.run(1, ()->{
+			drawing.getLayer().setColor(Vars.ui.top().getSelectedColor());
+		});
 		
 		Settings.save();
 	}

@@ -1,8 +1,10 @@
 package io.anuke.novix.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 
+import io.anuke.novix.Vars;
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.builders.build;
 import io.anuke.ucore.scene.builders.button;
@@ -31,6 +33,11 @@ public class TopSlider extends Table{
 	
 	void setup(){
 		picker = new ColorPicker();
+		picker.colorChanged(color->{
+			Vars.ui.top().setSelectedColor(color.cpy());
+			Vars.drawing.getLayer().setColor(color);
+		});
+		
 		top().left();
 		
 		build.begin(this);
@@ -55,8 +62,11 @@ public class TopSlider extends Table{
 		
 		build.end();
 		
-		
 		pack();
+	}
+	
+	public void updateColor(Color color){
+		picker.setColor(color);
 	}
 	
 	public PaletteMenu paletteMenu(){

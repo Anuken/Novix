@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.internal.Palette;
@@ -22,6 +23,11 @@ public class Palettes{
 	
 	public Palette current(){
 		return current;
+	}
+	
+	public void setSelected(Palette palette){
+		this.current = palette;
+		current.time = TimeUtils.millis();
 	}
 	
 	public Array<Palette> getPalettes(){

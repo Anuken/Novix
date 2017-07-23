@@ -12,8 +12,10 @@ import io.anuke.novix.internal.Palette;
 import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.core.Graphics;
 import io.anuke.ucore.scene.event.Touchable;
+import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.ScrollPane;
 import io.anuke.ucore.scene.ui.layout.Table;
+import io.anuke.ucore.scene.utils.ClickListener;
 
 public class PaletteMenu extends FloatingMenu{
 	Table mainTable = new Table();
@@ -46,8 +48,6 @@ public class PaletteMenu extends FloatingMenu{
 			
 			mainTable.row();
 		}
-		
-		
 	}
 	
 	public void show(){
@@ -59,7 +59,9 @@ public class PaletteMenu extends FloatingMenu{
 	class PaletteTable extends Table{
 		
 		public PaletteTable(Palette palette){
-			background("button");
+			setTouchable(Touchable.enabled);
+			
+			background(Vars.control.palettes().current() == palette ? "button-select" : "button");
 			
 			pad(14);
 			
@@ -69,7 +71,7 @@ public class PaletteMenu extends FloatingMenu{
 			
 			title.add().growX();
 			
-			title.addIButton("dots", "icon-dots", 40, ()->{
+			ImageButton button = title.addIButton("dots", "icon-dots", 40, ()->{
 				
 				PaletteDialogs.palette = palette;
 				
@@ -77,7 +79,7 @@ public class PaletteMenu extends FloatingMenu{
 				c.setPosition(Gdx.input.getX() - c.getPrefWidth()/2, Graphics.mouse().y-c.getPrefHeight()/2);
 				
 				PaletteDialogs.editPalette.show();
-			}).size(40);
+			}).size(40).get();
 			
 			title.getChildren().peek().setColor(Color.BLACK);
 			
@@ -88,6 +90,15 @@ public class PaletteMenu extends FloatingMenu{
 			Table table = generatePaletteTable(36, maxWidth-28, palette.colors);
 			
 			add(table).fill();
+			
+			ClickListener click = button.clicked(null);
+			
+			clicked(()->{
+				if(!click.isOver()){
+					Vars.control.palettes().setSelected(palette);
+					rebuild();
+				}
+			});
 		}
 	}
 	
