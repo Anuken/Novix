@@ -9,8 +9,10 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import io.anuke.novix.Novix;
+import io.anuke.novix.Vars;
 import io.anuke.novix.internal.Palette;
 import io.anuke.ucore.core.Settings;
+import io.anuke.ucore.util.Timers;
 
 public class Palettes{
 	private Palette current;
@@ -27,7 +29,12 @@ public class Palettes{
 	
 	public void setSelected(Palette palette){
 		this.current = palette;
-		current.time = TimeUtils.millis();
+		
+		Timers.run(10, ()->{
+			current.time = TimeUtils.millis();
+		});
+		
+		Vars.ui.top().updateDisplay(palette.colors);
 	}
 	
 	public Array<Palette> getPalettes(){

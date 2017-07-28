@@ -96,12 +96,11 @@ public class BottomSlider extends Table{
 		})
 		.add("Open", "icon-open", "Load an image file into this project.", ()->{
 			FileChooser.open("Open Image", f->{
+				Vars.drawing.loadImage(f);
 				Novix.log("Image opened: " + f);
 			});
 		});
-		//
 		
-		//menu(table, "");
 	}
 	
 	private void button(Table table, String name, String description, String icon, Listenable clicked){

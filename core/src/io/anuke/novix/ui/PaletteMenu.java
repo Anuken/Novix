@@ -95,6 +95,7 @@ public class PaletteMenu extends FloatingMenu{
 			
 			clicked(()->{
 				if(!click.isOver()){
+					//TODO NO
 					Vars.control.palettes().setSelected(palette);
 					rebuild();
 				}

@@ -187,6 +187,8 @@ public class Projects{
 				e.printStackTrace();
 				Novix.log("Project file corrupted?");
 				projects.remove(currentProject.id); //remove project since it's corrupted
+				
+				tryLoadAnotherProject();
 				//TODO backups
 				/*
 				//try to fix this mess

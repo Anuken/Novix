@@ -7,7 +7,9 @@ import java.util.Arrays;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
@@ -87,6 +89,24 @@ public class Drawing extends Module{
 		this.layer = layers[0];
 		
 		grid.resetView();
+	}
+	
+	public void loadImage(FileHandle file){
+		Layer load = new Layer(new Pixmap(file));
+		this.layer.dispose();
+		operations.dispose();
+		operations = new OperationStack();
+		
+		this.layer = load;
+		//TODO specific index-lookup
+		layers[0] = load;
+		
+		load.setColor(Vars.ui.top().getSelectedColor());
+		
+		grid.resetView();
+		
+		Vars.control.projects().saveProject();
+		Vars.control.projects().current().reloadTextures();
 	}
 	
 	public int width(){
@@ -541,7 +561,7 @@ public class Drawing extends Module{
 			alphaimage.setImageSize(layer.width(), layer.height());
 			alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
 			alphaimage.draw(batch, parentAlpha);
-			alphaimage.setTileSize((getWidth()/u));
+			alphaimage.setTileUV(u, u / ((float)layer.width() / layer.height()));
 			
 			for(int i = 0; i < layers.length; i ++){
 				if(layers[i].visible){

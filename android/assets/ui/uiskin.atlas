@@ -4,13 +4,6 @@ size: 512,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-alpha
-  rotate: false
-  xy: 384, 2
-  size: 2, 2
-  orig: 2, 2
-  offset: 0, 0
-  index: -1
 blank
   rotate: false
   xy: 414, 178
@@ -151,7 +144,7 @@ color-picker-selector-vertical
   index: -1
 cursor
   rotate: false
-  xy: 445, 103
+  xy: 384, 2
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
@@ -1025,5 +1018,18 @@ window-resizable
   split: 3, 19, 2, 20
   pad: 5, 5, 50, 7
   orig: 27, 84
+  offset: 0, 0
+  index: -1
+
+uiskin2.png
+size: 2,2
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+alpha/alpha
+  rotate: false
+  xy: 0, 0
+  size: 2, 2
+  orig: 2, 2
   offset: 0, 0
   index: -1

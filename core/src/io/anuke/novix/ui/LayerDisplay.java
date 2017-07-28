@@ -26,6 +26,7 @@ public class LayerDisplay extends Table{
 	}
 	
 	public void updateImage(){
+		
 		images.clear();
 		tabs.clear();
 		
@@ -70,5 +71,6 @@ public class LayerDisplay extends Table{
 			
 			tabs.row();
 		}
+		
 	}
 }

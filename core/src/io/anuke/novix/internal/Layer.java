@@ -223,6 +223,7 @@ public class Layer implements Disposable{
 
 	public void updateTexture(){
 		if(!Vars.control.saving()){
+			Novix.log("Updating texture");
 			texture.draw(pixmap, 0, 0);
 			drawn = false;
 		}else{
@@ -232,6 +233,7 @@ public class Layer implements Disposable{
 	}
 
 	public void updateAndPush(){
+		Novix.log("Updating and pushing");
 		texture.draw(pixmap, 0, 0);
 		pushOperation();
 	}
