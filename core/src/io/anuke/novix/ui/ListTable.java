@@ -20,14 +20,7 @@ public class ListTable extends Table{
 	void setup(){
 		pad(0);
 		
-		defaults().growX().height(50);
-		
-		addButton("Menu", ()->{
-			Vars.ui.showProjectMenu();
-		}, b->{
-			b.addImage("icon-menu").size(32);
-			b.getCells().reverse();
-		});
+		defaults().growX().height(60);
 		
 		menu("Image", "image")
 		.add("Resize", "icon-resize", "Change the canvas size.", ()->{
@@ -110,6 +103,7 @@ public class ListTable extends Table{
 			
 			bind.clicked(()->{
 				menu.show();
+				Vars.ui.hideToolMenu();
 			});
 		}
 		

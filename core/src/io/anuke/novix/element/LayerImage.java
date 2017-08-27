@@ -11,7 +11,7 @@ public class LayerImage extends Table{
 	public LayerImage(Texture texture){
 		Stack stack = new Stack();
 		
-		stack.add(new AlphaImage(texture.getWidth(), texture.getHeight()));
+		stack.add(new AlphaImage());
 		stack.add(new Image(texture));
 		stack.add(new BorderImage());
 		

@@ -17,6 +17,7 @@ public class UI extends SceneModule{
 	BottomMenu bottom;
 	Canvas canvas;
 	ProjectMenu projects;
+	PaletteMenu palettes;
 	FilterMenu filter;
 	ToolMenu tools;
 	
@@ -46,6 +47,8 @@ public class UI extends SceneModule{
 	void setup(){
 		projects = new ProjectMenu();
 		
+		palettes = new PaletteMenu();
+		
 		tools = new ToolMenu();
 		
 		canvas = new Canvas();
@@ -68,12 +71,24 @@ public class UI extends SceneModule{
 		tools.show();
 	}
 	
+	public void hideToolMenu(){
+		tools.hide();
+	}
+	
 	public void showProjectMenu(){
 		projects.show();
 	}
 	
+	public void showPaletteMenu(){
+		palettes.show();
+	}
+	
+	public void updatePaletteMenu(){
+		palettes.rebuild();
+	}
+	
 	public boolean menuOpen(){
-		return top.open() || bottom.open();
+		return top.open() || (bottom.open() && bottom.hasMouse());
 	}
 	
 	public TopMenu top(){

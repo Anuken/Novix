@@ -9,15 +9,22 @@ import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.layout.Table;
+import io.anuke.ucore.scene.utils.ClickListener;
 import io.anuke.ucore.scene.utils.Elements;
 
 public class BottomMenu extends Table{
 	private FlipButton flip;
 	private BottomSlider slider;
+	private ClickListener listener;
 
 	public BottomMenu(){
 		setFillParent(true);
 		setup();
+		listener = clicked(null);
+	}
+	
+	public boolean hasMouse(){
+		return listener.isOver();
 	}
 	
 	public void toggle(){

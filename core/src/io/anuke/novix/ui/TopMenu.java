@@ -29,10 +29,6 @@ public class TopMenu extends Table{
 		slider.slide(!flip.flipped());
 	}
 	
-	public void updatePaletteMenu(){
-		slider.paletteMenu().rebuild();
-	}
-	
 	public int getSelectedColorIndex(){
 		return display.getSelected();
 	}
@@ -66,9 +62,15 @@ public class TopMenu extends Table{
 			*/
 		});
 		
+		addIButton("icon-menu", 34, ()->{
+			Vars.ui.showProjectMenu();
+		}).size(60);
 		add(flip).growX().height(60);
+		addIButton("icon-palette", 42, ()->{
+			Vars.ui.showPaletteMenu();
+		}).size(60);
 		row();
-		add(display);
+		add(display).colspan(3);
 		
 		slider.padTop(60);
 	}

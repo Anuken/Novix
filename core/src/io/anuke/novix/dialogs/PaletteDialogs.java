@@ -6,6 +6,7 @@ import io.anuke.novix.element.FloatingMenu;
 import io.anuke.novix.element.PopupDialog;
 import io.anuke.novix.internal.Palette;
 import io.anuke.ucore.scene.ui.TextField;
+import io.anuke.ucore.scene.ui.TextField.TextFieldFilter;
 import io.anuke.ucore.util.Strings;
 
 public class PaletteDialogs{
@@ -61,9 +62,17 @@ public class PaletteDialogs{
 		TextField size;
 		{
 			size = new TextField("");
-			content.add("New palette size:").padBottom(8);
+			size.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
+			
+			content.add("New palette size:").colspan(3).padBottom(8);
 			content.row();
 			content.add(size).size(220, 46);
+			content.addButton("+", ()->{
+				add(1);
+			}).size(46);
+			content.addButton("-", ()->{
+				add(-1);
+			}).size(46);
 			
 			content.row();
 			
@@ -73,10 +82,19 @@ public class PaletteDialogs{
 				hide();
 				rebuild();
 			}, b->{
-				b.setDisabled(()->{
-					return !Strings.canParsePostiveInt(size.getText());
-				});
-			}).padTop(60).size(260, 58);
+				b.setDisabled(()->!Strings.canParsePostiveInt(size.getText()));
+			}).padTop(60).colspan(3).size(260, 58);
+		}
+		
+		void add(int amount){
+			if(!Strings.canParsePostiveInt(size.getText())) return;
+			
+			int current = Strings.parseInt(size.getText());
+			
+			current += amount;
+			
+			if(current > 0)
+				size.setText(current + "");
 		}
 		
 		public void show(){
@@ -127,7 +145,7 @@ public class PaletteDialogs{
 	};
 	
 	private static void rebuild(){
-		ui.top().updatePaletteMenu();
+		ui.updatePaletteMenu();
 	}
 
 }

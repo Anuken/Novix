@@ -15,12 +15,9 @@ public class TopSlider extends Table{
 	private float duration = 0.18f;
 	private Table content;
 	private ColorPicker picker;
-	private PaletteMenu palettemenu;
 	
 	public TopSlider(){
 		setup();
-		
-		palettemenu = new PaletteMenu();
 	}
 	
 	@Override
@@ -54,7 +51,7 @@ public class TopSlider extends Table{
 			row();
 			
 			new button("Palettes...", ()->{
-				palettemenu.show();
+				Vars.ui.showPaletteMenu();
 			}).growX().height(60).padBottom(12).padLeft(4).padRight(4);
 			
 			content = get();
@@ -67,10 +64,6 @@ public class TopSlider extends Table{
 	
 	public void updateColor(Color color){
 		picker.setColor(color);
-	}
-	
-	public PaletteMenu paletteMenu(){
-		return palettemenu;
 	}
 	
 	void slide(boolean up){

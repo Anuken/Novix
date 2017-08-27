@@ -30,17 +30,17 @@ public class ToolMenu extends FloatingMenu{
 
 		picker.padLeft(12);
 		picker.padRight(12);
-		content.add(picker).growX().padTop(12);
+		//content.add(picker).growX().padTop(12);
 
-		content.row();
+		//content.row();
 
-		content.addCenteredImageTextButton("Palettes...", "icon-palette", 42, () -> {
-			palettemenu.show();
-		}).growX().height(60).padBottom(12).padLeft(4).padRight(4);
+		//content.addCenteredImageTextButton("Palettes...", "icon-palette", 42, () -> {
+		//	palettemenu.show();
+		//}).growX().height(60).padBottom(12).padLeft(4).padRight(4);
 		
-		content.row();
+		//content.row();
 		
-		content.add(list);
+		content.add(list).growX();
 
 	}
 

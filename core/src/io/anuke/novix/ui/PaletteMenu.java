@@ -37,7 +37,7 @@ public class PaletteMenu extends FloatingMenu{
 		}).width(maxWidth).height(46).padTop(10);
 	}
 	
-	void rebuild(){
+	public void rebuild(){
 		mainTable.clearChildren();
 		
 		Array<Palette> list = Vars.control.palettes().getPalettes();

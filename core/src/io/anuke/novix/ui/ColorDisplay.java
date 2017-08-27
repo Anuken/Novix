@@ -57,13 +57,13 @@ public class ColorDisplay extends Table{
 			add(box).size(colorsize);
 			
 			box.clicked(()->{
-				Vars.drawing.getLayer().setColor(color);
+				Vars.drawing.getLayer().setColor(color.cpy());
 				Vars.ui.top().slider().updateColor(color);
 				selected = index;
 			});
 			
 			if(i == 0){
-				Vars.drawing.getLayer().setColor(color);
+				Vars.drawing.getLayer().setColor(color.cpy());
 				Vars.ui.top().slider().updateColor(color);
 			}
 

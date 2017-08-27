@@ -131,7 +131,7 @@ public class ProjectMenu extends FloatingMenu{
 			
 			Texture[] tex = project.getCachedTextures();
 			
-			stack.add(new AlphaImage(tex[0].getWidth(), tex[0].getHeight()));
+			stack.add(new AlphaImage());
 			
 			for(Texture t : tex){
 				stack.add(new Image(t));

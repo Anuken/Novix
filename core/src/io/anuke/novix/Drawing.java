@@ -102,6 +102,7 @@ public class Drawing extends Module{
 		layers[0] = load;
 		
 		load.setColor(Vars.ui.top().getSelectedColor());
+		load.setAlpha(Settings.getFloat("alpha"));
 		
 		grid.resetView();
 		
@@ -350,7 +351,7 @@ public class Drawing extends Module{
 		while(ints.size > 0){
 			int x = ints.get(cindex)%(size+1);
 			int y = ints.get(cindex)/(size+1);
-			path.add(new Vector2(x-1, y-1));
+			path.add(new Vector2(x-size/2, y-size/2));
 			ints.removeIndex(cindex);
 			
 			//find nearby edge
@@ -461,7 +462,7 @@ public class Drawing extends Module{
 
 		public DrawingGrid(){
 			gridimage = new GridImage(1, 1);
-			alphaimage = new AlphaImage(1, 1);
+			alphaimage = new AlphaImage();
 		}
 		
 		public boolean checkRange(int y){
@@ -517,7 +518,7 @@ public class Drawing extends Module{
 			offsetx = getWidth() / 2;
 			offsety = getHeight() / 2;
 			gridimage.setImageSize(layer.width(), layer.height());
-			alphaimage.setImageSize(layer.width(), layer.height());
+			//alphaimage.setImageSize(layer.width(), layer.height());
 		}
 
 		public void updateCursorSelection(){
@@ -558,7 +559,7 @@ public class Drawing extends Module{
 			}
 			//batch.draw(Textures.get("alpha"), getX(), getY(), getWidth(), getHeight(), u, u / ((float)layer.width() / layer.height()), 0, 0);
 			
-			alphaimage.setImageSize(layer.width(), layer.height());
+			//alphaimage.setImageSize(layer.width(), layer.height());
 			alphaimage.setBounds(getX(), getY(), getWidth(), getHeight());
 			alphaimage.draw(batch, parentAlpha);
 			alphaimage.setTileUV(u, u / ((float)layer.width() / layer.height()));
@@ -657,7 +658,8 @@ public class Drawing extends Module{
 
 		private void drawSelection(Batch batch, int x, int y, float cscl, float xt){
 			Draw.thick(Unit.dp.inPixels(4));
-			Draw.polygon(!control.tool().scalable() ? brushPolygons[0] : brushPolygons[brushSize() - 1], (int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
+			Draw.polygon(!control.tool().scalable() ? brushPolygons[0] : brushPolygons[brushSize() - 1], 
+					(int)(getX() + x * cscl), (int)(getY() + y * cscl), cscl);
 		}
 
 		public void updateCursor(){

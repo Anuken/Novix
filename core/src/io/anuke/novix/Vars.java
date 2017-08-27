@@ -10,7 +10,8 @@ public class Vars{
 	public static UI ui;
 	public static Drawing drawing;
 	
-	public static final int largeImageSize = 100 * 100;
+	public static final int largeImageSize = 64 * 64;
+	public static final int maxRecommendedSize = 512 * 512;
 	public static final Color clearcolor = Color.valueOf("12161b");
 	public static final Json json = new Json();
 	

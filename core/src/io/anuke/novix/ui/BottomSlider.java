@@ -1,22 +1,26 @@
 package io.anuke.novix.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 
-import io.anuke.novix.element.FloatingMenu;
-import io.anuke.ucore.function.Listenable;
+import io.anuke.novix.Vars;
+import io.anuke.novix.element.ColorBar;
+import io.anuke.ucore.core.Settings;
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.builders.build;
 import io.anuke.ucore.scene.builders.table;
-import io.anuke.ucore.scene.ui.Button;
+import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.Slider;
 import io.anuke.ucore.scene.ui.layout.Table;
+import io.anuke.ucore.scene.utils.Elements;
 
 public class BottomSlider extends Table{
 	private float duration = 0.18f;
 	private Table content;
 	private Slider sizeslider;
-	//private Bar alphabar;
+	private ColorBar alphabar;
+	private ImageButton grid, drawmode;
 	
 	protected LayerDisplay display;
 	
@@ -30,7 +34,26 @@ public class BottomSlider extends Table{
 		bottom().left();
 		
 		display = new LayerDisplay();
-		sizeslider = new Slider(0, 10, 1, false);
+		sizeslider = new Slider(1, 10, 1, false);
+		alphabar = new ColorBar(Color.CLEAR, Color.YELLOW);
+		
+		alphabar.setValue(Settings.getFloat("alpha"));
+		
+		sizeslider.setValue(Settings.getInt("brushsize"));
+		
+		sizeslider.changed(()->{
+			Settings.putInt("brushsize", (int)sizeslider.getValue());
+			Settings.save();
+		});
+		
+		alphabar.changed(()->{
+			Vars.drawing.getLayer().setAlpha(alphabar.getValue());
+			Settings.putFloat("alpha", alphabar.getValue());
+		});
+		
+		alphabar.update(()->{
+			alphabar.setColors(Color.CLEAR, Vars.ui.top().getSelectedColor());
+		});
 		
 		build.begin(this);
 		
@@ -39,13 +62,35 @@ public class BottomSlider extends Table{
 			aleft();
 			
 			Table extra = new Table();
-			extra.pad(8);
+			extra.pad(10);
 			
 			add(extra).left().grow();
 			
 			extra.add(()->"Brush size: " + (int)sizeslider.getValue()).left();
 			extra.row();
 			extra.add(sizeslider).growX();
+			extra.row();
+			extra.add(()->"Alpha: " + String.format("%.2f", alphabar.getValue())).left();
+			extra.row();
+			extra.add(alphabar).height(40).padTop(10).padBottom(8).padRight(4).growX();
+			
+			Table buttons = new Table();
+			add(buttons);
+			
+			grid = Elements.newImageButton("toggle", "icon-grid", 48, ()->{
+				Settings.putBool("grid", grid.isChecked());
+			});
+			
+			drawmode = Elements.newImageButton("toggle", "icon-cursor", 48, ()->{
+				Settings.putBool("cursormode", drawmode.isChecked());
+			});
+			
+			grid.setChecked(Settings.getBool("grid"));
+			drawmode.setChecked(Settings.getBool("cursormode"));
+			
+			buttons.add(grid).size(74).pad(2);
+			buttons.row();
+			buttons.add(drawmode).size(74).pad(2);
 			
 			content = get();
 		}}.expandX().fillX();
@@ -56,7 +101,7 @@ public class BottomSlider extends Table{
 	}
 	
 	void slide(boolean up){
-		addAction(Actions.moveBy(0, up ? content.getHeight() : -content.getHeight(), duration, Interpolation.fade));
+		addAction(Actions.moveBy(0, up ? content.getHeight() : -content.getHeight(), duration, Interpolation.pow5Out));
 	}
 	
 	@Override
@@ -64,25 +109,5 @@ public class BottomSlider extends Table{
 		super.act(delta);
 		
 		setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	}
-	
-	class MenuBuilder{
-		private FloatingMenu menu;
-		
-		public MenuBuilder(String title, Button bind){
-			menu = new FloatingMenu(title);
-			
-			bind.clicked(()->{
-				menu.show();
-			});
-		}
-		
-		public MenuBuilder add(String name, String icon, String text, Listenable clicked){
-			menu.addMenuItem(name, icon, text, ()->{
-				clicked.listen();
-				menu.hide();
-			});
-			return this;
-		}
 	}
 }

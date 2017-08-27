@@ -8,12 +8,10 @@ import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.scene.Element;
 
 public class AlphaImage extends Element{
-	private float imageWidth, imageHeight;
+	//private float imageWidth, imageHeight;
 	private float u, v;
 	
-	public AlphaImage(float w, float h){
-		this.imageWidth = w;
-		this.imageHeight = h;
+	public AlphaImage(){
 		
 		DrawContext.skin.getAtlas().getRegion("alpha").getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 	}
@@ -32,10 +30,5 @@ public class AlphaImage extends Element{
 	public void setTileUV(float u, float v){
 		this.u = u;
 		this.v = v;
-	}
-	
-	public void setImageSize(int w, int h){
-		this.imageWidth = w;
-		this.imageHeight = h;
 	}
 }

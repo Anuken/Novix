@@ -7,9 +7,12 @@ import io.anuke.novix.element.ColorBox;
 import io.anuke.novix.element.FloatingMenu;
 import io.anuke.novix.filter.Filter;
 import io.anuke.novix.internal.Layer;
+import io.anuke.ucore.scene.event.InputEvent;
+import io.anuke.ucore.scene.event.InputListener;
 import io.anuke.ucore.scene.style.Drawable;
 import io.anuke.ucore.scene.ui.ColorPicker;
 import io.anuke.ucore.scene.ui.Slider;
+import io.anuke.ucore.scene.ui.layout.Cell;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class FilterDialogs{
@@ -63,6 +66,24 @@ public class FilterDialogs{
 			return filter;
 		}
 		
+		Cell<Slider> updateOn(Cell<Slider> cell){
+			Slider slider = cell.get();
+			if(Vars.drawing.isImageLarge()){
+				slider.addListener(new InputListener(){
+					public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) { return true; }
+					
+					public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+						updateImage();
+					}
+				});
+			}else{
+				slider.changed(()->{
+					updateImage();
+				});
+			}
+			return cell;
+		}
+		
 		void updateArgs(){}
 		
 		void updateImage(){
@@ -90,25 +111,19 @@ public class FilterDialogs{
 			
 			tweaks.add(()->"Hue: " + (int)h.getValue()).left();
 			tweaks.row();
-			h = tweaks.addSlider(0, 360f, 1f, 180, value->{
-				updateImage();
-			}).growX().get();
+			h = updateOn(tweaks.addSlider(0, 360f, 1f, 180, null)).growX().get();
 			
 			tweaks.row();
 			
 			tweaks.add(()->"Saturation: " + (int)s.getValue()).left();
 			tweaks.row();
-			s = tweaks.addSlider(0, 100f, 1f, 50, value->{
-				updateImage();
-			}).growX().get();
+			s = updateOn(tweaks.addSlider(0, 100f, 1f, 50, null)).growX().get();
 			
 			tweaks.row();
 			
 			tweaks.add(()->"Brightness: " + (int)b.getValue()).left();
 			tweaks.row();
-			b = tweaks.addSlider(0, 100f, 1f, 50, value->{
-				updateImage();
-			}).growX().get();
+			b = updateOn(tweaks.addSlider(0, 100f, 1f, 50, null)).growX().get();
 			
 			tweaks.row();
 		}
@@ -128,9 +143,7 @@ public class FilterDialogs{
 			tweaks.add(()->"Contrast: " + (int)slider.getValue()).left();
 			tweaks.row();
 			
-			slider = tweaks.addSlider(-50, 50, 1f, 0, value->{
-				updateImage();
-			}).growX().get();
+			slider = updateOn(tweaks.addSlider(-50, 50, 1f, 0, null)).growX().get();
 		}
 		
 		public void updateArgs(){
