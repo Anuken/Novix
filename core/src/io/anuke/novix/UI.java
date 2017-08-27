@@ -18,6 +18,7 @@ public class UI extends SceneModule{
 	Canvas canvas;
 	ProjectMenu projects;
 	FilterMenu filter;
+	ToolMenu tools;
 	
 	@Override
 	public void init(){
@@ -45,6 +46,8 @@ public class UI extends SceneModule{
 	void setup(){
 		projects = new ProjectMenu();
 		
+		tools = new ToolMenu();
+		
 		canvas = new Canvas();
 		canvas.setFillParent(true);
 		scene.add(canvas);
@@ -59,6 +62,10 @@ public class UI extends SceneModule{
 		
 		top.setVisible(()->filter == null);
 		bottom.setVisible(()->filter == null);
+	}
+	
+	public void showToolMenu(){
+		tools.show();
 	}
 	
 	public void showProjectMenu(){

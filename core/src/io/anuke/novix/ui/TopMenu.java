@@ -56,11 +56,14 @@ public class TopMenu extends Table{
 		flip = new FlipButton(false);
 		
 		flip.clicked(()->{
+			Vars.ui.showToolMenu();
+			/*
 			slider.slide(!flip.flipped());
 			
 			if(Vars.ui.bottom().open()){
 				Vars.ui.bottom().toggle();
 			}
+			*/
 		});
 		
 		add(flip).growX().height(60);

@@ -3,23 +3,21 @@ package io.anuke.novix.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 
-import io.anuke.novix.Novix;
-import io.anuke.novix.Vars;
-import io.anuke.novix.dialogs.FilterDialogs;
 import io.anuke.novix.element.FloatingMenu;
-import io.anuke.ucore.core.Draw;
 import io.anuke.ucore.function.Listenable;
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.builders.build;
 import io.anuke.ucore.scene.builders.table;
 import io.anuke.ucore.scene.ui.Button;
-import io.anuke.ucore.scene.ui.Image;
-import io.anuke.ucore.scene.ui.TextButton;
+import io.anuke.ucore.scene.ui.Slider;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class BottomSlider extends Table{
 	private float duration = 0.18f;
 	private Table content;
+	private Slider sizeslider;
+	//private Bar alphabar;
+	
 	protected LayerDisplay display;
 	
 	public BottomSlider(){
@@ -28,104 +26,11 @@ public class BottomSlider extends Table{
 		setY(-content.getHeight());
 	}
 	
-	private void addMenus(Table table){
-		table.pad(0);
-		
-		table.defaults().growX().height(50);
-		
-		table.addButton("Menu", ()->{
-			Vars.ui.showProjectMenu();
-		}, b->{
-			b.addImage("icon-menu").size(32);
-			b.getCells().reverse();
-		});
-		
-		menu(table, "Image", "image")
-		.add("Resize", "icon-resize", "Change the canvas size.", ()->{
-			
-		})
-		.add("Crop", "icon-crop", "Cut out part of the image.", ()->{
-			
-		})
-		.add("Clear", "icon-clear", "Clear the image.", ()->{
-	
-		})
-		.add("Color Fill", "icon-clear", "Fill the image with one color.", ()->{
-	
-		})
-		.add("Symmetry", "icon-symmetry", "Configure symmetry.", ()->{
-	
-		});
-		
-		menu(table, "Filters", "filter")
-		.add("Colorize", "icon-colorize", "Configure image huge, brightness\nand saturation.", ()->{
-			FilterDialogs.colorize.show();
-		})
-		.add("Invert", "icon-invert", "Invert the image color.", ()->{
-			FilterDialogs.invert.show();
-		})
-		.add("Replace", "icon-replace", "Replace a color with another.", ()->{
-			FilterDialogs.replace.show();
-		})
-		.add("Contrast", "icon-filter", "Change image contrast.", ()->{
-			FilterDialogs.contrast.show();
-		})
-		.add("Outline", "icon-outline", "Add an outline around image contents.", ()->{
-			FilterDialogs.outline.show();
-		})
-		.add("Erase Color", "icon-erasecolor", "Erase a color from the image.", ()->{
-			FilterDialogs.coloralpha.show();
-		});
-		menu(table, "Edit", "edit")
-		.add("Flip", "icon-flip", "Flip the image.", ()->{
-			
-		})
-		.add("Rotate", "icon-rotate", "Rotate the image.", ()->{
-			
-		})
-		.add("Scale", "icon-scale", "Scale the image.", ()->{
-	
-		})
-		.add("Shift", "icon-shift", "Move the image.", ()->{
-	
-		});
-		
-		menu(table, "File", "file")
-		.add("Export", "icon-export", "Export the image as a PNG.", ()->{
-			
-		})
-		.add("Open", "icon-open", "Load an image file into this project.", ()->{
-			FileChooser.open("Open Image", f->{
-				Vars.drawing.loadImage(f);
-				Novix.log("Image opened: " + f);
-			});
-		});
-		
-	}
-	
-	private void button(Table table, String name, String description, String icon, Listenable clicked){
-		
-	}
-	
-	private void button(Table table, String name, String description, Listenable clicked){
-		
-	}
-	
-	private MenuBuilder menu(Table table, String name, String icon){
-		TextButton button = new TextButton(name);
-		Image image = new Image(Draw.getPatch("icon-"+icon));
-		button.add(image).size(32);
-		button.getCells().reverse();
-		
-		table.add(button);
-		
-		return new MenuBuilder(name, button);
-	}
-	
 	private void setup(){
 		bottom().left();
 		
 		display = new LayerDisplay();
+		sizeslider = new Slider(0, 10, 1, false);
 		
 		build.begin(this);
 		
@@ -133,20 +38,14 @@ public class BottomSlider extends Table{
 			atop();
 			aleft();
 			
-			Table table = new Table();
-			table.background("button");
-			addMenus(table);
-			
-			add(table).padTop(-get().getPadTop()).padLeft(-get().getPadLeft()).growX()
-			.padRight(-get().getPadRight());
-			
-			row();
-			
 			Table extra = new Table();
+			extra.pad(8);
 			
-			add(extra).left();
+			add(extra).left().grow();
 			
-			extra.add(display).left().pad(10);
+			extra.add(()->"Brush size: " + (int)sizeslider.getValue()).left();
+			extra.row();
+			extra.add(sizeslider).growX();
 			
 			content = get();
 		}}.expandX().fillX();

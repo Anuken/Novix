@@ -1,6 +1,7 @@
 package io.anuke.novix.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Colors;
 
 import io.anuke.novix.Vars;
 import io.anuke.novix.internal.Tool;
@@ -8,6 +9,7 @@ import io.anuke.ucore.core.DrawContext;
 import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.layout.Table;
+import io.anuke.ucore.scene.utils.Elements;
 
 public class BottomMenu extends Table{
 	private FlipButton flip;
@@ -34,9 +36,10 @@ public class BottomMenu extends Table{
 		
 		bottom().left();
 		
-		int amount = Tool.values().length + 2;
+		int amount = Tool.values().length + 3;
 		
 		flip = new FlipButton(true);
+		flip.getImage().setColor(Colors.get("accent"));
 		
 		flip.clicked(()->{
 			slider.slide(!flip.flipped());
@@ -46,7 +49,7 @@ public class BottomMenu extends Table{
 			}
 		});
 		
-		add(flip).colspan(amount).height(60).growX();
+		//add(flip).colspan(amount).height(60).growX();
 		
 		row();
 		
@@ -67,21 +70,19 @@ public class BottomMenu extends Table{
 			add(button);
 		}
 		
-		ImageButton undo = new ImageButton("icon-undo");
-		ImageButton redo = new ImageButton("icon-redo");
-		
-		undo.resizeImage(48);
-		redo.resizeImage(48);
-		
-		undo.clicked(()->{
+		add(Elements.newImageButton("icon-undo", 48, ()->{
 			Vars.drawing.undo();
-		});
-		redo.clicked(()->{
-			Vars.drawing.redo();
-		});
+		}));
 		
-		add(undo);
-		add(redo);
+		add(Elements.newImageButton("icon-redo", 48, ()->{
+			Vars.drawing.redo();
+		}));
+		
+		add(flip);
+		
+		//add(Elements.newImageButton("icon-up", 48, Colors.get("title"), ()->{
+			
+		//}));
 		
 		pack();
 		slider.padBottom(getHeight());
