@@ -32,10 +32,6 @@ public class BottomMenu extends Table{
 		slider.slide(!flip.flipped());
 	}
 	
-	//public void updateLayerDisplay(){
-	//	slider.display.updateImage();
-	//}
-	
 	private void setup(){
 		slider = new BottomSlider();
 		slider.setVisible(()-> isVisible());
@@ -50,10 +46,6 @@ public class BottomMenu extends Table{
 		
 		flip.clicked(()->{
 			slider.slide(!flip.flipped());
-			
-			if(Vars.ui.top().open()){
-				Vars.ui.top().toggle();
-			}
 		});
 		
 		//add(flip).colspan(amount).height(60).growX();

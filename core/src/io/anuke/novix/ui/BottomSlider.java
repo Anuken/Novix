@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Interpolation;
 
 import io.anuke.novix.Vars;
 import io.anuke.novix.element.ColorBar;
+import io.anuke.novix.internal.NovixEvent.AlphaChange;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.core.Settings;
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.builders.build;
@@ -38,6 +40,7 @@ public class BottomSlider extends Table{
 		alphabar = new ColorBar(Color.CLEAR, Color.YELLOW);
 		
 		alphabar.setValue(Settings.getFloat("alpha"));
+		Events.fire(AlphaChange.class, alphabar.getValue());
 		
 		sizeslider.setValue(Settings.getInt("brushsize"));
 		
@@ -47,8 +50,8 @@ public class BottomSlider extends Table{
 		});
 		
 		alphabar.changed(()->{
-			Vars.drawing.getLayer().setAlpha(alphabar.getValue());
 			Settings.putFloat("alpha", alphabar.getValue());
+			Events.fire(AlphaChange.class, alphabar.getValue());
 		});
 		
 		alphabar.update(()->{

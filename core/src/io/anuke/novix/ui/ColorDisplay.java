@@ -59,6 +59,7 @@ public class ColorDisplay extends Table{
 			
 			Color color = colors[i];
 			ColorBox box = new ColorBox(color);
+			boxes[i] = box;
 			group.add(box);
 			
 			add(box).size(colorsize);
@@ -78,7 +79,7 @@ public class ColorDisplay extends Table{
 				add().growX();
 			}
 			
-			boxes[i] = box;
+			
 		}
 
 		if(perow == 0)

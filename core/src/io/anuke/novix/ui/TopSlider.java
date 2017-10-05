@@ -36,8 +36,7 @@ public class TopSlider extends Table{
 	void setup(){
 		picker = new ColorPicker();
 		picker.colorChanged(color->{
-			Vars.ui.top().setSelectedColor(color.cpy());
-			Vars.drawing.getLayer().setColor(color);
+			Events.fire(ColorChange.class, color);
 		});
 		
 		top().left();

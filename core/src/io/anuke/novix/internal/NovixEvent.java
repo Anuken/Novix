@@ -21,4 +21,8 @@ public class NovixEvent{
 	public static interface PaletteChange extends Event{
 		public void handle(Palette newPalette);
 	}
+	
+	public static interface AlphaChange extends Event{
+		public void handle(float alpha);
+	}
 }

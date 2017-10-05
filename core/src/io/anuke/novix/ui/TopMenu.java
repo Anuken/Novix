@@ -7,7 +7,6 @@ import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class TopMenu extends Table{
-	private FlipButton flip;
 	private ColorDisplay display;
 	private TopSlider slider;
 	
@@ -16,17 +15,8 @@ public class TopMenu extends Table{
 		setup();
 	}
 	
-	public boolean open(){
-		return flip.flipped();
-	}
-	
 	public void updateDisplay(Color[] colors){
 		display.update(colors);
-	}
-	
-	public void toggle(){
-		flip.flip();
-		slider.slide(!flip.flipped());
 	}
 	
 	public int getSelectedColorIndex(){
@@ -49,23 +39,12 @@ public class TopMenu extends Table{
 		
 		slider.setVisible(()-> isVisible());
 		
-		flip = new FlipButton(false);
-		
-		flip.clicked(()->{
-			Vars.ui.showToolMenu();
-			/*
-			slider.slide(!flip.flipped());
-			
-			if(Vars.ui.bottom().open()){
-				Vars.ui.bottom().toggle();
-			}
-			*/
-		});
-		
 		addIButton("icon-menu", 34, ()->{
 			Vars.ui.showProjectMenu();
 		}).size(60);
-		add(flip).growX().height(60);
+		addIButton("icon-down", 48, ()->{
+			Vars.ui.showToolMenu();
+		}).growX().height(60);
 		addIButton("icon-palette", 42, ()->{
 			Vars.ui.showPaletteMenu();
 		}).size(60);

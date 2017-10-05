@@ -86,7 +86,7 @@ public class UI extends SceneModule{
 	}
 	
 	public boolean menuOpen(){
-		return top.open() || (bottom.open() && bottom.hasMouse());
+		return (bottom.open() && bottom.hasMouse());
 	}
 	
 	public TopMenu top(){

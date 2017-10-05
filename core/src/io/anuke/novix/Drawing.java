@@ -22,9 +22,7 @@ import com.badlogic.gdx.utils.IntArray;
 import io.anuke.novix.element.AlphaImage;
 import io.anuke.novix.element.GridImage;
 import io.anuke.novix.internal.*;
-import io.anuke.novix.internal.NovixEvent.ColorChange;
-import io.anuke.novix.internal.NovixEvent.FileLoad;
-import io.anuke.novix.internal.NovixEvent.LayerLoad;
+import io.anuke.novix.internal.NovixEvent.*;
 import io.anuke.ucore.core.*;
 import io.anuke.ucore.modules.Module;
 import io.anuke.ucore.scene.Element;
@@ -56,6 +54,12 @@ public class Drawing extends Module{
 		
 		Events.on(ColorChange.class, color->{
 			layer.setColor(color.cpy());
+		});
+		
+		Events.on(AlphaChange.class, alpha->{
+			if(layer != null){
+				layer.setAlpha(alpha);
+			}
 		});
 	}
 	
@@ -92,6 +96,12 @@ public class Drawing extends Module{
 		
 		this.layers = layers;
 		this.layer = layers[0];
+		
+		if(Vars.ui.top() != null){
+			this.layer.setColor(Vars.ui.top().getSelectedColor());
+		}else{
+			this.layer.setColor(Vars.control.palettes().current().colors[0]);
+		}
 		
 		grid.resetView();
 		
