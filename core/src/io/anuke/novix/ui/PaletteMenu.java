@@ -8,8 +8,10 @@ import io.anuke.novix.Vars;
 import io.anuke.novix.dialogs.PaletteDialogs;
 import io.anuke.novix.element.ColorBox;
 import io.anuke.novix.element.FloatingMenu;
+import io.anuke.novix.internal.NovixEvent.PaletteChange;
 import io.anuke.novix.internal.Palette;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.core.Graphics;
 import io.anuke.ucore.scene.event.Touchable;
 import io.anuke.ucore.scene.ui.ImageButton;
@@ -53,7 +55,7 @@ public class PaletteMenu extends FloatingMenu{
 	public void show(){
 		super.show();
 		rebuild();
-		DrawContext.scene.setScrollFocus(pane);
+		Core.scene.setScrollFocus(pane);
 	}
 	
 	class PaletteTable extends Table{
@@ -95,8 +97,7 @@ public class PaletteMenu extends FloatingMenu{
 			
 			clicked(()->{
 				if(!click.isOver()){
-					//TODO NO
-					Vars.control.palettes().setSelected(palette);
+					Events.fire(PaletteChange.class, palette);
 					rebuild();
 				}
 			});

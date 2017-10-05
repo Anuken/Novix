@@ -22,9 +22,10 @@ import com.badlogic.gdx.utils.IntArray;
 import io.anuke.novix.element.AlphaImage;
 import io.anuke.novix.element.GridImage;
 import io.anuke.novix.internal.*;
-import io.anuke.ucore.core.Draw;
-import io.anuke.ucore.core.DrawContext;
-import io.anuke.ucore.core.Settings;
+import io.anuke.novix.internal.NovixEvent.ColorChange;
+import io.anuke.novix.internal.NovixEvent.FileLoad;
+import io.anuke.novix.internal.NovixEvent.LayerLoad;
+import io.anuke.ucore.core.*;
 import io.anuke.ucore.modules.Module;
 import io.anuke.ucore.scene.Element;
 import io.anuke.ucore.scene.ui.layout.Unit;
@@ -52,11 +53,15 @@ public class Drawing extends Module{
 	public Drawing(){
 		generatePolygons();
 		grid = new DrawingGrid();
+		
+		Events.on(ColorChange.class, color->{
+			layer.setColor(color.cpy());
+		});
 	}
 	
 	@Override
 	public void init(){
-		DrawContext.scene.add(grid);
+		Core.scene.add(grid);
 	}
 	
 	@Override
@@ -89,25 +94,22 @@ public class Drawing extends Module{
 		this.layer = layers[0];
 		
 		grid.resetView();
+		
+		Events.fire(LayerLoad.class, (Object)layers);
 	}
 	
 	public void loadImage(FileHandle file){
 		Layer load = new Layer(new Pixmap(file));
-		this.layer.dispose();
-		operations.dispose();
-		operations = new OperationStack();
+		layer.dispose();
 		
-		this.layer = load;
+		loadLayers(new Layer[]{load});
+		
 		//TODO specific index-lookup
-		layers[0] = load;
 		
 		load.setColor(Vars.ui.top().getSelectedColor());
 		load.setAlpha(Settings.getFloat("alpha"));
 		
-		grid.resetView();
-		
-		Vars.control.projects().saveProject();
-		Vars.control.projects().current().reloadTextures();
+		Events.fire(FileLoad.class, (Object)layers);
 	}
 	
 	public int width(){

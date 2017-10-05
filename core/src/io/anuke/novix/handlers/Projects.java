@@ -14,9 +14,11 @@ import com.badlogic.gdx.utils.TimeUtils;
 import io.anuke.novix.Novix;
 import io.anuke.novix.Vars;
 import io.anuke.novix.internal.Layer;
+import io.anuke.novix.internal.NovixEvent.FileLoad;
 import io.anuke.novix.internal.Project;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.core.Settings;
-import io.anuke.ucore.util.Timers;
+import io.anuke.ucore.core.Timers;
 
 public class Projects{
 	private ObjectMap<String, Project> projects = new ObjectMap<>();
@@ -24,6 +26,14 @@ public class Projects{
 	private boolean savingProject = false;
 	private Array<Project> projectsort = new Array<Project>();
 	private boolean backedup;
+	
+	public Projects(){
+		
+		Events.on(FileLoad.class, layers->{
+			saveProject();
+			currentProject.reloadTextures();
+		});
+	}
 
 	public Iterable<Project> getProjects(){
 		projectsort.clear();

@@ -2,7 +2,7 @@ package io.anuke.novix.element;
 
 import com.badlogic.gdx.math.Interpolation;
 
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.function.ActionProvider;
 import io.anuke.ucore.function.Listenable;
 import io.anuke.ucore.scene.actions.Actions;
@@ -55,7 +55,7 @@ public class PopupDialog extends Table{
 	public void show(){
 		pack();
 		addAction(showAction.get());
-		DrawContext.scene.add(this);
+		Core.scene.add(this);
 	}
 	
 	public void hide(){

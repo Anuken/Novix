@@ -1,6 +1,6 @@
 package io.anuke.novix.ui;
 
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.ui.ImageButton;
 
 public class FlipButton extends ImageButton{
@@ -21,6 +21,6 @@ public class FlipButton extends ImageButton{
 	
 	public void flip(){
 		flipped = !flipped;
-		getStyle().imageUp = DrawContext.skin.getDrawable(flipped ? "icon-up" : "icon-down");
+		getStyle().imageUp = Core.skin.getDrawable(flipped ? "icon-up" : "icon-down");
 	}
 }

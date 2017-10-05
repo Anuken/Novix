@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Colors;
 
 import io.anuke.novix.Vars;
 import io.anuke.novix.internal.Tool;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.layout.Table;
@@ -32,14 +32,14 @@ public class BottomMenu extends Table{
 		slider.slide(!flip.flipped());
 	}
 	
-	public void updateLayerDisplay(){
-		slider.display.updateImage();
-	}
+	//public void updateLayerDisplay(){
+	//	slider.display.updateImage();
+	//}
 	
 	private void setup(){
 		slider = new BottomSlider();
 		slider.setVisible(()-> isVisible());
-		DrawContext.scene.add(slider);
+		Core.scene.add(slider);
 		
 		bottom().left();
 		

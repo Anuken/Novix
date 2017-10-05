@@ -10,9 +10,11 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import io.anuke.novix.Novix;
 import io.anuke.novix.Vars;
+import io.anuke.novix.internal.NovixEvent.PaletteChange;
 import io.anuke.novix.internal.Palette;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.core.Settings;
-import io.anuke.ucore.util.Timers;
+import io.anuke.ucore.core.Timers;
 
 public class Palettes{
 	private Palette current;
@@ -20,7 +22,9 @@ public class Palettes{
 	private Array<Palette> palettesort = new Array<Palette>();
 	
 	public Palettes(){
-		
+		Events.on(PaletteChange.class, palette->{
+			setSelected(palette);
+		});
 	}
 	
 	public Palette current(){

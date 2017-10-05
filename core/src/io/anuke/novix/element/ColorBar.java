@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
 import io.anuke.ucore.core.Draw;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.Element;
 import io.anuke.ucore.scene.event.InputEvent;
 import io.anuke.ucore.scene.event.InputListener;
@@ -61,7 +61,7 @@ public class ColorBar extends Element{
 		
 		image.setBounds(x, y, width, height);
 		image.setTileUV(width/10, height/10);
-		image.draw(DrawContext.batch, alpha);
+		image.draw(Core.batch, alpha);
 		
 		if(texture == null){
 			Draw.gradient(from, to, alpha, x, y, width, height);

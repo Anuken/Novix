@@ -3,7 +3,9 @@ package io.anuke.novix.ui;
 import io.anuke.novix.Vars;
 import io.anuke.novix.element.LayerImage;
 import io.anuke.novix.internal.Layer;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.novix.internal.NovixEvent.LayerLoad;
+import io.anuke.ucore.core.Core;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.ImageButton;
 import io.anuke.ucore.scene.ui.TextButton;
@@ -23,6 +25,10 @@ public class LayerDisplay extends Table{
 		
 		add(images).size(160);
 		add(tabs);
+		
+		Events.on(LayerLoad.class, layer->{
+			updateImage();
+		});
 	}
 	
 	public void updateImage(){
@@ -61,7 +67,7 @@ public class LayerDisplay extends Table{
 			ImageButton visible = new ImageButton("icon-invisible", "toggle");
 			visible.resizeImage(30);
 			
-			visible.getStyle().imageChecked = DrawContext.skin.getDrawable("icon-visible");
+			visible.getStyle().imageChecked = Core.skin.getDrawable("icon-visible");
 			visible.setChecked(true);
 			visible.clicked(()->{
 				Vars.drawing.getLayers()[index].visible = visible.isChecked();

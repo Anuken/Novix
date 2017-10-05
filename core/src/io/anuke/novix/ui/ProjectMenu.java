@@ -8,7 +8,7 @@ import io.anuke.novix.Vars;
 import io.anuke.novix.dialogs.ProjectDialogs;
 import io.anuke.novix.element.*;
 import io.anuke.novix.internal.Project;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.builders.*;
 import io.anuke.ucore.scene.ui.Image;
 import io.anuke.ucore.scene.ui.ScrollPane;
@@ -23,7 +23,7 @@ public class ProjectMenu extends FloatingMenu{
 	public ProjectMenu(){
 		super("Projects");
 		
-		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
+		background(Core.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
 		
 		pad(10);
 		
@@ -92,7 +92,7 @@ public class ProjectMenu extends FloatingMenu{
 	
 	public void show(){
 		super.show();
-		DrawContext.scene.setScrollFocus(pane);
+		Core.scene.setScrollFocus(pane);
 		rebuild();
 	}
 	/*

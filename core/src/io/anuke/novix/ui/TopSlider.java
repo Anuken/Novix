@@ -1,10 +1,11 @@
 package io.anuke.novix.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 
 import io.anuke.novix.Vars;
+import io.anuke.novix.internal.NovixEvent.ColorChange;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.scene.actions.Actions;
 import io.anuke.ucore.scene.builders.build;
 import io.anuke.ucore.scene.builders.button;
@@ -18,6 +19,10 @@ public class TopSlider extends Table{
 	
 	public TopSlider(){
 		setup();
+		
+		Events.on(ColorChange.class, color->{
+			picker.setColor(color);
+		});
 	}
 	
 	@Override
@@ -60,10 +65,6 @@ public class TopSlider extends Table{
 		build.end();
 		
 		pack();
-	}
-	
-	public void updateColor(Color color){
-		picker.setColor(color);
 	}
 	
 	void slide(boolean up){

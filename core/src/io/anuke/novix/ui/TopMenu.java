@@ -3,7 +3,7 @@ package io.anuke.novix.ui;
 import com.badlogic.gdx.graphics.Color;
 
 import io.anuke.novix.Vars;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class TopMenu extends Table{
@@ -44,7 +44,7 @@ public class TopMenu extends Table{
 	private void setup(){
 		display = new ColorDisplay();
 		slider = new TopSlider();
-		DrawContext.scene.add(slider);
+		Core.scene.add(slider);
 		top();
 		
 		slider.setVisible(()-> isVisible());

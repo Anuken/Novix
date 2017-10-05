@@ -8,8 +8,8 @@ import io.anuke.novix.handlers.Projects;
 import io.anuke.novix.internal.Tool;
 import io.anuke.ucore.core.Inputs;
 import io.anuke.ucore.core.Settings;
+import io.anuke.ucore.core.Timers;
 import io.anuke.ucore.modules.RendererModule;
-import io.anuke.ucore.util.Timers;
 
 public class Control extends RendererModule{
 	private Palettes palettes;

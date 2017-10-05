@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Colors;
 
 import io.anuke.novix.dialogs.FilterDialogs.FilterMenu;
 import io.anuke.novix.ui.*;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.core.Inputs;
 import io.anuke.ucore.modules.SceneModule;
 import io.anuke.ucore.scene.ui.layout.Unit;
@@ -24,9 +24,9 @@ public class UI extends SceneModule{
 	@Override
 	public void init(){
 		setColors();
-		DrawContext.font.setUseIntegerPositions(true);
-		DrawContext.font.getData().setScale((int)(Unit.dp.inPixels(1f)+0.001f));
-		DrawContext.atlas = DrawContext.skin.getAtlas();
+		Core.font.setUseIntegerPositions(true);
+		Core.font.getData().setScale((int)(Unit.dp.inPixels(1f)+0.001f));
+		Core.atlas = Core.skin.getAtlas();
 		
 		setup();
 		
@@ -60,8 +60,6 @@ public class UI extends SceneModule{
 		
 		bottom = new BottomMenu();
 		scene.add(bottom);
-		
-		bottom.updateLayerDisplay();
 		
 		top.setVisible(()->filter == null);
 		bottom.setVisible(()->filter == null);

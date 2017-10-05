@@ -22,7 +22,7 @@ public class BottomSlider extends Table{
 	private ColorBar alphabar;
 	private ImageButton grid, drawmode;
 	
-	protected LayerDisplay display;
+	private LayerDisplay display;
 	
 	public BottomSlider(){
 		setup();

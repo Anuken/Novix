@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.math.Interpolation;
 
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.function.ActionProvider;
 import io.anuke.ucore.function.Listenable;
 import io.anuke.ucore.scene.actions.Actions;
@@ -32,7 +32,7 @@ public class FloatingMenu extends Table{
 	public FloatingMenu(boolean backbutton, String text){
 		setFillParent(true);
 		setTouchable(Touchable.enabled);
-		background(DrawContext.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
+		background(Core.skin.newDrawable("white", new Color(0, 0, 0, 0.9f)));
 		
 		content = new Table();
 		
@@ -93,7 +93,7 @@ public class FloatingMenu extends Table{
 	
 	public void show(){
 		addAction(showAction.get());
-		DrawContext.scene.add(this);
+		Core.scene.add(this);
 		if(shown != null)
 			shown.listen();
 	}

@@ -1,7 +1,8 @@
 package io.anuke.novix.ui;
 
-import io.anuke.novix.Vars;
 import io.anuke.novix.element.FloatingMenu;
+import io.anuke.novix.internal.NovixEvent.ColorChange;
+import io.anuke.ucore.core.Events;
 
 public class ToolMenu extends FloatingMenu{
 	private ColorPicker picker;
@@ -22,23 +23,13 @@ public class ToolMenu extends FloatingMenu{
 		
 		picker = new ColorPicker();
 		picker.colorChanged(color -> {
-			Vars.ui.top().setSelectedColor(color.cpy());
-			Vars.drawing.getLayer().setColor(color);
+			Events.fire(ColorChange.class, color);
 		});
 
 		content.top().left();
 
 		picker.padLeft(12);
 		picker.padRight(12);
-		//content.add(picker).growX().padTop(12);
-
-		//content.row();
-
-		//content.addCenteredImageTextButton("Palettes...", "icon-palette", 42, () -> {
-		//	palettemenu.show();
-		//}).growX().height(60).padBottom(12).padLeft(4).padRight(4);
-		
-		//content.row();
 		
 		content.add(list).growX();
 

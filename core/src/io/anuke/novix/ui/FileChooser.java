@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pools;
 
 import io.anuke.novix.element.FloatingMenu;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.function.Consumer;
 import io.anuke.ucore.scene.event.Touchable;
 import io.anuke.ucore.scene.ui.*;
@@ -193,7 +193,7 @@ public class FileChooser extends FloatingMenu{
 		
 		GlyphLayout layout = Pools.obtain(GlyphLayout.class);
 		
-		layout.setText(DrawContext.font, navigation.getText());
+		layout.setText(Core.font, navigation.getText());
 		
 		if(layout.width < navigation.getWidth()){
 			navigation.setCursorPosition(0);
@@ -274,7 +274,7 @@ public class FileChooser extends FloatingMenu{
 	@Override
 	public void show(){
 		super.show();
-		DrawContext.scene.setScrollFocus(pane);
+		Core.scene.setScrollFocus(pane);
 	}
 
 	public void fileSelected(Consumer<FileHandle> listener){

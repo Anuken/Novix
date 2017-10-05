@@ -3,14 +3,21 @@ package io.anuke.novix.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
-import io.anuke.novix.Vars;
 import io.anuke.novix.element.ColorBox;
+import io.anuke.novix.internal.NovixEvent.ColorChange;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class ColorDisplay extends Table{
 	private int selected;
 	private ColorBox[] boxes;
+	
+	public ColorDisplay(){
+		Events.on(ColorChange.class, color->{
+			boxes[selected].setImageColor(color);
+		});
+	}
 	
 	public void setColor(int index, Color color){
 		boxes[index].setImageColor(color);
@@ -51,20 +58,18 @@ public class ColorDisplay extends Table{
 			int index = i;
 			
 			Color color = colors[i];
-			ColorBox box = new ColorBox(colors[i]);
+			ColorBox box = new ColorBox(color);
 			group.add(box);
 			
 			add(box).size(colorsize);
 			
 			box.clicked(()->{
-				Vars.drawing.getLayer().setColor(color.cpy());
-				Vars.ui.top().slider().updateColor(color);
+				Events.fire(ColorChange.class, box.getColor());
 				selected = index;
 			});
 			
 			if(i == 0){
-				Vars.drawing.getLayer().setColor(color.cpy());
-				Vars.ui.top().slider().updateColor(color);
+				Events.fire(ColorChange.class, box.getColor());
 			}
 
 			if(perow != 0 && i % perow == perow - 1){

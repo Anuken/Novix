@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import io.anuke.ucore.core.Draw;
-import io.anuke.ucore.core.DrawContext;
+import io.anuke.ucore.core.Core;
 import io.anuke.ucore.scene.Element;
 
 public class AlphaImage extends Element{
@@ -13,7 +13,7 @@ public class AlphaImage extends Element{
 	
 	public AlphaImage(){
 		
-		DrawContext.skin.getAtlas().getRegion("alpha").getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		Core.skin.getAtlas().getRegion("alpha").getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 	}
 	
 	@Override

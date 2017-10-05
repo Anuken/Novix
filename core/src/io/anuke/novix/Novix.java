@@ -2,15 +2,15 @@ package io.anuke.novix;
 
 import com.badlogic.gdx.Gdx;
 
-import io.anuke.ucore.modules.Core;
+import io.anuke.ucore.modules.ModuleCore;
 
-public class Novix extends Core {
+public class Novix extends ModuleCore {
 	
 	@Override
 	public void init(){
-		add(Vars.control = new Control());
-		add(Vars.ui = new UI());
-		add(Vars.drawing = new Drawing());
+		module(Vars.control = new Control());
+		module(Vars.ui = new UI());
+		module(Vars.drawing = new Drawing());
 	}
 	
 	public static void log(Object o){
