@@ -60,7 +60,7 @@ public class ProjectMenu extends FloatingMenu{
 		tasks.add().size(0, 0).growX();
 		
 		tasks.addImageTextButton("Settings", "icon-settings", 32, ()->{
-			
+			Vars.ui.showSettings();
 		});
 		
 		add(tasks).growX();

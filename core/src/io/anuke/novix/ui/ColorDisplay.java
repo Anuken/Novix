@@ -33,9 +33,10 @@ public class ColorDisplay extends Table{
 	
 	public void update(Color[] colors){
 		boxes = new ColorBox[colors.length];
+		selected = 0;
 		
 		clear();
-
+		
 		int maxcolorsize = 57;
 		int mincolorsize = 40;
 
@@ -65,12 +66,12 @@ public class ColorDisplay extends Table{
 			add(box).size(colorsize);
 			
 			box.clicked(()->{
-				Events.fire(ColorChange.class, box.getColor());
 				selected = index;
+				Events.fire(ColorChange.class, color);
 			});
 			
-			if(i == 0){
-				Events.fire(ColorChange.class, box.getColor());
+			if(i == selected){
+				Events.fire(ColorChange.class, color);
 			}
 
 			if(perow != 0 && i % perow == perow - 1){
@@ -78,7 +79,6 @@ public class ColorDisplay extends Table{
 				row();
 				add().growX();
 			}
-			
 			
 		}
 
