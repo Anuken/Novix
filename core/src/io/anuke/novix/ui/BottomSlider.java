@@ -54,6 +54,14 @@ public class BottomSlider extends Table{
 			Events.fire(AlphaChange.class, alphabar.getValue());
 		});
 		
+		alphabar.released(()->{
+			Settings.save();
+		});
+		
+		sizeslider.released(()->{
+			Settings.save();
+		});
+		
 		alphabar.update(()->{
 			alphabar.setColors(Color.CLEAR, Vars.ui.top().getSelectedColor());
 		});

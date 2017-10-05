@@ -2,6 +2,7 @@ package io.anuke.novix.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import io.anuke.novix.Vars;
@@ -78,7 +79,8 @@ public class PaletteMenu extends FloatingMenu{
 				PaletteDialogs.palette = palette;
 				
 				Table c = PaletteDialogs.editPalette.content();
-				c.setPosition(Gdx.input.getX() - c.getPrefWidth()/2, Graphics.mouse().y-c.getPrefHeight()/2);
+				c.pack();
+				c.setPosition(Gdx.input.getX(), Graphics.mouse().y, Align.topRight);
 				
 				PaletteDialogs.editPalette.show();
 			}).size(40).get();

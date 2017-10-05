@@ -14,7 +14,7 @@ public class PaletteDialogs{
 	
 	public static final PopupDialog editPalette = new PopupDialog(){
 		{
-			content().defaults().size(190, 50);
+			content().defaults().size(190, 40);
 			
 			addItem("Rename", "icon-rename", 28, () -> {
 				renamePalette.show();

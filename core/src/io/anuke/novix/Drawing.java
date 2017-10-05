@@ -656,8 +656,11 @@ public class Drawing extends Module{
 				//TODO is color switching the right choice?
 				Draw.color(tempcolor);
 				
-				if(control.tool() != Tool.zoom) 	
+				if(control.tool() != Tool.zoom){
 					Draw.crect("icon-" + control.tool().name(), getX() + cursorx, getY() + cursory, csize, csize);
+				}else{
+					Draw.crect("icon-" + control.tool().name(), Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2, csize, csize);
+				}
 			}
 			
 			batch.flush();

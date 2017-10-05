@@ -2,21 +2,59 @@ package io.anuke.novix.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 
 import io.anuke.novix.element.ColorBox;
 import io.anuke.novix.internal.NovixEvent.ColorChange;
+import io.anuke.novix.internal.NovixEvent.ColorPick;
+import io.anuke.ucore.core.Draw;
 import io.anuke.ucore.core.Events;
+import io.anuke.ucore.graphics.Hue;
 import io.anuke.ucore.scene.ui.ButtonGroup;
 import io.anuke.ucore.scene.ui.layout.Table;
 
 public class ColorDisplay extends Table{
 	private int selected;
 	private ColorBox[] boxes;
+	private ButtonGroup<ColorBox> group;
 	
 	public ColorDisplay(){
 		Events.on(ColorChange.class, color->{
 			boxes[selected].setImageColor(color);
 		});
+		
+		Events.on(ColorPick.class, color->{
+			color.a = 1f;
+			int index = -1;
+			
+			for(int i = 0; i < boxes.length; i ++){
+				if(Hue.approximate(color, boxes[i].getImageColor(), 0.005f)){
+					index = i;
+					break;
+				}
+			}
+			
+			if(index == -1){
+				Events.fire(ColorChange.class, color);
+			}else{
+				selected = index;
+				boxes[selected].setChecked(true);
+				Events.fire(ColorChange.class, boxes[selected].getImageColor());
+			}
+		});
+	}
+	
+	@Override
+	public void draw(Batch batch, float alpha){
+		super.draw(batch, alpha);
+		
+		ColorBox box = boxes[selected];
+		
+		Draw.color("title");
+		float margin = 6;
+		Draw.patch("box-select", getX() + box.getX() - margin, getY() + box.getY() - margin, 
+				box.getWidth() + margin*2, box.getHeight() + margin*2);
+		Draw.color();
 	}
 	
 	public void setColor(int index, Color color){
@@ -37,7 +75,7 @@ public class ColorDisplay extends Table{
 		
 		clear();
 		
-		int maxcolorsize = 57;
+		int maxcolorsize = 54;
 		int mincolorsize = 40;
 
 		int colorsize = Gdx.graphics.getWidth() / colors.length;
@@ -53,7 +91,7 @@ public class ColorDisplay extends Table{
 
 		add().growX();
 		
-		ButtonGroup<ColorBox> group = new ButtonGroup<>();
+		group = new ButtonGroup<>();
 
 		for(int i = 0; i < colors.length; i++){
 			int index = i;

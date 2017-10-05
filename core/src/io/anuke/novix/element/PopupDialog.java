@@ -29,7 +29,8 @@ public class PopupDialog extends Table{
 			hide();
 		});
 		
-		content = new Table();
+		content = new Table("button");
+		content.pad(8);
 		
 		addChild(content);
 	}
@@ -42,6 +43,9 @@ public class PopupDialog extends Table{
 		button.add(text).left().bottom();
 		button.left();
 		button.getImageCell().left().padRight(4);
+		button.setStyle(new ImageButton.ImageButtonStyle((ImageButton.ImageButtonStyle)button.getStyle()));
+		button.getStyle().up = Core.skin.getDrawable("black");
+		button.getStyle().down = null;
 		content.add(button);
 		content.row();
 		

@@ -3,6 +3,8 @@ package io.anuke.novix.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Scaling;
 
 import io.anuke.novix.Vars;
 import io.anuke.novix.dialogs.ProjectDialogs;
@@ -125,16 +127,18 @@ public class ProjectMenu extends FloatingMenu{
 		
 		public ProjectTable(Project project){
 			
+			Scaling scaling = Scaling.fit;
 			Stack stack = new Stack();
 			
 			project.reloadTextures();
 			
 			Texture[] tex = project.getCachedTextures();
 			
-			stack.add(new AlphaImage());
+			stack.add(new AlphaImage(5f, 5f * tex[0].getHeight() / tex[0].getWidth()));
 			
 			for(Texture t : tex){
-				stack.add(new Image(t));
+				Image image = new Image(t);
+				stack.add(image);
 			}
 			
 			stack.add(new BorderImage());
@@ -143,8 +147,15 @@ public class ProjectMenu extends FloatingMenu{
 			
 			background("button");
 			
+			float target = 120f;
+			
+			Vector2 size = scaling.apply(tex[0].getWidth(), tex[0].getHeight(), target, target);
+			float padx = (target-size.x)/2f;
+			float pady = (target-size.y)/2f;
+			
 			left();
-			add(stack).padRight(4).padBottom(4).size(120).left();
+			add(stack).size(size.x, size.y).padLeft(padx).padRight(padx + 4f)
+			.padTop(pady).padBottom(pady + 4f).left();
 			
 			new table(){{
 				

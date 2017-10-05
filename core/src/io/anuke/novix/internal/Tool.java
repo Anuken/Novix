@@ -5,6 +5,8 @@ import java.util.Stack;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.IntSet;
 
+import io.anuke.novix.internal.NovixEvent.ColorPick;
+import io.anuke.ucore.core.Events;
 import io.anuke.ucore.core.Settings;
 
 public enum Tool{
@@ -78,6 +80,7 @@ public enum Tool{
 		}
 		
 		public void clicked(Layer layer, int x, int y){
+			Events.fire(ColorPick.class, layer.getColor(x, y));
 			//TODO
 			/*
 			Color selected = layer.getColor(x, y);

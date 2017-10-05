@@ -25,4 +25,8 @@ public class NovixEvent{
 	public static interface AlphaChange extends Event{
 		public void handle(float alpha);
 	}
+	
+	public static interface ColorPick extends Event{
+		public void handle(Color newColor);
+	}
 }

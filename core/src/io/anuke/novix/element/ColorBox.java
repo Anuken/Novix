@@ -24,6 +24,7 @@ public class ColorBox extends ImageButton{
 	
 	public void setImageColor(Color color){
 		getImage().setColor(color);
+		getImage().getColor().a = 1f;
 	}
 	
 	@Override
